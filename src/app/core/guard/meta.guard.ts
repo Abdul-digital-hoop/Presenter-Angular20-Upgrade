@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { MetaService } from '../Sevices/meta.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class MetaGuard implements CanActivate {
+export class MetaGuard  {
 
   constructor(private metaService: MetaService) {}
 
