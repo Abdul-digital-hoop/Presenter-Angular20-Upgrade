@@ -119,16 +119,16 @@
           },
           "configurations": {
             "production": {
-              "browserTarget": "Slidea:build:production"
+              "buildTarget": "Slidea:build:production"
             },
             "test": {
-              "browserTarget": "Slidea:build:test"
+              "buildTarget": "Slidea:build:test"
             },
             "dev": {
-              "browserTarget": "Slidea:build:dev"
+              "buildTarget": "Slidea:build:dev"
             },
             "development": {
-              "browserTarget": "Slidea:build:development"
+              "buildTarget": "Slidea:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -136,7 +136,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "Slidea:build"
+            "buildTarget": "Slidea:build"
           }
         },
         "test": {

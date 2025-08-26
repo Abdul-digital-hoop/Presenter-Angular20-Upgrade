@@ -38,7 +38,7 @@
                     <div class="control-icon">
                         <label class="switch mb-0">
                             <input type="checkbox" class="ctsm-toggle-btn" 
-                                [(ngModel)]="!workspaceService.slideEnableVoting"
+                                [ngModel]="!workspaceService.slideEnableVoting" (ngModelChange)="workspaceService.slideEnableVoting = $event"
                                 [ngModelOptions]="{standalone: true}" (change)="updateSlideShowResponse()"
                                 [disabled]="!customerPlan?.audience_response_control">
                             <span class="slider round" [ngClass]="!customerPlan?.audience_response_control ? 'cursor-notallowed':''"></span>

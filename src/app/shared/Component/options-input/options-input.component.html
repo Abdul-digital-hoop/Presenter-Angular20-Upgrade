@@ -10,7 +10,7 @@
         <div class="row mx-0 align-items-center">
             <ng-container *ngIf="isTrueorFalseStatement">
                 <div class="col-1 round-lie px-0" id="round-lie">
-                    <input type="checkbox" id="{{idx}}-wrong" [(ngModel)]="!option.isCorrect"
+                    <input type="checkbox" id="{{idx}}-wrong" [ngModel]="!option.isCorrect" (ngModelChange)="option.isCorrect = $event"
                         [ngModelOptions]="{standalone: true}"
                     (change)="truthorLieCorrectOptions(option.OptionId,false,option)" class="right-side-bar-tooltip-top"  
                     data-tooltip="Wrong"/>
