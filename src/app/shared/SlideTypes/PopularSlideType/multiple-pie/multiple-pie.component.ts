@@ -4,9 +4,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
 @Component({
-  selector: 'app-multiple-pie',
-  templateUrl: './multiple-pie.component.html',
-  styleUrls: ['./multiple-pie.component.scss']
+    selector: 'app-multiple-pie',
+    templateUrl: './multiple-pie.component.html',
+    styleUrls: ['./multiple-pie.component.scss'],
+    standalone: false
 })
 export class MultiplePieComponent implements OnInit {
   @Input() barData: any[] = [];

@@ -10,9 +10,10 @@ import { MetaService } from 'src/app/core/Sevices/meta.service';
 
 declare var google: any; 
 @Component({
-  selector: 'app-resend-email-verification',
-  templateUrl: './resend-email-verification.component.html',
-  styleUrls: ['./resend-email-verification.component.scss']
+    selector: 'app-resend-email-verification',
+    templateUrl: './resend-email-verification.component.html',
+    styleUrls: ['./resend-email-verification.component.scss'],
+    standalone: false
 })
 export class ResendEmailVerificationComponent implements OnInit {
   resendEmailForm: FormGroup;

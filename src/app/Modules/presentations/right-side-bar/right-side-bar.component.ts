@@ -16,9 +16,10 @@ import { Layout } from 'src/app/core/Models/layout.model';
 //? Declarations
 declare var $: any;
 @Component({
-  selector: 'app-right-side-bar',
-  templateUrl: './right-side-bar.component.html',
-  styleUrls: ['./right-side-bar.component.scss']
+    selector: 'app-right-side-bar',
+    templateUrl: './right-side-bar.component.html',
+    styleUrls: ['./right-side-bar.component.scss'],
+    standalone: false
 })
 export class RightSideBarComponent implements OnInit {
   @Output() public slideTypeName: EventEmitter<any> = new EventEmitter<any>();

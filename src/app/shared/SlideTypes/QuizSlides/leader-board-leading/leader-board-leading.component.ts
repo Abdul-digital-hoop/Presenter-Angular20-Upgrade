@@ -3,16 +3,17 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { QuizPresenterScreenManageConstant } from 'src/app/utility/constants';
 import { trigger, state, style, animate, transition } from '@angular/animations';
 @Component({
-  selector: 'app-leader-board-leading',
-  templateUrl: './leader-board-leading.component.html',
-  styleUrls: ['./leader-board-leading.component.scss'],
-  animations: [
-    trigger('progressAnimation', [
-      state('start', style({ width: '0%' })),
-      state('end', style({ width: 'var(--progress-width)' })),
-      transition('start => end', animate('2s ease-in-out'))
-    ])
-  ]
+    selector: 'app-leader-board-leading',
+    templateUrl: './leader-board-leading.component.html',
+    styleUrls: ['./leader-board-leading.component.scss'],
+    animations: [
+        trigger('progressAnimation', [
+            state('start', style({ width: '0%' })),
+            state('end', style({ width: 'var(--progress-width)' })),
+            transition('start => end', animate('2s ease-in-out'))
+        ])
+    ],
+    standalone: false
 })
 export class LeaderBoardLeadingComponent implements OnInit {
 

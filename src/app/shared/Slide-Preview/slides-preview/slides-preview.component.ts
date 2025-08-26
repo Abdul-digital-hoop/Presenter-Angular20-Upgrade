@@ -5,9 +5,10 @@ import { MasterSlideTypeName } from 'src/app/utility/constants';
 import { DynamicSlideTypeComponent } from '../../Component/dynamic-slide-type/dynamic-slide-type.component';
 
 @Component({
-  selector: 'app-slides-preview',
-  templateUrl: './slides-preview.component.html',
-  styleUrls: ['./slides-preview.component.scss']
+    selector: 'app-slides-preview',
+    templateUrl: './slides-preview.component.html',
+    styleUrls: ['./slides-preview.component.scss'],
+    standalone: false
 })
 export class SlidesPreviewComponent implements OnInit {
   @Input() isPresentation: boolean = false; // Indicates whether the parent component is a presentation, template, website, or admin

@@ -11,9 +11,10 @@ import { CustomerLimitationsCount, CustomerPlan } from 'src/app/core/Models/cust
 import { MypresentationsService } from '../../Home/mypresentations/Service/mypresentations.service';
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-nav-bar',
-  templateUrl: './nav-bar.component.html',
-  styleUrls: ['./nav-bar.component.scss']
+    selector: 'app-nav-bar',
+    templateUrl: './nav-bar.component.html',
+    styleUrls: ['./nav-bar.component.scss'],
+    standalone: false
 })
 export class NavBarComponent implements OnInit {
   @Output() public clearDynamicComponent: EventEmitter<any> = new EventEmitter<any>();

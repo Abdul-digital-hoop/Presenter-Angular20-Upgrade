@@ -2,9 +2,10 @@ import { AfterViewInit, Component, Input, OnInit } from '@angular/core';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-spinner',
-  templateUrl: './spinner.component.html',
-  styleUrls: ['./spinner.component.scss']
+    selector: 'app-spinner',
+    templateUrl: './spinner.component.html',
+    styleUrls: ['./spinner.component.scss'],
+    standalone: false
 })
 export class SpinnerComponent implements OnInit,AfterViewInit {
   @Input() theme: any;

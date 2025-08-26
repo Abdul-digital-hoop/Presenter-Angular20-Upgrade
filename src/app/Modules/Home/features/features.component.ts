@@ -17,9 +17,10 @@ import { MasterSlideTypeName } from 'src/app/utility/constants';
 declare var $: any;
 declare const _IntegrationMediumZoom: boolean;
 @Component({
-  selector: 'app-features',
-  templateUrl: './features.component.html',
-  styleUrls: ['./features.component.scss']
+    selector: 'app-features',
+    templateUrl: './features.component.html',
+    styleUrls: ['./features.component.scss'],
+    standalone: false
 })
 export class FeaturesComponent implements OnInit {
   previousScrollTop : number = 0;

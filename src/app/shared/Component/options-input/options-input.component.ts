@@ -6,9 +6,10 @@ import { inputControlTextLengthColor } from 'src/app/utility/InputControlType';
 import { QuizTheme } from 'src/app/utility/MasterConstants';
 
 @Component({
-  selector: 'app-options-input',
-  templateUrl: './options-input.component.html',
-  styleUrls: ['./options-input.component.scss']
+    selector: 'app-options-input',
+    templateUrl: './options-input.component.html',
+    styleUrls: ['./options-input.component.scss'],
+    standalone: false
 })
 export class OptionsInputComponent implements OnInit {
   // * Input Parames For This Component.

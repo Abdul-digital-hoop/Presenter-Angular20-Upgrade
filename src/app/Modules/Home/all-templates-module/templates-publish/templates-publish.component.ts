@@ -6,9 +6,10 @@ import { SlideType } from 'src/app/utility/MasterConstants';
 import { MasterSlideTypeName } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-templates-publish',
-  templateUrl: './templates-publish.component.html',
-  styleUrls: ['./templates-publish.component.scss']
+    selector: 'app-templates-publish',
+    templateUrl: './templates-publish.component.html',
+    styleUrls: ['./templates-publish.component.scss'],
+    standalone: false
 })
 export class TemplatesPublishComponent implements OnInit, OnChanges {
   @ViewChild('tagInputElement') tagInputElement!: ElementRef;

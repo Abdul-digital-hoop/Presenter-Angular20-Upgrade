@@ -3,9 +3,10 @@ import * as d3 from 'd3';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 @Component({
-  selector: 'app-multiple-dot',
-  templateUrl: './multiple-dot.component.html',
-  styleUrls: ['./multiple-dot.component.scss']
+    selector: 'app-multiple-dot',
+    templateUrl: './multiple-dot.component.html',
+    styleUrls: ['./multiple-dot.component.scss'],
+    standalone: false
 })
 export class MultipleDotComponent implements OnInit {
   @Input() barData: any[] = [];

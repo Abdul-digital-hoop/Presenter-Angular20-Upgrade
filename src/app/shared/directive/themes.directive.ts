@@ -3,7 +3,8 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
 
 @Directive({
-  selector: '[appThemes]'
+    selector: '[appThemes]',
+    standalone: false
 })
 export class ThemesDirective implements OnInit, OnChanges, AfterViewChecked, AfterViewInit, OnDestroy {
   @Input('appThemes') themesData: any;

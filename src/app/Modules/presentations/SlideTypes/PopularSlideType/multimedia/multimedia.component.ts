@@ -30,9 +30,10 @@ interface TableConfig {
 }
 
 @Component({
-  selector: 'app-multimedia',
-  templateUrl: './multimedia.component.html',
-  styleUrls: ['./multimedia.component.scss']
+    selector: 'app-multimedia',
+    templateUrl: './multimedia.component.html',
+    styleUrls: ['./multimedia.component.scss'],
+    standalone: false
 })
 export class MultimediaComponent implements OnInit, OnDestroy {
 

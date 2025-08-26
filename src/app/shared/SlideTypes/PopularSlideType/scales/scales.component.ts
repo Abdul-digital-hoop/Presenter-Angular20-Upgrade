@@ -13,9 +13,10 @@ interface PathData {
 }
 
 @Component({
-  selector: 'app-scales',
-  templateUrl: './scales.component.html',
-  styleUrls: ['./scales.component.scss'],
+    selector: 'app-scales',
+    templateUrl: './scales.component.html',
+    styleUrls: ['./scales.component.scss'],
+    standalone: false
 })
 export class ScalesComponent implements OnInit {
   @Input('themesChartColor') public themesChartColor: any[];

@@ -4,9 +4,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { ActivatedRoute, Router } from '@angular/router';
 @Component({
-  selector: 'app-work-space',
-  templateUrl: './work-space.component.html',
-  styleUrls: ['./work-space.component.scss']
+    selector: 'app-work-space',
+    templateUrl: './work-space.component.html',
+    styleUrls: ['./work-space.component.scss'],
+    standalone: false
 })
 export class WorkSpaceComponent implements OnInit {
   selectedTab: any = ' ';

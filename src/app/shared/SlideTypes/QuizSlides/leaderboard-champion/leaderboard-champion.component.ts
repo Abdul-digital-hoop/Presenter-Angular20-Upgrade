@@ -2,9 +2,10 @@ import { Component, Input, OnInit, AfterViewInit } from '@angular/core';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-leaderboard-champion',
-  templateUrl: './leaderboard-champion.component.html',
-  styleUrls: ['./leaderboard-champion.component.scss']
+    selector: 'app-leaderboard-champion',
+    templateUrl: './leaderboard-champion.component.html',
+    styleUrls: ['./leaderboard-champion.component.scss'],
+    standalone: false
 })
 export class LeaderboardChampionComponent implements OnInit, AfterViewInit {
 

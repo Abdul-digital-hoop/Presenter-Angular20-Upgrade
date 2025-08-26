@@ -4,9 +4,10 @@ import { PresentationThemeService } from 'src/app/core/Sevices/Presentation/pres
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-create-theme',
-  templateUrl: './create-theme.component.html',
-  styleUrls: ['./create-theme.component.scss']
+    selector: 'app-create-theme',
+    templateUrl: './create-theme.component.html',
+    styleUrls: ['./create-theme.component.scss'],
+    standalone: false
 })
 export class CreateThemeComponent implements OnInit {
   // These variables are used to store the theme id and theme data

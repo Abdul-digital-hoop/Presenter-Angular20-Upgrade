@@ -12,9 +12,10 @@ export interface participent {
   optionColor: any;
 };
 @Component({
-  selector: 'app-leader-board',
-  templateUrl: './leader-board.component.html',
-  styleUrls: ['./leader-board.component.scss']
+    selector: 'app-leader-board',
+    templateUrl: './leader-board.component.html',
+    styleUrls: ['./leader-board.component.scss'],
+    standalone: false
 })
 export class LeaderBoardComponent implements OnInit, OnChanges, AfterViewInit {
   @Input('screenOptions') public screenOptions: string;

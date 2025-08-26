@@ -3,9 +3,10 @@ import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-this-or-that',
-  templateUrl: './this-or-that.component.html',
-  styleUrls: ['./this-or-that.component.scss']
+    selector: 'app-this-or-that',
+    templateUrl: './this-or-that.component.html',
+    styleUrls: ['./this-or-that.component.scss'],
+    standalone: false
 })
 export class ThisOrThatComponent implements OnInit {
 screenOptions :any='presentationScreen' ;

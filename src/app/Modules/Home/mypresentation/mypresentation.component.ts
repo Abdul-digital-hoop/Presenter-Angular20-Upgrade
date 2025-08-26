@@ -27,21 +27,22 @@ declare let zoomSdk: any;
 declare const _IntegrationMediumZoom: boolean;
 
 @Component({
-  selector: 'app-mypresentation',
-  templateUrl: './mypresentation.component.html',
-  styleUrls: ['./mypresentation.component.scss'],
-  animations: [
-    trigger('slideUpAnimation', [
-      transition('* => *', [
-        query(':enter', [
-          style({ opacity: 0, transform: 'translateY(20px)' }),
-          stagger(100, [
-            animate('0.5s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
-          ])
-        ], { optional: true })
-      ])
-    ])
-  ]
+    selector: 'app-mypresentation',
+    templateUrl: './mypresentation.component.html',
+    styleUrls: ['./mypresentation.component.scss'],
+    animations: [
+        trigger('slideUpAnimation', [
+            transition('* => *', [
+                query(':enter', [
+                    style({ opacity: 0, transform: 'translateY(20px)' }),
+                    stagger(100, [
+                        animate('0.5s ease-out', style({ opacity: 1, transform: 'translateY(0)' }))
+                    ])
+                ], { optional: true })
+            ])
+        ])
+    ],
+    standalone: false
 })
 export class MypresentationComponent implements OnInit {
   isConverting : boolean = false;

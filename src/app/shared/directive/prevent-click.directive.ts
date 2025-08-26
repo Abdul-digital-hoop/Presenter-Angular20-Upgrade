@@ -2,7 +2,8 @@ import { Directive, ElementRef, HostListener } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 
 @Directive({
-  selector: '[appPreventClick]'
+    selector: '[appPreventClick]',
+    standalone: false
 })
 export class PreventClickDirective {
 

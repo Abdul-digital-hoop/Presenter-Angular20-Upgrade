@@ -16,9 +16,10 @@ import { PresentationService } from 'src/app/core/Sevices/Presentation/presentat
 declare var $: any;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-mypresentation-listview',
-  templateUrl: './mypresentation-listview.component.html',
-  styleUrls: ['./mypresentation-listview.component.scss']
+    selector: 'app-mypresentation-listview',
+    templateUrl: './mypresentation-listview.component.html',
+    styleUrls: ['./mypresentation-listview.component.scss'],
+    standalone: false
 })
 export class MypresentationListviewComponent implements OnInit, OnChanges {
   @Input() presentations: any[] = [];

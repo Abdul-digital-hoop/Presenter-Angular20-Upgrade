@@ -4,9 +4,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 
 declare var $:any;
 @Component({
-  selector: 'app-import-powerpoint',
-  templateUrl: './import-powerpoint.component.html',
-  styleUrls: ['./import-powerpoint.component.scss']
+    selector: 'app-import-powerpoint',
+    templateUrl: './import-powerpoint.component.html',
+    styleUrls: ['./import-powerpoint.component.scss'],
+    standalone: false
 })
 export class ImportPowerpointComponent implements OnInit {
   sanitizedEmbedLink: SafeResourceUrl;

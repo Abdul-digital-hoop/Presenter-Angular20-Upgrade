@@ -36,9 +36,10 @@ import { EmptySlideComponent } from '../SlideTypes/empty-slide/empty-slide.compo
 
 
 @Component({
-  selector: 'app-dynamic-chart',
-  templateUrl: './dynamic-chart.component.html',
-  styleUrls: ['./dynamic-chart.component.scss']
+    selector: 'app-dynamic-chart',
+    templateUrl: './dynamic-chart.component.html',
+    styleUrls: ['./dynamic-chart.component.scss'],
+    standalone: false
 })
 export class DynamicChartComponent implements OnInit {
   @Output() public clearDynamicComponent: EventEmitter<any> = new EventEmitter<any>();

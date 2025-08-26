@@ -2,9 +2,10 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output } from '@ang
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 declare var $:any;
 @Component({
-  selector: 'app-change-themes',
-  templateUrl: './change-themes.component.html',
-  styleUrls: ['./change-themes.component.scss']
+    selector: 'app-change-themes',
+    templateUrl: './change-themes.component.html',
+    styleUrls: ['./change-themes.component.scss'],
+    standalone: false
 })
 export class ChangeThemesComponent implements OnInit {
   @Output() changeThemeEvent = new EventEmitter();

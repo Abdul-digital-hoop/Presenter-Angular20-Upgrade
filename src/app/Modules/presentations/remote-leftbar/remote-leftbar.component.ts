@@ -13,9 +13,10 @@ import { debug } from 'util';
 declare var $: any;
 
 @Component({
-  selector: 'app-remote-leftbar',
-  templateUrl: './remote-leftbar.component.html',
-  styleUrls: ['./remote-leftbar.component.scss']
+    selector: 'app-remote-leftbar',
+    templateUrl: './remote-leftbar.component.html',
+    styleUrls: ['./remote-leftbar.component.scss'],
+    standalone: false
 })
 export class RemoteLeftbarComponent implements OnInit {
   isSidebarHidden = false;

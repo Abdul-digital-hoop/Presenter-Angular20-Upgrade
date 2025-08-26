@@ -6,9 +6,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { MasterSlideTypeName } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-view-result-response',
-  templateUrl: './view-result-response.component.html',
-  styleUrls: ['./view-result-response.component.scss']
+    selector: 'app-view-result-response',
+    templateUrl: './view-result-response.component.html',
+    styleUrls: ['./view-result-response.component.scss'],
+    standalone: false
 })
 export class ViewResultResponseComponent implements OnInit {
   PresentationId: string;

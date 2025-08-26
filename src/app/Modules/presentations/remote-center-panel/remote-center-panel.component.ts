@@ -11,9 +11,10 @@ import { DynamicSlideTypeDirective } from 'src/app/shared/directive/dynamic-slid
 import { DynamicSlideTypeComponent } from 'src/app/shared/Component/dynamic-slide-type/dynamic-slide-type.component';
 
 @Component({
-  selector: 'app-remote-center-panel',
-  templateUrl: './remote-center-panel.component.html',
-  styleUrls: ['./remote-center-panel.component.scss']
+    selector: 'app-remote-center-panel',
+    templateUrl: './remote-center-panel.component.html',
+    styleUrls: ['./remote-center-panel.component.scss'],
+    standalone: false
 })
 export class RemoteCenterPanelComponent implements OnInit {
   @ViewChild('CenterPanel', { static: true }) CenterPanel: ElementRef;

@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-templates-edit',
-  templateUrl: './templates-edit.component.html',
-  styleUrls: ['./templates-edit.component.scss']
+    selector: 'app-templates-edit',
+    templateUrl: './templates-edit.component.html',
+    styleUrls: ['./templates-edit.component.scss'],
+    standalone: false
 })
 export class TemplatesEditComponent implements OnInit {
   @Input() templateCard! :any;

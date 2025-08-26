@@ -8,9 +8,10 @@ import { AccountService } from 'src/app/core/Sevices/account.service';
 declare var $: any;
 
 @Component({
-  selector: 'app-teams-presentations',
-  templateUrl: './teams-presentations.component.html',
-  styleUrls: ['./teams-presentations.component.scss']
+    selector: 'app-teams-presentations',
+    templateUrl: './teams-presentations.component.html',
+    styleUrls: ['./teams-presentations.component.scss'],
+    standalone: false
 })
 export class TeamsPresentationsComponent implements OnInit {
 

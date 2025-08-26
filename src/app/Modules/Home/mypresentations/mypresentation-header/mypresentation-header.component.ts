@@ -11,9 +11,10 @@ declare var $: any;
 declare const _IntegrationMediumZoom: boolean;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-mypresentation-header',
-  templateUrl: './mypresentation-header.component.html',
-  styleUrls: ['./mypresentation-header.component.scss']
+    selector: 'app-mypresentation-header',
+    templateUrl: './mypresentation-header.component.html',
+    styleUrls: ['./mypresentation-header.component.scss'],
+    standalone: false
 })
 export class MypresentationHeaderComponent implements OnInit {
   folderForm: FormGroup;

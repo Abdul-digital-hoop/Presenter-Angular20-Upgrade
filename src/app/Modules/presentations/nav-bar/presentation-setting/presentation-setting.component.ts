@@ -16,9 +16,10 @@ import { SlideType } from 'src/app/utility/MasterConstants';
 declare var $: any;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-presentation-setting',
-  templateUrl: './presentation-setting.component.html',
-  styleUrls: ['./presentation-setting.component.scss']
+    selector: 'app-presentation-setting',
+    templateUrl: './presentation-setting.component.html',
+    styleUrls: ['./presentation-setting.component.scss'],
+    standalone: false
 })
 export class PresentationSettingComponent implements OnInit {
   categoryList:any;

@@ -5,9 +5,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
 @Component({
-  selector: 'app-multiple-bar',
-  templateUrl: './multiple-bar.component.html',
-  styleUrls: ['./multiple-bar.component.scss']
+    selector: 'app-multiple-bar',
+    templateUrl: './multiple-bar.component.html',
+    styleUrls: ['./multiple-bar.component.scss'],
+    standalone: false
 })
 export class MultipleBarComponent implements OnInit {
   @Input() multipleChoiceData: any[] = [];

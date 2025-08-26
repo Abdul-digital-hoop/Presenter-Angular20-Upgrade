@@ -8,9 +8,10 @@ import { ProfanityFilterWords } from 'src/app/utility/ProfanityFilter';
 import { settingVariables } from 'src/app/utility/SettingVariables';
 
 @Component({
-  selector: 'app-question-answers',
-  templateUrl: './question-answers.component.html',
-  styleUrls: ['./question-answers.component.scss']
+    selector: 'app-question-answers',
+    templateUrl: './question-answers.component.html',
+    styleUrls: ['./question-answers.component.scss'],
+    standalone: false
 })
 export class QuestionAnswersComponent implements OnInit {
   @Input() slideTheme:any;

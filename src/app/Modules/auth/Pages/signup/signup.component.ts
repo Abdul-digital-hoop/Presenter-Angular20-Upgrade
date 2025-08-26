@@ -14,9 +14,10 @@ import { MetaService } from 'src/app/core/Sevices/meta.service';
 
 declare var google: any; 
 @Component({
-  selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss']
+    selector: 'app-signup',
+    templateUrl: './signup.component.html',
+    styleUrls: ['./signup.component.scss'],
+    standalone: false
 })
 export class SignupComponent implements OnInit {
   registerForm: FormGroup;

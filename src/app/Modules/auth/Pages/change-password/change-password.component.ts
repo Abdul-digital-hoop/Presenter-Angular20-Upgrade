@@ -8,9 +8,10 @@ import { ErrorMessages, SuccessMessages } from 'src/app/core/SuccessResponse';
 import { MetaService } from 'src/app/core/Sevices/meta.service';
 
 @Component({
-  selector: 'app-change-password',
-  templateUrl: './change-password.component.html',
-  styleUrls: ['./change-password.component.scss']
+    selector: 'app-change-password',
+    templateUrl: './change-password.component.html',
+    styleUrls: ['./change-password.component.scss'],
+    standalone: false
 })
 export class ChangePasswordComponent implements OnInit {
   changePasswordForm: FormGroup;

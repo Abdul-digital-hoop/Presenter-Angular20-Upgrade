@@ -2,9 +2,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-share-presenatation',
-  templateUrl: './share-presenatation.component.html',
-  styleUrls: ['./share-presenatation.component.scss']
+    selector: 'app-share-presenatation',
+    templateUrl: './share-presenatation.component.html',
+    styleUrls: ['./share-presenatation.component.scss'],
+    standalone: false
 })
 export class SharePresenatationComponent implements OnInit {
   shareTabNumber: any = 1;

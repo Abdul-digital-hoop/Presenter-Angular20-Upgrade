@@ -3,9 +3,10 @@ import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-reactions',
-  templateUrl: './reactions.component.html',
-  styleUrls: ['./reactions.component.scss']
+    selector: 'app-reactions',
+    templateUrl: './reactions.component.html',
+    styleUrls: ['./reactions.component.scss'],
+    standalone: false
 })
 export class ReactionsComponent implements OnInit,OnChanges {
 

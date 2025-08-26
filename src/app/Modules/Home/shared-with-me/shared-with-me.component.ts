@@ -12,9 +12,10 @@ import { ErrorMessages, SuccessMessages } from 'src/app/core/SuccessResponse';
 import { TrashServiceService } from 'src/app/trash-service.service';
 declare var $: any;
 @Component({
-  selector: 'app-shared-with-me',
-  templateUrl: './shared-with-me.component.html',
-  styleUrls: ['./shared-with-me.component.scss']
+    selector: 'app-shared-with-me',
+    templateUrl: './shared-with-me.component.html',
+    styleUrls: ['./shared-with-me.component.scss'],
+    standalone: false
 })
 export class SharedWithMeComponent implements OnInit {
   presentationData: any[] = [];

@@ -18,9 +18,10 @@ export class ImageTypeClass {
   Type: string;
 }
 @Component({
-  selector: 'app-reusable-image-upload',
-  templateUrl: './reusable-image-upload.component.html',
-  styleUrls: ['./reusable-image-upload.component.scss']
+    selector: 'app-reusable-image-upload',
+    templateUrl: './reusable-image-upload.component.html',
+    styleUrls: ['./reusable-image-upload.component.scss'],
+    standalone: false
 })
 export class ReusableImageUploadComponent implements OnInit{
   @Output() closeUploadComponentModal = new EventEmitter<void>();

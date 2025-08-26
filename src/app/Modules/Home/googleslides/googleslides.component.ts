@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-googleslides',
-  templateUrl: './googleslides.component.html',
-  styleUrls: ['./googleslides.component.scss']
+    selector: 'app-googleslides',
+    templateUrl: './googleslides.component.html',
+    styleUrls: ['./googleslides.component.scss'],
+    standalone: false
 })
 export class GoogleslidesComponent implements OnInit {
 

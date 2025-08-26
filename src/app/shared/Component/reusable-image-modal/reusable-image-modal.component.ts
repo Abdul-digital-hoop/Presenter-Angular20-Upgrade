@@ -9,9 +9,10 @@ export class ImageTypeClass {
 }
 
 @Component({
-  selector: 'app-reusable-image-modal',
-  templateUrl: './reusable-image-modal.component.html',
-  styleUrls: ['./reusable-image-modal.component.scss']
+    selector: 'app-reusable-image-modal',
+    templateUrl: './reusable-image-modal.component.html',
+    styleUrls: ['./reusable-image-modal.component.scss'],
+    standalone: false
 })
 export class ReusableImageModalComponent implements OnInit {
   @Input() imageURL: string | null = null;

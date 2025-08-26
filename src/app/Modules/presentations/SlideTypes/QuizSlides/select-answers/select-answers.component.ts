@@ -10,10 +10,11 @@ import { QuizTheme,staticPresentationTheme } from 'src/app/utility/MasterConstan
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-select-answers',
-  templateUrl: './select-answers.component.html',
-  styleUrls: ['./select-answers.component.scss'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-select-answers',
+    templateUrl: './select-answers.component.html',
+    styleUrls: ['./select-answers.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class SelectAnswersComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() selectAnswerData: any[] = [];

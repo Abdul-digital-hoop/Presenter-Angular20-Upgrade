@@ -4,9 +4,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { TemplateService } from 'src/app/Modules/Home/all-templates-module/Service/template.service';
 
 @Component({
-  selector: 'app-common-preview',
-  templateUrl: './common-preview.component.html',
-  styleUrls: ['./common-preview.component.scss']
+    selector: 'app-common-preview',
+    templateUrl: './common-preview.component.html',
+    styleUrls: ['./common-preview.component.scss'],
+    standalone: false
 })
 export class CommonPreviewComponent implements OnInit {
    templateDetails:any;

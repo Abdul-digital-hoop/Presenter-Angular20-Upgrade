@@ -16,9 +16,10 @@ import { TrashServiceService } from 'src/app/trash-service.service';
 declare var $: any;
 
 @Component({
-  selector: 'app-trash',
-  templateUrl: './trash.component.html',
-  styleUrls: ['./trash.component.scss']
+    selector: 'app-trash',
+    templateUrl: './trash.component.html',
+    styleUrls: ['./trash.component.scss'],
+    standalone: false
 })
 export class TrashComponent implements OnInit {
   presentationData: any[] = [];

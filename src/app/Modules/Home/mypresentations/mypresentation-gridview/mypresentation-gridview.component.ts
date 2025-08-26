@@ -20,9 +20,10 @@ declare var $: any;
 declare const _IntegrationMediumZoom: boolean;
 declare const zoomSdk: any;
 @Component({
-  selector: 'app-mypresentation-gridview',
-  templateUrl: './mypresentation-gridview.component.html',
-  styleUrls: ['./mypresentation-gridview.component.scss']
+    selector: 'app-mypresentation-gridview',
+    templateUrl: './mypresentation-gridview.component.html',
+    styleUrls: ['./mypresentation-gridview.component.scss'],
+    standalone: false
 })
 export class MypresentationGridviewComponent implements OnInit, OnChanges {
   public profile: Profile;

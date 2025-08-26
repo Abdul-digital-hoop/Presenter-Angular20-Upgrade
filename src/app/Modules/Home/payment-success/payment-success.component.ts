@@ -3,9 +3,10 @@ import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
-  selector: 'app-payment-success',
-  templateUrl: './payment-success.component.html',
-  styleUrls: ['./payment-success.component.scss']
+    selector: 'app-payment-success',
+    templateUrl: './payment-success.component.html',
+    styleUrls: ['./payment-success.component.scss'],
+    standalone: false
 })
 export class PaymentSuccessComponent implements OnInit {
 

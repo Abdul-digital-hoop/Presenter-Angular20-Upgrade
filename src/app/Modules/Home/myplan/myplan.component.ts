@@ -13,9 +13,10 @@ interface ApiResponse {
   subscriptionId?: string;
 }
 @Component({
-  selector: 'app-myplan',
-  templateUrl: './myplan.component.html',
-  styleUrls: ['./myplan.component.scss']
+    selector: 'app-myplan',
+    templateUrl: './myplan.component.html',
+    styleUrls: ['./myplan.component.scss'],
+    standalone: false
 })
 export class MyplanComponent implements OnInit {
   isSkeleton: boolean = true;

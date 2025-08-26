@@ -5,9 +5,10 @@ import { Router } from '@angular/router';
 import { TemplateService } from 'src/app/Modules/Home/all-templates-module/Service/template.service';
 declare var $: any;
 @Component({
-  selector: 'app-templates-preview',
-  templateUrl: './templates-preview.component.html',
-  styleUrls: ['./templates-preview.component.scss']
+    selector: 'app-templates-preview',
+    templateUrl: './templates-preview.component.html',
+    styleUrls: ['./templates-preview.component.scss'],
+    standalone: false
 })
 export class TemplatesPreviewComponent {
   @Input() createdBy! : string;

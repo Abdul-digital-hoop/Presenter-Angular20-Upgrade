@@ -7,9 +7,10 @@ import { QuizPresenterScreenManageConstant } from 'src/app/utility/constants';
 import { QuizTheme, staticPresentationTheme } from 'src/app/utility/MasterConstants';
 
 @Component({
-  selector: 'app-lineup',
-  templateUrl: './lineup.component.html',
-  styleUrls: ['./lineup.component.scss']
+    selector: 'app-lineup',
+    templateUrl: './lineup.component.html',
+    styleUrls: ['./lineup.component.scss'],
+    standalone: false
 })
 export class LineupComponent implements OnInit, OnDestroy {
 

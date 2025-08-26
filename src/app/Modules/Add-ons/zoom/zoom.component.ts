@@ -7,9 +7,10 @@ import { AccountService } from 'src/app/core/Sevices/account.service';
 import { environment } from 'src/environments/environment';
 declare let zoomSdk: any;
 @Component({
-  selector: 'app-zoom',
-  templateUrl: './zoom.component.html',
-  styleUrls: ['./zoom.component.scss']
+    selector: 'app-zoom',
+    templateUrl: './zoom.component.html',
+    styleUrls: ['./zoom.component.scss'],
+    standalone: false
 })
 export class ZoomComponent implements OnInit {
   value:any;

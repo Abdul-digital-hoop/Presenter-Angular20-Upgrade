@@ -8,9 +8,10 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-templates',
-  templateUrl: './templates.component.html',
-  styleUrls: ['./templates.component.scss']
+    selector: 'app-templates',
+    templateUrl: './templates.component.html',
+    styleUrls: ['./templates.component.scss'],
+    standalone: false
 })
 export class TemplatesComponent implements OnInit, OnDestroy {
   customerLimitationCount: any;

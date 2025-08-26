@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Clipboard } from '@angular/cdk/clipboard';
 @Component({
-  selector: 'app-access-code',
-  templateUrl: './access-code.component.html',
-  styleUrls: ['./access-code.component.scss']
+    selector: 'app-access-code',
+    templateUrl: './access-code.component.html',
+    styleUrls: ['./access-code.component.scss'],
+    standalone: false
 })
 export class AccessCodeComponent implements OnInit {
   @Input() presentationURL: string;

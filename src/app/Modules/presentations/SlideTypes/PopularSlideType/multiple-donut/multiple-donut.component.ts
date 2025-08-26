@@ -4,9 +4,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
 @Component({
-  selector: 'app-multiple-donut',
-  templateUrl: './multiple-donut.component.html',
-  styleUrls: ['./multiple-donut.component.scss']
+    selector: 'app-multiple-donut',
+    templateUrl: './multiple-donut.component.html',
+    styleUrls: ['./multiple-donut.component.scss'],
+    standalone: false
 })
 export class MultipleDonutComponent implements OnInit, OnChanges {
   @Input() data: any[] = [];

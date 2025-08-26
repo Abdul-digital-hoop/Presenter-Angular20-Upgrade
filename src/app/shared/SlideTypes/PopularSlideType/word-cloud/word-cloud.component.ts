@@ -34,9 +34,10 @@ const Svg_Width = 555;
 const Svg_Height = 240;
 
 @Component({
-  selector: 'app-word-cloud',
-  templateUrl: './word-cloud.component.html',
-  styleUrls: ['./word-cloud.component.scss']
+    selector: 'app-word-cloud',
+    templateUrl: './word-cloud.component.html',
+    styleUrls: ['./word-cloud.component.scss'],
+    standalone: false
 })
 export class WordCloudComponent implements OnInit, OnDestroy, AfterViewInit {
   private wordCloud: any;

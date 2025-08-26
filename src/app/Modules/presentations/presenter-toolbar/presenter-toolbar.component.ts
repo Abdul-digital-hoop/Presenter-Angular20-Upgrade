@@ -11,9 +11,10 @@ declare const _IntegrationMediumZoom: boolean;
 declare const _IntegrationMediumOffice: boolean;
 
 @Component({
-  selector: 'app-presenter-toolbar',
-  templateUrl: './presenter-toolbar.component.html',
-  styleUrls: ['./presenter-toolbar.component.scss']
+    selector: 'app-presenter-toolbar',
+    templateUrl: './presenter-toolbar.component.html',
+    styleUrls: ['./presenter-toolbar.component.scss'],
+    standalone: false
 })
 export class PresenterToolbarComponent implements OnInit {
   @Input('activeslideTypeName') public activeslideTypeName: string;

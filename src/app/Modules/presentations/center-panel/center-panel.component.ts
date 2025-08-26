@@ -37,9 +37,10 @@ import { DynamicSlideTypeDirective } from 'src/app/shared/directive/dynamic-slid
 import { DynamicSlideTypeComponent } from 'src/app/shared/Component/dynamic-slide-type/dynamic-slide-type.component';
 
 @Component({
-  selector: 'app-center-panel',
-  templateUrl: './center-panel.component.html',
-  styleUrls: ['./center-panel.component.scss']
+    selector: 'app-center-panel',
+    templateUrl: './center-panel.component.html',
+    styleUrls: ['./center-panel.component.scss'],
+    standalone: false
 })
 export class CenterPanelComponent implements OnInit {
   @ViewChild('CenterPanel', {static: true}) CenterPanel: ElementRef;

@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'spaceBetweenNumbers'
+    name: 'spaceBetweenNumbers',
+    standalone: false
 })
 export class SpaceBetweenNumbersPipe implements PipeTransform {
 

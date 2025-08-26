@@ -5,29 +5,30 @@ import { settingVariables } from 'src/app/utility/SettingVariables';
 import { animate, style, transition, trigger } from '@angular/animations';
 declare var $: any;
 @Component({
-  selector: 'app-open-ended',
-  templateUrl: './open-ended.component.html',
-  styleUrls: ['./open-ended.component.scss'],
-  animations: [
-    trigger('slideInLeft', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateX(-850px)' }),
-        animate('800ms ease-in-out', style({ opacity: 1, transform: 'translateX(0)' }))
-      ])
-    ]),
-    trigger('slideInTop', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-250px)' }), 
-        animate('800ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
-      ])
-    ]),
-    trigger('slideInRight', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateX(850px)' }), 
-        animate('800ms ease-in-out', style({ opacity: 1, transform: 'translateX(0)' }))
-      ])
-    ])
-  ] 
+    selector: 'app-open-ended',
+    templateUrl: './open-ended.component.html',
+    styleUrls: ['./open-ended.component.scss'],
+    animations: [
+        trigger('slideInLeft', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateX(-850px)' }),
+                animate('800ms ease-in-out', style({ opacity: 1, transform: 'translateX(0)' }))
+            ])
+        ]),
+        trigger('slideInTop', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateY(-250px)' }),
+                animate('800ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
+            ])
+        ]),
+        trigger('slideInRight', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateX(850px)' }),
+                animate('800ms ease-in-out', style({ opacity: 1, transform: 'translateX(0)' }))
+            ])
+        ])
+    ],
+    standalone: false
 })
 export class OpenEndedComponent implements OnInit, OnDestroy {
   @Input('presentationDetails') public presentationDetails: any;

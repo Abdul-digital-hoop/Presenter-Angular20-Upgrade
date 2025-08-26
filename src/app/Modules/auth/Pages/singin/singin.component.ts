@@ -15,9 +15,10 @@ import { MetaService } from 'src/app/core/Sevices/meta.service';
 declare var google: any;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-singin',
-  templateUrl: './singin.component.html',
-  styleUrls: ['./singin.component.scss']
+    selector: 'app-singin',
+    templateUrl: './singin.component.html',
+    styleUrls: ['./singin.component.scss'],
+    standalone: false
 })
 export class SinginComponent implements OnInit {
   loginForm: FormGroup;

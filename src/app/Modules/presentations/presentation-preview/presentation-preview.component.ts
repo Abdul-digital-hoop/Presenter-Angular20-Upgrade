@@ -8,9 +8,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { environment } from 'src/environments/environment';
 declare const Tawk_API: any;
 @Component({
-  selector: 'app-presentation-preview',
-  templateUrl: './presentation-preview.component.html',
-  styleUrls: ['./presentation-preview.component.scss']
+    selector: 'app-presentation-preview',
+    templateUrl: './presentation-preview.component.html',
+    styleUrls: ['./presentation-preview.component.scss'],
+    standalone: false
 })
 export class PresentationPreviewComponent implements OnInit {
 

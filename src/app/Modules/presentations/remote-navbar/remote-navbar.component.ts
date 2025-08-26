@@ -3,9 +3,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { RemoteTabString } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-remote-navbar',
-  templateUrl: './remote-navbar.component.html',
-  styleUrls: ['./remote-navbar.component.scss']
+    selector: 'app-remote-navbar',
+    templateUrl: './remote-navbar.component.html',
+    styleUrls: ['./remote-navbar.component.scss'],
+    standalone: false
 })
 export class RemoteNavbarComponent implements OnInit {
   @Input('isAllQuestionsAnswered') public isAllQuestionsAnswered: boolean;

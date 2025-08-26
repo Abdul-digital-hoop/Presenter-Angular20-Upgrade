@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { MetaService } from 'src/app/core/Sevices/meta.service';
 
 @Component({
-  selector: 'app-signup-verification',
-  templateUrl: './signup-verification.component.html',
-  styleUrls: ['./signup-verification.component.scss']
+    selector: 'app-signup-verification',
+    templateUrl: './signup-verification.component.html',
+    styleUrls: ['./signup-verification.component.scss'],
+    standalone: false
 })
 export class SignupVerificationComponent implements OnInit {
 

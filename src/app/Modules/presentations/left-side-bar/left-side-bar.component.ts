@@ -14,9 +14,10 @@ import { CustomerPlan } from 'src/app/core/Models/customer-plan.model';
 import { Router } from '@angular/router';
 declare var $: any;
 @Component({
-  selector: 'app-left-side-bar',
-  templateUrl: './left-side-bar.component.html',
-  styleUrls: ['./left-side-bar.component.scss']
+    selector: 'app-left-side-bar',
+    templateUrl: './left-side-bar.component.html',
+    styleUrls: ['./left-side-bar.component.scss'],
+    standalone: false
 })
 export class LeftSideBarComponent implements OnInit {
   commonConfig = CommonConfig;

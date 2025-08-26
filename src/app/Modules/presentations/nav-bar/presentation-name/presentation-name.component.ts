@@ -5,9 +5,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { Constants } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-presentation-name',
-  templateUrl: './presentation-name.component.html',
-  styleUrls: ['./presentation-name.component.scss']
+    selector: 'app-presentation-name',
+    templateUrl: './presentation-name.component.html',
+    styleUrls: ['./presentation-name.component.scss'],
+    standalone: false
 })
 export class PresentationNameComponent implements OnInit {
   constantVariable = Constants;

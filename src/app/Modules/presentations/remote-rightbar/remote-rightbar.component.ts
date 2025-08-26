@@ -7,9 +7,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { MasterSlideTypeName, QuestionTabString } from 'src/app/utility/constants';
 declare var $: any;
 @Component({
-  selector: 'app-remote-rightbar',
-  templateUrl: './remote-rightbar.component.html',
-  styleUrls: ['./remote-rightbar.component.scss']
+    selector: 'app-remote-rightbar',
+    templateUrl: './remote-rightbar.component.html',
+    styleUrls: ['./remote-rightbar.component.scss'],
+    standalone: false
 })
 export class RemoteRightbarComponent implements OnInit {
   @Input('itHasQASlides') public itHasQASlides: boolean;

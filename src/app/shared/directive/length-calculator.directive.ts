@@ -1,7 +1,8 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
 
 @Directive({
-  selector: '[appLengthCalculator]'
+    selector: '[appLengthCalculator]',
+    standalone: false
 })
 export class LengthCalculatorDirective {
 

@@ -11,9 +11,10 @@ import { MypresentationsService } from '../Home/mypresentations/Service/mypresen
 declare var $: any;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+    selector: 'app-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    standalone: false
 })
 export class HeaderComponent implements OnInit {
   userName: string;

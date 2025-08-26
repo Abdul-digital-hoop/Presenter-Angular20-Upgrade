@@ -7,9 +7,10 @@ declare let zoomSdk: any;
 declare const _IntegrationMediumZoom: boolean;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-mypresentations',
-  templateUrl: './mypresentations.component.html',
-  styleUrls: ['./mypresentations.component.scss']
+    selector: 'app-mypresentations',
+    templateUrl: './mypresentations.component.html',
+    styleUrls: ['./mypresentations.component.scss'],
+    standalone: false
 })
 export class MypresentationsComponent implements OnInit {
   customerPlan: CustomerPlan;

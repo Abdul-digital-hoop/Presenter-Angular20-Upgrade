@@ -14,9 +14,10 @@ import { MasterSlideTypeName, ViewResult } from 'src/app/utility/constants';
 declare let zoomSdk: any;
 declare const _IntegrationMediumZoom: boolean;
 @Component({
-  selector: 'app-view-result',
-  templateUrl: './view-result.component.html',
-  styleUrls: ['./view-result.component.scss']
+    selector: 'app-view-result',
+    templateUrl: './view-result.component.html',
+    styleUrls: ['./view-result.component.scss'],
+    standalone: false
 })
 export class ViewResultComponent implements OnInit {
   presentationname:any;

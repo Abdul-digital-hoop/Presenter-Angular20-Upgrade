@@ -15,21 +15,22 @@ import { ErrorMessages, SuccessMessages } from 'src/app/core/SuccessResponse';
 import { FileHandle } from 'src/app/shared/directive/dragDrop.directive';
 declare var $: any;
 @Component({
-  selector: 'app-user-home',
-  templateUrl: './user-home.component.html',
-  styleUrls: ['./user-home.component.scss'],
-  animations: [
-    trigger('rotateAnimation', [
-        state('open', style({ transform: 'rotate(180deg)' })),
-        state('closed', style({ transform: 'rotate(0deg)' })),
-        transition('open <=> closed', animate('300ms ease-in-out')),
-    ]),
-    trigger('fadeInOut', [
-        state('visible', style({ opacity: 1, height: '*' })),
-        state('hidden', style({ opacity: 0, height: '0' })),
-        transition('visible <=> hidden', animate('300ms ease-in-out')),
-    ]),
-  ]
+    selector: 'app-user-home',
+    templateUrl: './user-home.component.html',
+    styleUrls: ['./user-home.component.scss'],
+    animations: [
+        trigger('rotateAnimation', [
+            state('open', style({ transform: 'rotate(180deg)' })),
+            state('closed', style({ transform: 'rotate(0deg)' })),
+            transition('open <=> closed', animate('300ms ease-in-out')),
+        ]),
+        trigger('fadeInOut', [
+            state('visible', style({ opacity: 1, height: '*' })),
+            state('hidden', style({ opacity: 0, height: '0' })),
+            transition('visible <=> hidden', animate('300ms ease-in-out')),
+        ]),
+    ],
+    standalone: false
 })
 export class UserHomeComponent implements OnInit {
 

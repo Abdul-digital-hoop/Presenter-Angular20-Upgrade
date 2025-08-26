@@ -3,10 +3,11 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-traffic-lights',
-  templateUrl: './traffic-lights.component.html',
-  styleUrls: ['./traffic-lights.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-traffic-lights',
+    templateUrl: './traffic-lights.component.html',
+    styleUrls: ['./traffic-lights.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    standalone: false
 })
 export class TrafficLightsComponent implements OnInit, OnDestroy {
   // @Input('aboutTheSlides') public aboutTheSlideValue: any;

@@ -8,9 +8,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 declare var $;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-presentation-present',
-  templateUrl: './presentation-present.component.html',
-  styleUrls: ['./presentation-present.component.scss']
+    selector: 'app-presentation-present',
+    templateUrl: './presentation-present.component.html',
+    styleUrls: ['./presentation-present.component.scss'],
+    standalone: false
 })
 export class PresentationPresentComponent implements OnInit {
   hasLeaderboardSlides: boolean;

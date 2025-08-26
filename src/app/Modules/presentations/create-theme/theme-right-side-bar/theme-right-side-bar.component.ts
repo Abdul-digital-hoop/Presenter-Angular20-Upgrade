@@ -6,9 +6,10 @@ import { ImageUploadeModuleName } from 'src/app/utility/constants';
 import { CustomerPlanService } from 'src/app/core/Sevices/CustomerPlan/customer-plan.service';
 
 @Component({
-  selector: 'app-theme-right-side-bar',
-  templateUrl: './theme-right-side-bar.component.html',
-  styleUrls: ['./theme-right-side-bar.component.scss']
+    selector: 'app-theme-right-side-bar',
+    templateUrl: './theme-right-side-bar.component.html',
+    styleUrls: ['./theme-right-side-bar.component.scss'],
+    standalone: false
 })
 export class ThemeRightSideBarComponent implements OnInit {
   @Input() public currentCustomerTheme: any;

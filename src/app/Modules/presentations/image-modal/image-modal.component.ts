@@ -3,9 +3,10 @@ import { PresentationService } from 'src/app/core/Sevices/Presentation/presentat
 import { settingVariables } from 'src/app/utility/SettingVariables';
 declare var $: any;
 @Component({
-  selector: 'app-image-modal',
-  templateUrl: './image-modal.component.html',
-  styleUrls: ['./image-modal.component.scss']
+    selector: 'app-image-modal',
+    templateUrl: './image-modal.component.html',
+    styleUrls: ['./image-modal.component.scss'],
+    standalone: false
 })
 export class ImageModalComponent implements OnInit{
 

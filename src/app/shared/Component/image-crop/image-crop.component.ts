@@ -9,9 +9,10 @@ import { every } from 'd3';
 import { MasterSlideTypeName,ImageType } from 'src/app/utility/constants';
 declare var $: any;
 @Component({
-  selector: 'app-image-crop',
-  templateUrl: './image-crop.component.html',
-  styleUrls: ['./image-crop.component.scss']
+    selector: 'app-image-crop',
+    templateUrl: './image-crop.component.html',
+    styleUrls: ['./image-crop.component.scss'],
+    standalone: false
 })
 export class ImageCropComponent implements OnInit, OnChanges {
   @Input('SlideDetails') public slideDetails;

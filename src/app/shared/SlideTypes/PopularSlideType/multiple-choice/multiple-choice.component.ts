@@ -5,9 +5,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
 @Component({
-  selector: 'app-multiple-choice',
-  templateUrl: './multiple-choice.component.html',
-  styleUrls: ['./multiple-choice.component.scss']
+    selector: 'app-multiple-choice',
+    templateUrl: './multiple-choice.component.html',
+    styleUrls: ['./multiple-choice.component.scss'],
+    standalone: false
 })
 export class MultipleChoiceComponent implements OnInit {
   // @Input('barData') public multipleChoiceData: any[];

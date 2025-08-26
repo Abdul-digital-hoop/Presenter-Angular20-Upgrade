@@ -3,9 +3,10 @@ import { PlansService } from 'src/app/core/Sevices/Plans/plans.service';
 import { ChoosePricePlan, PrizeString } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-save-more',
-  templateUrl: './save-more.component.html',
-  styleUrls: ['./save-more.component.scss']
+    selector: 'app-save-more',
+    templateUrl: './save-more.component.html',
+    styleUrls: ['./save-more.component.scss'],
+    standalone: false
 })
 export class SaveMoreComponent implements OnInit {
   licenseCount: number = 2;

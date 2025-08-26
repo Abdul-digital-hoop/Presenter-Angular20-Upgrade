@@ -5,9 +5,10 @@ import { inputControlTextLengthColor } from 'src/app/utility/InputControlType';
 import { MasterSlideTypeName } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-questions-input',
-  templateUrl: './questions-input.component.html',
-  styleUrls: ['./questions-input.component.scss']
+    selector: 'app-questions-input',
+    templateUrl: './questions-input.component.html',
+    styleUrls: ['./questions-input.component.scss'],
+    standalone: false
 })
 export class QuestionsInputComponent implements OnInit {
   // * Input Parames For This Component.

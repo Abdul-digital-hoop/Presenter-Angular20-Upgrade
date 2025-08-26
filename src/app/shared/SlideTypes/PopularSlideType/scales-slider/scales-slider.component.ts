@@ -13,9 +13,10 @@ interface DataPoint {
   scores: Score[];
 }
 @Component({
-  selector: 'app-scales-slider',
-  templateUrl: './scales-slider.component.html',
-  styleUrls: ['./scales-slider.component.scss']
+    selector: 'app-scales-slider',
+    templateUrl: './scales-slider.component.html',
+    styleUrls: ['./scales-slider.component.scss'],
+    standalone: false
 })
 export class ScalesSliderComponent implements OnInit {
   currentUrl: string;

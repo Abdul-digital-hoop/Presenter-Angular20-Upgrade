@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-help-support',
-  templateUrl: './help-support.component.html',
-  styleUrls: ['./help-support.component.scss']
+    selector: 'app-help-support',
+    templateUrl: './help-support.component.html',
+    styleUrls: ['./help-support.component.scss'],
+    standalone: false
 })
 export class HelpSupportComponent implements OnInit {
 

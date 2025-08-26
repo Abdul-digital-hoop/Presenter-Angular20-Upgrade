@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { TemplateService } from '../Service/template.service';
 
 @Component({
-  selector: 'app-templates-header',
-  templateUrl: './templates-header.component.html',
-  styleUrls: ['./templates-header.component.scss']
+    selector: 'app-templates-header',
+    templateUrl: './templates-header.component.html',
+    styleUrls: ['./templates-header.component.scss'],
+    standalone: false
 })
 export class TemplatesHeaderComponent implements OnInit {
   @Input() searchTerm: string = '';

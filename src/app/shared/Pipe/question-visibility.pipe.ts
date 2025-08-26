@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { MasterSlideTypeName, QuizPresenterScreenManageConstant } from 'src/app/utility/constants';
 
 @Pipe({
-  name: 'questionVisibility'
+    name: 'questionVisibility',
+    standalone: false
 })
 export class QuestionVisibilityPipe implements PipeTransform {
   transform(slideType: any, screenState: any): boolean {

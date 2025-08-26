@@ -10,9 +10,10 @@ declare let zoomSdk: any;
 declare var $: any;
 declare const _IntegrationMediumZoom: boolean;
 @Component({
-  selector: 'app-popular-templates',
-  templateUrl: './popular-templates.component.html',
-  styleUrls: ['./popular-templates.component.scss']
+    selector: 'app-popular-templates',
+    templateUrl: './popular-templates.component.html',
+    styleUrls: ['./popular-templates.component.scss'],
+    standalone: false
 })
 export class PopularTemplatesComponent implements OnInit {
   @ViewChild('scrollContainer') scrollContainer!: ElementRef

@@ -5,9 +5,10 @@ import { Reactions } from 'src/app/utility/MasterConstants';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-theme-center-panel',
-  templateUrl: './theme-center-panel.component.html',
-  styleUrls: ['./theme-center-panel.component.scss']
+    selector: 'app-theme-center-panel',
+    templateUrl: './theme-center-panel.component.html',
+    styleUrls: ['./theme-center-panel.component.scss'],
+    standalone: false
 })
 export class ThemeCenterPanelComponent implements OnInit,OnChanges {
   @Input() public currentCustomerTheme: any;

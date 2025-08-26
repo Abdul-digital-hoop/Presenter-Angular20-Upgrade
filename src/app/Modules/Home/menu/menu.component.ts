@@ -5,9 +5,10 @@ import { TeamService } from 'src/app/core/Sevices/Team/team.service';
 import { MypresentationsService } from '../mypresentations/Service/mypresentations.service';
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-menu',
-  templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.scss']
+    selector: 'app-menu',
+    templateUrl: './menu.component.html',
+    styleUrls: ['./menu.component.scss'],
+    standalone: false
 })
 export class MenuComponent implements OnInit, OnDestroy {
   isActiveTeam: boolean = false;

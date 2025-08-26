@@ -11,9 +11,10 @@ interface DataPoint {
 }
 
 @Component({
-  selector: 'app-guess-the-number',
-  templateUrl: './guess-the-number.component.html',
-  styleUrls: ['./guess-the-number.component.scss']
+    selector: 'app-guess-the-number',
+    templateUrl: './guess-the-number.component.html',
+    styleUrls: ['./guess-the-number.component.scss'],
+    standalone: false
 })
 export class GuessTheNumberComponent implements OnInit {
   @Input() guesstheNumberData: any;

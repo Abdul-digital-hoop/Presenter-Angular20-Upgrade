@@ -3,9 +3,10 @@ import { AnnotationService, AnnotationTool, AnnotationSettings } from 'src/app/c
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'app-annotation-toolbar',
-  templateUrl: './annotation-toolbar.component.html',
-  styleUrls: ['./annotation-toolbar.component.scss']
+    selector: 'app-annotation-toolbar',
+    templateUrl: './annotation-toolbar.component.html',
+    styleUrls: ['./annotation-toolbar.component.scss'],
+    standalone: false
 })
 export class AnnotationToolbarComponent implements OnInit, OnDestroy {
   @Input() isVisible: boolean = false;

@@ -12,9 +12,10 @@ import { PresentationService } from 'src/app/core/Sevices/Presentation/presentat
 import { Profile } from 'src/app/core/Models/profile.model';
 declare var $: any;
 @Component({
-  selector: 'app-remote',
-  templateUrl: './remote.component.html',
-  styleUrls: ['./remote.component.scss']
+    selector: 'app-remote',
+    templateUrl: './remote.component.html',
+    styleUrls: ['./remote.component.scss'],
+    standalone: false
 })
 export class RemoteComponent implements OnInit {
   public RemoteTabString = RemoteTabString;

@@ -7,9 +7,10 @@ import { PresentationService } from 'src/app/core/Sevices/Presentation/presentat
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-right-panel-text',
-  templateUrl: './right-panel-text.component.html',
-  styleUrls: ['./right-panel-text.component.scss']
+    selector: 'app-right-panel-text',
+    templateUrl: './right-panel-text.component.html',
+    styleUrls: ['./right-panel-text.component.scss'],
+    standalone: false
 })
 export class RightPanelTextComponent implements OnInit {
   @Output() public slideThemesEmitter: EventEmitter<any[]> = new EventEmitter<any[]>();

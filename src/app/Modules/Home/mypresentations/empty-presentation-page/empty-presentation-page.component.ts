@@ -13,9 +13,10 @@ import { debounceTime } from 'rxjs/operators';
 declare var $: any;
 declare const _IntegrationMediumZoom: boolean;
 @Component({
-  selector: 'app-empty-presentation-page',
-  templateUrl: './empty-presentation-page.component.html',
-  styleUrls: ['./empty-presentation-page.component.scss']
+    selector: 'app-empty-presentation-page',
+    templateUrl: './empty-presentation-page.component.html',
+    styleUrls: ['./empty-presentation-page.component.scss'],
+    standalone: false
 })
 export class EmptyPresentationPageComponent implements OnInit {
   @ViewChild('scrollContainer') scrollContainer!: ElementRef

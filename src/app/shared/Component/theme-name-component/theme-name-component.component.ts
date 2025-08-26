@@ -3,9 +3,10 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-theme-name-component',
-  templateUrl: './theme-name-component.component.html',
-  styleUrls: ['./theme-name-component.component.scss']
+    selector: 'app-theme-name-component',
+    templateUrl: './theme-name-component.component.html',
+    styleUrls: ['./theme-name-component.component.scss'],
+    standalone: false
 })
 export class ThemeNameComponentComponent implements OnInit {
   @Output() changeThemeNameEvent = new EventEmitter();

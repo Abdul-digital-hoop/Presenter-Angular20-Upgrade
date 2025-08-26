@@ -1,8 +1,9 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 @Pipe({
-  name: 'slideThemes',
-  pure: true
+    name: 'slideThemes',
+    pure: true,
+    standalone: false
 })
 export class SlideThemesPipe implements PipeTransform {
   constructor(public workSpaceService: WorkspaceService) { }

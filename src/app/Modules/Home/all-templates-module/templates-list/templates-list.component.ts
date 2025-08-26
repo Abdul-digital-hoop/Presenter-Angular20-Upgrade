@@ -12,9 +12,10 @@ import { debounceTime } from 'rxjs';
 declare var $ : any;
 
 @Component({
-  selector: 'app-templates-list',
-  templateUrl: './templates-list.component.html',
-  styleUrls: ['./templates-list.component.scss']
+    selector: 'app-templates-list',
+    templateUrl: './templates-list.component.html',
+    styleUrls: ['./templates-list.component.scss'],
+    standalone: false
 })
 export class TemplatesListComponent implements OnInit, OnDestroy {
   selectedTemplateId:string;

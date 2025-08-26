@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'comma'
+    name: 'comma',
+    standalone: false
 })
 export class CommaPipe implements PipeTransform {
 

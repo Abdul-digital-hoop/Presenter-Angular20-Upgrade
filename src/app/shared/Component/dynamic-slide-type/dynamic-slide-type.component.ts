@@ -33,9 +33,10 @@ import { DynamicSlideTypeDirective } from '../../directive/dynamic-slide-type.di
 import { InstructionComponent } from '../../SlideTypes/ContentSlides/instruction/instruction.component';
 
 @Component({
-  selector: 'app-dynamic-slide-type',
-  templateUrl: './dynamic-slide-type.component.html',
-  styleUrls: ['./dynamic-slide-type.component.scss']
+    selector: 'app-dynamic-slide-type',
+    templateUrl: './dynamic-slide-type.component.html',
+    styleUrls: ['./dynamic-slide-type.component.scss'],
+    standalone: false
 })
 export class DynamicSlideTypeComponent implements OnInit {
   @Input() activeSlideTypeId: any;

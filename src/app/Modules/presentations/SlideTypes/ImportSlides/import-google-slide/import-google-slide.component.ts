@@ -3,9 +3,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-import-google-slide',
-  templateUrl: './import-google-slide.component.html',
-  styleUrls: ['./import-google-slide.component.scss']
+    selector: 'app-import-google-slide',
+    templateUrl: './import-google-slide.component.html',
+    styleUrls: ['./import-google-slide.component.scss'],
+    standalone: false
 })
 export class ImportGoogleSlideComponent implements OnInit {
 

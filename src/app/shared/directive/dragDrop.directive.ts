@@ -13,7 +13,8 @@ export interface FileHandle {
 }
 
 @Directive({
-    selector: "[appDrag]"
+    selector: "[appDrag]",
+    standalone: false
 })
 export class DragDirective {
     @Output() files: EventEmitter<FileHandle[]> = new EventEmitter();

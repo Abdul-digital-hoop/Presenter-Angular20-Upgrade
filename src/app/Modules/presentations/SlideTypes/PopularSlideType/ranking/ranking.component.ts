@@ -3,9 +3,10 @@ import * as d3 from 'd3';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
-  selector: 'app-ranking',
-  templateUrl: './ranking.component.html',
-  styleUrls: ['./ranking.component.scss']
+    selector: 'app-ranking',
+    templateUrl: './ranking.component.html',
+    styleUrls: ['./ranking.component.scss'],
+    standalone: false
 })
 export class RankingComponent implements OnInit, OnChanges {
   @Input('themesChartColor') public themesChartColor: any[];

@@ -15,9 +15,10 @@ interface DataPoint {
 
 
 @Component({
-  selector: 'app-guess-the-number-quiz',
-  templateUrl: './guess-the-number-quiz.component.html',
-  styleUrls: ['./guess-the-number-quiz.component.scss']
+    selector: 'app-guess-the-number-quiz',
+    templateUrl: './guess-the-number-quiz.component.html',
+    styleUrls: ['./guess-the-number-quiz.component.scss'],
+    standalone: false
 })
 export class GuessTheNumberQuizComponent implements OnInit {
 

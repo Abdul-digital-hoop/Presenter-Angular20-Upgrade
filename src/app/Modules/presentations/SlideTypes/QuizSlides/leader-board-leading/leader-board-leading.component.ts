@@ -3,9 +3,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { QuizPresenterScreenManageConstant } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-leader-board-leading',
-  templateUrl: './leader-board-leading.component.html',
-  styleUrls: ['./leader-board-leading.component.scss']
+    selector: 'app-leader-board-leading',
+    templateUrl: './leader-board-leading.component.html',
+    styleUrls: ['./leader-board-leading.component.scss'],
+    standalone: false
 })
 export class LeaderBoardLeadingComponent implements OnInit {
 

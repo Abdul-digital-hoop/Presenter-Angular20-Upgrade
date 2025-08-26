@@ -6,9 +6,10 @@ import { ImageUploadeModuleName } from 'src/app/utility/constants';
 import { settingVariables } from 'src/app/utility/SettingVariables';
 
 @Component({
-  selector: 'app-reusable-image-crop',
-  templateUrl: './reusable-image-crop.component.html',
-  styleUrls: ['./reusable-image-crop.component.scss']
+    selector: 'app-reusable-image-crop',
+    templateUrl: './reusable-image-crop.component.html',
+    styleUrls: ['./reusable-image-crop.component.scss'],
+    standalone: false
 })
 export class ReusableImageCropComponent implements OnInit {
   @Input() currentImageFormat: string = '';

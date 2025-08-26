@@ -9,9 +9,10 @@ import { ErrorMessages, SuccessMessages } from 'src/app/core/SuccessResponse';
 import { MasterSlideTypeName } from 'src/app/utility/constants';
 
 @Component({
-  selector: 'app-convert-template',
-  templateUrl: './convert-template.component.html',
-  styleUrls: ['./convert-template.component.scss']
+    selector: 'app-convert-template',
+    templateUrl: './convert-template.component.html',
+    styleUrls: ['./convert-template.component.scss'],
+    standalone: false
 })
 export class ConvertTemplateComponent implements OnInit {
 

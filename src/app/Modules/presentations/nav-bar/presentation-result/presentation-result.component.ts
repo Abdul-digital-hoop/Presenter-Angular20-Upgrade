@@ -6,9 +6,10 @@ import { CustomerPlanService } from 'src/app/core/Sevices/CustomerPlan/customer-
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 declare const _IntegrationMediumOffice: boolean;
 @Component({
-  selector: 'app-presentation-result',
-  templateUrl: './presentation-result.component.html',
-  styleUrls: ['./presentation-result.component.scss']
+    selector: 'app-presentation-result',
+    templateUrl: './presentation-result.component.html',
+    styleUrls: ['./presentation-result.component.scss'],
+    standalone: false
 })
 export class PresentationResultComponent implements OnInit {
   customerPlan:CustomerPlan;

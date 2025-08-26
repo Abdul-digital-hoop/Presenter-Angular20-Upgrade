@@ -1,9 +1,10 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-explore',
-  templateUrl: './explore.component.html',
-  styleUrls: ['./explore.component.scss']
+    selector: 'app-explore',
+    templateUrl: './explore.component.html',
+    styleUrls: ['./explore.component.scss'],
+    standalone: false
 })
 export class ExploreComponent implements OnInit {
   isPowerPoinPopupVisible: boolean = false;

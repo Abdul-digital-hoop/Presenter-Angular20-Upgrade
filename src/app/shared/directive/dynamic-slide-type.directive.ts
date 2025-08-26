@@ -1,7 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[appDynamicSlideType]'
+    selector: '[appDynamicSlideType]',
+    standalone: false
 })
 export class DynamicSlideTypeDirective {
 

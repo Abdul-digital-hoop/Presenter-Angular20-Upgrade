@@ -5,10 +5,11 @@ import { CommanService } from 'src/app/core/Sevices/comman.service';
 
 
 @Component({
-  selector: 'app-truth-or-lie',
-  templateUrl: './truth-or-lie.component.html',
-  styleUrls: ['./truth-or-lie.component.scss'],
-  encapsulation: ViewEncapsulation.None,
+    selector: 'app-truth-or-lie',
+    templateUrl: './truth-or-lie.component.html',
+    styleUrls: ['./truth-or-lie.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class TruthOrLieComponent implements OnInit, OnDestroy {
 

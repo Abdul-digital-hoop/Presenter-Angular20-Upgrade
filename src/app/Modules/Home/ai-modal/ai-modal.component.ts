@@ -14,37 +14,38 @@ import { environment } from 'src/environments/environment';
 import { Subject } from 'rxjs';
 
 @Component({
-  selector: 'app-ai-modal',
-  templateUrl: './ai-modal.component.html',
-  styleUrls: ['./ai-modal.component.scss'],
-  animations: [
-    trigger('stageAnimation', [
-      transition(':increment', [
-        query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
-        group([
-          query(':leave', [
-            animate('300ms ease-out', style({ transform: 'translateX(-100%)', opacity: 0 }))
-          ], { optional: true }),
-          query(':enter', [
-            style({ transform: 'translateX(100%)', opacity: 0 }),
-            animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-          ], { optional: true })
+    selector: 'app-ai-modal',
+    templateUrl: './ai-modal.component.html',
+    styleUrls: ['./ai-modal.component.scss'],
+    animations: [
+        trigger('stageAnimation', [
+            transition(':increment', [
+                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
+                group([
+                    query(':leave', [
+                        animate('300ms ease-out', style({ transform: 'translateX(-100%)', opacity: 0 }))
+                    ], { optional: true }),
+                    query(':enter', [
+                        style({ transform: 'translateX(100%)', opacity: 0 }),
+                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+                    ], { optional: true })
+                ])
+            ]),
+            transition(':decrement', [
+                query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
+                group([
+                    query(':leave', [
+                        animate('300ms ease-out', style({ transform: 'translateX(100%)', opacity: 0 }))
+                    ], { optional: true }),
+                    query(':enter', [
+                        style({ transform: 'translateX(-100%)', opacity: 0 }),
+                        animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
+                    ], { optional: true })
+                ])
+            ])
         ])
-      ]),
-      transition(':decrement', [
-        query(':enter, :leave', style({ position: 'absolute', width: '100%' }), { optional: true }),
-        group([
-          query(':leave', [
-            animate('300ms ease-out', style({ transform: 'translateX(100%)', opacity: 0 }))
-          ], { optional: true }),
-          query(':enter', [
-            style({ transform: 'translateX(-100%)', opacity: 0 }),
-            animate('300ms ease-out', style({ transform: 'translateX(0)', opacity: 1 }))
-          ], { optional: true })
-        ])
-      ])
-    ])
-  ]
+    ],
+    standalone: false
 })
 export class AiModalComponent {
   @Input() isShowModal: boolean = false;

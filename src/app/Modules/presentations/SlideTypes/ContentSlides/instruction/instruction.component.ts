@@ -5,9 +5,10 @@ import { Clipboard } from '@angular/cdk/clipboard';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
 @Component({
-  selector: 'app-instruction',
-  templateUrl: './instruction.component.html',
-  styleUrls: ['./instruction.component.scss']
+    selector: 'app-instruction',
+    templateUrl: './instruction.component.html',
+    styleUrls: ['./instruction.component.scss'],
+    standalone: false
 })
 export class InstructionComponent implements OnInit {
   environmentDetails=environment;

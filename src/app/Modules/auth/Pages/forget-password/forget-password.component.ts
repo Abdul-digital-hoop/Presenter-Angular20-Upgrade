@@ -12,9 +12,10 @@ import { MetaService } from 'src/app/core/Sevices/meta.service';
 
 declare var google: any; 
 @Component({
-  selector: 'app-forget-password',
-  templateUrl: './forget-password.component.html',
-  styleUrls: ['./forget-password.component.scss']
+    selector: 'app-forget-password',
+    templateUrl: './forget-password.component.html',
+    styleUrls: ['./forget-password.component.scss'],
+    standalone: false
 })
 export class ForgetPasswordComponent implements OnInit {
   forgetPasswordForm: FormGroup;

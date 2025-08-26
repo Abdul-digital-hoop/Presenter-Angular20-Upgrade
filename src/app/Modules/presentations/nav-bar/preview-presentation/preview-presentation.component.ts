@@ -2,9 +2,10 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-preview-presentation',
-  templateUrl: './preview-presentation.component.html',
-  styleUrls: ['./preview-presentation.component.scss']
+    selector: 'app-preview-presentation',
+    templateUrl: './preview-presentation.component.html',
+    styleUrls: ['./preview-presentation.component.scss'],
+    standalone: false
 })
 export class PreviewPresentationComponent implements OnInit {
 

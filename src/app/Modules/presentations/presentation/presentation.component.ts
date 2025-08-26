@@ -26,10 +26,10 @@ declare const _IntegrationMediumZoom: boolean;
 declare const _IntegrationMediumOffice: boolean;
 
 @Component({
-  selector: 'app-presentation',
-  templateUrl: './presentation.component.html',
-  styleUrls: ['./presentation.component.scss'],
-  //changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'app-presentation',
+    templateUrl: './presentation.component.html',
+    styleUrls: ['./presentation.component.scss'],
+    standalone: false
 })
 export class PresentationComponent implements OnInit {
   @Output() public clearDynamicComponent: EventEmitter<any> = new EventEmitter<any>();

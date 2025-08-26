@@ -8,9 +8,10 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 // Removed unused variable declaration for $:any;
 declare var $: any;
 @Component({
-  selector: 'app-presentation-themes',
-  templateUrl: './presentation-themes.component.html',
-  styleUrls: ['./presentation-themes.component.scss']
+    selector: 'app-presentation-themes',
+    templateUrl: './presentation-themes.component.html',
+    styleUrls: ['./presentation-themes.component.scss'],
+    standalone: false
 })
 export class PresentationThemesComponent implements OnInit {
   uploadTabNumber: any = 1; // Variable to track the current upload tab number

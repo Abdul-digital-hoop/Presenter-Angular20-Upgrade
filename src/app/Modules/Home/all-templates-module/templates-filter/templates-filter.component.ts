@@ -3,9 +3,10 @@ import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-templates-filter',
-  templateUrl: './templates-filter.component.html',
-  styleUrls: ['./templates-filter.component.scss']
+    selector: 'app-templates-filter',
+    templateUrl: './templates-filter.component.html',
+    styleUrls: ['./templates-filter.component.scss'],
+    standalone: false
 })
 export class TemplatesFilterComponent implements OnInit {
   @Input() categoryList: any[];

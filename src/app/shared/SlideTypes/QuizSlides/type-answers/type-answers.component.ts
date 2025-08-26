@@ -8,9 +8,10 @@ import { QuizTheme, staticPresentationTheme } from 'src/app/utility/MasterConsta
 import { settingVariables } from 'src/app/utility/SettingVariables';
 
 @Component({
-  selector: 'app-type-answers',
-  templateUrl: './type-answers.component.html',
-  styleUrls: ['./type-answers.component.scss']
+    selector: 'app-type-answers',
+    templateUrl: './type-answers.component.html',
+    styleUrls: ['./type-answers.component.scss'],
+    standalone: false
 })
 export class TypeAnswersComponent implements OnInit, OnDestroy {
   screenState: string;
