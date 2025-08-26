@@ -1,0 +1,160 @@
+@import '/src/assets/variablesScss/varaiabledecalaration.scss';
+@import '/src/assets/variablesScss/common.scss';
+
+.remaining-padding {
+  padding-right: $sizepx-30;
+}
+
+.btn-cstm-secondar {
+  color: #353535;
+  background-color: $gray-100;
+  background-clip: padding-box;
+  border: 1px solid transparent !important;
+  border-radius: $sizepx-10;
+}
+
+.reached-maximum {
+  font-size: $fs-10;
+  color: $danger;
+  margin-bottom: 0px;
+}
+
+input.ng-valid.ng-untouched {
+  margin-left: 4px;
+  padding: 10px 35px 8px 13px;
+}
+
+input.ng-invalid.ng-touched {
+  margin-left: 4px;
+  padding: 10px 35px 8px 13px;
+}
+
+input.ng-valid.ng-touched {
+  margin-left: 4px;
+  padding: 10px 35px 8px 13px;
+}
+
+input.ng-invalid.ng-touched {
+  margin-left: 4px;
+  padding: 10px 35px 8px 13px;
+}
+.round {
+  position: relative;
+}
+.round label {
+  background-color: $white;
+  border: 1px solid $gray-300;
+  border-radius: 50%;
+  cursor: pointer;
+  height: 18px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 18px;
+}
+.round label:after {
+  border: 2px solid $green;
+  border-top: none;
+  border-right: none;
+  content: "";
+  height: 5px;
+  left: 3px;
+  opacity: 0;
+  position: absolute;
+  top: 5px;
+  transform: rotate(-45deg);
+  width: 10px;
+}
+.round input[type="checkbox"] {
+  visibility: hidden;
+}
+.round input[type="checkbox"]:checked + label {
+  background-color: $white;
+  border-color: $green;
+}
+.round input[type="checkbox"]:checked + label:after {
+  opacity: 1;
+}
+.round-lie {
+  position: relative;
+}
+
+.round-lie label {
+  background-color: white;
+  border: 1px solid #d1d5db;
+  /* equivalent to $gray-300 */
+  border-radius: 50%;
+  cursor: pointer;
+  height: 18px;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 18px;
+}
+
+.round-lie label:after,
+.round-lie label:before {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 1px;
+  background-color: #db3735;
+  top: 8px;
+  left: 3px;
+  opacity: 0;
+}
+
+.round-lie label:before {
+  transform: rotate(45deg);
+}
+
+.round-lie label:after {
+  transform: rotate(-45deg);
+}
+
+.round-lie input[type="checkbox"] {
+  visibility: hidden;
+}
+
+.round-lie input[type="checkbox"]:checked+label {
+  background-color: white;
+  border-color: #db3735;
+  /* equivalent to $red */
+}
+
+.round-lie input[type="checkbox"]:checked+label:after,
+.round-lie input[type="checkbox"]:checked+label:before {
+  opacity: 1;
+}
+.bg-picker-color {
+  width: 23px;
+  height: 23px;
+  border-radius: 50%;
+  // border: 1px solid #5c5c5c;
+}
+.background-color-picker {
+  padding: 0px !important;
+  width: 90%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.bg-picker-color-custome {
+  width: 32px;
+  height: 25px;
+  border-radius: 50%;
+  margin-top: 6px;
+  border: 1px solid #5c5c5c;
+}
+.length-span span{
+  right: 40px !important;
+}
+.ml-5{
+  margin-left: 40px !important;
+}
+
+.hover-border:hover {
+  border: 1px solid #4848FF !important; 
+}

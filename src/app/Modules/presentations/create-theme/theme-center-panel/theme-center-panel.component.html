@@ -1,0 +1,352 @@
+<div class="center-panel-container">
+    <div class="center-panel-image">
+        <div class="center-panel-content" [ngStyle]="{'background-color':this.currentCustomerTheme?.themesBackgroundColor}">
+            <div class="chart-container">
+            <div class="background-image-div"  [ngStyle]="{'background-image': 'url(' + this._presentationThemeService.customerThemeBackgroundImage + ')','opacity':this.currentCustomerTheme?.backgroundColorOpacity,'border-radius':'10px'}"></div>
+                <div class="center-panel-header-actions">
+                    <span class="center-panel-header-actions-text" [ngStyle]="{'background-color':this.ContrastColor, 'color':this.emojiContrastColor}">
+                        To join, go to : {{environment.AudienceURL}} | #123456
+                    </span>
+                </div>
+                <ng-container *ngIf="_presentationThemeService.customerThemeLogoImage">
+                    <div class="brand-logo" [style.width]="_presentationThemeService.logoPositionType =='Landscape'? '10%':'3%'">
+                        <div class="logo-icon">
+                            <img [src]="_presentationThemeService.customerThemeLogoImage" alt="Logo" class="logo-image">
+                        </div>
+                    </div> 
+                </ng-container>
+                <div class="question-text">
+                    <span class="chart-text" [ngStyle]="{'font-family':this.currentCustomerTheme?.themesFonts, 'color':this.currentCustomerTheme?.themesFontColor, 
+                    'font-weight':this.currentCustomerTheme?.textBold? 'bold':'normal', 'font-style':this.currentCustomerTheme?.textItalic?'italic':'', 
+                    'text-decoration': (this.currentCustomerTheme?.textUnderline && this.currentCustomerTheme?.textStrikeout) ? 'underline line-through' : this.currentCustomerTheme?.textUnderline ? 'underline' : this.currentCustomerTheme?.textStrikeout ? 'line-through' : '',
+                    'font-size':this.currentCustomerTheme?.fontSize+'px'}">
+                        I once designed an entire 50-slide presentation in under 30 minutes using slidea’s advanced design
+                        tools and templates, which saved me a lot of time and effort!~
+                    </span>
+                    
+                </div>
+                <div class="chart-center">
+                    <div class="chart-line" [ngStyle]="{'background-color':this.currentCustomerTheme?.lineClour}"></div>
+                    <div class="chart-content">
+                        <div class="bar">
+                            <div class="bar-inner bar-inner-height-50" [ngStyle]="{'background-color':this.currentCustomerTheme?.themesChartColor[0].color}"></div>
+                        </div>
+                        <span [ngStyle]="{'font-family':this.currentCustomerTheme?.themesFonts, 'color':this.currentCustomerTheme?.themesFontColor}">Option 1</span>
+                    </div>
+                    <div class="chart-content">
+                        <div class="bar">
+                            <div class="bar-inner bar-inner-height-90" [ngStyle]="{'background-color':this.currentCustomerTheme?.themesChartColor[1].color}"></div>
+                        </div>
+                        <span [ngStyle]="{'font-family':this.currentCustomerTheme?.themesFonts, 'color':this.currentCustomerTheme?.themesFontColor}">Option 2</span>
+                    </div>
+                    <div class="chart-content">
+                        <div class="bar">
+                            <div class="bar-inner bar-inner-height-40" [ngStyle]="{'background-color':this.currentCustomerTheme?.themesChartColor[2].color}"></div>
+                        </div>
+                        <span [ngStyle]="{'font-family':this.currentCustomerTheme?.themesFonts, 'color':this.currentCustomerTheme?.themesFontColor}">Option 3</span>
+                    </div>
+                    <div class="chart-content">
+                        <div class="bar">
+                            <div class="bar-inner bar-inner-height-70" [ngStyle]="{'background-color':this.currentCustomerTheme?.themesChartColor[3].color}"></div>
+                        </div>
+                        <span [ngStyle]="{'font-family':this.currentCustomerTheme?.themesFonts, 'color':this.currentCustomerTheme?.themesFontColor}">Option 4</span>
+                    </div>
+                    <div class="bottom-actions">
+                        <div class="bottom-actions-top">
+                            <div class="bottom-actions-top-item" [ngStyle]="{'background-color':this.ContrastColor}">
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none" data-bs-custom-class="opacity-07" data-bs-toggle="tooltip"
+                                        data-bs-placement="right" data-bs-title="History">
+                                        <mask id="mask0_9340_43725" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_43725)">
+                                            <path
+                                                d="M4 21C3.45 21 2.97917 20.8042 2.5875 20.4125C2.19583 20.0208 2 19.55 2 19V8C2 7.45 2.19583 6.97917 2.5875 6.5875C2.97917 6.19583 3.45 6 4 6H8V4C8 3.45 8.19583 2.97917 8.5875 2.5875C8.97917 2.19583 9.45 2 10 2H14C14.55 2 15.0208 2.19583 15.4125 2.5875C15.8042 2.97917 16 3.45 16 4V6H20C20.55 6 21.0208 6.19583 21.4125 6.5875C21.8042 6.97917 22 7.45 22 8V12.275C21.7 12.0583 21.3833 11.8708 21.05 11.7125C20.7167 11.5542 20.3667 11.4167 20 11.3V8H4V19H11.075C11.125 19.35 11.2 19.6917 11.3 20.025C11.4 20.3583 11.525 20.6833 11.675 21H4ZM10 6H14V4H10V6ZM18 23C16.6167 23 15.4375 22.5125 14.4625 21.5375C13.4875 20.5625 13 19.3833 13 18C13 16.6167 13.4875 15.4375 14.4625 14.4625C15.4375 13.4875 16.6167 13 18 13C19.3833 13 20.5625 13.4875 21.5375 14.4625C22.5125 15.4375 23 16.6167 23 18C23 19.3833 22.5125 20.5625 21.5375 21.5375C20.5625 22.5125 19.3833 23 18 23ZM18.5 17.8V15H17.5V18.2L19.65 20.35L20.35 19.65L18.5 17.8Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none" data-bs-custom-class="opacity-07" data-bs-toggle="tooltip"
+                                        data-bs-placement="right" data-bs-title="Reset Results">
+                                        <mask id="mask0_9340_43729" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_43729)">
+                                            <path
+                                                d="M12 21C9.7 21 7.69583 20.2375 5.9875 18.7125C4.27917 17.1875 3.3 15.2833 3.05 13H5.1C5.33333 14.7333 6.10417 16.1667 7.4125 17.3C8.72083 18.4333 10.25 19 12 19C13.95 19 15.6042 18.3208 16.9625 16.9625C18.3208 15.6042 19 13.95 19 12C19 10.05 18.3208 8.39583 16.9625 7.0375C15.6042 5.67917 13.95 5 12 5C10.85 5 9.775 5.26667 8.775 5.8C7.775 6.33333 6.93333 7.06667 6.25 8H9V10H3V4H5V6.35C5.85 5.28333 6.8875 4.45833 8.1125 3.875C9.3375 3.29167 10.6333 3 12 3C13.25 3 14.4208 3.2375 15.5125 3.7125C16.6042 4.1875 17.5542 4.82917 18.3625 5.6375C19.1708 6.44583 19.8125 7.39583 20.2875 8.4875C20.7625 9.57917 21 10.75 21 12C21 13.25 20.7625 14.4208 20.2875 15.5125C19.8125 16.6042 19.1708 17.5542 18.3625 18.3625C17.5542 19.1708 16.6042 19.8125 15.5125 20.2875C14.4208 20.7625 13.25 21 12 21Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                            <path d="M9 17H8V14H10V17H9Z" [attr.fill]="emojiContrastColor" />
+                                            <path d="M12 17H11V11H13V17H12Z" [attr.fill]="emojiContrastColor" />
+                                            <path d="M15 17H14V8H16V17H15Z" [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <path d="M4 20V12H8V20H4ZM10 20V4H14V20H10ZM16 20V9H20V20H16Z"
+                                            [attr.fill]="emojiContrastColor" />
+                                    </svg>
+                                </a>
+                                <!-- * ===== Trent Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none" data-bs-custom-class="opacity-07" data-bs-toggle="tooltip"
+                                        data-bs-placement="right" data-bs-title="Show Trends">
+                                        <mask id="mask0_9340_43737" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" fill="#D9D9D9" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_43737)">
+                                            <path
+                                                d="M3.4 18L2 16.6L9.4 9.15L13.4 13.15L18.6 8H16V6H22V12H20V9.4L13.4 16L9.4 12L3.4 18Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="bottom-actions-left">
+                            <div class="bottom-actions-left-item" [ngStyle]="{'background-color':this.ContrastColor}">
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_37129" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_37129)">
+                                            <path d="M16 22L6 12L16 2L17.775 3.775L9.55 12L17.775 20.225L16 22Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                                <!-- * ===== Slide Count Show ====== -->
+                                <span class="position-text-bottom-left" [style.color]="emojiContrastColor">5</span>
+                                <!-- * ===== Next Slide Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_37136" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect x="24" y="24" width="24" height="24" transform="rotate(-180 24 24)"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_37136)">
+                                            <path d="M8 2L18 12L8 22L6.225 20.225L14.45 12L6.225 3.775L8 2Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            </div>
+                            <div class="bottom-actions-left-item" [ngStyle]="{'background-color':this.ContrastColor}">
+                                <!-- * ===== Fullscreen Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <path d="M3 21V13H5V17.6L17.6 5H13V3H21V11H19V6.4L6.4 19H11V21H3Z"
+                                            [attr.fill]="emojiContrastColor" />
+                                    </svg>
+                                </a>
+                                <!-- * ===== Slide Reset Result Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg class="svg-icon" width="16" height="16" viewBox="0 0 14 16" fill="currentColor"
+                                        xmlns="http://www.w3.org/2000/svg" [attr.fill]="emojiContrastColor">
+                                        <path
+                                            d="M6.16658 15.459C4.48603 15.2507 3.09367 14.518 1.9895 13.2611C0.885335 12.0041 0.333252 10.5284 0.333252 8.83398C0.333252 7.91732 0.513808 7.03885 0.874919 6.19857C1.23603 5.35829 1.74992 4.62565 2.41659 4.00065L3.60409 5.18815C3.07631 5.66037 2.677 6.20898 2.40617 6.83398C2.13534 7.45898 1.99992 8.12565 1.99992 8.83398C1.99992 10.0562 2.38881 11.1361 3.16659 12.0736C3.94436 13.0111 4.94436 13.584 6.16658 13.7923V15.459ZM7.83325 15.459V13.7923C9.04158 13.5701 10.0381 12.9937 10.8228 12.0632C11.6076 11.1326 11.9999 10.0562 11.9999 8.83398C11.9999 7.4451 11.5138 6.26454 10.5416 5.29232C9.56936 4.3201 8.38881 3.83398 6.99992 3.83398H6.93742L7.85409 4.75065L6.68742 5.91732L3.77075 3.00065L6.68742 0.0839844L7.85409 1.25065L6.93742 2.16732H6.99992C8.86103 2.16732 10.4374 2.81315 11.7291 4.10482C13.0208 5.39648 13.6666 6.97287 13.6666 8.83398C13.6666 10.5145 13.1145 11.9833 12.0103 13.2402C10.9062 14.4972 9.51381 15.2368 7.83325 15.459Z" />
+                                    </svg>
+                                </a>
+                                <div class="position-relative">
+                                    <a class="btn-a-action">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                            fill="none">
+                                            <mask id="mask0_9340_35044" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                                y="0" width="24" height="24">
+                                                <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                            </mask>
+                                            <g mask="url(#mask0_9340_35044)">
+                                                <path
+                                                    d="M9 3V1H15V3H9ZM11 14H13V8H11V14ZM12 22C10.7667 22 9.60417 21.7625 8.5125 21.2875C7.42083 20.8125 6.46667 20.1667 5.65 19.35C4.83333 18.5333 4.1875 17.5792 3.7125 16.4875C3.2375 15.3958 3 14.2333 3 13C3 11.7667 3.2375 10.6042 3.7125 9.5125C4.1875 8.42083 4.83333 7.46667 5.65 6.65C6.46667 5.83333 7.42083 5.1875 8.5125 4.7125C9.60417 4.2375 10.7667 4 12 4C13.0333 4 14.025 4.16667 14.975 4.5C15.925 4.83333 16.8167 5.31667 17.65 5.95L19.05 4.55L20.45 5.95L19.05 7.35C19.6833 8.18333 20.1667 9.075 20.5 10.025C20.8333 10.975 21 11.9667 21 13C21 14.2333 20.7625 15.3958 20.2875 16.4875C19.8125 17.5792 19.1667 18.5333 18.35 19.35C17.5333 20.1667 16.5792 20.8125 15.4875 21.2875C14.3958 21.7625 13.2333 22 12 22ZM12 20C13.9333 20 15.5833 19.3167 16.95 17.95C18.3167 16.5833 19 14.9333 19 13C19 11.0667 18.3167 9.41667 16.95 8.05C15.5833 6.68333 13.9333 6 12 6C10.0667 6 8.41667 6.68333 7.05 8.05C5.68333 9.41667 5 11.0667 5 13C5 14.9333 5.68333 16.5833 7.05 17.95C8.41667 19.3167 10.0667 20 12 20Z"
+                                                    [attr.fill]="emojiContrastColor" />
+                                            </g>
+                                        </svg>
+                                    </a>
+                                </div>
+                                <!-- * ===== HotKey Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_35048" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_35048)">
+                                            <path
+                                                d="M12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22ZM12 20C14.2333 20 16.125 19.225 17.675 17.675C19.225 16.125 20 14.2333 20 12C20 9.76667 19.225 7.875 17.675 6.325C16.125 4.775 14.2333 4 12 4C9.76667 4 7.875 4.775 6.325 6.325C4.775 7.875 4 9.76667 4 12C4 14.2333 4.775 16.125 6.325 17.675C7.875 19.225 9.76667 20 12 20Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                            <path
+                                                d="M10.0016 13.6114L9.80713 12.1371L13.3079 8H14.893L10.0016 13.6114ZM9 16V8H10.2642V16H9ZM13.4635 16L10.8865 11.9657L11.7812 11.0629L15 16H13.4635Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                                <!-- * ===== Menu divided Action ====== -->
+                                <a class="btn-a-action" disabled>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 1 24"
+                                        fill="none">
+                                        <line opacity="0.5" x1="0.5" y1="2.18558e-08" x2="0.499999" y2="24"
+                                            [attr.stroke]="emojiContrastColor" />
+                                    </svg>
+                                </a>
+                                <!-- * ===== Question Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_35058" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_35058)">
+                                            <path
+                                                d="M7 18C6.71667 18 6.47917 17.9042 6.2875 17.7125C6.09583 17.5208 6 17.2833 6 17V15H19V6H21C21.2833 6 21.5208 6.09583 21.7125 6.2875C21.9042 6.47917 22 6.71667 22 7V22L18 18H7ZM2 17V3C2 2.71667 2.09583 2.47917 2.2875 2.2875C2.47917 2.09583 2.71667 2 3 2H16C16.2833 2 16.5208 2.09583 16.7125 2.2875C16.9042 2.47917 17 2.71667 17 3V12C17 12.2833 16.9042 12.5208 16.7125 12.7125C16.5208 12.9042 16.2833 13 16 13H6L2 17ZM15 11V4H4V11H15Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                                <!-- * ===== Comment Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_35062" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" fill="#D9D9D9" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_35062)">
+                                            <path
+                                                d="M2 22V4C2 3.45 2.19583 2.97917 2.5875 2.5875C2.97917 2.19583 3.45 2 4 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H6L2 22ZM5.15 16H20V4H4V17.125L5.15 16Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                                <!-- * ===== Show Response Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" viewBox="0 0 24 23"
+                                        fill="none">
+                                        <path
+                                            d="M12 16C13.25 16 14.3125 15.5625 15.1875 14.6875C16.0625 13.8125 16.5 12.75 16.5 11.5C16.5 10.25 16.0625 9.1875 15.1875 8.3125C14.3125 7.4375 13.25 7 12 7C10.75 7 9.6875 7.4375 8.8125 8.3125C7.9375 9.1875 7.5 10.25 7.5 11.5C7.5 12.75 7.9375 13.8125 8.8125 14.6875C9.6875 15.5625 10.75 16 12 16ZM12 14.2C11.25 14.2 10.6125 13.9375 10.0875 13.4125C9.5625 12.8875 9.3 12.25 9.3 11.5C9.3 10.75 9.5625 10.1125 10.0875 9.5875C10.6125 9.0625 11.25 8.8 12 8.8C12.75 8.8 13.3875 9.0625 13.9125 9.5875C14.4375 10.1125 14.7 10.75 14.7 11.5C14.7 12.25 14.4375 12.8875 13.9125 13.4125C13.3875 13.9375 12.75 14.2 12 14.2ZM12 19C9.56667 19 7.35 18.3208 5.35 16.9625C3.35 15.6042 1.9 13.7833 1 11.5C1.9 9.21667 3.35 7.39583 5.35 6.0375C7.35 4.67917 9.56667 4 12 4C14.4333 4 16.65 4.67917 18.65 6.0375C20.65 7.39583 22.1 9.21667 23 11.5C22.1 13.7833 20.65 15.6042 18.65 16.9625C16.65 18.3208 14.4333 19 12 19ZM12 17C13.8833 17 15.6125 16.5042 17.1875 15.5125C18.7625 14.5208 19.9667 13.1833 20.8 11.5C19.9667 9.81667 18.7625 8.47917 17.1875 7.4875C15.6125 6.49583 13.8833 6 12 6C10.1167 6 8.3875 6.49583 6.8125 7.4875C5.2375 8.47917 4.03333 9.81667 3.2 11.5C4.03333 13.1833 5.2375 14.5208 6.8125 15.5125C8.3875 16.5042 10.1167 17 12 17Z"
+                                            [attr.fill]="emojiContrastColor" />
+                                    </svg>
+                                </a>
+                                <!-- * ===== Lock Voting Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_35068" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_35068)">
+                                            <path
+                                                d="M6 22C5.45 22 4.97917 21.8042 4.5875 21.4125C4.19583 21.0208 4 20.55 4 20V10C4 9.45 4.19583 8.97917 4.5875 8.5875C4.97917 8.19583 5.45 8 6 8H7V6C7 4.61667 7.4875 3.4375 8.4625 2.4625C9.4375 1.4875 10.6167 1 12 1C13.3833 1 14.5625 1.4875 15.5375 2.4625C16.5125 3.4375 17 4.61667 17 6V8H18C18.55 8 19.0208 8.19583 19.4125 8.5875C19.8042 8.97917 20 9.45 20 10V20C20 20.55 19.8042 21.0208 19.4125 21.4125C19.0208 21.8042 18.55 22 18 22H6ZM6 20H18V10H6V20ZM12 17C12.55 17 13.0208 16.8042 13.4125 16.4125C13.8042 16.0208 14 15.55 14 15C14 14.45 13.8042 13.9792 13.4125 13.5875C13.0208 13.1958 12.55 13 12 13C11.45 13 10.9792 13.1958 10.5875 13.5875C10.1958 13.9792 10 14.45 10 15C10 15.55 10.1958 16.0208 10.5875 16.4125C10.9792 16.8042 11.45 17 12 17ZM9 8H15V6C15 5.16667 14.7083 4.45833 14.125 3.875C13.5417 3.29167 12.8333 3 12 3C11.1667 3 10.4583 3.29167 9.875 3.875C9.29167 4.45833 9 5.16667 9 6V8Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                                <!-- * ===== QRCode Action ====== -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_35071" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_35071)">
+                                            <path
+                                                d="M3 11V3H11V11H3ZM5 9H9V5H5V9ZM3 21V13H11V21H3ZM5 19H9V15H5V19ZM13 11V3H21V11H13ZM15 9H19V5H15V9ZM19 21V19H21V21H19ZM13 15V13H15V15H13ZM15 17V15H17V17H15ZM13 19V17H15V19H13ZM15 21V19H17V21H15ZM17 19V17H19V19H17ZM17 15V13H19V15H17ZM19 17V15H21V17H19Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="bottom-actions-right">
+                            <div class="bottom-actions-left-item" [ngStyle]="{'background-color':this.ContrastColor}">
+                                <ng-container *ngFor="let reaction of reactionsList">
+                                    <a class="btn-a-action">
+                                        <img [src]="reactionURL+reaction.ReactionURL" width="16" height="20"
+                                            class="img-fluid" />
+                                        <span class="position-text-bottom" [style.color]="emojiContrastColor">5</span>
+                                    </a>
+                                </ng-container>
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_118077" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_118077)">
+                                            <path
+                                                d="M12.7992 23C11.4326 23 10.1492 22.6875 8.94922 22.0625C7.74922 21.4375 6.76589 20.5667 5.99922 19.45L1.19922 12.4L1.67422 11.925C2.00755 11.575 2.42005 11.375 2.91172 11.325C3.40339 11.275 3.84922 11.3917 4.24922 11.675L6.99922 13.575V4C6.99922 3.71667 7.09505 3.47917 7.28672 3.2875C7.47839 3.09583 7.71589 3 7.99922 3C8.28255 3 8.52005 3.09583 8.71172 3.2875C8.90339 3.47917 8.99922 3.71667 8.99922 4V17.425L5.29922 14.85L7.67422 18.3C8.25755 19.15 8.99922 19.8125 9.89922 20.2875C10.7992 20.7625 11.7659 21 12.7992 21C14.5159 21 15.9784 20.3958 17.1867 19.1875C18.3951 17.9792 18.9992 16.5167 18.9992 14.8V5C18.9992 4.71667 19.0951 4.47917 19.2867 4.2875C19.4784 4.09583 19.7159 4 19.9992 4C20.2826 4 20.5201 4.09583 20.7117 4.2875C20.9034 4.47917 20.9992 4.71667 20.9992 5V14.8C20.9992 17.0833 20.2034 19.0208 18.6117 20.6125C17.0201 22.2042 15.0826 23 12.7992 23ZM10.9992 12V2C10.9992 1.71667 11.0951 1.47917 11.2867 1.2875C11.4784 1.09583 11.7159 1 11.9992 1C12.2826 1 12.5201 1.09583 12.7117 1.2875C12.9034 1.47917 12.9992 1.71667 12.9992 2V12H10.9992ZM14.9992 12V3C14.9992 2.71667 15.0951 2.47917 15.2867 2.2875C15.4784 2.09583 15.7159 2 15.9992 2C16.2826 2 16.5201 2.09583 16.7117 2.2875C16.9034 2.47917 16.9992 2.71667 16.9992 3V12H14.9992Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                    <span class="position-text-bottom" [style.color]="emojiContrastColor">5</span>
+                                </a>
+                                <!-- *========= Question Count Display ========= -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_35058" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_35058)">
+                                            <path
+                                                d="M7 18C6.71667 18 6.47917 17.9042 6.2875 17.7125C6.09583 17.5208 6 17.2833 6 17V15H19V6H21C21.2833 6 21.5208 6.09583 21.7125 6.2875C21.9042 6.47917 22 6.71667 22 7V22L18 18H7ZM2 17V3C2 2.71667 2.09583 2.47917 2.2875 2.2875C2.47917 2.09583 2.71667 2 3 2H16C16.2833 2 16.5208 2.09583 16.7125 2.2875C16.9042 2.47917 17 2.71667 17 3V12C17 12.2833 16.9042 12.5208 16.7125 12.7125C16.5208 12.9042 16.2833 13 16 13H6L2 17ZM15 11V4H4V11H15Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                    <span class="position-text-bottom" [style.color]="emojiContrastColor">5</span>
+                                </a>
+                                <!-- *========= Comment Count Display ========= -->
+                                <a class="btn-a-action">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 24 24"
+                                        fill="none">
+                                        <mask id="mask0_9340_35062" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                            y="0" width="24" height="24">
+                                            <rect width="24" height="24" [attr.fill]="emojiContrastColor" />
+                                        </mask>
+                                        <g mask="url(#mask0_9340_35062)">
+                                            <path
+                                                d="M2 22V4C2 3.45 2.19583 2.97917 2.5875 2.5875C2.97917 2.19583 3.45 2 4 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H6L2 22ZM5.15 16H20V4H4V17.125L5.15 16Z"
+                                                [attr.fill]="emojiContrastColor" />
+                                        </g>
+                                    </svg>
+                                    <span class="position-text-bottom" [style.color]="emojiContrastColor">*</span>
+                                </a>
+                                <!-- *========= Participant Count Display ========= -->
+                                <a class="btn-a-action" data-tooltip="Participant">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="20" viewBox="0 0 20 20"
+                                        fill="none">
+                                        <path
+                                            d="M3.85 15.1C4.7 14.45 5.65 13.9375 6.7 13.5625C7.75 13.1875 8.85 13 10 13C11.15 13 12.25 13.1875 13.3 13.5625C14.35 13.9375 15.3 14.45 16.15 15.1C16.7333 14.4167 17.1875 13.6417 17.5125 12.775C17.8375 11.9083 18 10.9833 18 10C18 7.78333 17.2208 5.89583 15.6625 4.3375C14.1042 2.77917 12.2167 2 10 2C7.78333 2 5.89583 2.77917 4.3375 4.3375C2.77917 5.89583 2 7.78333 2 10C2 10.9833 2.1625 11.9083 2.4875 12.775C2.8125 13.6417 3.26667 14.4167 3.85 15.1ZM10 11C9.01667 11 8.1875 10.6625 7.5125 9.9875C6.8375 9.3125 6.5 8.48333 6.5 7.5C6.5 6.51667 6.8375 5.6875 7.5125 5.0125C8.1875 4.3375 9.01667 4 10 4C10.9833 4 11.8125 4.3375 12.4875 5.0125C13.1625 5.6875 13.5 6.51667 13.5 7.5C13.5 8.48333 13.1625 9.3125 12.4875 9.9875C11.8125 10.6625 10.9833 11 10 11ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C10.8833 18 11.7167 17.8708 12.5 17.6125C13.2833 17.3542 14 16.9833 14.65 16.5C14 16.0167 13.2833 15.6458 12.5 15.3875C11.7167 15.1292 10.8833 15 10 15C9.11667 15 8.28333 15.1292 7.5 15.3875C6.71667 15.6458 6 16.0167 5.35 16.5C6 16.9833 6.71667 17.3542 7.5 17.6125C8.28333 17.8708 9.11667 18 10 18ZM10 9C10.4333 9 10.7917 8.85833 11.075 8.575C11.3583 8.29167 11.5 7.93333 11.5 7.5C11.5 7.06667 11.3583 6.70833 11.075 6.425C10.7917 6.14167 10.4333 6 10 6C9.56667 6 9.20833 6.14167 8.925 6.425C8.64167 6.70833 8.5 7.06667 8.5 7.5C8.5 7.93333 8.64167 8.29167 8.925 8.575C9.20833 8.85833 9.56667 9 10 9Z"
+                                            [attr.fill]="emojiContrastColor" />
+                                    </svg>
+                                    <span class="position-text-bottom" [style.color]="emojiContrastColor">5</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>

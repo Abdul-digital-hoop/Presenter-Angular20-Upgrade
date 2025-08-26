@@ -1,0 +1,220 @@
+<div class="overflow" id="overflow-scroll-{{slideDetails?.slideId}}-{{viewfrom}}" *ngIf="presentationMode">
+    <div class="row1" (keydown)="onKeyDown($event)"  *ngIf="slideDetails.settings.showInResults">
+        <div class="column">
+            <div class="mb-1" *ngFor="let item of openEndedData; index as i;" [@slideInTop] [ngClass]="isShowOptionDetails? 'd-none': 'd-block'">
+                <div *ngIf="item?.Answer">
+                <a href="javascript:void(0);" class="text-decoration-none hover-show-expand"  (click)="showOptionDetails(i)"  *ngIf="i%3===0 && screenOptions=='presentationScreen'">
+                    <div class="border-open-ended open-ended-box" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div> 
+                        <div class="p-3 position-relative">
+                            <p [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer }}</p>
+                            <span class="position-absolute tr-10"  *ngIf="presentationMode">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="15" height="15" aria-label="Expand" viewBox="0 0 16 16"><g [attr.fill]="slideTheme?.ThemeTextColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M11.8661 3.25H9V2H14V7H12.75V4.13388L9.44194 7.44194L8.55806 6.55806L11.8661 3.25ZM3.25 11.8661L6.55808 8.55806L7.44196 9.44194L4.13389 12.75H7V14H2L2 9H3.25V11.8661Z"></path></g></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                <div class="border-open-ended open-ended-box" *ngIf="(i%3===0) && screenOptions=='newPresentation'" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                    <div class="bg-position-absolute"></div>
+                    <div class="p-3 position-relative">
+                        <p class="mb-0 description-text" [style.font-family]="slideTheme?.ThemeFontFamily" [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="column">
+            <div class="mb-1" *ngFor="let item of openEndedData; index as i;" [@slideInLeft] [ngClass]="isShowOptionDetails? 'd-none': 'd-block'">
+                <a href="javascript:void(0);" class="text-decoration-none hover-show-expand"  (click)="showOptionDetails(i)"  *ngIf="(i-1)%3===0  && screenOptions=='presentationScreen'">
+                    <div class="border-open-ended open-ended-box" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                            <p [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer }}</p>
+                            <span class="position-absolute tr-10"  *ngIf="presentationMode">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="15" height="15" aria-label="Expand" viewBox="0 0 16 16"><g [attr.fill]="slideTheme?.ThemeTextColor"  fill-rule="evenodd" clip-rule="evenodd"><path d="M11.8661 3.25H9V2H14V7H12.75V4.13388L9.44194 7.44194L8.55806 6.55806L11.8661 3.25ZM3.25 11.8661L6.55808 8.55806L7.44196 9.44194L4.13389 12.75H7V14H2L2 9H3.25V11.8661Z"></path></g></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                <div class="border-open-ended open-ended-box" *ngIf="((i-1)%3===0) &&  screenOptions=='newPresentation'" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                    <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                        <p class="mb-0 description-text" [style.font-family]="slideTheme?.ThemeFontFamily" [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">  
+            <div  class="mb-1"  *ngFor="let item of openEndedData; index as i;" [@slideInRight] [ngClass]="isShowOptionDetails? 'd-none': 'd-block'">
+                <a href="javascript:void(0);" class="text-decoration-none hover-show-expand"  (click)="showOptionDetails(i)"  *ngIf="(i-2)%3===0 && screenOptions=='presentationScreen'">
+                    <div class="border-open-ended open-ended-box" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                            <p [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer }}</p>
+                            <span class="position-absolute tr-10" *ngIf="presentationMode">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="15" height="15" aria-label="Expand" viewBox="0 0 16 16"><g [attr.fill]="slideTheme?.ThemeTextColor"  fill-rule="evenodd" clip-rule="evenodd"><path d="M11.8661 3.25H9V2H14V7H12.75V4.13388L9.44194 7.44194L8.55806 6.55806L11.8661 3.25ZM3.25 11.8661L6.55808 8.55806L7.44196 9.44194L4.13389 12.75H7V14H2L2 9H3.25V11.8661Z"></path></g></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                <ng-container *ngIf="((i-2)%3===0 ) && item?.value > 0 && screenOptions=='newPresentation' " >
+                    <div class="border-open-ended open-ended-box " [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                            <p class="mb-0 description-text" [style.font-family]="slideTheme?.ThemeFontFamily" [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer}}</p>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+        <div class="col-12"  *ngIf="isShowOptionDetails"  [ngClass]="isShowOptionDetails? 'd-block': 'd-none'" >
+            <div class="content-area-qa flex-column">
+                <div class="d-block">
+                    <div class="text-center" *ngFor="let item of openEndedData; index as i" [ngClass]=" selectedOptionIndex == i ? 'd-block' : 'd-none'">
+                        <div class="text-center my-3" *ngIf="i>0">
+                            <button class="btn bg-white rounded-circle border px-1 py-1" (click)="previousOption()">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="32" height="32" aria-label="Collapse" viewBox="0 0 24 24"><g fill="#252B36" fill-rule="evenodd" clip-rule="evenodd"><path d="M11.9999 7.2627L19.1187 14.3814L17.8812 15.6189L11.9999 9.73757L6.11866 15.6189L4.88123 14.3814L11.9999 7.2627Z"></path></g></svg>
+                            </button>
+                        </div>
+                        <div [ngClass]="selectedOptionIndex == i ? (isPrev ? 'd-block fade-in-bottom' : 'd-block fade-in-top') : 'hidden'" class="pb-80">
+                            <h5 class="mb-4 count-color" [ngStyle]="{'color': slideTheme?.ThemeTextColor}">
+                              <span>{{ i + 1 }} of {{ openEndedData?.length }}</span>
+                            </h5>
+                            <h2 [ngStyle]="{'color': slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{ item?.Answer  }}</h2>
+                          </div>
+                        <button class="btn rounded  all-ansewrs" (click)="displayAllAnswers()" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor,'color':slideTheme?.ThemeTextColor}">
+                            <span class=" me-1 ">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="15" height="15" aria-label="Arrow left" viewBox="0 0 16 16"><g fill="rgb(113, 117, 124)" fill-rule="evenodd" clip-rule="evenodd"><path d="M4.51244 7.375L7.94594 3.9415L7.06206 3.05762L2.12012 7.99956L7.06206 12.9415L7.94594 12.0576L4.51333 8.625H13.0039V7.375H4.51244Z"></path></g></svg>
+                            </span>All answers
+                        </button>
+                        <div class="text-center my-3" *ngIf="openEndedData?.length != i+1">
+                            <button class="btn bg-white rounded-circle border px-1 py-1" (click)="nextOption()">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="30" height="30" aria-label="Expand" viewBox="0 0 24 24">
+                                    <g color="#101834">
+                                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="6 9 12 15 18 9"></polyline>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="overflow-hiden" id="overflow-scroll" *ngIf="!presentationMode && this.openEndedData.length !=0">
+    <div class="row1" (keydown)="onKeyDown($event)" *ngIf="slideDetails.settings.showInResults">
+        <div class="column">
+            <div class="mb-1" *ngFor="let item of openEndedData; index as i;" [ngClass]="isShowOptionDetails? 'd-none': 'd-block'">
+                <div *ngIf="item?.Answer">
+                <a href="javascript:void(0);" class="text-decoration-none hover-show-expand"    *ngIf="i%3===0 && screenOptions=='presentationScreen'">
+                    <div class="border-open-ended open-ended-box" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div> 
+                        <div class="p-3 position-relative">
+                            <p [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer }}</p>
+                            <span class="position-absolute tr-10"  *ngIf="presentationMode">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="15" height="15" aria-label="Expand" viewBox="0 0 16 16"><g [attr.fill]="slideTheme?.ThemeTextColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M11.8661 3.25H9V2H14V7H12.75V4.13388L9.44194 7.44194L8.55806 6.55806L11.8661 3.25ZM3.25 11.8661L6.55808 8.55806L7.44196 9.44194L4.13389 12.75H7V14H2L2 9H3.25V11.8661Z"></path></g></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                <div class="border-open-ended open-ended-box" *ngIf="(i%3===0) && screenOptions=='newPresentation'" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                    <div class="bg-position-absolute"></div>
+                    <div class="p-3 position-relative">
+                        <p class="mb-0 description-text" [style.font-family]="slideTheme?.ThemeFontFamily" [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="column">
+            <div class="mb-1" *ngFor="let item of openEndedData; index as i;" [ngClass]="isShowOptionDetails? 'd-none': 'd-block'">
+                <a href="javascript:void(0);" class="text-decoration-none hover-show-expand"   *ngIf="(i-1)%3===0  && screenOptions=='presentationScreen'">
+                    <div class="border-open-ended open-ended-box" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                            <p [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer }}</p>
+                            <span class="position-absolute tr-10"  *ngIf="presentationMode">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="15" height="15" aria-label="Expand" viewBox="0 0 16 16"><g [attr.fill]="slideTheme?.ThemeTextColor"  fill-rule="evenodd" clip-rule="evenodd"><path d="M11.8661 3.25H9V2H14V7H12.75V4.13388L9.44194 7.44194L8.55806 6.55806L11.8661 3.25ZM3.25 11.8661L6.55808 8.55806L7.44196 9.44194L4.13389 12.75H7V14H2L2 9H3.25V11.8661Z"></path></g></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                <div class="border-open-ended open-ended-box" *ngIf="((i-1)%3===0) &&  screenOptions=='newPresentation'" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                    <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                        <p class="mb-0 description-text" [style.font-family]="slideTheme?.ThemeFontFamily" [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column">  
+            <div  class="mb-1"  *ngFor="let item of openEndedData; index as i;" [ngClass]="isShowOptionDetails? 'd-none': 'd-block'">
+                <a href="javascript:void(0);" class="text-decoration-none hover-show-expand"   *ngIf="(i-2)%3===0 && screenOptions=='presentationScreen'">
+                    <div class="border-open-ended open-ended-box" [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                            <p [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer }}</p>
+                            <span class="position-absolute tr-10" *ngIf="presentationMode">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="15" height="15" aria-label="Expand" viewBox="0 0 16 16"><g [attr.fill]="slideTheme?.ThemeTextColor"  fill-rule="evenodd" clip-rule="evenodd"><path d="M11.8661 3.25H9V2H14V7H12.75V4.13388L9.44194 7.44194L8.55806 6.55806L11.8661 3.25ZM3.25 11.8661L6.55808 8.55806L7.44196 9.44194L4.13389 12.75H7V14H2L2 9H3.25V11.8661Z"></path></g></svg>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+                <ng-container *ngIf="((i-2)%3===0 ) && item?.value > 0 && screenOptions=='newPresentation' " >
+                    <div class="border-open-ended open-ended-box " [ngStyle]="{'background-color':hexToRgbColor,'border-color':hexToRgbColor}">
+                        <div class="bg-position-absolute"></div>
+                        <div class="p-3 position-relative">
+                            <p class="mb-0 description-text" [style.font-family]="slideTheme?.ThemeFontFamily" [ngStyle]="{'color':slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">{{item?.Answer}}</p>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- default chart -->
+<div class="d-flex flex-column" *ngIf="!presentationMode && this.openEndedData.length === 0">
+    <ng-container *ngFor="let row of defaultDataColumn; let rowIndex = index">
+      <div class="d-flex">
+        <div 
+          class="col-4 default-head" 
+          *ngFor="let item of row; let i = index;" 
+          [ngClass]="isShowOptionDetails? 'd-none' : 'd-block'"
+        >
+          <div *ngIf="item?.Answer">
+            <a href="javascript:void(0);" class="text-decoration-none hover-show-expand">
+              <div 
+                class="border-open-ended open-ended-box" 
+                [ngStyle]="{'background-color': hexToRgbColor, 'border-color': hexToRgbColor}"
+              >
+                <div class="bg-position-absolute"></div> 
+                <div class="p-3 position-relative">
+                  <p class="fs-very-low" [ngStyle]="{'color': slideTheme?.ThemeTextColor, 'white-space': 'pre-wrap'}">
+                    {{ item?.Answer  }}
+                  </p>
+                  <span class="position-absolute tr-10" *ngIf="presentationMode">
+                    <svg 
+                      xmlns="http://www.w3.org/2000/svg" 
+                      role="img" 
+                      preserveAspectRatio="xMidYMid meet" 
+                      width="15" 
+                      height="15" 
+                      aria-label="Expand" 
+                      viewBox="0 0 16 16"
+                    >
+                      <g [attr.fill]="slideTheme?.ThemeTextColor" fill-rule="evenodd" clip-rule="evenodd">
+                        <path d="M11.8661 3.25H9V2H14V7H12.75V4.13388L9.44194 7.44194L8.55806 6.55806L11.8661 3.25ZM3.25 11.8661L6.55808 8.55806L7.44196 9.44194L4.13389 12.75H7V14H2L2 9H3.25V11.8661Z"></path>
+                      </g>
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>

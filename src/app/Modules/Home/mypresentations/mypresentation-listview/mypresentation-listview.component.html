@@ -1,0 +1,1510 @@
+<div class="Dashboard-namesection d-flex"
+*ngIf="(!_mypresentationsService.isInSubFolder && (presentations.length > 0 || mainFolders.length > 0)) || (_mypresentationsService.isInSubFolder && presentations.length > 0)">
+    <div class="form-check d-inline-block me-2 checkbox-container" *ngIf="presentations.length > 0 || _mypresentationsService.selectedPresentations.size > 0">
+        <label class="form-check-label checkbox-label" for="selectAllPresentations">
+            <input class="form-check-input" type="checkbox" id="selectAllPresentations" [checked]="isAllSelected"
+                (change)="onSelectAllChange($event)">
+        </label>
+    </div>
+    <div class="dashboard-name col-7 d-flex align-items-center">
+        <span class="sort-name cursor-pointer" (click)="presentationSortByName()">Name</span>
+        <div class="d-flex align-items-center cursor-pointer" (click)="presentationSortByName()">
+            <p class="ascending sort-p mb-0" [class.active]="isNameAscending">
+                <svg *ngIf="isNameAscending" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 14 14" fill="none">
+                    <mask id="mask0_4463_211600" style="mask-type: alpha;" maskUnits="userSpaceOnUse" x="0" y="0"
+                        width="14" height="14">
+                        <rect x="14" y="14" width="14" height="14" transform="rotate(-180 14 14)" fill="#D9D9D9" />
+                    </mask>
+                    <g mask="url(#mask0_4463_211600)">
+                        <path
+                            d="M7.81706 11.668L7.81706 4.56589L11.0837 7.83255L11.9004 7.0013L7.23373 2.33464L2.56706 7.0013L3.38373 7.83255L6.65039 4.56589L6.65039 11.668L7.81706 11.668Z"
+                            fill="#1C1B1F" />
+                    </g>
+                </svg>
+            </p>
+            <p class="descending sort-p mb-0" [class.active]="!isNameAscending">
+                <svg *ngIf="!isNameAscending" xmlns="http://www.w3.org/2000/svg" width="10" height="10"
+                    viewBox="0 0 10 10" fill="none">
+                    <path
+                        d="M4.1849 0.332031V7.43411L0.918229 4.16745L0.101562 4.9987L4.76823 9.66536L9.43489 4.9987L8.61823 4.16745L5.35156 7.43411V0.332031H4.1849Z"
+                        fill="#1C1B1F" />
+                </svg>
+            </p>
+        </div>
+    </div>
+    <div class="dashboard-date col-5 d-flex align-items-center">
+        <span class="sort-date cursor-pointer" (click)="presentationSortByDate()">Created On</span>
+        <div class="d-flex align-items-center date-sort-icons cursor-pointer" (click)="presentationSortByDate()">
+            <p class="ascending sort-p mb-0" [class.active]="isNameascending">
+                <svg *ngIf="isNameascending" xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                    viewBox="0 0 14 14" fill="none">
+                    <mask id="mask0_4463_211600" style="mask-type: alpha;" maskUnits="userSpaceOnUse" x="0" y="0"
+                        width="14" height="14">
+                        <rect x="14" y="14" width="14" height="14" transform="rotate(-180 14 14)" fill="#D9D9D9" />
+                    </mask>
+                    <g mask="url(#mask0_4463_211600)">
+                        <path
+                            d="M7.81706 11.668L7.81706 4.56589L11.0837 7.83255L11.9004 7.0013L7.23373 2.33464L2.56706 7.0013L3.38373 7.83255L6.65039 4.56589L6.65039 11.668L7.81706 11.668Z"
+                            fill="#1C1B1F" />
+                    </g>
+                </svg>
+            </p>
+            <p class="descending sort-p mb-0" [class.active]="!isNameascending">
+                <svg *ngIf="!isNameascending" xmlns="http://www.w3.org/2000/svg" width="10" height="10"
+                    viewBox="0 0 10 10" fill="none">
+                    <path
+                        d="M4.1849 0.332031V7.43411L0.918229 4.16745L0.101562 4.9987L4.76823 9.66536L9.43489 4.9987L8.61823 4.16745L5.35156 7.43411V0.332031H4.1849Z"
+                        fill="#1C1B1F" />
+                </svg>
+            </p>
+        </div>
+    </div>
+</div>
+<section class="section-content-part"
+    *ngIf="!_mypresentationsService.isInSubFolder && (mainFolders.length > 0 || presentations.length > 0)">
+    <div class="container-fluid px-0">
+        <div class="presentation-shadow-content rounded">
+            <div class="section-content-part-element">
+                <div class="folder-row">
+                    <div class="folder-container folder-container-{{i}}" (mouseenter)="folderhover(i, true)"
+                        (mouseleave)="folderhover(i, false)" *ngFor="let folder of mainFolders; let i = index">
+                        <a class="col-7 ps-0 text-decoration-hover-none" [routerLink]="['/app/mypresentations']"
+                            [queryParams]="{ Id: folder.id }" queryParamsHandling="merge"
+                            (click)="onFolderClick(folder.id, folder.folderName)">
+                            <div class="folder">
+                                <div class="folder-content">
+                                    <div class="folder-icon">
+                                        <ng-container *ngIf="folder.presentationid_count > 0">
+                                            <!-- Filled folder icon -->
+                                            <img src="assets/mypresentation-icons/filled-folder.svg" alt="">
+                                        </ng-container>
+                                        <ng-container *ngIf="folder.presentationid_count === 0">
+                                            <!-- Empty folder icon -->
+                                            <img src="assets/mypresentation-icons/empty-folder.svg" alt="">
+                                        </ng-container>
+                                    </div>
+                                    <div class="folder-name">
+                                        <span
+                                            class="folder-truncatename fs-very-low">{{truncateText(folder.folderName,15)}}</span>
+                                        <div class="folder-pname">
+                                            <span class="presentaion-count fs-very-low-12 mv-flex">
+                                                <svg width="23" height="23" viewBox="0 0 23 23" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <rect x="3.65398" y="3.60711" width="15.4995" height="12.1782"
+                                                        rx="1.10711" stroke="#999999" stroke-width="2.21422" />
+                                                    <path d="M11.4073 15.7852L9.7466 17.9994L8.08594 20.2136"
+                                                        stroke="#999999" stroke-width="1.10711"
+                                                        stroke-linecap="round" />
+                                                    <path d="M11.4052 15.7852L13.0659 17.9994L14.7266 20.2136"
+                                                        stroke="#999999" stroke-width="1.10711"
+                                                        stroke-linecap="round" />
+                                                    <path d="M8.08594 8.03516L8.08594 10.2494L8.08594 12.4636"
+                                                        stroke="#999999" stroke-width="1.32853"
+                                                        stroke-linecap="round" />
+                                                    <path d="M14.7266 6.92969V9.69746V12.4652" stroke="#999999"
+                                                        stroke-width="1.32853" stroke-linecap="round" />
+                                                    <path d="M11.4062 9.14062L11.4063 10.8013L11.4063 12.462"
+                                                        stroke="#999999" stroke-width="1.32853"
+                                                        stroke-linecap="round" />
+                                                </svg>
+                                                {{folder.presentationid_count}}
+                                            </span>
+                                            <div class="vertical-line md-none"></div>
+                                            <span class="edited-minutes fs-very-low-12 md-none">Edited
+                                                {{folder.updatedDateTime | timeAgo}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        <div class="d-flex align-items-center col-5">
+                            <div class="folder-date text-nowrap ">
+                                <span class="folder-createdate fs-very-low-12">{{folder.createdDateTime |
+                                    date:'dd-MMM-yyyy'}}</span>
+                            </div>
+                            <div class="open">
+                                <button data-bs-toggle="modal" [routerLink]="['/app/mypresentations']"
+                                    [queryParams]="{ Id: folder.id }" queryParamsHandling="merge"
+                                    class="btn btn-present px-3 me-2 md-none" *ngIf="IsHovered[i]"
+                                    (click)="onFolderClick(folder.id, folder.folderName)">
+                                    <span class="align-text-bottom me-2 icon-d"> </span>
+                                    <span class="d-md-inline-block d-none p-btn fs-very-low-12">Open</span>
+                                    <span class="d-md-none d-inline-block p-btn">Open </span>
+                                </button>
+                            </div>
+                            <div class="center-svg">
+                                <div class="d-flex p-svg justify-content-end" *ngIf="IsHovered[i]">
+                                    <div class="delete-icon md-none cursor-pointer"
+                                        (click)="showDeleteConfirmationDialog(folder.id)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            viewBox="0 0 20 20" fill="none">
+                                            <mask id="mask0_2515_128289" style="mask-type: alpha;"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                <rect width="20" height="20" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2515_128289)">
+                                                <path
+                                                    d="M5.83398 17.5C5.37565 17.5 4.98329 17.3368 4.6569 17.0104C4.33051 16.684 4.16732 16.2917 4.16732 15.8333V5H3.33398V3.33333H7.50065V2.5H12.5007V3.33333H16.6673V5H15.834V15.8333C15.834 16.2917 15.6708 16.684 15.3444 17.0104C15.018 17.3368 14.6257 17.5 14.1673 17.5H5.83398ZM14.1673 5H5.83398V15.8333H14.1673V5ZM7.50065 14.1667H9.16732V6.66667H7.50065V14.1667ZM10.834 14.1667H12.5007V6.66667H10.834V14.1667Z"
+                                                    fill="#383838" />
+                                            </g>
+                                        </svg>
+                                        <span class="tooltiptext">Delete</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="menu-content position-relative">
+                                <button type="button" class="mat-menu-trigger"
+                                    aria-label="Actions for event Presentation2" aria-haspopup="menu"
+                                    aria-expanded="false" (click)="toggleFolderMenu($event, folder)">
+                                    <svg width="24" height="24" fill="rgb(130, 130, 130)" viewBox="0 0 24 24"
+                                        class="icon-size20 f-grey1 f-h-blue toggle-icon">
+                                        <path
+                                            d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <div class="popup popup-view" id="folder-menu" *ngIf="folder.showMenu">
+                                    <ul>
+                                        <li class="d-flex" (click)="renameFolder(folder)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                viewBox="0 0 18 18" fill="none">
+                                                <path
+                                                    d="M2.16667 17.5C1.70833 17.5 1.31597 17.3368 0.989583 17.0104C0.663194 16.684 0.5 16.2917 0.5 15.8333V4.16667C0.5 3.70833 0.663194 3.31597 0.989583 2.98958C1.31597 2.66319 1.70833 2.5 2.16667 2.5H9.60417L7.9375 4.16667H2.16667V15.8333H13.8333V10.0417L15.5 8.375V15.8333C15.5 16.2917 15.3368 16.684 15.0104 17.0104C14.684 17.3368 14.2917 17.5 13.8333 17.5H2.16667ZM5.5 12.5V8.95833L13.1458 1.3125C13.3125 1.14583 13.5 1.02083 13.7083 0.9375C13.9167 0.854167 14.125 0.8125 14.3333 0.8125C14.5556 0.8125 14.7674 0.854167 14.9688 0.9375C15.1701 1.02083 15.3542 1.14583 15.5208 1.3125L16.6875 2.5C16.8403 2.66667 16.9583 2.85069 17.0417 3.05208C17.125 3.25347 17.1667 3.45833 17.1667 3.66667C17.1667 3.875 17.1285 4.07986 17.0521 4.28125C16.9757 4.48264 16.8542 4.66667 16.6875 4.83333L9.04167 12.5H5.5ZM7.16667 10.8333H8.33333L13.1667 6L12.5833 5.41667L11.9792 4.83333L7.16667 9.64583V10.8333Z"
+                                                    fill="#525252" />
+                                            </svg>
+                                            <span class="ps-2 fs-very-low"> Rename</span>
+                                        </li>
+                                        <!-- <li class="d-flex" data-bs-toggle="modal" (click)="moveFolder(folder)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                viewBox="0 0 20 20" fill="none">
+                                                <mask id="mask0_4038_120452" style="mask-type: alpha;"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_4038_120452)">
+                                                    <path
+                                                        d="M10.168 11.6668L8.8138 13.021L9.98047 14.1877L13.3346 10.8335L9.98047 7.47933L8.8138 8.646L10.168 10.0002H6.66797V11.6668H10.168ZM3.33464 16.6668C2.8763 16.6668 2.48394 16.5036 2.15755 16.1772C1.83116 15.8509 1.66797 15.4585 1.66797 15.0002V5.00016C1.66797 4.54183 1.83116 4.14947 2.15755 3.82308C2.48394 3.49669 2.8763 3.3335 3.33464 3.3335H8.33464L10.0013 5.00016H16.668C17.1263 5.00016 17.5187 5.16336 17.8451 5.48975C18.1714 5.81613 18.3346 6.2085 18.3346 6.66683V15.0002C18.3346 15.4585 18.1714 15.8509 17.8451 16.1772C17.5187 16.5036 17.1263 16.6668 16.668 16.6668H3.33464ZM3.33464 15.0002H16.668V6.66683H9.3138L7.64714 5.00016H3.33464V15.0002Z"
+                                                        fill="#525252" />
+                                                </g>
+                                            </svg>
+                                            <span class="ps-2 fs-very-low">Move to Folder</span>
+                                        </li> -->
+                                        <li class="d-flex" data-bs-toggle="modal" data-bs-target="#FolderDelete"
+                                            (click)="showDeleteConfirmationDialog(folder.id)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                viewBox="0 0 20 20" fill="none">
+                                                <mask id="mask0_4038_31863" style="mask-type: alpha;"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_4038_31863)">
+                                                    <path
+                                                        d="M5.83203 17.5C5.3737 17.5 4.98134 17.3368 4.65495 17.0104C4.32856 16.684 4.16536 16.2917 4.16536 15.8333V5H3.33203V3.33333H7.4987V2.5H12.4987V3.33333H16.6654V5H15.832V15.8333C15.832 16.2917 15.6688 16.684 15.3424 17.0104C15.0161 17.3368 14.6237 17.5 14.1654 17.5H5.83203ZM14.1654 5H5.83203V15.8333H14.1654V5ZM7.4987 14.1667H9.16536V6.66667H7.4987V14.1667ZM10.832 14.1667H12.4987V6.66667H10.832V14.1667Z"
+                                                        fill="#FF1717" />
+                                                </g>
+                                            </svg>
+                                            <span class="ps-2 fs-very-low delete"> Delete</span>
+                                        </li>
+                                    </ul>
+                                    <div class="popup-arrow"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="list-row">
+                    <div class="row userpresentation mx-0 userpresentation-{{i}}"
+                        (mouseenter)="toggleHoverClass(i, true)" (mouseleave)="toggleHoverClass(i, false)"
+                        *ngFor="let item of presentations; let i = index">
+                        <div class="d-flex align-items-center col-5">
+                            <div class="form-check me-5">
+                                <input class="form-check-input" type="checkbox"
+                                    [checked]="_mypresentationsService.isPresentationSelected(item.id)"
+                                    (change)="onPresentationCheckboxChange(item.id, $event)">
+                            </div>
+                            <a href="javascript:void(0);" class="text-decoration-hover-none list-anchor"
+                                (click)="handlePresentationClick(item)">
+                                <div class="d-flex align-items-center hover-effect" style="min-height: 85px;"
+                                    [style.background-size]="'cover'">
+                                    <div class="position-absolute bottom-0 right-0 d-none">
+                                        <button type="button" class="btn btn-transparent w-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" role="img"
+                                                preserveAspectRatio="xMidYMid meet" width="16px" height="16px"
+                                                aria-labelledby="descriptive-:r1bh:" viewBox="0 0 24 24">
+                                                <title id="descriptive-:r1bh:">Trash can</title>
+                                                <g color="currentColor">
+                                                    <g fill="none" stroke="currentColor" stroke-width="2"
+                                                        stroke-linecap="round" stroke-linejoin="round">
+                                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                                        <path
+                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                        </path>
+                                                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                    </g>
+                                                </g>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="position-absolute bottom-5 left-1 d-none">
+                                        <div class="rounded-circle px-py-user-profile bg-user-profile mhv-0">
+                                            <span class="text-white fs-very-low-12"></span>
+                                        </div>
+                                    </div>
+                                    <div class="d-block text-center  mypresentation-show-icon">
+                                        <div
+                                            *ngIf="item?.slides && item.slides?.length > 0 && item.slides[0]?.slideTypeImage != null">
+                                            <p class="mb-0 icon click-icon"
+                                                [innerHTML]="GetSVGtoIMG(item?.slides[0]?.slideTypeImage)"></p>
+                                        </div>
+                                        <div
+                                            *ngIf="!(item?.slides && item.slides.length > 0 && item.slides[0]?.slideTypeImage != null)">
+                                            <img width="45" height="29" src="assets/images/empty-slides.png">
+                                        </div>
+                                        <span class="d-block fs-very-low"></span>
+                                        <div class="position-absolute bottom-0 right-0 d-none">
+                                            <button type="button" class="btn btn-transparent w-100">
+                                                <svg xmlns="http://www.w3.org/2000/svg" role="img"
+                                                    preserveAspectRatio="xMidYMid meet" width="16px" height="16px"
+                                                    aria-labelledby="descriptive-:r1bh:" viewBox="0 0 24 24">
+                                                    <title id="descriptive-:r1bh:">Trash can</title>
+                                                    <g color="currentColor">
+                                                        <g fill="none" stroke="currentColor" stroke-width="2"
+                                                            stroke-linecap="round" stroke-linejoin="round">
+                                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                                            <path
+                                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                            </path>
+                                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                        </g>
+                                                    </g>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="list-values" style="display: flex; width: 95%;">
+                                        <div class="">
+                                            <p class="prst-name" [attr.title]="item?.presentationName">{{
+                                                item?.presentationName?.length > 40 ?
+                                                item?.presentationName.substring(0,40)+'...' :
+                                                item?.presentationName}}
+                                            </p>
+                                            <span class="slide-count fs-very-low-12">
+                                                <svg width="14" height="12" viewBox="0 0 14 12" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <path
+                                                        d="M1.66927 12C1.3026 12 0.988715 11.8694 0.727604 11.6083C0.466493 11.3472 0.335938 11.0333 0.335938 10.6667V6H1.66927V10.6667H7.66927V12H1.66927ZM4.33594 9.33333C3.96927 9.33333 3.65538 9.20278 3.39427 8.94167C3.13316 8.68056 3.0026 8.36667 3.0026 8V3.33333H4.33594V8H10.3359V9.33333H4.33594ZM7.0026 6.66667C6.63594 6.66667 6.32205 6.53611 6.06094 6.275C5.79983 6.01389 5.66927 5.7 5.66927 5.33333V1.33333C5.66927 0.966667 5.79983 0.652778 6.06094 0.391667C6.32205 0.130556 6.63594 0 7.0026 0H12.3359C12.7026 0 13.0165 0.130556 13.2776 0.391667C13.5387 0.652778 13.6693 0.966667 13.6693 1.33333V5.33333C13.6693 5.7 13.5387 6.01389 13.2776 6.275C13.0165 6.53611 12.7026 6.66667 12.3359 6.66667H7.0026ZM7.0026 5.33333H12.3359V2.66667H7.0026V5.33333Z"
+                                                        fill="#999999" />
+                                                </svg>
+                                                {{ item.slideCount== null ? '0' : item.slideCount }}
+                                            </span>
+                                            <div class="vertical-line md-none"></div>
+                                            <span class="presentation-editminuets fs-very-low-12 md-none">Edited
+                                                {{item.updatedDateTime | timeAgo}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="d-flex justify-content-end col-2">
+                            <button data-bs-toggle="modal" class="btn btn-result px-3 me-2 md-none"
+                                (click)="viewResult(item?.id,item?.slides[0].slideId)"
+                                [ngClass]="{'disableds': !item?.slides || !item.slides[0]?.slideTypeImage}"
+                                *ngIf="Hovered[i]">
+                                <span class="align-text-bottom me-2 icon-d">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M8.29252 16.7619C8.11076 16.7602 7.93701 16.6869 7.80908 16.5577C7.68114 16.4286 7.60937 16.2542 7.60938 16.0725V13.7285C7.60938 13.5456 7.68201 13.3703 7.8113 13.241C7.94059 13.1117 8.11594 13.0391 8.29878 13.0391C8.48163 13.0391 8.65698 13.1117 8.78627 13.241C8.91556 13.3703 8.98819 13.5456 8.98819 13.7285V16.0725C8.9882 16.1635 8.97016 16.2537 8.93512 16.3377C8.90008 16.4218 8.84874 16.4981 8.78406 16.5622C8.71938 16.6263 8.64264 16.6769 8.55827 16.7112C8.4739 16.7455 8.38358 16.7627 8.29252 16.7619Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M8.29062 13.1562C8.14103 13.1562 7.99755 13.2157 7.89177 13.3215C7.78599 13.4272 7.72656 13.5707 7.72656 13.7203V16.0643C7.72656 16.2139 7.78599 16.3574 7.89177 16.4632C7.99755 16.5689 8.14103 16.6284 8.29062 16.6284C8.44022 16.6284 8.58369 16.5689 8.68948 16.4632C8.79526 16.3574 8.85469 16.2139 8.85469 16.0643V13.7203C8.85306 13.5712 8.79311 13.4287 8.68767 13.3233C8.58224 13.2178 8.43972 13.1579 8.29062 13.1562Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M10.7441 16.7603C10.5613 16.7603 10.3859 16.6877 10.2566 16.5584C10.1273 16.4291 10.0547 16.2538 10.0547 16.0709V10.9003C10.0547 10.7175 10.1273 10.5422 10.2566 10.4129C10.3859 10.2836 10.5613 10.2109 10.7441 10.2109C10.9269 10.2109 11.1023 10.2836 11.2316 10.4129C11.3609 10.5422 11.4335 10.7175 11.4335 10.9003V16.0709C11.4335 16.2538 11.3609 16.4291 11.2316 16.5584C11.1023 16.6877 10.9269 16.7603 10.7441 16.7603Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M10.7437 10.3359C10.5942 10.3359 10.4507 10.3954 10.3449 10.5011C10.2391 10.6069 10.1797 10.7504 10.1797 10.9V16.0706C10.1797 16.2202 10.2391 16.3636 10.3449 16.4694C10.4507 16.5752 10.5942 16.6346 10.7437 16.6346C10.8933 16.6346 11.0368 16.5752 11.1426 16.4694C11.2484 16.3636 11.3078 16.2202 11.3078 16.0706V10.9C11.3078 10.7504 11.2484 10.6069 11.1426 10.5011C11.0368 10.3954 10.8933 10.3359 10.7437 10.3359Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M13.2519 16.7619C13.0691 16.7619 12.8937 16.6892 12.7644 16.5599C12.6351 16.4307 12.5625 16.2553 12.5625 16.0725V13.7285C12.5625 13.5456 12.6351 13.3703 12.7644 13.241C12.8937 13.1117 13.0691 13.0391 13.2519 13.0391C13.4348 13.0391 13.6101 13.1117 13.7394 13.241C13.8687 13.3703 13.9413 13.5456 13.9413 13.7285V16.0725C13.9413 16.2553 13.8687 16.4307 13.7394 16.5599C13.6101 16.6892 13.4348 16.7619 13.2519 16.7619Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M13.2516 13.1562C13.102 13.1562 12.9585 13.2157 12.8527 13.3215C12.7469 13.4272 12.6875 13.5707 12.6875 13.7203V16.0643C12.6875 16.2139 12.7469 16.3574 12.8527 16.4632C12.9585 16.5689 13.102 16.6284 13.2516 16.6284C13.4012 16.6284 13.5446 16.5689 13.6504 16.4632C13.7562 16.3574 13.8156 16.2139 13.8156 16.0643V13.7203C13.8156 13.5707 13.7562 13.4272 13.6504 13.3215C13.5446 13.2157 13.4012 13.1563 13.2516 13.1562Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M15.705 16.7603C15.5222 16.7603 15.3468 16.6877 15.2175 16.5584C15.0883 16.4291 15.0156 16.2538 15.0156 16.0709V10.9003C15.0156 10.7175 15.0883 10.5422 15.2175 10.4129C15.3468 10.2836 15.5222 10.2109 15.705 10.2109C15.8879 10.2109 16.0632 10.2836 16.1925 10.4129C16.3218 10.5422 16.3944 10.7175 16.3944 10.9003V16.0709C16.3944 16.2538 16.3218 16.4291 16.1925 16.5584C16.0632 16.6877 15.8879 16.7603 15.705 16.7603Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M15.7047 10.3359C15.5551 10.3359 15.4116 10.3954 15.3058 10.5011C15.2001 10.6069 15.1406 10.7504 15.1406 10.9V16.0706C15.1406 16.2202 15.2001 16.3636 15.3058 16.4694C15.4116 16.5752 15.5551 16.6346 15.7047 16.6346C15.8543 16.6346 15.9978 16.5752 16.1035 16.4694C16.2093 16.3636 16.2687 16.2202 16.2687 16.0706V10.9C16.2687 10.8259 16.2542 10.7526 16.2258 10.6841C16.1975 10.6157 16.1559 10.5535 16.1035 10.5011C16.0512 10.4488 15.989 10.4072 15.9205 10.3789C15.8521 10.3505 15.7788 10.3359 15.7047 10.3359Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M6.54618 21.459C5.86518 21.4574 5.21255 21.1861 4.73101 20.7046C4.24948 20.223 3.97822 19.5704 3.97656 18.8894V6.59287C3.97822 5.91187 4.24948 5.25924 4.73101 4.7777C5.21255 4.29617 5.86518 4.02491 6.54618 4.02325H8.42638L8.68961 3.35891C8.78925 3.10964 8.96272 2.8968 9.18676 2.74893C9.41081 2.60106 9.67472 2.52523 9.94308 2.53162H14.067C14.3301 2.53159 14.5871 2.61039 14.8049 2.75786C15.0228 2.90532 15.1914 3.11467 15.2891 3.35891L15.5524 4.02325H17.4326C18.1136 4.02491 18.7662 4.29617 19.2477 4.7777C19.7293 5.25924 20.0005 5.91187 20.0022 6.59287V18.8894C20.0005 19.5704 19.7293 20.223 19.2477 20.7046C18.7662 21.1861 18.1136 21.4574 17.4326 21.459H6.54618ZM6.54618 5.40834C6.23144 5.40833 5.9295 5.53293 5.70637 5.7549C5.48323 5.97686 5.35704 6.27814 5.35538 6.59287V18.8894C5.35538 19.2052 5.48084 19.5081 5.70416 19.7314C5.92747 19.9548 6.23036 20.0802 6.54618 20.0802H17.4514C17.6078 20.0802 17.7626 20.0494 17.9071 19.9896C18.0515 19.9297 18.1828 19.842 18.2934 19.7314C18.404 19.6209 18.4917 19.4896 18.5515 19.3451C18.6114 19.2006 18.6422 19.0458 18.6422 18.8894V6.59287C18.6405 6.27814 18.5143 5.97686 18.2912 5.7549C18.068 5.53293 17.7661 5.40833 17.4514 5.40834H16.0412C16.09 5.72454 16.016 6.04742 15.8344 6.31084C15.714 6.48911 15.5515 6.63498 15.3613 6.73554C15.1711 6.83611 14.959 6.88828 14.7439 6.88743H9.24741C9.03246 6.88719 8.82082 6.83455 8.6308 6.73408C8.44078 6.63361 8.27811 6.48834 8.15689 6.31084C7.983 6.04409 7.90969 5.72418 7.95007 5.40834H6.54618ZM9.36022 5.53995H14.6561L14.0294 3.94178H9.98069L9.36022 5.53995Z"
+                                            fill="#343434" />
+                                        <path
+                                            d="M17.451 4.14788H15.4643L15.1634 3.40833C15.0765 3.18661 14.9247 2.99625 14.728 2.86209C14.5312 2.72793 14.2985 2.65619 14.0604 2.65625H9.93647C9.70368 2.66239 9.47787 2.737 9.28726 2.87076C9.09664 3.00453 8.94969 3.19151 8.86475 3.40833L8.56392 4.14788H6.54583C5.89808 4.14953 5.27733 4.40759 4.8193 4.86562C4.36127 5.32365 4.10322 5.9444 4.10156 6.59215V18.8887C4.10322 19.5364 4.36127 20.1572 4.8193 20.6152C5.27733 21.0733 5.89808 21.3313 6.54583 21.333H17.451C18.0988 21.3313 18.7195 21.0733 19.1776 20.6152C19.6356 20.1572 19.8936 19.5364 19.8953 18.8887V6.59842C19.8953 5.94958 19.638 5.32722 19.1798 4.86784C18.7216 4.40845 18.0999 4.14954 17.451 4.14788ZM9.88006 3.84705C9.88412 3.83551 9.89181 3.82561 9.90199 3.81883C9.91216 3.81204 9.92426 3.80875 9.93647 3.80944H14.0604C14.0726 3.80875 14.0847 3.81204 14.0949 3.81883C14.105 3.82561 14.1127 3.83551 14.1168 3.84705L14.8062 5.57684L14.7498 5.65831H9.25333C9.24458 5.66272 9.23492 5.66502 9.22512 5.66502C9.21533 5.66502 9.20567 5.66272 9.19692 5.65831L9.88006 3.84705ZM18.7672 18.8887C18.7672 19.0615 18.7331 19.2327 18.667 19.3924C18.6008 19.552 18.5039 19.6971 18.3817 19.8194C18.2595 19.9416 18.1144 20.0385 17.9547 20.1047C17.795 20.1708 17.6239 20.2048 17.451 20.2048H6.54583C6.37299 20.2048 6.20185 20.1708 6.04216 20.1047C5.88248 20.0385 5.73739 19.9416 5.61518 19.8194C5.49296 19.6971 5.39601 19.552 5.32987 19.3924C5.26373 19.2327 5.22969 19.0615 5.22969 18.8887V6.59842C5.22969 6.24935 5.36835 5.91459 5.61518 5.66776C5.862 5.42094 6.19677 5.28227 6.54583 5.28227H8.1064C8.05755 5.4421 8.04401 5.61063 8.06674 5.7762C8.08946 5.94177 8.14791 6.10043 8.23802 6.24118C8.34686 6.40186 8.49352 6.53333 8.6651 6.62404C8.83668 6.71475 9.02791 6.7619 9.22199 6.76137H14.7185C14.9218 6.77026 15.124 6.72715 15.3061 6.63613C15.4881 6.54511 15.644 6.40918 15.7588 6.24118C15.8513 6.1015 15.913 5.94382 15.94 5.77853C15.967 5.61324 15.9587 5.4441 15.9155 5.28227H17.451C17.8001 5.28227 18.1349 5.42094 18.3817 5.66776C18.6285 5.91459 18.7672 6.24935 18.7672 6.59842V18.8887Z"
+                                            fill="#343434" />
+                                    </svg>
+                                </span>
+                                <span class="d-md-inline-block d-none re-btn fs-very-low-12">Results</span>
+                                <span class="d-md-none d-inline-block re-btn">Results </span>
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center col-5">
+                            <div class="folder-date text-nowrap">
+                                <span class="folder-createdate fs-very-low-12">{{item.createdDateTime |
+                                    date:'dd-MMM-yyyy'}}</span>
+                            </div>
+                            <div class="present"
+                                [class.disableds]="!item?.slides || item.slides?.length === 0"
+                                (click)="item?.slides && item.slides?.length > 0 && item.slides[0]?.slideTypeImage ? presentThePresentation(item?.id, item.slides[0].slideId) : null">
+                                <button data-bs-toggle="modal" class="btn btn-present px-3 me-2 md-none"
+                                    *ngIf="Hovered[i]"
+                                    [disabled]="!item?.slides || item.slides?.length === 0 || !item.slides[0]?.slideTypeImage">
+                                    <span class="align-text-bottom me-2 icon-d"></span>
+                                    <span class="d-md-inline-block d-none p-btn fs-very-low-12">Present</span>
+                                    <span class="d-md-none d-inline-block p-btn">Present </span>
+                                </button>
+                            </div>
+                            <div class="head-svg">
+                                <div class="d-flex p-svg justify-content-end"
+                                    (click)="showDeletePresentationDialog(item.id)" *ngIf="Hovered[i]">
+                                    <div class="delete-icon md-none cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                            viewBox="0 0 20 20" fill="none">
+                                            <mask id="mask0_2515_128289" style="mask-type: alpha;"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                <rect width="20" height="20" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_2515_128289)">
+                                                <path
+                                                    d="M5.83398 17.5C5.37565 17.5 4.98329 17.3368 4.6569 17.0104C4.33051 16.684 4.16732 16.2917 4.16732 15.8333V5H3.33398V3.33333H7.50065V2.5H12.5007V3.33333H16.6673V5H15.834V15.8333C15.834 16.2917 15.6708 16.684 15.3444 17.0104C15.018 17.3368 14.6257 17.5 14.1673 17.5H5.83398ZM14.1673 5H5.83398V15.8333H14.1673V5ZM7.50065 14.1667H9.16732V6.66667H7.50065V14.1667ZM10.834 14.1667H12.5007V6.66667H10.834V14.1667Z"
+                                                    fill="#383838" />
+                                            </g>
+                                        </svg>
+                                        <span class="tooltiptext">Delete</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="toggle position-relative">
+                                <button type="button" class="mat-menu-trigger"
+                                    aria-label="Actions for event Presentation2" aria-haspopup="menu"
+                                    aria-expanded="false" (click)="togglePresentationMenu($event, item)">
+                                    <svg width="24" height="24" fill="rgb(130, 130, 130)" viewBox="0 0 24 24"
+                                        class="icon-size20 f-grey1 f-h-blue toggle-icon">
+                                        <path
+                                            d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <div id="presentation-menu" class="view-menu menu-list" *ngIf="item.showMenu" [ngClass]="{'flip-up': item.menuFlipUp}">
+                                    <ul>
+                                        <li class="d-flex" (click)="handlePresentationClick(item)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                viewBox="0 0 20 20" fill="none">
+                                                <mask id="mask0_4082_21573" style="mask-type: alpha;"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_4082_21573)">
+                                                    <path
+                                                        d="M1.66797 20.0003V16.667H18.3346V20.0003H1.66797ZM5.0013 13.3337H6.16797L12.668 6.85449L11.4805 5.66699L5.0013 12.167V13.3337ZM3.33464 15.0003V11.4587L12.668 2.14616C12.8207 1.99338 12.9978 1.87533 13.1992 1.79199C13.4006 1.70866 13.6124 1.66699 13.8346 1.66699C14.0569 1.66699 14.2721 1.70866 14.4805 1.79199C14.6888 1.87533 14.8763 2.00033 15.043 2.16699L16.1888 3.33366C16.3555 3.48644 16.477 3.66699 16.5534 3.87533C16.6298 4.08366 16.668 4.29894 16.668 4.52116C16.668 4.72949 16.6298 4.93435 16.5534 5.13574C16.477 5.33713 16.3555 5.52116 16.1888 5.68783L6.8763 15.0003H3.33464Z"
+                                                        fill="#525252" />
+                                                </g>
+                                            </svg>
+                                            <span class="pl-10 fs-very-low-12"> Edit</span>
+                                        </li>
+                                        <li class="d-flex" (click)="renamePresentation(item.id, item.presentationName)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                viewBox="0 0 18 18" fill="none">
+                                                <path
+                                                    d="M2.16667 17.5C1.70833 17.5 1.31597 17.3368 0.989583 17.0104C0.663194 16.684 0.5 16.2917 0.5 15.8333V4.16667C0.5 3.70833 0.663194 3.31597 0.989583 2.98958C1.31597 2.66319 1.70833 2.5 2.16667 2.5H9.60417L7.9375 4.16667H2.16667V15.8333H13.8333V10.0417L15.5 8.375V15.8333C15.5 16.2917 15.3368 16.684 15.0104 17.0104C14.684 17.3368 14.2917 17.5 13.8333 17.5H2.16667ZM5.5 12.5V8.95833L13.1458 1.3125C13.3125 1.14583 13.5 1.02083 13.7083 0.9375C13.9167 0.854167 14.125 0.8125 14.3333 0.8125C14.5556 0.8125 14.7674 0.854167 14.9688 0.9375C15.1701 1.02083 15.3542 1.14583 15.5208 1.3125L16.6875 2.5C16.8403 2.66667 16.9583 2.85069 17.0417 3.05208C17.125 3.25347 17.1667 3.45833 17.1667 3.66667C17.1667 3.875 17.1285 4.07986 17.0521 4.28125C16.9757 4.48264 16.8542 4.66667 16.6875 4.83333L9.04167 12.5H5.5ZM7.16667 10.8333H8.33333L13.1667 6L12.5833 5.41667L11.9792 4.83333L7.16667 9.64583V10.8333Z"
+                                                    fill="#525252" />
+                                            </svg>
+                                            <span class="pl-10 fs-very-low-12"> Rename</span>
+                                        </li>
+                                        <li class="d-flex align-items-center"
+                                            (click)="(item.slides && item.slides.length > 0 && customerLimitationCount?.balancePresentationLimit > 0) ? duplicatePresentation(item?.id) : null"
+                                            [class.disabled]="!item.slides || item.slides.length === 0 || customerLimitationCount?.balancePresentationLimit <= 0"
+                                            [ngStyle]="{'cursor': (!item.slides || item.slides.length === 0 || customerLimitationCount?.balancePresentationLimit <= 0) ? 'not-allowed' : 'pointer'}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                                                viewBox="0 0 17 20" fill="none">
+                                                <path
+                                                    d="M14.8346 15.8335H5.66797C5.20964 15.8335 4.81727 15.6703 4.49089 15.3439C4.1645 15.0175 4.0013 14.6252 4.0013 14.1668V2.50016C4.0013 2.04183 4.1645 1.64947 4.49089 1.32308C4.81727 0.996691 5.20964 0.833496 5.66797 0.833496H11.5013L16.5013 5.8335V14.1668C16.5013 14.6252 16.3381 15.0175 16.0117 15.3439C15.6853 15.6703 15.293 15.8335 14.8346 15.8335ZM10.668 6.66683V2.50016H5.66797V14.1668H14.8346V6.66683H10.668ZM2.33464 19.1668C1.8763 19.1668 1.48394 19.0036 1.15755 18.6772C0.831163 18.3509 0.667969 17.9585 0.667969 17.5002V5.8335H2.33464V17.5002H11.5013V19.1668H2.33464Z"
+                                                    fill="#525252" />
+                                            </svg>
+                                            <ng-container
+                                                *ngIf="(customerLimitationCount?.balancePresentationLimit <= 0);else noDublicatePresentation">
+                                                <div class="layout-label">
+                                                    <span class="pl-10 fs-very-low-12">Duplicate</span>
+                                                    <div class="pricing-icon-container">
+                                                        <div class="pricing-icon-recently-view slide-list-hover right-side-bar-tooltip-top"
+                                                            data-tooltip="Need subscription">
+                                                            <img src="/assets/images/Crown.svg" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                            <ng-template #noDublicatePresentation>
+                                                <span class="pl-10 fs-very-low-12">Duplicate</span>
+                                            </ng-template>
+                                        </li>
+                                        <li class="d-flex align-items-center" *ngIf="!IntegrationMediumOffice"
+                                            [class.disabled]="((customerPlan?.remote && item.slides?.length > 0)  ? '' : 'disabled')"
+                                            [attr.data-bs-toggle]="customerPlan?.remote ? null : 'tooltip'"
+                                            [attr.data-bs-title]="customerPlan?.remote ? null : 'Need subscription'"
+                                            data-tooltip="Slidea Remote" [attr.data-bs-placement]="'top'"
+                                            [ngStyle]="{'cursor': (customerPlan?.remote && item.slides?.length > 0) ? '' : 'not-allowed'}"
+                                            (click)="openSlideOneRemote(item?.id, item.slides[0].slideId)">
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="black"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M15.625 17.5C15.5255 17.5 15.4302 17.5395 15.3598 17.6098C15.2895 17.6802 15.25 17.7755 15.25 17.875V20.0425C15.25 20.0644 15.2413 20.0854 15.2258 20.1008C15.2104 20.1163 15.1894 20.125 15.1675 20.125H1.8325C1.81062 20.125 1.78964 20.1163 1.77416 20.1008C1.75869 20.0854 1.75 20.0644 1.75 20.0425V10.4575C1.75 10.4356 1.75869 10.4146 1.77416 10.3992C1.78964 10.3837 1.81062 10.375 1.8325 10.375H5.875C5.97446 10.375 6.06984 10.3355 6.14016 10.2652C6.21049 10.1948 6.25 10.0995 6.25 10C6.25 9.90054 6.21049 9.80516 6.14016 9.73483C6.06984 9.66451 5.97446 9.625 5.875 9.625H1.8325C1.61171 9.625 1.39996 9.71271 1.24383 9.86883C1.08771 10.025 1 10.2367 1 10.4575L1 20.0425C1 20.2633 1.08771 20.475 1.24383 20.6312C1.39996 20.7873 1.61171 20.875 1.8325 20.875H8.125V22.375H5.125C5.02554 22.375 4.93016 22.4145 4.85984 22.4848C4.78951 22.5552 4.75 22.6505 4.75 22.75C4.75 22.8495 4.78951 22.9448 4.85984 23.0152C4.93016 23.0855 5.02554 23.125 5.125 23.125H11.875C11.9745 23.125 12.0698 23.0855 12.1402 23.0152C12.2105 22.9448 12.25 22.8495 12.25 22.75C12.25 22.6505 12.2105 22.5552 12.1402 22.4848C12.0698 22.4145 11.9745 22.375 11.875 22.375H8.875V20.875H15.1675C15.3883 20.875 15.6 20.7873 15.7562 20.6312C15.9123 20.475 16 20.2633 16 20.0425V17.875C16 17.7755 15.9605 17.6802 15.8902 17.6098C15.8198 17.5395 15.7245 17.5 15.625 17.5Z"
+                                                    fill="black" stroke="black" stroke-width="0.5" />
+                                                <path
+                                                    d="M14.5 0.875C12.8189 0.875 11.1755 1.37352 9.77766 2.30751C8.37984 3.2415 7.29037 4.56902 6.64703 6.12219C6.00368 7.67536 5.83535 9.38443 6.16333 11.0333C6.4913 12.6821 7.30085 14.1967 8.48959 15.3854C9.67834 16.5742 11.1929 17.3837 12.8417 17.7117C14.4906 18.0396 16.1996 17.8713 17.7528 17.228C19.306 16.5846 20.6335 15.4952 21.5675 14.0973C22.5015 12.6995 23 11.0561 23 9.375C23 7.12066 22.1045 4.95865 20.5104 3.36459C18.9164 1.77053 16.7543 0.875 14.5 0.875ZM14.5 16.8125C13.029 16.8125 11.591 16.3763 10.3679 15.5591C9.14486 14.7418 8.19158 13.5802 7.62865 12.2212C7.06572 10.8622 6.91844 9.36675 7.20541 7.92401C7.49239 6.48128 8.20074 5.15605 9.2409 4.11589C10.281 3.07574 11.6063 2.36739 13.049 2.08041C14.4918 1.79343 15.9872 1.94072 17.3462 2.50365C18.7052 3.06657 19.8668 4.01986 20.6841 5.24295C21.5013 6.46604 21.9375 7.904 21.9375 9.375C21.9375 11.3475 21.1539 13.2393 19.7591 14.6341C18.3643 16.0289 16.4725 16.8125 14.5 16.8125Z"
+                                                    fill="black" stroke="black" stroke-width="0.5" />
+                                                <path
+                                                    d="M17.8801 5.1158C17.8421 5.07909 17.797 5.04997 17.7474 5.0301C17.6977 5.01023 17.6445 5 17.5908 5C17.537 5 17.4838 5.01023 17.4342 5.0301C17.3845 5.04997 17.3394 5.07909 17.3015 5.1158L15.1199 7.22031C15.0819 7.25698 15.0517 7.30053 15.0312 7.34846C15.0106 7.39639 15 7.44777 15 7.49966C15 7.55155 15.0106 7.60293 15.0312 7.65086C15.0517 7.6988 15.0819 7.74234 15.1199 7.77901L17.3015 9.88352C17.3778 9.95767 17.4815 9.99956 17.5897 10C17.6437 10 17.6971 9.98977 17.747 9.96978C17.7968 9.94979 17.842 9.92047 17.8801 9.88352C17.9181 9.84685 17.9483 9.8033 17.9688 9.75537C17.9894 9.70744 18 9.65606 18 9.60417C18 9.55228 17.9894 9.5009 17.9688 9.45297C17.9483 9.40504 17.9181 9.36149 17.8801 9.32482L15.9889 7.49867L17.8801 5.67253C17.9562 5.59855 17.999 5.49848 17.999 5.39417C17.999 5.28985 17.9562 5.18978 17.8801 5.1158Z"
+                                                    fill="black" stroke="black" stroke-width="0.5" />
+                                                <path
+                                                    d="M12.6985 8.36571C12.6217 8.29162 12.5177 8.25 12.4092 8.25C12.3006 8.25 12.1966 8.29162 12.1198 8.36571C12.0431 8.4398 12 8.54029 12 8.64507C12 8.74985 12.0431 8.85033 12.1198 8.92442L14.0111 10.7506L12.1198 12.5768C12.0437 12.6508 12.0009 12.7508 12.0009 12.8552C12.0009 12.9595 12.0437 13.0595 12.1198 13.1335C12.1579 13.1705 12.2031 13.1998 12.2529 13.2198C12.3028 13.2398 12.3562 13.25 12.4102 13.25C12.5185 13.2496 12.6221 13.2077 12.6985 13.1335L14.8801 11.029C14.9181 10.9923 14.9482 10.9488 14.9688 10.9008C14.9894 10.8529 15 10.8015 15 10.7496C15 10.6977 14.9894 10.6463 14.9688 10.5984C14.9482 10.5505 14.9181 10.5069 14.8801 10.4703L12.6985 8.36571Z"
+                                                    fill="black" stroke="black" stroke-width="0.5" />
+                                            </svg>
+                                            <span class="ps-2 fs-very-low-12">Open Slidea Remote</span>
+                                        </li>
+                                        <li class="d-flex"
+                                            (click)="openSelectFolderModal(item.id, item.presentationName)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                viewBox="0 0 20 20" fill="none">
+                                                <mask id="mask0_4038_120452" style="mask-type: alpha;"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                                    primary-svg-sec
+                                                </mask>
+                                                <g mask="url(#mask0_4038_120452)">
+                                                    <path
+                                                        d="M10.168 11.6668L8.8138 13.021L9.98047 14.1877L13.3346 10.8335L9.98047 7.47933L8.8138 8.646L10.168 10.0002H6.66797V11.6668H10.168ZM3.33464 16.6668C2.8763 16.6668 2.48394 16.5036 2.15755 16.1772C1.83116 15.8509 1.66797 15.4585 1.66797 15.0002V5.00016C1.66797 4.54183 1.83116 4.14947 2.15755 3.82308C2.48394 3.49669 2.8763 3.3335 3.33464 3.3335H8.33464L10.0013 5.00016H16.668C17.1263 5.00016 17.5187 5.16336 17.8451 5.48975C18.1714 5.81613 18.3346 6.2085 18.3346 6.66683V15.0002C18.3346 15.4585 18.1714 15.8509 17.8451 16.1772C17.5187 16.5036 17.1263 16.6668 16.668 16.6668H3.33464ZM3.33464 15.0002H16.668V6.66683H9.3138L7.64714 5.00016H3.33464V15.0002Z"
+                                                        fill="#525252" />
+                                                </g>
+                                            </svg>
+                                            <span class="pl-10 fs-very-low-12"> Move to Folder</span>
+                                        </li>
+                                        <li class="d-flex" *ngIf="!IntegrationMediumOffice"
+                                            (click)="(item.slides.length > 0 && !isTemplateButtonDisabled) && createTemplate(item.id, item.presentationName,item.slides)"
+                                            [class.disabled]="(!item.slides || item.slides.length === 0) || isTemplateButtonDisabled">
+                                            <img src="assets/new-icons/create_template.svg">
+                                            <ng-container
+                                                *ngIf="(customerLimitationCount?.templateCount >= customerPlan?.create_presentation_templates);else noAccessText">
+                                                <div class="layout-label">
+                                                    <span class="pl-10 fs-very-low-12"> Create Template</span>
+                                                    <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top"
+                                                        data-tooltip="Need subscription">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" role="img"
+                                                            preserveAspectRatio="xMidYMid meet" width="0.625rem"
+                                                            height="0.625rem" aria-label="Star" viewBox="0 0 16 16">
+                                                            <g fill="currentColor" fill-rule="evenodd"
+                                                                clip-rule="evenodd">
+                                                                <path
+                                                                    d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z">
+                                                                </path>
+                                                            </g>
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                            <ng-template #noAccessText>
+                                                <span class="fs-very-low-12 ms-2"> Create Template</span>
+                                            </ng-template>
+                                        </li>
+                                        <li class="d-flex" (click)="showDeletePresentationDialog(item.id)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                viewBox="0 0 20 20" fill="none">
+                                                <mask id="mask0_4038_31863" style="mask-type: alpha;"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_4038_31863)">
+                                                    <path
+                                                        d="M5.83203 17.5C5.3737 17.5 4.98134 17.3368 4.65495 17.0104C4.32856 16.684 4.16536 16.2917 4.16536 15.8333V5H3.33203V3.33333H7.4987V2.5H12.4987V3.33333H16.6654V5H15.832V15.8333C15.832 16.2917 15.6688 16.684 15.3424 17.0104C15.0161 17.3368 14.6237 17.5 14.1654 17.5H5.83203ZM14.1654 5H5.83203V15.8333H14.1654V5ZM7.4987 14.1667H9.16536V6.66667H7.4987V14.1667ZM10.832 14.1667H12.4987V6.66667H10.832V14.1667Z"
+                                                        fill="#FF1717" />
+                                                </g>
+                                            </svg>
+                                            <span class="pl-10 fs-very-low-12 delete">Delete</span>
+                                        </li>
+                                    </ul>
+                                    <div class="presentation-arrow" [ngClass]="{'arrow-flip-up': item.menuFlipUp}"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="infinite-scroll-loader" *ngIf="_mypresentationsService.isLoadingMore">
+                        Loading<span class="dot-1">.</span><span class="dot-2">.</span><span class="dot-3">.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- subfolders and presentations -->
+<section class="section-content-part list" *ngIf="_mypresentationsService.isInSubFolder">
+    <div class="container-fluid px-0">
+        <ng-container *ngIf="subFolders.length > 0 || presentations.length > 0">
+            <div class="presentation-shadow-content rounded">
+                <div class="section-content-part-element">
+                    <div class="folder-row">
+                        <div class="folder-container folder-container-{{i}}" (mouseenter)="folderhover(i, true)"
+                            (mouseleave)="folderhover(i, false)" *ngFor="let folder of subFolders; let i = index">
+                            <a [routerLink]="['/app/mypresentations']" [queryParams]="{ Id: folder.id }"
+                                queryParamsHandling="merge" (click)="onFolderClick(folder.id, folder.folderName)"
+                                class="col-7 ps-0 text-decoration-hover-none">
+                                <div class="folder">
+                                    <div class="folder-content">
+                                        <div class="folder-icon">
+                                            <ng-container *ngIf="folder?.presentationid_count > 0">
+                                                <!-- Filled folder icon -->
+                                                <svg width="99" height="56" viewBox="0 0 99 56" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <g clip-path="url(#clip0_1053_8565)">
+                                                        <rect width="99" height="56" rx="2" fill="#F6F7FC" />
+                                                        <path
+                                                            d="M32.0839 40.0632C32.0296 39.9045 32 39.7344 32 39.5573V15.558C32 14.6975 32.6975 14 33.558 14H44.0671C44.577 14 45.0694 14.1877 45.4501 14.5271L48.2854 17.0568C48.6661 17.3962 49.1581 17.5839 49.6684 17.5839H61.4984C62.359 17.5839 63.0565 18.2814 63.0565 19.142V21.1733L32.0839 40.0632Z"
+                                                            fill="#94A0DB" />
+                                                        <path
+                                                            d="M34.625 31.5995V20.16C34.625 19.8149 34.9047 19.5352 35.2498 19.5352H60.1706C60.5157 19.5352 60.7954 19.8149 60.7954 20.16V30.0209L34.625 31.5995Z"
+                                                            fill="#E8E8E8" />
+                                                        <path
+                                                            d="M35.1875 32.3183V20.8787C35.1875 20.5336 35.4672 20.2539 35.8123 20.2539H60.7331C61.0782 20.2539 61.3579 20.5336 61.3579 20.8787V30.7397L35.1875 32.3183Z"
+                                                            fill="white" />
+                                                        <path
+                                                            d="M67.874 23.1471L62.9077 41.0152C62.7134 41.7146 62.0765 42.1985 61.3506 42.1985H33.6171C32.5505 42.1985 31.7764 41.1836 32.0585 40.155L36.1995 25.0558C36.3851 24.379 37.0003 23.9098 37.702 23.9098H51.0028C51.3736 23.9098 51.7377 23.8106 52.0572 23.6224L55.729 21.4594C56.0485 21.2711 56.4125 21.1719 56.7834 21.1719H66.3729C67.4033 21.1719 68.1499 22.1543 67.874 23.1471Z"
+                                                            fill="#B3BBE6" />
+                                                        <path
+                                                            d="M109 5C109 12.1797 103.18 18 96 18C88.8203 18 83 12.1797 83 5C83 -2.1797 88.8203 -8 96 -8C103.18 -8 109 -2.1797 109 5ZM87.0376 5C87.0376 9.94982 91.0502 13.9624 96 13.9624C100.95 13.9624 104.962 9.94982 104.962 5C104.962 0.0501804 100.95 -3.96244 96 -3.96244C91.0502 -3.96244 87.0376 0.0501804 87.0376 5Z"
+                                                            fill="#E4E7F6" />
+                                                        <path
+                                                            d="M10 53C10 60.1797 4.1797 66 -3 66C-10.1797 66 -16 60.1797 -16 53C-16 45.8203 -10.1797 40 -3 40C4.1797 40 10 45.8203 10 53ZM-11.9624 53C-11.9624 57.9498 -7.94982 61.9624 -3 61.9624C1.94982 61.9624 5.96244 57.9498 5.96244 53C5.96244 48.0502 1.94982 44.0376 -3 44.0376C-7.94982 44.0376 -11.9624 48.0502 -11.9624 53Z"
+                                                            fill="#E4E7F6" />
+                                                    </g>
+                                                    <rect x="0.5" y="0.5" width="98" height="55" rx="1.5"
+                                                        stroke="#F0F1FA" />
+                                                    <defs>
+                                                        <clipPath id="clip0_1053_8565">
+                                                            <rect width="99" height="56" rx="2" fill="white" />
+                                                        </clipPath>
+                                                    </defs>
+                                                </svg>
+                                            </ng-container>
+                                            <ng-container *ngIf="folder?.presentationid_count === 0">
+                                                <!-- Empty folder icon -->
+                                                <svg width="99" height="56" viewBox="0 0 99 56" fill="none"
+                                                    xmlns="http://www.w3.org/2000/svg">
+                                                    <g clip-path="url(#clip0_1053_18650)">
+                                                        <rect width="99" height="56" rx="2" fill="#F6F7FC" />
+                                                        <path
+                                                            d="M32.0839 40.0632C32.0296 39.9045 32 39.7344 32 39.5573V15.558C32 14.6975 32.6975 14 33.558 14H44.0671C44.577 14 45.0694 14.1877 45.4501 14.5271L48.2854 17.0568C48.6661 17.3962 49.1581 17.5839 49.6684 17.5839H61.4984C62.359 17.5839 63.0565 18.2814 63.0565 19.142V21.1733L32.0839 40.0632Z"
+                                                            fill="#94A0DB" />
+                                                        <path
+                                                            d="M34.625 31.5995V20.16C34.625 19.8149 34.9047 19.5352 35.2498 19.5352H60.1706C60.5157 19.5352 60.7954 19.8149 60.7954 20.16V30.0209L34.625 31.5995Z"
+                                                            fill="#94A0DB" />
+                                                        <path
+                                                            d="M35.1875 32.3183V20.8787C35.1875 20.5336 35.4672 20.2539 35.8123 20.2539H60.7331C61.0782 20.2539 61.3579 20.5336 61.3579 20.8787V30.7397L35.1875 32.3183Z"
+                                                            fill="#94A0DB" />
+                                                        <path
+                                                            d="M67.874 23.1471L62.9077 41.0152C62.7134 41.7146 62.0765 42.1985 61.3506 42.1985H33.6171C32.5505 42.1985 31.7764 41.1836 32.0585 40.155L36.1995 25.0558C36.3851 24.379 37.0003 23.9098 37.702 23.9098H51.0028C51.3736 23.9098 51.7377 23.8106 52.0572 23.6224L55.729 21.4594C56.0485 21.2711 56.4125 21.1719 56.7834 21.1719H66.3729C67.4033 21.1719 68.1499 22.1543 67.874 23.1471Z"
+                                                            fill="#B3BBE6" />
+                                                        <path
+                                                            d="M109 5C109 12.1797 103.18 18 96 18C88.8203 18 83 12.1797 83 5C83 -2.1797 88.8203 -8 96 -8C103.18 -8 109 -2.1797 109 5ZM87.0376 5C87.0376 9.94982 91.0502 13.9624 96 13.9624C100.95 13.9624 104.962 9.94982 104.962 5C104.962 0.0501804 100.95 -3.96244 96 -3.96244C91.0502 -3.96244 87.0376 0.0501804 87.0376 5Z"
+                                                            fill="#E4E7F6" />
+                                                        <path
+                                                            d="M10 53C10 60.1797 4.1797 66 -3 66C-10.1797 66 -16 60.1797 -16 53C-16 45.8203 -10.1797 40 -3 40C4.1797 40 10 45.8203 10 53ZM-11.9624 53C-11.9624 57.9498 -7.94982 61.9624 -3 61.9624C1.94982 61.9624 5.96244 57.9498 5.96244 53C5.96244 48.0502 1.94982 44.0376 -3 44.0376C-7.94982 44.0376 -11.9624 48.0502 -11.9624 53Z"
+                                                            fill="#E4E7F6" />
+                                                    </g>
+                                                    <rect x="0.5" y="0.5" width="98" height="55" rx="1.5"
+                                                        stroke="#F0F1FA" />
+                                                    <defs>
+                                                        <clipPath id="clip0_1053_18650">
+                                                            <rect width="99" height="56" rx="2" fill="white" />
+                                                        </clipPath>
+                                                    </defs>
+                                                </svg>
+                                            </ng-container>
+                                        </div>
+                                        <div class="folder-name">
+                                            <span
+                                                class="folder-truncatename fs-very-low">{{truncateText(folder.folderName,22)}}</span>
+                                            <div class="folder-pname">
+                                                <span class="presentaion-count fs-very-low-12 mv-flex">
+                                                    <svg width="23" height="23" viewBox="0 0 23 23" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <rect x="3.65398" y="3.60711" width="15.4995" height="12.1782"
+                                                            rx="1.10711" stroke="#999999" stroke-width="2.21422" />
+                                                        <path d="M11.4073 15.7852L9.7466 17.9994L8.08594 20.2136"
+                                                            stroke="#999999" stroke-width="1.10711"
+                                                            stroke-linecap="round" />
+                                                        <path d="M11.4052 15.7852L13.0659 17.9994L14.7266 20.2136"
+                                                            stroke="#999999" stroke-width="1.10711"
+                                                            stroke-linecap="round" />
+                                                        <path d="M8.08594 8.03516L8.08594 10.2494L8.08594 12.4636"
+                                                            stroke="#999999" stroke-width="1.32853"
+                                                            stroke-linecap="round" />
+                                                        <path d="M14.7266 6.92969V9.69746V12.4652" stroke="#999999"
+                                                            stroke-width="1.32853" stroke-linecap="round" />
+                                                        <path d="M11.4062 9.14062L11.4063 10.8013L11.4063 12.462"
+                                                            stroke="#999999" stroke-width="1.32853"
+                                                            stroke-linecap="round" />
+                                                    </svg>
+                                                    {{folder.PresentationId?.length || 0}}
+                                                </span>
+                                                <div class="vertical-line md-none"></div>
+                                                <span class="edited-minutes fs-very-low-12 md-none">Edited
+                                                    {{folder.updatedDateTime | timeAgo}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                            <div class="d-flex align-items-center col-5">
+                                <div class="folder-date text-nowrap">
+                                    <span class="folder-createdate fs-very-low-12">{{ folder.createdDateTime |
+                                        date:'dd-MMM-yyyy' }}</span>
+                                </div>
+                                <div class="open">
+                                    <button data-bs-toggle="modal" [routerLink]="['/app/mypresentations']"
+                                        [queryParams]="{ Id: folder.id }" queryParamsHandling="merge"
+                                        class="btn btn-present px-3 me-2 md-none" *ngIf="IsHovered[i]"
+                                        (click)="onFolderClick(folder.id, folder.folderName)">
+                                        <span class="align-text-bottom me-2 icon-d"> </span>
+                                        <span class="d-md-inline-block d-none p-btn fs-very-low-12">Open</span>
+                                        <span class="d-md-none d-inline-block p-btn">Open </span>
+                                    </button>
+                                </div>
+                                <div class="center-svg">
+                                    <div class="d-flex p-svg justify-content-end" *ngIf="IsHovered[i]">
+                                        <div class="delete-icon md-none cursor-pointer" data-bs-toggle="modal"
+                                            data-bs-target="#FolderDelete"
+                                            (click)="showDeleteConfirmationDialog(folder.id)">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                viewBox="0 0 20 20" fill="none">
+                                                <mask id="mask0_2515_128289" style="mask-type: alpha;"
+                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                                </mask>
+                                                <g mask="url(#mask0_2515_128289)">
+                                                    <path
+                                                        d="M5.83398 17.5C5.37565 17.5 4.98329 17.3368 4.6569 17.0104C4.33051 16.684 4.16732 16.2917 4.16732 15.8333V5H3.33398V3.33333H7.50065V2.5H12.5007V3.33333H16.6673V5H15.834V15.8333C15.834 16.2917 15.6708 16.684 15.3444 17.0104C15.018 17.3368 14.6257 17.5 14.1673 17.5H5.83398ZM14.1673 5H5.83398V15.8333H14.1673V5ZM7.50065 14.1667H9.16732V6.66667H7.50065V14.1667ZM10.834 14.1667H12.5007V6.66667H10.834V14.1667Z"
+                                                        fill="#383838" />
+                                                </g>
+                                            </svg>
+                                            <span class="tooltiptext">Delete</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="menu-content position-relative">
+                                    <button type="button" class="mat-menu-trigger"
+                                        aria-label="Actions for event Presentation2" aria-haspopup="menu"
+                                        aria-expanded="false" (click)="toggleFolderMenu($event, folder)">
+                                        <svg width="24" height="24" fill="rgb(130, 130, 130)" viewBox="0 0 24 24"
+                                            class="icon-size20 f-grey1 f-h-blue toggle-icon">
+                                            <path
+                                                d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                    <div class="popup popup-view" id="folder-menu" *ngIf="folder.showMenu">
+                                        <ul>
+                                            <li class="d-flex" (click)="renameFolder(folder)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                    viewBox="0 0 18 18" fill="none">
+                                                    <path
+                                                        d="M2.16667 17.5C1.70833 17.5 1.31597 17.3368 0.989583 17.0104C0.663194 16.684 0.5 16.2917 0.5 15.8333V4.16667C0.5 3.70833 0.663194 3.31597 0.989583 2.98958C1.31597 2.66319 1.70833 2.5 2.16667 2.5H9.60417L7.9375 4.16667H2.16667V15.8333H13.8333V10.0417L15.5 8.375V15.8333C15.5 16.2917 15.3368 16.684 15.0104 17.0104C14.684 17.3368 14.2917 17.5 13.8333 17.5H2.16667ZM5.5 12.5V8.95833L13.1458 1.3125C13.3125 1.14583 13.5 1.02083 13.7083 0.9375C13.9167 0.854167 14.125 0.8125 14.3333 0.8125C14.5556 0.8125 14.7674 0.854167 14.9688 0.9375C15.1701 1.02083 15.3542 1.14583 15.5208 1.3125L16.6875 2.5C16.8403 2.66667 16.9583 2.85069 17.0417 3.05208C17.125 3.25347 17.1667 3.45833 17.1667 3.66667C17.1667 3.875 17.1285 4.07986 17.0521 4.28125C16.9757 4.48264 16.8542 4.66667 16.6875 4.83333L9.04167 12.5H5.5ZM7.16667 10.8333H8.33333L13.1667 6L12.5833 5.41667L11.9792 4.83333L7.16667 9.64583V10.8333Z"
+                                                        fill="#525252" />
+                                                </svg>
+                                                <span class="ps-2 folder-text fs-very-low"> Rename</span>
+                                            </li>
+                                            <!-- <li class="d-flex" data-bs-toggle="modal" (click)="moveFolder(folder)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    viewBox="0 0 20 20" fill="none">
+                                                    <mask id="mask0_4038_120452" style="mask-type: alpha;"
+                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                        <rect width="20" height="20" fill="#D9D9D9" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_4038_120452)">
+                                                        <path
+                                                            d="M10.168 11.6668L8.8138 13.021L9.98047 14.1877L13.3346 10.8335L9.98047 7.47933L8.8138 8.646L10.168 10.0002H6.66797V11.6668H10.168ZM3.33464 16.6668C2.8763 16.6668 2.48394 16.5036 2.15755 16.1772C1.83116 15.8509 1.66797 15.4585 1.66797 15.0002V5.00016C1.66797 4.54183 1.83116 4.14947 2.15755 3.82308C2.48394 3.49669 2.8763 3.3335 3.33464 3.3335H8.33464L10.0013 5.00016H16.668C17.1263 5.00016 17.5187 5.16336 17.8451 5.48975C18.1714 5.81613 18.3346 6.2085 18.3346 6.66683V15.0002C18.3346 15.4585 18.1714 15.8509 17.8451 16.1772C17.5187 16.5036 17.1263 16.6668 16.668 16.6668H3.33464ZM3.33464 15.0002H16.668V6.66683H9.3138L7.64714 5.00016H3.33464V15.0002Z"
+                                                            fill="#525252" />
+                                                    </g>
+                                                </svg>
+                                                <span class="ps-2 folder-text fs-very-low">Move to Folder</span>
+                                            </li> -->
+                                            <li class="d-flex" data-bs-toggle="modal" data-bs-target="#FolderDelete"
+                                                (click)="showDeleteConfirmationDialog(folder.id)">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    viewBox="0 0 20 20" fill="none">
+                                                    <mask id="mask0_4038_31863" style="mask-type: alpha;"
+                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                        <rect width="20" height="20" fill="#D9D9D9" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_4038_31863)">
+                                                        <path
+                                                            d="M5.83203 17.5C5.3737 17.5 4.98134 17.3368 4.65495 17.0104C4.32856 16.684 4.16536 16.2917 4.16536 15.8333V5H3.33203V3.33333H7.4987V2.5H12.4987V3.33333H16.6654V5H15.832V15.8333C15.832 16.2917 15.6688 16.684 15.3424 17.0104C15.0161 17.3368 14.6237 17.5 14.1654 17.5H5.83203ZM14.1654 5H5.83203V15.8333H14.1654V5ZM7.4987 14.1667H9.16536V6.66667H7.4987V14.1667ZM10.832 14.1667H12.4987V6.66667H10.832V14.1667Z"
+                                                            fill="#FF1717" />
+                                                    </g>
+                                                </svg>
+                                                <span class="ps-2 folder-text fs-very-low delete"> Delete</span>
+                                            </li>
+                                        </ul>
+                                        <div class="popup-arrow"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="list-row">
+                        <div>
+                            <div class="userpresentation userpresentation-{{i}}"
+                                *ngFor="let item of presentations; let i = index"
+                                (mouseenter)="toggleHoverClass(i, true)" (mouseleave)="toggleHoverClass(i, false)">
+                                <div class="d-flex align-items-center col-5">
+                                    <div class="form-check me-5 custom-checkbox">
+                                        <input class="form-check-input" type="checkbox"
+                                            [checked]="_mypresentationsService.isPresentationSelected(item.id)"
+                                            (change)="onPresentationCheckboxChange(item.id, $event)">
+                                    </div>
+                                    <a href="javascript:void(0);" class="text-decoration-hover-none list-anchor"
+                                        (click)="handlePresentationClick(item)">
+                                        <div class="d-flex align-items-center hover-effect" style="min-height: 85px;"
+                                            [style.background-size]="'cover'">
+                                            <div class="position-absolute bottom-0 right-0 d-none">
+                                                <button type="button" class="btn btn-transparent w-100">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" role="img"
+                                                        preserveAspectRatio="xMidYMid meet" width="16px" height="16px"
+                                                        aria-labelledby="descriptive-:r1bh:" viewBox="0 0 24 24">
+                                                        <title id="descriptive-:r1bh:">Trash can</title>
+                                                        <g color="currentColor">
+                                                            <g fill="none" stroke="currentColor" stroke-width="2"
+                                                                stroke-linecap="round" stroke-linejoin="round">
+                                                                <polyline points="3 6 5 6 21 6"></polyline>
+                                                                <path
+                                                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                                </path>
+                                                                <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                                <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                            </g>
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <div class="position-absolute bottom-5 left-1 d-none">
+                                                <div class="rounded-circle px-py-user-profile bg-user-profile mhv-0">
+                                                    <span class="text-white fs-very-low-12"></span>
+                                                </div>
+                                            </div>
+                                            <div class="d-block text-center  mypresentation-show-icon">
+                                                <div
+                                                    *ngIf="item?.slides && item.slides?.length > 0 && item.slides[0]?.slideTypeImage != null">
+                                                    <p class="mb-0 icon click-icon"
+                                                        [innerHTML]="GetSVGtoIMG(item?.slides[0]?.slideTypeImage)"></p>
+                                                </div>
+                                                <div
+                                                    *ngIf="!(item?.slides && item.slides.length > 0 && item.slides[0]?.slideTypeImage != null)">
+                                                    <img width="45" height="29" src="assets/images/empty-slides.png">
+                                                </div>
+                                                <span class="d-block fs-very-low"></span>
+                                                <div class="position-absolute bottom-0 right-0 d-none">
+                                                    <button type="button" class="btn btn-transparent w-100">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" role="img"
+                                                            preserveAspectRatio="xMidYMid meet" width="16px"
+                                                            height="16px" aria-labelledby="descriptive-:r1bh:"
+                                                            viewBox="0 0 24 24">
+                                                            <title id="descriptive-:r1bh:">Trash can</title>
+                                                            <g color="currentColor">
+                                                                <g fill="none" stroke="currentColor" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round">
+                                                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                                                    <path
+                                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                                    </path>
+                                                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                                                </g>
+                                                            </g>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="list-values" style="display: flex; width: 95%;">
+                                                <div class="">
+                                                    <p class="prst-name" [attr.title]="item?.presentationName">
+                                                        {{
+                                                        item?.presentationName?.length > 40 ?
+                                                        item?.presentationName.substring(0,40)+'...' :
+                                                        item?.presentationName}}
+                                                    </p>
+                                                    <span class="slide-count fs-very-low-12">
+                                                        <svg width="14" height="12" viewBox="0 0 14 12" fill="none"
+                                                            xmlns="http://www.w3.org/2000/svg">
+                                                            <path
+                                                                d="M1.66927 12C1.3026 12 0.988715 11.8694 0.727604 11.6083C0.466493 11.3472 0.335938 11.0333 0.335938 10.6667V6H1.66927V10.6667H7.66927V12H1.66927ZM4.33594 9.33333C3.96927 9.33333 3.65538 9.20278 3.39427 8.94167C3.13316 8.68056 3.0026 8.36667 3.0026 8V3.33333H4.33594V8H10.3359V9.33333H4.33594ZM7.0026 6.66667C6.63594 6.66667 6.32205 6.53611 6.06094 6.275C5.79983 6.01389 5.66927 5.7 5.66927 5.33333V1.33333C5.66927 0.966667 5.79983 0.652778 6.06094 0.391667C6.32205 0.130556 6.63594 0 7.0026 0H12.3359C12.7026 0 13.0165 0.130556 13.2776 0.391667C13.5387 0.652778 13.6693 0.966667 13.6693 1.33333V5.33333C13.6693 5.7 13.5387 6.01389 13.2776 6.275C13.0165 6.53611 12.7026 6.66667 12.3359 6.66667H7.0026ZM7.0026 5.33333H12.3359V2.66667H7.0026V5.33333Z"
+                                                                fill="#999999" />
+                                                        </svg>
+                                                        {{ item.slideCount== null ? '0' : item.slideCount }}
+                                                    </span>
+                                                    <div class="vertical-line md-none"></div>
+                                                    <span class="presentation-editminuets fs-very-low-12 md-none">Edited
+                                                        {{item.updatedDateTime | timeAgo}}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="col-2 d-flex justify-content-end">
+                                    <button data-bs-toggle="modal" class="btn btn-result md-none px-3 me-2"
+                                        (click)="viewResult(item?.id,item?.slides[0].slideId)"
+                                        [ngClass]="{'disableds': !item?.slides || !item.slides[0]?.slideTypeImage}"
+                                        *ngIf="Hovered[i]">
+                                        <span class="align-text-bottom me-2 icon-d">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                                xmlns="http://www.w3.org/2000/svg">
+                                                <path
+                                                    d="M8.29252 16.7619C8.11076 16.7602 7.93701 16.6869 7.80908 16.5577C7.68114 16.4286 7.60937 16.2542 7.60938 16.0725V13.7285C7.60938 13.5456 7.68201 13.3703 7.8113 13.241C7.94059 13.1117 8.11594 13.0391 8.29878 13.0391C8.48163 13.0391 8.65698 13.1117 8.78627 13.241C8.91556 13.3703 8.98819 13.5456 8.98819 13.7285V16.0725C8.9882 16.1635 8.97016 16.2537 8.93512 16.3377C8.90008 16.4218 8.84874 16.4981 8.78406 16.5622C8.71938 16.6263 8.64264 16.6769 8.55827 16.7112C8.4739 16.7455 8.38358 16.7627 8.29252 16.7619Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M8.29062 13.1562C8.14103 13.1562 7.99755 13.2157 7.89177 13.3215C7.78599 13.4272 7.72656 13.5707 7.72656 13.7203V16.0643C7.72656 16.2139 7.78599 16.3574 7.89177 16.4632C7.99755 16.5689 8.14103 16.6284 8.29062 16.6284C8.44022 16.6284 8.58369 16.5689 8.68948 16.4632C8.79526 16.3574 8.85469 16.2139 8.85469 16.0643V13.7203C8.85306 13.5712 8.79311 13.4287 8.68767 13.3233C8.58224 13.2178 8.43972 13.1579 8.29062 13.1562Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M10.7441 16.7603C10.5613 16.7603 10.3859 16.6877 10.2566 16.5584C10.1273 16.4291 10.0547 16.2538 10.0547 16.0709V10.9003C10.0547 10.7175 10.1273 10.5422 10.2566 10.4129C10.3859 10.2836 10.5613 10.2109 10.7441 10.2109C10.9269 10.2109 11.1023 10.2836 11.2316 10.4129C11.3609 10.5422 11.4335 10.7175 11.4335 10.9003V16.0709C11.4335 16.2538 11.3609 16.4291 11.2316 16.5584C11.1023 16.6877 10.9269 16.7603 10.7441 16.7603Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M10.7437 10.3359C10.5942 10.3359 10.4507 10.3954 10.3449 10.5011C10.2391 10.6069 10.1797 10.7504 10.1797 10.9V16.0706C10.1797 16.2202 10.2391 16.3636 10.3449 16.4694C10.4507 16.5752 10.5942 16.6346 10.7437 16.6346C10.8933 16.6346 11.0368 16.5752 11.1426 16.4694C11.2484 16.3636 11.3078 16.2202 11.3078 16.0706V10.9C11.3078 10.7504 11.2484 10.6069 11.1426 10.5011C11.0368 10.3954 10.8933 10.3359 10.7437 10.3359Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M13.2519 16.7619C13.0691 16.7619 12.8937 16.6892 12.7644 16.5599C12.6351 16.4307 12.5625 16.2553 12.5625 16.0725V13.7285C12.5625 13.5456 12.6351 13.3703 12.7644 13.241C12.8937 13.1117 13.0691 13.0391 13.2519 13.0391C13.4348 13.0391 13.6101 13.1117 13.7394 13.241C13.8687 13.3703 13.9413 13.5456 13.9413 13.7285V16.0725C13.9413 16.2553 13.8687 16.4307 13.7394 16.5599C13.6101 16.6892 13.4348 16.7619 13.2519 16.7619Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M13.2516 13.1562C13.102 13.1562 12.9585 13.2157 12.8527 13.3215C12.7469 13.4272 12.6875 13.5707 12.6875 13.7203V16.0643C12.6875 16.2139 12.7469 16.3574 12.8527 16.4632C12.9585 16.5689 13.102 16.6284 13.2516 16.6284C13.4012 16.6284 13.5446 16.5689 13.6504 16.4632C13.7562 16.3574 13.8156 16.2139 13.8156 16.0643V13.7203C13.8156 13.5707 13.7562 13.4272 13.6504 13.3215C13.5446 13.2157 13.4012 13.1563 13.2516 13.1562Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M15.705 16.7603C15.5222 16.7603 15.3468 16.6877 15.2175 16.5584C15.0883 16.4291 15.0156 16.2538 15.0156 16.0709V10.9003C15.0156 10.7175 15.0883 10.5422 15.2175 10.4129C15.3468 10.2836 15.5222 10.2109 15.705 10.2109C15.8879 10.2109 16.0632 10.2836 16.1925 10.4129C16.3218 10.5422 16.3944 10.7175 16.3944 10.9003V16.0709C16.3944 16.2538 16.3218 16.4291 16.1925 16.5584C16.0632 16.6877 15.8879 16.7603 15.705 16.7603Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M15.7047 10.3359C15.5551 10.3359 15.4116 10.3954 15.3058 10.5011C15.2001 10.6069 15.1406 10.7504 15.1406 10.9V16.0706C15.1406 16.2202 15.2001 16.3636 15.3058 16.4694C15.4116 16.5752 15.5551 16.6346 15.7047 16.6346C15.8543 16.6346 15.9978 16.5752 16.1035 16.4694C16.2093 16.3636 16.2687 16.2202 16.2687 16.0706V10.9C16.2687 10.8259 16.2542 10.7526 16.2258 10.6841C16.1975 10.6157 16.1559 10.5535 16.1035 10.5011C16.0512 10.4488 15.989 10.4072 15.9205 10.3789C15.8521 10.3505 15.7788 10.3359 15.7047 10.3359Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M6.54618 21.459C5.86518 21.4574 5.21255 21.1861 4.73101 20.7046C4.24948 20.223 3.97822 19.5704 3.97656 18.8894V6.59287C3.97822 5.91187 4.24948 5.25924 4.73101 4.7777C5.21255 4.29617 5.86518 4.02491 6.54618 4.02325H8.42638L8.68961 3.35891C8.78925 3.10964 8.96272 2.8968 9.18676 2.74893C9.41081 2.60106 9.67472 2.52523 9.94308 2.53162H14.067C14.3301 2.53159 14.5871 2.61039 14.8049 2.75786C15.0228 2.90532 15.1914 3.11467 15.2891 3.35891L15.5524 4.02325H17.4326C18.1136 4.02491 18.7662 4.29617 19.2477 4.7777C19.7293 5.25924 20.0005 5.91187 20.0022 6.59287V18.8894C20.0005 19.5704 19.7293 20.223 19.2477 20.7046C18.7662 21.1861 18.1136 21.4574 17.4326 21.459H6.54618ZM6.54618 5.40834C6.23144 5.40833 5.9295 5.53293 5.70637 5.7549C5.48323 5.97686 5.35704 6.27814 5.35538 6.59287V18.8894C5.35538 19.2052 5.48084 19.5081 5.70416 19.7314C5.92747 19.9548 6.23036 20.0802 6.54618 20.0802H17.4514C17.6078 20.0802 17.7626 20.0494 17.9071 19.9896C18.0515 19.9297 18.1828 19.842 18.2934 19.7314C18.404 19.6209 18.4917 19.4896 18.5515 19.3451C18.6114 19.2006 18.6422 19.0458 18.6422 18.8894V6.59287C18.6405 6.27814 18.5143 5.97686 18.2912 5.7549C18.068 5.53293 17.7661 5.40833 17.4514 5.40834H16.0412C16.09 5.72454 16.016 6.04742 15.8344 6.31084C15.714 6.48911 15.5515 6.63498 15.3613 6.73554C15.1711 6.83611 14.959 6.88828 14.7439 6.88743H9.24741C9.03246 6.88719 8.82082 6.83455 8.6308 6.73408C8.44078 6.63361 8.27811 6.48834 8.15689 6.31084C7.983 6.04409 7.90969 5.72418 7.95007 5.40834H6.54618ZM9.36022 5.53995H14.6561L14.0294 3.94178H9.98069L9.36022 5.53995Z"
+                                                    fill="#343434" />
+                                                <path
+                                                    d="M17.451 4.14788H15.4643L15.1634 3.40833C15.0765 3.18661 14.9247 2.99625 14.728 2.86209C14.5312 2.72793 14.2985 2.65619 14.0604 2.65625H9.93647C9.70368 2.66239 9.47787 2.737 9.28726 2.87076C9.09664 3.00453 8.94969 3.19151 8.86475 3.40833L8.56392 4.14788H6.54583C5.89808 4.14953 5.27733 4.40759 4.8193 4.86562C4.36127 5.32365 4.10322 5.9444 4.10156 6.59215V18.8887C4.10322 19.5364 4.36127 20.1572 4.8193 20.6152C5.27733 21.0733 5.89808 21.3313 6.54583 21.333H17.451C18.0988 21.3313 18.7195 21.0733 19.1776 20.6152C19.6356 20.1572 19.8936 19.5364 19.8953 18.8887V6.59842C19.8953 5.94958 19.638 5.32722 19.1798 4.86784C18.7216 4.40845 18.0999 4.14954 17.451 4.14788ZM9.88006 3.84705C9.88412 3.83551 9.89181 3.82561 9.90199 3.81883C9.91216 3.81204 9.92426 3.80875 9.93647 3.80944H14.0604C14.0726 3.80875 14.0847 3.81204 14.0949 3.81883C14.105 3.82561 14.1127 3.83551 14.1168 3.84705L14.8062 5.57684L14.7498 5.65831H9.25333C9.24458 5.66272 9.23492 5.66502 9.22512 5.66502C9.21533 5.66502 9.20567 5.66272 9.19692 5.65831L9.88006 3.84705ZM18.7672 18.8887C18.7672 19.0615 18.7331 19.2327 18.667 19.3924C18.6008 19.552 18.5039 19.6971 18.3817 19.8194C18.2595 19.9416 18.1144 20.0385 17.9547 20.1047C17.795 20.1708 17.6239 20.2048 17.451 20.2048H6.54583C6.37299 20.2048 6.20185 20.1708 6.04216 20.1047C5.88248 20.0385 5.73739 19.9416 5.61518 19.8194C5.49296 19.6971 5.39601 19.552 5.32987 19.3924C5.26373 19.2327 5.22969 19.0615 5.22969 18.8887V6.59842C5.22969 6.24935 5.36835 5.91459 5.61518 5.66776C5.862 5.42094 6.19677 5.28227 6.54583 5.28227H8.1064C8.05755 5.4421 8.04401 5.61063 8.06674 5.7762C8.08946 5.94177 8.14791 6.10043 8.23802 6.24118C8.34686 6.40186 8.49352 6.53333 8.6651 6.62404C8.83668 6.71475 9.02791 6.7619 9.22199 6.76137H14.7185C14.9218 6.77026 15.124 6.72715 15.3061 6.63613C15.4881 6.54511 15.644 6.40918 15.7588 6.24118C15.8513 6.1015 15.913 5.94382 15.94 5.77853C15.967 5.61324 15.9587 5.4441 15.9155 5.28227H17.451C17.8001 5.28227 18.1349 5.42094 18.3817 5.66776C18.6285 5.91459 18.7672 6.24935 18.7672 6.59842V18.8887Z"
+                                                    fill="#343434" />
+                                            </svg>
+                                        </span>
+                                        <span class="d-md-inline-block d-none re-btn fs-very-low-12">Results</span>
+                                        <span class="d-md-none d-inline-block re-btn">Results </span>
+                                    </button>
+                                </div>
+                                <div class="d-flex align-items-center justify-content-end col-5">
+                                    <div class="folder-date text-nowrap">
+                                        <span class="folder-createdate fs-very-low-12">{{item.CreatedDateTime |
+                                            date:'dd-MMM-yyyy'}}</span>
+                                    </div>
+                                    <div class="present" [class.disableds]="!item?.slides || item.slides?.length === 0"
+                                        (click)="item?.slides && item.slides?.length > 0 && item.slides[0]?.slideTypeImage ? presentThePresentation(item?.id, item.slides[0].slideId) : null">
+                                        <button data-bs-toggle="modal" class="btn btn-present px-3 me-2 md-none" *ngIf="Hovered[i]"
+                                            [disabled]="!item?.slides || item.slides?.length === 0 || !item.slides[0]?.slideTypeImage">
+                                            <span class="align-text-bottom me-2 icon-d"></span>
+                                            <span class="d-md-inline-block d-none p-btn fs-very-low-12">Present</span>
+                                            <span class="d-md-none d-inline-block p-btn">Present </span>
+                                        </button>
+                                    </div>
+                                    <div class="head-svg">
+                                        <div class="d-flex p-svg justify-content-end"
+                                            (click)="openFolderDeletePresentation(item.id,item.presentationName)"
+                                            *ngIf="Hovered[i]">
+                                            <div class="delete-icon md-none cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    viewBox="0 0 20 20" fill="none">
+                                                    <mask id="mask0_2515_128289" style="mask-type: alpha;"
+                                                        maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                        <rect width="20" height="20" fill="#D9D9D9" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_2515_128289)">
+                                                        <path
+                                                            d="M5.83398 17.5C5.37565 17.5 4.98329 17.3368 4.6569 17.0104C4.33051 16.684 4.16732 16.2917 4.16732 15.8333V5H3.33398V3.33333H7.50065V2.5H12.5007V3.33333H16.6673V5H15.834V15.8333C15.834 16.2917 15.6708 16.684 15.3444 17.0104C15.018 17.3368 14.6257 17.5 14.1673 17.5H5.83398ZM14.1673 5H5.83398V15.8333H14.1673V5ZM7.50065 14.1667H9.16732V6.66667H7.50065V14.1667ZM10.834 14.1667H12.5007V6.66667H10.834V14.1667Z"
+                                                            fill="#383838" />
+                                                    </g>
+                                                </svg>
+                                                <span class="tooltiptext">Delete</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="toggle position-relative">
+                                        <button type="button" class="mat-menu-trigger"
+                                            aria-label="Actions for event Presentation2" aria-haspopup="menu"
+                                            aria-expanded="false" (click)="togglePresentationMenu($event, item)">
+                                            <svg width="24" height="24" fill="rgb(130, 130, 130)" viewBox="0 0 24 24"
+                                                class="icon-size20 f-grey1 f-h-blue toggle-icon">
+                                                <path
+                                                    d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <div id="presentation-menu" class="view-menu menu-list" *ngIf="item.showMenu" [ngClass]="{'flip-up': item.menuFlipUp}">
+                                            <ul>
+                                                <li class="d-flex" (click)="handlePresentationClick(item)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                        viewBox="0 0 20 20" fill="none">
+                                                        <mask id="mask0_4082_21573" style="mask-type: alpha;"
+                                                            maskUnits="userSpaceOnUse" x="0" y="0" width="20"
+                                                            height="20">
+                                                            <rect width="20" height="20" fill="#D9D9D9" />
+                                                        </mask>
+                                                        <g mask="url(#mask0_4082_21573)">
+                                                            <path
+                                                                d="M1.66797 20.0003V16.667H18.3346V20.0003H1.66797ZM5.0013 13.3337H6.16797L12.668 6.85449L11.4805 5.66699L5.0013 12.167V13.3337ZM3.33464 15.0003V11.4587L12.668 2.14616C12.8207 1.99338 12.9978 1.87533 13.1992 1.79199C13.4006 1.70866 13.6124 1.66699 13.8346 1.66699C14.0569 1.66699 14.2721 1.70866 14.4805 1.79199C14.6888 1.87533 14.8763 2.00033 15.043 2.16699L16.1888 3.33366C16.3555 3.48644 16.477 3.66699 16.5534 3.87533C16.6298 4.08366 16.668 4.29894 16.668 4.52116C16.668 4.72949 16.6298 4.93435 16.5534 5.13574C16.477 5.33713 16.3555 5.52116 16.1888 5.68783L6.8763 15.0003H3.33464Z"
+                                                                fill="#525252" />
+                                                        </g>
+                                                    </svg>
+                                                    <span class="pl-10 fs-very-low-12"> Edit</span>
+                                                </li>
+                                                <li class="d-flex"
+                                                    (click)="renamePresentation(item.id, item.presentationName)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                        viewBox="0 0 18 18" fill="none">
+                                                        <path
+                                                            d="M2.16667 17.5C1.70833 17.5 1.31597 17.3368 0.989583 17.0104C0.663194 16.684 0.5 16.2917 0.5 15.8333V4.16667C0.5 3.70833 0.663194 3.31597 0.989583 2.98958C1.31597 2.66319 1.70833 2.5 2.16667 2.5H9.60417L7.9375 4.16667H2.16667V15.8333H13.8333V10.0417L15.5 8.375V15.8333C15.5 16.2917 15.3368 16.684 15.0104 17.0104C14.684 17.3368 14.2917 17.5 13.8333 17.5H2.16667ZM5.5 12.5V8.95833L13.1458 1.3125C13.3125 1.14583 13.5 1.02083 13.7083 0.9375C13.9167 0.854167 14.125 0.8125 14.3333 0.8125C14.5556 0.8125 14.7674 0.854167 14.9688 0.9375C15.1701 1.02083 15.3542 1.14583 15.5208 1.3125L16.6875 2.5C16.8403 2.66667 16.9583 2.85069 17.0417 3.05208C17.125 3.25347 17.1667 3.45833 17.1667 3.66667C17.1667 3.875 17.1285 4.07986 17.0521 4.28125C16.9757 4.48264 16.8542 4.66667 16.6875 4.83333L9.04167 12.5H5.5ZM7.16667 10.8333H8.33333L13.1667 6L12.5833 5.41667L11.9792 4.83333L7.16667 9.64583V10.8333Z"
+                                                            fill="#525252" />
+                                                    </svg>
+                                                    <span class="pl-10 fs-very-low-12"> Rename</span>
+                                                </li>
+                                                <li class="d-flex align-items-center"
+                                                    (click)="(item.slides && item.slides.length > 0 && customerLimitationCount?.balancePresentationLimit > 0) ? duplicatePresentation(item?.id) : null"
+                                                    [class.disabled]="!item.slides || item.slides.length === 0 || customerLimitationCount?.balancePresentationLimit <= 0"
+                                                    [ngStyle]="{'cursor': (!item.slides || item.slides.length === 0 || customerLimitationCount?.balancePresentationLimit <= 0) ? 'not-allowed' : 'pointer'}">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                                                        viewBox="0 0 17 20" fill="none">
+                                                        <path
+                                                            d="M14.8346 15.8335H5.66797C5.20964 15.8335 4.81727 15.6703 4.49089 15.3439C4.1645 15.0175 4.0013 14.6252 4.0013 14.1668V2.50016C4.0013 2.04183 4.1645 1.64947 4.49089 1.32308C4.81727 0.996691 5.20964 0.833496 5.66797 0.833496H11.5013L16.5013 5.8335V14.1668C16.5013 14.6252 16.3381 15.0175 16.0117 15.3439C15.6853 15.6703 15.293 15.8335 14.8346 15.8335ZM10.668 6.66683V2.50016H5.66797V14.1668H14.8346V6.66683H10.668ZM2.33464 19.1668C1.8763 19.1668 1.48394 19.0036 1.15755 18.6772C0.831163 18.3509 0.667969 17.9585 0.667969 17.5002V5.8335H2.33464V17.5002H11.5013V19.1668H2.33464Z"
+                                                            fill="#525252" />
+                                                    </svg>
+                                                    <ng-container
+                                                        *ngIf="(customerLimitationCount?.balancePresentationLimit <= 0);else noDublicatePresentation">
+                                                        <div class="layout-label">
+                                                            <span class="pl-10 fs-very-low-12">Duplicate</span>
+                                                            <div class="pricing-icon-container">
+                                                                <div class="pricing-icon-recently-view slide-list-hover right-side-bar-tooltip-top"
+                                                                    data-tooltip="Need subscription">
+                                                                    <img src="/assets/images/Crown.svg" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+                                                    <ng-template #noDublicatePresentation>
+                                                        <span class="pl-10 fs-very-low-12">Duplicate</span>
+                                                    </ng-template>
+                                                </li>
+                                                <li class="d-flex align-items-center" *ngIf="!IntegrationMediumOffice"
+                                                    [class.disabled]="((customerPlan?.remote && item.slides?.length > 0)  ? '' : 'disabled')"
+                                                    [attr.data-bs-toggle]="customerPlan?.remote ? null : 'tooltip'"
+                                                    [attr.data-bs-title]="customerPlan?.remote ? null : 'Need subscription'"
+                                                    data-tooltip="Slidea Remote" [attr.data-bs-placement]="'top'"
+                                                    [ngStyle]="{'cursor': (customerPlan?.remote && item.slides?.length > 0) ? '' : 'not-allowed'}"
+                                                    (click)="openSlideOneRemote(item?.id, item.slides[0].slideId)">
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="black"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <path
+                                                            d="M15.625 17.5C15.5255 17.5 15.4302 17.5395 15.3598 17.6098C15.2895 17.6802 15.25 17.7755 15.25 17.875V20.0425C15.25 20.0644 15.2413 20.0854 15.2258 20.1008C15.2104 20.1163 15.1894 20.125 15.1675 20.125H1.8325C1.81062 20.125 1.78964 20.1163 1.77416 20.1008C1.75869 20.0854 1.75 20.0644 1.75 20.0425V10.4575C1.75 10.4356 1.75869 10.4146 1.77416 10.3992C1.78964 10.3837 1.81062 10.375 1.8325 10.375H5.875C5.97446 10.375 6.06984 10.3355 6.14016 10.2652C6.21049 10.1948 6.25 10.0995 6.25 10C6.25 9.90054 6.21049 9.80516 6.14016 9.73483C6.06984 9.66451 5.97446 9.625 5.875 9.625H1.8325C1.61171 9.625 1.39996 9.71271 1.24383 9.86883C1.08771 10.025 1 10.2367 1 10.4575L1 20.0425C1 20.2633 1.08771 20.475 1.24383 20.6312C1.39996 20.7873 1.61171 20.875 1.8325 20.875H8.125V22.375H5.125C5.02554 22.375 4.93016 22.4145 4.85984 22.4848C4.78951 22.5552 4.75 22.6505 4.75 22.75C4.75 22.8495 4.78951 22.9448 4.85984 23.0152C4.93016 23.0855 5.02554 23.125 5.125 23.125H11.875C11.9745 23.125 12.0698 23.0855 12.1402 23.0152C12.2105 22.9448 12.25 22.8495 12.25 22.75C12.25 22.6505 12.2105 22.5552 12.1402 22.4848C12.0698 22.4145 11.9745 22.375 11.875 22.375H8.875V20.875H15.1675C15.3883 20.875 15.6 20.7873 15.7562 20.6312C15.9123 20.475 16 20.2633 16 20.0425V17.875C16 17.7755 15.9605 17.6802 15.8902 17.6098C15.8198 17.5395 15.7245 17.5 15.625 17.5Z"
+                                                            fill="black" stroke="black" stroke-width="0.5" />
+                                                        <path
+                                                            d="M14.5 0.875C12.8189 0.875 11.1755 1.37352 9.77766 2.30751C8.37984 3.2415 7.29037 4.56902 6.64703 6.12219C6.00368 7.67536 5.83535 9.38443 6.16333 11.0333C6.4913 12.6821 7.30085 14.1967 8.48959 15.3854C9.67834 16.5742 11.1929 17.3837 12.8417 17.7117C14.4906 18.0396 16.1996 17.8713 17.7528 17.228C19.306 16.5846 20.6335 15.4952 21.5675 14.0973C22.5015 12.6995 23 11.0561 23 9.375C23 7.12066 22.1045 4.95865 20.5104 3.36459C18.9164 1.77053 16.7543 0.875 14.5 0.875ZM14.5 16.8125C13.029 16.8125 11.591 16.3763 10.3679 15.5591C9.14486 14.7418 8.19158 13.5802 7.62865 12.2212C7.06572 10.8622 6.91844 9.36675 7.20541 7.92401C7.49239 6.48128 8.20074 5.15605 9.2409 4.11589C10.281 3.07574 11.6063 2.36739 13.049 2.08041C14.4918 1.79343 15.9872 1.94072 17.3462 2.50365C18.7052 3.06657 19.8668 4.01986 20.6841 5.24295C21.5013 6.46604 21.9375 7.904 21.9375 9.375C21.9375 11.3475 21.1539 13.2393 19.7591 14.6341C18.3643 16.0289 16.4725 16.8125 14.5 16.8125Z"
+                                                            fill="black" stroke="black" stroke-width="0.5" />
+                                                        <path
+                                                            d="M17.8801 5.1158C17.8421 5.07909 17.797 5.04997 17.7474 5.0301C17.6977 5.01023 17.6445 5 17.5908 5C17.537 5 17.4838 5.01023 17.4342 5.0301C17.3845 5.04997 17.3394 5.07909 17.3015 5.1158L15.1199 7.22031C15.0819 7.25698 15.0517 7.30053 15.0312 7.34846C15.0106 7.39639 15 7.44777 15 7.49966C15 7.55155 15.0106 7.60293 15.0312 7.65086C15.0517 7.6988 15.0819 7.74234 15.1199 7.77901L17.3015 9.88352C17.3778 9.95767 17.4815 9.99956 17.5897 10C17.6437 10 17.6971 9.98977 17.747 9.96978C17.7968 9.94979 17.842 9.92047 17.8801 9.88352C17.9181 9.84685 17.9483 9.8033 17.9688 9.75537C17.9894 9.70744 18 9.65606 18 9.60417C18 9.55228 17.9894 9.5009 17.9688 9.45297C17.9483 9.40504 17.9181 9.36149 17.8801 9.32482L15.9889 7.49867L17.8801 5.67253C17.9562 5.59855 17.999 5.49848 17.999 5.39417C17.999 5.28985 17.9562 5.18978 17.8801 5.1158Z"
+                                                            fill="black" stroke="black" stroke-width="0.5" />
+                                                        <path
+                                                            d="M12.6985 8.36571C12.6217 8.29162 12.5177 8.25 12.4092 8.25C12.3006 8.25 12.1966 8.29162 12.1198 8.36571C12.0431 8.4398 12 8.54029 12 8.64507C12 8.74985 12.0431 8.85033 12.1198 8.92442L14.0111 10.7506L12.1198 12.5768C12.0437 12.6508 12.0009 12.7508 12.0009 12.8552C12.0009 12.9595 12.0437 13.0595 12.1198 13.1335C12.1579 13.1705 12.2031 13.1998 12.2529 13.2198C12.3028 13.2398 12.3562 13.25 12.4102 13.25C12.5185 13.2496 12.6221 13.2077 12.6985 13.1335L14.8801 11.029C14.9181 10.9923 14.9482 10.9488 14.9688 10.9008C14.9894 10.8529 15 10.8015 15 10.7496C15 10.6977 14.9894 10.6463 14.9688 10.5984C14.9482 10.5505 14.9181 10.5069 14.8801 10.4703L12.6985 8.36571Z"
+                                                            fill="black" stroke="black" stroke-width="0.5" />
+                                                    </svg>
+                                                    <span class="ps-2 fs-very-low-12">Open Slidea Remote</span>
+                                                </li>
+                                                <li class="d-flex"
+                                                    (click)="openSelectFolderModal(item.id, item.presentationName)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                        viewBox="0 0 20 20" fill="none">
+                                                        <mask id="mask0_4038_120452" style="mask-type: alpha;"
+                                                            maskUnits="userSpaceOnUse" x="0" y="0" width="20"
+                                                            height="20">
+                                                            <rect width="20" height="20" fill="#D9D9D9" />
+                                                        </mask>
+                                                        <g mask="url(#mask0_4038_120452)">
+                                                            <path
+                                                                d="M10.168 11.6668L8.8138 13.021L9.98047 14.1877L13.3346 10.8335L9.98047 7.47933L8.8138 8.646L10.168 10.0002H6.66797V11.6668H10.168ZM3.33464 16.6668C2.8763 16.6668 2.48394 16.5036 2.15755 16.1772C1.83116 15.8509 1.66797 15.4585 1.66797 15.0002V5.00016C1.66797 4.54183 1.83116 4.14947 2.15755 3.82308C2.48394 3.49669 2.8763 3.3335 3.33464 3.3335H8.33464L10.0013 5.00016H16.668C17.1263 5.00016 17.5187 5.16336 17.8451 5.48975C18.1714 5.81613 18.3346 6.2085 18.3346 6.66683V15.0002C18.3346 15.4585 18.1714 15.8509 17.8451 16.1772C17.5187 16.5036 17.1263 16.6668 16.668 16.6668H3.33464ZM3.33464 15.0002H16.668V6.66683H9.3138L7.64714 5.00016H3.33464V15.0002Z"
+                                                                fill="#525252" />
+                                                        </g>
+                                                    </svg>
+                                                    <span class="pl-10 fs-very-low-12"> Move to Folder</span>
+                                                </li>
+                                                <li class="d-flex" *ngIf="!IntegrationMediumOffice" [class.disabled]="(!item.slides || item.slides.length === 0) || isTemplateButtonDisabled"
+                                                    (click)="(item.slides.length > 0 && !isTemplateButtonDisabled) && createTemplate(item.id, item.presentationName,item.slides)">
+                                                    <img src="assets/new-icons/create_template.svg">
+                                                    <ng-container
+                                                        *ngIf="(customerLimitationCount?.templateCount >= customerPlan?.create_presentation_templates);else noAccessText">
+                                                        <div class="layout-label">
+                                                            <span class="pl-10 fs-very-low-12"> Create Template</span>
+                                                            <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top"
+                                                                data-tooltip="Need subscription">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" role="img"
+                                                                    preserveAspectRatio="xMidYMid meet" width="0.625rem"
+                                                                    height="0.625rem" aria-label="Star"
+                                                                    viewBox="0 0 16 16">
+                                                                    <g fill="currentColor" fill-rule="evenodd"
+                                                                        clip-rule="evenodd">
+                                                                        <path
+                                                                            d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z">
+                                                                        </path>
+                                                                    </g>
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+                                                    <ng-template #noAccessText>
+                                                        <span class="pl-10 fs-very-low-12"> Create Template</span>
+                                                    </ng-template>
+                                                </li>
+                                                <li class="d-flex" (click)="showDeletePresentationDialog(item.id)">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                                        viewBox="0 0 20 20" fill="none">
+                                                        <mask id="mask0_4038_31863" style="mask-type: alpha;"
+                                                            maskUnits="userSpaceOnUse" x="0" y="0" width="20"
+                                                            height="20">
+                                                            <rect width="20" height="20" fill="#D9D9D9" />
+                                                        </mask>
+                                                        <g mask="url(#mask0_4038_31863)">
+                                                            <path
+                                                                d="M5.83203 17.5C5.3737 17.5 4.98134 17.3368 4.65495 17.0104C4.32856 16.684 4.16536 16.2917 4.16536 15.8333V5H3.33203V3.33333H7.4987V2.5H12.4987V3.33333H16.6654V5H15.832V15.8333C15.832 16.2917 15.6688 16.684 15.3424 17.0104C15.0161 17.3368 14.6237 17.5 14.1654 17.5H5.83203ZM14.1654 5H5.83203V15.8333H14.1654V5ZM7.4987 14.1667H9.16536V6.66667H7.4987V14.1667ZM10.832 14.1667H12.4987V6.66667H10.832V14.1667Z"
+                                                                fill="#FF1717" />
+                                                        </g>
+                                                    </svg>
+                                                    <span class="pl-10 fs-very-low-12 delete">Delete</span>
+                                                </li>
+                                            </ul>
+                                            <div class="presentation-arrow" [ngClass]="{'arrow-flip-up': item.menuFlipUp}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </ng-container>
+        <ng-container
+            *ngIf="subFolders.length === 0 && presentations.length === 0 && !_mypresentationsService.searchTerm">
+            <div class="emp-folder">
+                <div class="d-flex justify-content-center">
+                    <img src="assets/images/empty-presentation.svg" />
+                </div>
+                <div class="empty-text mt-3">
+                    <p class="text-head">Looks like this folder is empty</p>
+                    <p class="text-content ms-none">
+                        Move an existing presentation to this folder, or "New Presentation" to add a
+                        <br />
+                        presentation right here.
+                    </p>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+</section>
+<!-- Folder Delete Confirmation Modal -->
+<div class="modal fade" id="FolderDelete" tabindex="-1" aria-labelledby="renameFolderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-popup">
+        <div class="modal-content content-popup">
+            <div class="modal-body d-flex">
+                <div class="wi-90">
+                    <p class="fw-five">Are you sure you want to delete this?<br> You can find it
+                        in the trash later.</p>
+                </div>
+                <div>
+                    <button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="closeModal()">
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                    (click)="closeModal()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn delete-button fs-very-low" (click)="deleteFolder()"><span
+                        class="spinner-border spinner-border-sm fs-very-low" role="status" aria-hidden="true"
+                        *ngIf="isLoading"></span> Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Rename folder modal -->
+<div class="modal fade" id="Renamefolder" tabindex="-1" aria-labelledby="renameFolderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered rename-modal wih-100">
+        <div class="modal-content content-popup">
+            <div class="modal-header bb-none">
+                <div>
+                    <h5 class="modal-title fw-five fs-low" id="renameFolderLabel">Rename "{{
+                        currentFolderNameInHeader }}"</h5>
+                </div>
+                <div>
+                    <button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close">
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <form name="renameFolderForm" [formGroup]="renameFolderForm" (ngSubmit)="updateRenameFolder()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control w-100 border-0 rounded-0 fs-very-low"
+                            formControlName="folderName" #RenameFolderName maxlength="100" placeholder="Enter the Name"
+                            [ngClass]="{ 'is-invalid': renameFolderForm.get('folderName').invalid && renameFolderForm.get('folderName').touched }"
+                            [value]="currentFolderNameInHeader" />
+                        <span
+                            [ngClass]="{ 'remaning': !renameFolderForm.get('folderName').touched || !renameFolderForm.get('folderName').errors, 'remaning-i': renameFolderForm.get('folderName').touched && renameFolderForm.get('folderName').errors }">
+                            {{ 100 - RenameFolderName.value.length }}</span>
+                        <span
+                            *ngIf="renameFolderForm.get('folderName').invalid && renameFolderForm.get('folderName').touched"
+                            class="invalid-feedback"> Enter a new name</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                        (click)="cancelRenameFolder()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn rename-button fs-very-low"><span
+                            class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            *ngIf="isLoading"></span> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Rename Presentation modal -->
+<div class="modal fade" id="renamePresentation" tabindex="-1" aria-labelledby="renamePresentationLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered rename-modal wih-100">
+        <div class="modal-content content-popup">
+            <div class="modal-header bb-none">
+                <div>
+                    <h5 class="modal-title fw-five fs-low" id="renamePresentationLabel">Rename Presentation</h5>
+                </div>
+                <div>
+                    <button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelRenameFolder()">
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <form name="renamePresentationForm" [formGroup]="renamePresentationForm" (ngSubmit)="updatePresentation()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="hidden" formControlName="presentationId" [value]="currentPresId" />
+                        <input type="text" class="form-control w-100 border-0 rounded-0 fs-very-low" id="YourNewInputID"
+                            placeholder="Enter the Name" formControlName="newPresentationName" #RenamePresentation
+                            maxlength="100"
+                            [ngClass]="{ 'is-invalid': renamePresentationForm.get('newPresentationName').invalid && renamePresentationForm.get('newPresentationName').touched }"
+                            [value]="currentPresName" (focus)="RenamePresentation.select()" />
+                        <span
+                            [ngClass]="{ 'remaning': !renamePresentationForm.get('newPresentationName').touched || !renamePresentationForm.get('newPresentationName').errors, 'remaning-i': renamePresentationForm.get('newPresentationName').touched && renamePresentationForm.get('newPresentationName').errors }">
+                            {{ 100 - RenamePresentation.value.length > 0 ? 100 - RenamePresentation.value.length
+                            : 0}}</span>
+                        <span
+                            *ngIf="renamePresentationForm.get('newPresentationName').invalid && renamePresentationForm.get('newPresentationName').touched"
+                            class="invalid-feedback">Enter your new title here. </span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                        (click)="cancelRenamePresentation()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn rename-button fs-very-low"><span
+                            class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            *ngIf="isLoading"></span> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Delete Presentation modal -->
+<div class="modal fade" id="presentationDelete" tabindex="-1"
+    aria-labelledrenamePresentationLabelby="presentationDeletelabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-popup">
+        <div class="modal-content content-popup">
+            <div class="modal-body d-flex">
+                <div class="wi-90">
+                    <p class="fw-five delete-pop-font">Are you sure you want to delete this?<br> You can find it
+                        in the trash later.</p>
+                </div>
+                <div>
+                    <button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelDeletePresentation()">
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                    (click)="cancelDeletePresentation()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn delete-button" (click)="deletePresentation()"><span
+                        class="spinner-border spinner-border-sm fs-very-low" role="status" aria-hidden="true"
+                        *ngIf="isLoading"></span> Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Delete Presentation modal -->
+<div class="modal fade" id="folderpresentationDelete" tabindex="-1"
+    aria-labelledrenamePresentationLabelby="folderpresentationDelete" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered custom-popup">
+        <div class="modal-content content-popup">
+            <div class="modal-body d-flex">
+                <div class="wi-90">
+                    <p class="fw-five mobile-delete-text delete-pop-font">Are you sure you want to delete this?<br> You
+                        can find it in the trash later.</p>
+                </div>
+                <div>
+                    <button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelRenameFolder()">
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                    (click)="cancelRenameFolder()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn delete-button" (click)="deleteFolderpresentation()"><span
+                        class="spinner-border spinner-border-sm fs-very-low" role="status" aria-hidden="true"
+                        *ngIf="isLoading"></span> Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Main Folders Modal -->
+<div class="modal fade custom-fixed-modal" id="SelectFolderModal" tabindex="-1" aria-labelledby="selectFolderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered custom-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="selectFolderLabel">Move "{{presentationnames}}"</h5>
+            </div>
+            <div class="modal-body px-4">
+                <div class="scrollable-list">
+                <div *ngFor="let folder of allFoldersWithLogos" class="folder-option"
+                    (click)="moveAndShowSubfolders(folder.id)">
+                    <img src="assets/Icon/folder2.png" alt="Folder Logo" class="folder-logo" />
+                    <div class="folder-names">{{ folder.folderName }}</div>
+                </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn cancel-button rounded-5 border" data-bs-dismiss="modal"
+                        (click)="cancelMovefolderToPresentation2()">
+                        Cancel
+                    </button>
+                    <!-- <button type="submit" class="btn movefolder-btn text-white" id="moveFolderButton"
+                        (click)="movePresentationToFolder(selectedFolder)">
+                        Move Here
+                    </button> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Subfolders Modal -->
+<div class="modal fade custom-fixed-modal" id="fourthModal" tabindex="-1" aria-labelledby="secondModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered custom-modal">
+        <div class="modal-content">
+            <div class="modal-header align-items-center justify-content-between" style="display: flex;">
+                <div class="go-back-item" (click)="goBackToFirstModal2()">
+                    <svg width="20" height="20" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3.21602 6.67187L6.94935 10.4052L5.99935 11.3385L0.666016 6.00521L5.99935 0.671875L6.94935 1.60521L3.21602 5.33854H11.3327V6.67187H3.21602Z" fill="#4848FF"/>
+                    </svg>
+                    <span class="go-back-text">Go Back</span>
+                </div>
+            </div>
+            <div class="modal-body px-4">
+                <div class="scrollable-list"
+                    *ngIf="(selectedFolderDetails && selectedFolderDetails.length > 0) || (movepresentaionname && movepresentaionname.length > 0)">
+                    <div *ngFor="let folderName of selectedFolderDetails">
+                        <div class="folder-option" id="folder-options" (click)="moveAndShowSubfolders(folderName.id)">
+                            <img src="assets/Icon/folder2.png" alt="Folder Logo" class="folder-logo" />
+                            <div class="folder-names">{{ folderName.folderName }}</div>
+                        </div>
+                    </div>
+                    <div *ngFor="let item of movepresentaionname" class="presentation-option">
+                        <svg class="arrow-mark disabled" width="24" height="24" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M6.91602 12.7474L12.7493 8.9974L6.91602 5.2474V12.7474ZM8.99935 17.3307C7.84657 17.3307 6.76324 17.112 5.74935 16.6745C4.73546 16.237 3.85352 15.6432 3.10352 14.8932C2.35352 14.1432 1.75977 13.2613 1.32227 12.2474C0.884766 11.2335 0.666016 10.1502 0.666016 8.9974C0.666016 7.84462 0.884766 6.76128 1.32227 5.7474C1.75977 4.73351 2.35352 3.85156 3.10352 3.10156C3.85352 2.35156 4.73546 1.75781 5.74935 1.32031C6.76324 0.882812 7.84657 0.664062 8.99935 0.664062C10.1521 0.664062 11.2355 0.882812 12.2493 1.32031C13.2632 1.75781 14.1452 2.35156 14.8952 3.10156C15.6452 3.85156 16.2389 4.73351 16.6764 5.7474C17.1139 6.76128 17.3327 7.84462 17.3327 8.9974C17.3327 10.1502 17.1139 11.2335 16.6764 12.2474C16.2389 13.2613 15.6452 14.1432 14.8952 14.8932C14.1452 15.6432 13.2632 16.237 12.2493 16.6745C11.2355 17.112 10.1521 17.3307 8.99935 17.3307ZM8.99935 15.6641C10.8605 15.6641 12.4368 15.0182 13.7285 13.7266C15.0202 12.4349 15.666 10.8585 15.666 8.9974C15.666 7.13628 15.0202 5.5599 13.7285 4.26823C12.4368 2.97656 10.8605 2.33073 8.99935 2.33073C7.13824 2.33073 5.56185 2.97656 4.27018 4.26823C2.97852 5.5599 2.33268 7.13628 2.33268 8.9974C2.33268 10.8585 2.97852 12.4349 4.27018 13.7266C5.56185 15.0182 7.13824 15.6641 8.99935 15.6641Z" fill="#525252"/>
+                        </svg>
+                        <span class="presentation-name disabled">{{ item.presentationName }}</span>
+                    </div>
+                </div>
+                <div class="empty-state" 
+                    *ngIf="!(selectedFolderDetails && selectedFolderDetails.length > 0 || movepresentaionname && movepresentaionname.length > 0)"
+                    style="text-align: center;">
+                    <div class="folder-empty">
+                        <img src="/assets/mypresentation-icons/folder-empty.jpg" alt="Folder Logo"
+                            class="folder-emptsvg" />
+                    </div>
+                    <p>Looks like this folder is empty</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel-button rounded-5 border" data-bs-dismiss="modal"
+                    (click)="cancelMovefolderToPresentation3()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn movefolder-btn text-white rounded-5"
+                    [disabled]="!(selectedFolderDetails && selectedFolderDetails.length > 0 || movepresentaionname && movepresentaionname.length > 0) ? !lastid : false"
+                    (click)="movePresentationToFolder(foldermovehere)">
+                    Move Here
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Folder Move Modal: Main Folders -->
+<div class="modal fade" id="MoveFolder" tabindex="-1" aria-labelledby="moveFolderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered custom-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="moveFolderLabel">
+                    Move "{{ currentFolderNameInHeader }}"
+                </h5>
+            </div>
+            <div class="modal-body px-5">
+                <div *ngFor="let folder of mainFolders" class="folder-option" (click)="Modalformovetofolder(folder.id)"
+                    [ngClass]="{'disabled': folder.id === currentFolderIdInHeader}">
+                    <img src="assets/Icon/folder2.png" alt="Folder Logo" class="folder-logo" />
+                    <div class="folder-names">{{ folder.folderName }}</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn outline-primary rounded-0" data-bs-dismiss="modal"
+                    (click)="cancelMovefolderToPresentation1()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn movefolder-btn text-white" [disabled]="!selectedDestinationFolder"
+                    id="moveFolderButton" (click)="moveFolderToFolder()">
+                    Move here
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Folder Move Modal: Subfolders -->
+<div class="modal fade" id="SecondModal" tabindex="-1" aria-labelledby="secondModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered custom-modal">
+        <div class="modal-content">
+            <div class="modal-header cursor-pointer">
+                <h5 class="modal-title" id="secondModalLabel" (click)="goBackToFirstModal()">Back</h5>
+            </div>
+            <div class="main"
+                *ngIf="(selectedFolderDetails && selectedFolderDetails.length > 0) || (movepresentaionname && movepresentaionname.length > 0)">
+                <div class="modal-body px-5">
+                    <div *ngFor="let folderName of selectedFolderDetails">
+                        <div class="folder-option" (click)="Modalformovetofolder(folderName.id)"><img
+                                src="assets/Icon/folder2.png" alt="Folder Logo" class="folder-logo" />
+                            <div class="folder-names">{{ folderName?.folderName }}</div>
+                        </div>
+                    </div>
+                    <div *ngFor="let item of movepresentaionname" class="presentation-option">
+                        <span class="arrow-mark disabled">&#9658;</span>
+                        <span class="presentation-name disabled">{{ item.presentationName }}</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn outline-primary rounded-0" data-bs-dismiss="modal"
+                        (click)="cancelMovefolderToPresentation1()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn movefolder-btn text-white" (click)="moveFolderToFolder()">
+                        Move here
+                    </button>
+                </div>
+            </div>
+            <div class="else"
+                *ngIf="!(selectedFolderDetails && selectedFolderDetails.length > 0) && !(movepresentaionname && movepresentaionname.length > 0)">
+                <div class="modal-body px-5" style="text-align: center;">
+                    <div class="folder-empty">
+                        <img class="w-25 h-25" src="assets/mypresentation-icons/folder-empty.png" />
+                    </div>
+                    <p class="mt-4">Looks like this folder is empty</p>
+                </div>
+                <div class="modal-footer" [id]="lastid">
+                    <button type="button" class="btn outline-primary rounded-0" data-bs-dismiss="modal"
+                        (click)="cancelMovefolderToPresentation1()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn movefolder-btn text-white" (click)="moveFolderToFolder1()">
+                        Move here
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="presentationMode-To-Open" tabindex="-1"
+    aria-labelledrenamePresentationLabelby="presentationMode-To-Open" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered presentation-popup wih-100">
+        <div class="modal-content content-popup">
+            <div class="modal-body d-flex">
+                <div class="presentation-mode d-flex justify-content-center">
+                    <p class="fw-five">This presentation is currently present in another tab or browser.</p>
+                </div>
+                <div><button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close"
+                        (click)="cancelRenameFolder()">
+                        &times;
+                    </button></div>
+            </div>
+            <div class="presentation-mode d-flex justify-content-center">
+                <p class="fs-very-low">Are you sure you want to open the presentation here?</p>
+            </div>
+            <div class="d-flex justify-content-center">
+                <button type="submit" class="btn delete-button"
+                    (click)="confirmOpenPresentation()"><span
+                        class="spinner-border spinner-border-sm fs-very-low" role="status" aria-hidden="true"
+                        *ngIf="isLoading"></span> Ok</button>
+            </div>
+            <div class="modal-footer">
+                <!-- <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal" (click)="cancelRenameFolder()">
+                    Cancel
+                </button> -->
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade template-form-model " id="createTemplate" tabindex="-1" aria-labelledby="TemplateLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="TemplateLabel">Create Template</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeCreateTemplateModal()"> &times; </button>
+            </div>
+            <app-convert-template *ngIf="isCreateTemplateModal" [presentationId]="selectPresentationId"
+                [customerPlan]="customerPlan" [isEditorScreen]="false"
+                [customerLimitationCount]="customerLimitationCount"
+                [isTemplateButtonDisabled]="isTemplateButtonDisabled" [categoryList]="categoryList"
+                [popularFeatures]="popularFeatures" (templateCreated)="storeTemplate($event)"
+                (categoryToggleDropdown)="CategoryToggleDropdown($event)">
+            </app-convert-template>
+        </div>
+    </div>
+</div>

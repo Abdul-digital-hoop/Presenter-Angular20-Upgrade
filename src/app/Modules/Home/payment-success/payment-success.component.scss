@@ -1,0 +1,115 @@
+.payment-scs-header{
+    padding: 10px;
+    position: absolute;
+    width: 100%;
+}
+.payment-scs-txt{
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 15px;
+    color: #999999;
+    text-decoration: none;
+}
+.payment-rltd-txt{
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 21.25px;
+    color: #696969;
+    margin-bottom: 20px;
+    padding: 30px 15px 0px 15px;
+}
+
+.payment-about-txt{
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 21.25px;
+    color: #3BB400;
+    margin-bottom: 10px;
+    padding: 0px 15px 0px 15px;
+}
+.payment-about-dsc{
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 17.5px;
+    color: #999999;
+    margin-bottom: 30px;
+    padding: 0px 15px 0px 15px;
+}
+.payment-btn{
+    box-shadow: 0px -1px 1px 0px #00000040 inset !important;
+    background: #4848FF;
+    color:#fff;
+    border-radius: 60px;
+    padding: 10px 40px;
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 17.5px;
+    margin-bottom: 30px;
+    display: inline-block;
+    text-decoration: none;
+}
+.payment-container-section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+.payment-container-csc{
+    width: 30%;
+    text-align: center;
+    border: 1px solid #ECECFF;
+    box-shadow: 0px 0px 6px 0px #4848FF33;
+    border-radius: 5px;
+}
+.payment-img-section{
+    margin-bottom: 20px;
+}
+.payment-img-bgclr{
+    width: 100%;
+    background: #F2FFEB;
+    position: absolute;
+    right: 0;
+    top: 30%;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+}
+.payment-img-section{
+    position: relative;
+}
+.payment-img{
+    z-index: 10;
+    position: relative;
+}
+.payment-scs-csc{
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    cursor: pointer;
+    z-index: 11;
+    position: relative;
+    width: 20%;
+    text-decoration: none;
+}
+.payment-scs-csc:hover .payment-scs-txt{
+    color: #4848FF;
+}
+.payment-scs-csc:hover .payment-scs-svg path{
+    fill: #4848FF;
+}
+@media only screen and (max-width: 991px) {
+    .payment-container-csc{
+        width: 50%;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .payment-container-csc{
+        width: 80%;
+    }
+    .payment-scs-csc{
+        width: 100%;
+    }
+}

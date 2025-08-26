@@ -1,0 +1,1421 @@
+<section class="templates-main-container">
+    <div class="templates-header-section">
+        <div class="templates-left-sec">
+            <div class="templates-text">My Plan</div>
+        </div>
+    </div>
+    <div class="plan-txt">Current Plan</div>
+    <div class="cutomer-section">
+        <div class="cutomer-left-section">
+            <div class="owner-txt">Owner</div>
+            <div class="limit-txt">Participation limit</div>
+        </div>
+        <div class="cutomer-right-section">
+            <span class="owner-ans-txt">: {{ profile?.ProfileEMail}}</span>
+            <span class="owner-ans-txt">: {{profile?.ParticipationLimit >= priceString.SetUnlimitedCount ? priceString.Unlimited : profile?.ParticipationLimit }}</span>
+        </div>
+    </div>
+    <button type="button" class="upgrade-btn" (click)="scrollToPlans()">Upgrade</button>
+</section>
+<section class="swap-plan-section-ind-edu">
+    <div class="swap-plan-ind-edu">
+        <div class="swap-plan-container-ind-edu">
+            <div class="swap-individual" (click)="toggleType(true)" [class.actie-ind-edu-plan]="isIndividualSelected">Individual Plan</div>
+            <div class="swap-individual" (click)="toggleType(false)" [class.actie-ind-edu-plan]="!isIndividualSelected">Education Plan</div>
+        </div>
+    </div>
+</section>
+<section class="swap-plan-section">
+    <div class="swap-plan-cnt">
+        <div class="swap-plan-container">
+            <div class="swap-month" *ngIf="isIndividualSelected" (click)="togglePlan(true)" [class.planactive]="isMonthlySelected">Monthly</div>
+            <div class="swap-yearly" (click)="togglePlan(false)" [class.planactive]="!isMonthlySelected">Yearly</div>
+        </div>
+    </div>
+</section>
+<div class="skel-main" *ngIf="isSkeleton">
+    <div class="skeleton-item"><div class="skeleton-sec"></div></div>
+    <div class="skeleton-item"><div class="skeleton-sec"></div></div>
+    <div class="skeleton-item"><div class="skeleton-sec"></div></div>
+    <div class="skeleton-item"><div class="skeleton-sec"></div></div>
+</div>
+<section class="plan-card-section" *ngIf="!isSkeleton" #targetPlans>
+    <div class="plan-card-container">
+        <div class="plan-wdth-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+            <div class="plan-card-grid" [class.activecolorchange]="profile?.PlanId == plan.plan_id">
+                <div class="plan-card-grid-item">
+                    <div class="plan-type-txt">{{ plan.plan_name }}</div>
+                    <div class="plan-desc-txt">{{ plan.description }}</div>
+                    <div class="plan-vertical-line"></div>
+                    <div class="plan-amount" >{{plan.plan_name != priceString.PlanEnterprise? ("$"+ (plan.recurring_type == priceString.Monthly ? plan.plan_amount : plan.plan_amount / 12 | number)) : "Custom" }}<span class="amount-format">USD</span></div>
+                    <div class="plan-amount-about">{{ plan.amount_validity?.billing_type }}&nbsp;</div>
+                    <div class="plan-amount-about about-sec-plan">{{ plan.amount_validity?.billing_txt }}&nbsp;</div>
+                </div>
+                <div class="plan-btn-cnt">
+                    <button type="button" class="plan-btn" [class.activecolorchange]="profile?.PlanId == plan.plan_id" [attr.data-plan_id]="plan.plan_id" (click)="handlePlanButtonClick(plan.plan_id , plan.plan_name)" [class.disabled]="isDisabled(plan.plan_id,plan.plan_name)">{{ profile?.PlanId == plan.plan_id? priceString.CurrentPlan : plan.button_txt }}</button>
+                </div>
+                <div class="plan-desc-cnt">
+                    <div class="plan-desc-heading">{{ plan.feature_heading }}</div>
+                    <div class="plan-desc" *ngFor="let content of plan.feature_content.split(',')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"><mask id="mask0_2328_107414" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="16" height="16"><rect width="16" height="16" fill="#D9D9D9"/></mask><g mask="url(#mask0_2328_107414)"><path d="M8.0026 14.6693C7.08038 14.6693 6.21372 14.4943 5.4026 14.1443C4.59149 13.7943 3.88594 13.3193 3.28594 12.7193C2.68594 12.1193 2.21094 11.4137 1.86094 10.6026C1.51094 9.79149 1.33594 8.92483 1.33594 8.0026C1.33594 7.08038 1.51094 6.21372 1.86094 5.4026C2.21094 4.59149 2.68594 3.88594 3.28594 3.28594C3.88594 2.68594 4.59149 2.21094 5.4026 1.86094C6.21372 1.51094 7.08038 1.33594 8.0026 1.33594C8.72483 1.33594 9.40816 1.44149 10.0526 1.6526C10.697 1.86372 11.2915 2.15816 11.8359 2.53594L10.8693 3.51927C10.447 3.2526 9.99705 3.04427 9.51927 2.89427C9.04149 2.74427 8.53594 2.66927 8.0026 2.66927C6.52483 2.66927 5.26649 3.18872 4.2276 4.2276C3.18872 5.26649 2.66927 6.52483 2.66927 8.0026C2.66927 9.48038 3.18872 10.7387 4.2276 11.7776C5.26649 12.8165 6.52483 13.3359 8.0026 13.3359C9.48038 13.3359 10.7387 12.8165 11.7776 11.7776C12.8165 10.7387 13.3359 9.48038 13.3359 8.0026C13.3359 7.8026 13.3248 7.6026 13.3026 7.4026C13.2804 7.2026 13.247 7.00816 13.2026 6.81927L14.2859 5.73594C14.4082 6.09149 14.5026 6.45816 14.5693 6.83594C14.6359 7.21372 14.6693 7.6026 14.6693 8.0026C14.6693 8.92483 14.4943 9.79149 14.1443 10.6026C13.7943 11.4137 13.3193 12.1193 12.7193 12.7193C12.1193 13.3193 11.4137 13.7943 10.6026 14.1443C9.79149 14.4943 8.92483 14.6693 8.0026 14.6693ZM7.06927 11.0693L4.23594 8.23594L5.16927 7.3026L7.06927 9.2026L13.7359 2.51927L14.6693 3.4526L7.06927 11.0693Z" fill="#159F15"/></g></svg>
+                        <span class="plan-desc-content">{{ content }}</span>
+                    </div>
+                </div>
+                <div class="plan-footer-cnt">
+                    <div class="see-all-txt" [class.activecolorchange]="profile?.PlanId == plan.plan_id" (click)="scrollToFeatures()">See all features</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="sticky-dummy"></div>
+<section class="plan-sticky-section" id="sticky-section">
+    <div class="plan-sticky-container" #targetFeatures>
+        <div class="plan-sticky-sec">
+            <div class="plan-sticky-swap">
+                <div class="swap-plan-cnt">
+                    <div class="swap-plan-container">
+                        <div class="swap-month" *ngIf="isIndividualSelected" (click)="togglePlan(true)" [class.planactive]="isMonthlySelected">Monthly</div>
+                        <div class="swap-yearly" (click)="togglePlan(false)" [class.planactive]="!isMonthlySelected">Yearly</div>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-item"><div class="skeleton-sticky-sec"></div></div>
+                <div class="skeleton-item"><div class="skeleton-sticky-sec"></div></div>
+                <div class="skeleton-item"><div class="skeleton-sticky-sec"></div></div>
+                <div class="skeleton-item"><div class="skeleton-sticky-sec"></div></div>
+            </div>
+            <div class="plan-sticky-btn-sec" *ngIf="!isSkeleton">
+                <div class="plan-sticky-cnt" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-sticky-txt">{{ plan.plan_name }}</div>
+                    <div class="plan-btn-cnt">
+                        <button type="button" class="sticky-plan-btn"  [attr.data-plan_id]="plan.plan_id" (click)="handlePlanButtonClick(plan.plan_id , plan.plan_name)" [class.disabled]="isDisabled(plan.plan_id,plan.plan_name)">{{ plan.button_txt }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="plan-details-section">
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Active presentations</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Participants per month</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Total number of participants allowed per month. This count resets monthly. You can exceed this limit once a month if needed.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt"  *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt">{{ plan.presentation_per_month >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.presentation_per_month}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Participants per presentation</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Total number of participants allowed per presentation.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt"  *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt">{{ plan.participants_per_presentation >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.participants_per_presentation }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Slide types per presentation</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="All slide types covered—content and popular questions.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt">{{ plan.slide_types_per_presentation >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.slide_types_per_presentation }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Quiz per presentation</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Total number Quiz slides allowed per presentation.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt"  *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt">{{ plan.quiz_per_presentation >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.quiz_per_presentation }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Q&A</span>
+                    <div class="details-content-svg small-pricing-tooltip-top" data-tooltip="Let your audience ask questions directly during the presentation.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf="plan.qa">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf="!plan.qa">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Comments</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Allow audience to comment their thoughts on slides.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf="plan.comments">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf="!plan.comments">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Import presentation</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Upload PPT, PDFs easily and start presenting right away.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt"  *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.import_presentations">
+                        <div class="plan-option-txt">{{ plan.import_presentations >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.import_presentations }}</div>
+                    </div>
+                    <div class="plan-option-txt" *ngIf="!plan.import_presentations">
+                        <div class="plan-option-txt">{{ plan.import_presentations >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.import_presentations }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Remote</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Use the remote to control your presentation easily.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf="plan.remote">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf="!plan.remote">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Reset results</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Reset all data to restart the session from scratch.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf="plan.reset_result">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf="!plan.reset_result">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">View results</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Track participant results instantly as you present.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf="plan.view_result">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf="!plan.view_result">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Multiple responses</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Allow your audience to submit more than one response.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec" *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf="plan.several_answers">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf="!plan.several_answers">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Make presentations private</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Manage who gets to view your presentations.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.make_presentations_private">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.make_presentations_private">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Lock audience response</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Manage the response from the audience.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.audience_response_control">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.audience_response_control">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Branding & customization</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Quick layouts</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Easily customize the image layout to match your slides.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.quick_layouts">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.quick_layouts">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Custom colors</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Set custom colors to align with your brand.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.custom_colours">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.custom_colours">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Custom themes</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Create your own theme to match your presentation style.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.custom_themes">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.custom_themes">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Company branding</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Design and share branded themes for your team.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.company_branding">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.company_branding">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Custom Logo</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Easily upload your logo for branded presentations.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.add_your_logotype">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.add_your_logotype">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Teams</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Collaborative workspace</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Create a shared hub for your team to edit and manage presentations easily.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.collaborative_workspace">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.collaborative_workspace">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Workspace roles</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Control team access by setting specific roles for members and admins.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.workspace_roles">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.workspace_roles">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Maximum number of Member lite</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Total number of free users that can be invited to a team.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.maximum_number_of_member_lite">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.maximum_number_of_member_lite">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Edit presentations with team members</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Allow team members to edit the shared presentations.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.edit_presentation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.edit_presentation">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Invite non-members to edit presentations</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Invite others outside your team to view and edit presentations.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.invite_nonmembers">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.invite_nonmembers">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Create presentation templates</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Customize and save templates for easy access later.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.create_presentation_templates">
+                        <div class="plan-option-txt">{{ plan.create_presentation_templates >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.create_presentation_templates }}</div>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.create_presentation_templates">
+                        <div class="plan-option-txt">{{ plan.create_presentation_templates >= priceString.SetUnlimitedCount ? priceString.Unlimited : plan.create_presentation_templates }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Create groups</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Keep your workspace organized by creating member groups.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.create_group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.create_group">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Workspace insights</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Track team efforts and see what’s getting done in your workspace.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.workspace_insights">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.workspace_insights">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Export</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Image and PDF export</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Easily export results as images or PDFs for quick sharing.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.image_export">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.image_export">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Excel export</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Export directly to Excel for a smooth data review.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.excel_export">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.excel_export">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Advanced input</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Moderate Q&A</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Review and approve questions before they appear for everyone.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt"  *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.moderate_qa">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.moderate_qa">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">   
+                    <span class="details-content-txt">Add Quick Forms</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Ask more than one question in a slide during presentations.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.quick_forms">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.quick_forms">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Privacy & control</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">SSO</span>
+                    <div class="details-content-svg small-pricing-tooltip-top" data-tooltip="Sign in easily with Single Sign-On for secure, quick access.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.sso">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.sso">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">SCIM</span>
+                    <div class="details-content-svg small-pricing-tooltip-top" data-tooltip="Automate user management with SCIM for smooth team onboarding.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt"  *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.scim">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.scim">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Join settings</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Decide who joins your workspace with adjustable entry settings.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div> 
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.join_settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.join_settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Access levels</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Define rights and control team access with ease.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.access_levels">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.access_levels">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Payment</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Pay via bank transfer</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Make payments directly with bank transfer.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.pay_via_bank_transfer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.pay_via_bank_transfer">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="plan-details-container">
+        <div class="plan-details-heading">Support</div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Online support</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Get instant support by chatting live with our team.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.online_support">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.online_support">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Priority support</span>
+                    <div class="details-content-svg medium-pricing-tooltip-top" data-tooltip="Receive top-tier support with quicker response times in extended hours.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.priority_support">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.priority_support">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="plan-details-cnt">
+            <div class="plan-details-content">
+                <div class="details-content-set">
+                    <span class="details-content-txt">Custom onboarding</span>
+                    <div class="details-content-svg pricing-tooltip-top" data-tooltip="Start strong with a personalized onboarding session.">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M8.95963 14.0013C9.2513 14.0013 9.49783 13.9006 9.69922 13.6992C9.90061 13.4978 10.0013 13.2513 10.0013 12.9596C10.0013 12.668 9.90061 12.4214 9.69922 12.2201C9.49783 12.0187 9.2513 11.918 8.95963 11.918C8.66797 11.918 8.42144 12.0187 8.22005 12.2201C8.01866 12.4214 7.91797 12.668 7.91797 12.9596C7.91797 13.2513 8.01866 13.4978 8.22005 13.6992C8.42144 13.9006 8.66797 14.0013 8.95963 14.0013ZM8.20964 10.793H9.7513C9.7513 10.3346 9.80339 9.97352 9.90755 9.70964C10.0117 9.44575 10.3069 9.08464 10.793 8.6263C11.1541 8.26519 11.4388 7.92144 11.6471 7.59505C11.8555 7.26866 11.9596 6.8763 11.9596 6.41797C11.9596 5.64019 11.6749 5.04297 11.1055 4.6263C10.536 4.20964 9.86241 4.0013 9.08464 4.0013C8.29297 4.0013 7.65061 4.20964 7.15755 4.6263C6.6645 5.04297 6.32075 5.54297 6.1263 6.1263L7.5013 6.66797C7.57075 6.41797 7.727 6.14714 7.97005 5.85547C8.21311 5.5638 8.58464 5.41797 9.08464 5.41797C9.52908 5.41797 9.86241 5.5395 10.0846 5.78255C10.3069 6.02561 10.418 6.29297 10.418 6.58464C10.418 6.86241 10.3346 7.12283 10.168 7.36589C10.0013 7.60894 9.79297 7.83464 9.54297 8.04297C8.93186 8.58464 8.55686 8.99436 8.41797 9.27213C8.27908 9.54991 8.20964 10.0569 8.20964 10.793ZM9.0013 17.3346C7.84852 17.3346 6.76519 17.1159 5.7513 16.6784C4.73741 16.2409 3.85547 15.6471 3.10547 14.8971C2.35547 14.1471 1.76172 13.2652 1.32422 12.2513C0.886719 11.2374 0.667969 10.1541 0.667969 9.0013C0.667969 7.84852 0.886719 6.76519 1.32422 5.7513C1.76172 4.73741 2.35547 3.85547 3.10547 3.10547C3.85547 2.35547 4.73741 1.76172 5.7513 1.32422C6.76519 0.886719 7.84852 0.667969 9.0013 0.667969C10.1541 0.667969 11.2374 0.886719 12.2513 1.32422C13.2652 1.76172 14.1471 2.35547 14.8971 3.10547C15.6471 3.85547 16.2409 4.73741 16.6784 5.7513C17.1159 6.76519 17.3346 7.84852 17.3346 9.0013C17.3346 10.1541 17.1159 11.2374 16.6784 12.2513C16.2409 13.2652 15.6471 14.1471 14.8971 14.8971C14.1471 15.6471 13.2652 16.2409 12.2513 16.6784C11.2374 17.1159 10.1541 17.3346 9.0013 17.3346ZM9.0013 15.668C10.8624 15.668 12.4388 15.0221 13.7305 13.7305C15.0221 12.4388 15.668 10.8624 15.668 9.0013C15.668 7.14019 15.0221 5.5638 13.7305 4.27214C12.4388 2.98047 10.8624 2.33464 9.0013 2.33464C7.14019 2.33464 5.5638 2.98047 4.27214 4.27214C2.98047 5.5638 2.33464 7.14019 2.33464 9.0013C2.33464 10.8624 2.98047 12.4388 4.27214 13.7305C5.5638 15.0221 7.14019 15.668 9.0013 15.668Z" fill="#999999"/></svg>
+                    </div>
+                </div>
+            </div>
+            <div class="skel-main"  *ngIf="isSkeleton">
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+                <div class="skeleton-details-item"><div class="skeleton-details-sec"></div></div>
+            </div>
+            <div class="plan-option-cnt" *ngIf="!isSkeleton">
+                <div class="plan-option-sec"  *ngFor="let plan of (isMonthlySelected ? monthlyPlans : yearlyPlans)">
+                    <div class="plan-option-txt" *ngIf=" plan.custom_onboarding">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="13" viewBox="0 0 18 13" fill="none">
+                            <path d="M6.55156 13.0016L0.851562 7.30156L2.27656 5.87656L6.55156 10.1516L15.7266 0.976562L17.1516 2.40156L6.55156 13.0016Z" fill="#159F15"/>
+                        </svg>
+                    </div>
+                    <div class="plan-option-txt" *ngIf=" !plan.custom_onboarding">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <mask id="mask0_3334_77507" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_3334_77507)">
+                            <path d="M6.4 19L5 17.6L10.6 12L5 6.4L6.4 5L12 10.6L17.6 5L19 6.4L13.4 12L19 17.6L17.6 19L12 13.4L6.4 19Z" fill="#DEDEDE"/>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="loader-div" id="loading-indicator" *ngIf="isloading">
+    <div id="loading-bar-spinner" class="spinner"><div class="spinner-icon"></div></div>
+</div>
+<!-- Success Payment Modal -->
+<div class="modal payment-modal" [class.show]="showSuccessModal">
+    <div class="modal-content success">
+        <div class="modal-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="#E6F4E6"/>
+                <path d="M21.5516 29.0016L15.8516 23.3016L17.2766 21.8766L21.5516 26.1516L30.7266 16.9766L32.1516 18.4016L21.5516 29.0016Z" fill="#159F15"/>
+            </svg>
+            <h2>Payment Successful!</h2>
+        </div>
+        <div class="modal-body">
+            <p>Congratulations on your upgrade! All features of your new plan will be activated within 30 minutes.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-primary" (click)="closeSuccessModal()">Continue</button>
+        </div>
+    </div>
+</div>
+<!-- Failed Payment Modal -->
+<div class="modal payment-modal" [class.show]="showFailedModal">
+    <div class="modal-content failed">
+        <div class="modal-header">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                <circle cx="24" cy="24" r="24" fill="#FFE6E6"/>
+                <path d="M24 26.2L19.4 30.8L17.2 28.6L21.8 24L17.2 19.4L19.4 17.2L24 21.8L28.6 17.2L30.8 19.4L26.2 24L30.8 28.6L28.6 30.8L24 26.2Z" fill="#FF4D4D"/>
+            </svg>
+            <h2 style="margin-right: 70px;">Payment Failed</h2>
+        </div>
+        <div class="modal-body">
+            <p>Your payment could not be processed. Please try again.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" (click)="closeFailedModal()">Close</button>
+        </div>
+    </div>
+</div>
+<app-save-more [yearlyPlans]="yearlyPlans"></app-save-more>

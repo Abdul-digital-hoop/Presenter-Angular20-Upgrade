@@ -1,0 +1,18 @@
+.access-bar {
+    font-size: 1.55rem;
+    padding: 10px;
+    // color: #252B36 !important;
+}
+
+.access-bar-contant {
+    width: 100%;
+    background-color: rgba(237, 237, 240, 0.6);
+    border-radius: 5px;
+}
+
+/* Mobile layout (tab format) */
+@media (max-width: 576px) {
+    .access-bar {
+        font-size: 0.35rem;
+    }
+}

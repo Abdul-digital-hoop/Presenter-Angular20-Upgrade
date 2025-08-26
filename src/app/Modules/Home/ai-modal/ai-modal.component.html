@@ -1,0 +1,232 @@
+<div class="modal custom-scrollbar fade in" tabindex="-1"
+ [style.display]="isShowModal ? 'block' : 'none'" 
+ [ngClass]="{
+  'show bg-color modal-animation': isShowModal,
+  'modal-animationout': !isShowModal
+}">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="ai-modal-header">
+          <p>Create with AI</p>
+          <button type="button" class="btn-close" (click)="close()"></button>
+      </div>
+        <div class="modal-body" [@stageAnimation]="currentStage">
+          <ng-container [ngSwitch]="currentStage">
+      
+            <!-- Stage 1: Prompt Input -->
+            <div *ngSwitchCase="1" class="stage-layout">
+              <form name="stage1" [formGroup]="promptForm" (ngSubmit)="refineInitialPrompt()">
+                <div class="user-prompt-section">
+                  <div class="bold-label-text">Tell us what would you like to create and <br> we’ll help you build it.</div>
+                  <div class="prompt-textarea-section">
+                    <textarea rows="5" placeholder="Give your title or quick idea..."
+                      formControlName="userPrompt" maxlength="10000" autocomplete="off" [ngClass]="{ 'is-invalid': promptForm.get('userPrompt').invalid && promptForm.get('userPrompt').touched }"
+                    ></textarea>
+                    <span
+                        *ngIf="promptForm.get('userPrompt')?.errors?.custom && promptForm.get('userPrompt').invalid && promptForm.get('userPrompt').touched"
+                        class="invalid-feedback">
+                        {{ promptForm.get('userPrompt')?.errors?.custom }}
+                    </span>
+                    <span
+                        *ngIf="promptForm.get('userPrompt')?.errors?.required && promptForm.get('userPrompt').invalid && promptForm.get('userPrompt').touched"
+                        class="invalid-feedback">
+                        Enter a description for your presentation
+                    </span>
+                  </div>
+                  <button [disabled]="isLoading" type="submit" class="btn btn-n text-white px-3 me-2 position-relative">
+                    <span *ngIf="!isLoading" class="align-text-bottom me-2 icon-d">
+                        <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.7639 13.3412C14.4595 14.4511 13.1905 15.7201 12.0807 21.0246C12.0148 21.3394 11.5675 21.3394 11.5016 21.0246C10.3918 15.7201 9.12279 14.4511 3.81842 13.3412C3.50356 13.2753 3.50356 12.828 3.81842 12.7621C9.12279 11.6523 10.3918 10.3833 11.5016 5.07877C11.5675 4.7639 12.0148 4.7639 12.0807 5.07877C13.1905 10.3833 14.4595 11.6523 19.7639 12.7621C20.0787 12.828 20.0787 13.2753 19.7639 13.3412Z" fill="#F8F8FF"/>
+                        <path d="M8.09104 4.98853C5.43884 5.54347 4.80439 6.17797 4.24942 8.83024C4.21647 8.98765 3.99284 8.98765 3.95992 8.83024C3.405 6.17797 2.77051 5.54351 0.1183 4.98853C-0.0391078 4.95557 -0.0391078 4.73194 0.1183 4.69898C2.77051 4.14404 3.40495 3.50954 3.95992 0.857316C3.99288 0.699905 4.21651 0.699905 4.24942 0.857316C4.80435 3.50958 5.43884 4.14404 8.09104 4.69898C8.24845 4.73194 8.24845 4.95562 8.09104 4.98853Z" fill="#F8F8FF"/>
+                        </svg>
+                    </span>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            *ngIf="isLoading"></span>
+                    <span class="d-md-inline-block d-none t-content me-4">Generate</span>
+                  </button>
+                </div>
+              </form>
+              <div class="topic-suggestion-section">
+                <div class="suggestion-header">
+                  Try another topic?
+                  <span class="align-text-bottom me-2 icon-d">
+                      <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M16.3107 10.3728C12.0672 11.2607 11.0521 12.2758 10.1642 16.5192C10.1115 16.7711 9.75364 16.7711 9.70094 16.5192C8.81307 12.2758 7.79788 11.2607 3.55439 10.3728C3.30251 10.3201 3.30251 9.96232 3.55439 9.90962C7.79788 9.02177 8.81307 8.00662 9.70094 3.76327C9.75364 3.51139 10.1115 3.51139 10.1642 3.76327C11.0521 8.00662 12.0672 9.02177 16.3107 9.90962C16.5626 9.96232 16.5626 10.3201 16.3107 10.3728Z" fill="#525252"/>
+                      <path d="M6.97287 3.69115C4.85111 4.13507 4.34356 4.64265 3.89958 6.76434C3.87322 6.89026 3.69431 6.89026 3.66798 6.76434C3.22404 4.64265 2.71645 4.13511 0.594689 3.69115C0.468763 3.66478 0.468763 3.48588 0.594689 3.45952C2.71645 3.01559 3.22401 2.50802 3.66798 0.386357C3.69435 0.260435 3.87325 0.260435 3.89958 0.386357C4.34352 2.50805 4.85111 3.01559 6.97287 3.45952C7.0988 3.48588 7.0988 3.66482 6.97287 3.69115Z" fill="#525252"/>
+                      </svg>
+                  </span>
+                </div>
+                <div class="suggestion-list">
+                  <div *ngFor="let hint of hints" (click)="setSuggestionPrompt(hint)" class="suggestion-pill">
+                    {{ hint }}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Stage 2: Response Review -->
+            <div *ngSwitchCase="2" class="stage-layout">
+              <form name="stage2" [formGroup]="refinedPromptForm" (ngSubmit)="moveToThemeSelection()">
+                <div class="user-prompt-section">
+                  <div class="bold-label-text">Take a look. You can use this prompt or edit it to <br> make it your own.</div>
+                  <div class="prompt-textarea-section">
+                    <textarea rows="5" placeholder="40 general knowledge quiz questions with answers for you to test your friends, colleagues or guests. Players join with their phones and play along live!"
+                      formControlName="userPrompt" maxlength="10000" autocomplete="off" [ngClass]="{ 'is-invalid': refinedPromptForm.get('userPrompt').invalid && refinedPromptForm.get('userPrompt').touched }"
+                      ></textarea>
+                      <span
+                        *ngIf="refinedPromptForm.get('userPrompt')?.errors?.custom && refinedPromptForm.get('userPrompt').invalid && refinedPromptForm.get('userPrompt').touched"
+                        class="invalid-feedback">
+                        {{ refinedPromptForm.get('userPrompt')?.errors?.custom }}
+                    </span>
+                    <span
+                        *ngIf="refinedPromptForm.get('userPrompt')?.errors?.required && refinedPromptForm.get('userPrompt').invalid && refinedPromptForm.get('userPrompt').touched"
+                        class="invalid-feedback">
+                        Enter a description for your presentation
+                    </span>
+                    <!-- Refine Button -->
+                    <button type="button" class="btn">
+                      <span *ngIf="!isRefineLoading" class="icon-d" (click)="reRefinePrompt()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <mask id="mask0_89_83880" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="#D9D9D9"/>
+                          </mask>
+                          <g mask="url(#mask0_89_83880)">
+                            <path d="M12 22C10.75 22 9.57917 21.7625 8.4875 21.2875C7.39583 20.8125 6.44583 20.1708 5.6375 19.3625C4.82917 18.5542 4.1875 17.6042 3.7125 16.5125C3.2375 15.4208 3 14.25 3 13H5C5 14.95 5.67917 16.6042 7.0375 17.9625C8.39583 19.3208 10.05 20 12 20C13.95 20 15.6042 19.3208 16.9625 17.9625C18.3208 16.6042 19 14.95 19 13C19 11.05 18.3208 9.39583 16.9625 8.0375C15.6042 6.67917 13.95 6 12 6H11.85L13.4 7.55L12 9L8 5L12 1L13.4 2.45L11.85 4H12C13.25 4 14.4208 4.2375 15.5125 4.7125C16.6042 5.1875 17.5542 5.82917 18.3625 6.6375C19.1708 7.44583 19.8125 8.39583 20.2875 9.4875C20.7625 10.5792 21 11.75 21 13C21 14.25 20.7625 15.4208 20.2875 16.5125C19.8125 17.6042 19.1708 18.5542 18.3625 19.3625C17.5542 20.1708 16.6042 20.8125 15.5125 21.2875C14.4208 21.7625 13.25 22 12 22Z" fill="#4848FF"/>
+                          </g>
+                        </svg>
+                      </span>
+                      <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            *ngIf="isRefineLoading"></span>
+                    </button>
+                  </div>
+                  <div class="additional-settings-section">
+                    <div class="slide-count" [ngClass]="editMode ? 'edit-mode' : ''">
+                      <label for="slideCount" class="number-of-slide-label">No. of Slides</label>
+                      <div class="number-of-slide-button-input-group">
+                        <button type="button" class="number-of-slide-button" (click)="decrease()" [disabled]="numberOfSlides <= minNumberOfSlides">
+                          <span class="icon-d">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                              <path d="M12.8333 8.33339H3.5V7.00006H12.8333V8.33339Z" fill="#343434"/>
+                            </svg>
+                          </span>
+                        </button>
+                        <div class="number-of-slide-value" type="number" (click)="toggleEditModeAndFocus()">
+                          <span class="icon-d">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                              <path d="M16.5 6H16V5.5C16 4.67156 15.3284 4 14.5 4H14V3.5C14 2.67156 13.3284 2 12.5 2H3.5C2.67156 2 2 2.67156 2 3.5V12.5C2 13.3284 2.67156 14 3.5 14H4V14.5C4 15.3284 4.67156 16 5.5 16H6V16.5C6 17.3284 6.67156 18 7.5 18H16.5C17.3284 18 18 17.3284 18 16.5V7.5C18 6.67156 17.3284 6 16.5 6ZM3.5 13C3.22384 13 3 12.7762 3 12.5V3.5C3 3.22384 3.22384 3 3.5 3H12.5C12.7762 3 13 3.22384 13 3.5V12.5C13 12.7762 12.7762 13 12.5 13H3.5ZM5.5 15C5.22384 15 5 14.7762 5 14.5V14H12.5C13.3284 14 14 13.3284 14 12.5V5H14.5C14.7762 5 15 5.22384 15 5.5V14.5C15 14.7762 14.7762 15 14.5 15H5.5ZM17 16.5C17 16.7762 16.7762 17 16.5 17H7.5C7.22384 17 7 16.7762 7 16.5V16H14.5C15.3284 16 16 15.3284 16 14.5V7H16.5C16.7762 7 17 7.22384 17 7.5V16.5Z" fill="black"/>
+                            </svg>
+                          </span>
+                          <span *ngIf="!editMode">{{ numberOfSlides }}</span>
+                          <input 
+                            #slideCountInput
+                            *ngIf="editMode" 
+                            type="text"
+                            [value]="numberOfSlides"
+                            (blur)="saveEdit($event)"
+                            (keydown.enter)="saveEdit($event)"
+                            (input)="onInputChange($event)"
+                            (keydown)="filterNonNumeric($event)"
+                            style="max-width: 50px; height: 27px; border: none !important; border-bottom: 1px solid #4848FF !important; border-radius: 0px !important; background-color: transparent; padding: 2px; outline: none !important;"
+                            />
+                        </div>
+                        <button type="button" class="number-of-slide-button" (click)="increase()" [disabled]="numberOfSlides >= maxNumberOfSlides">
+                          <span class="icon-d">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                              <path d="M12.8333 8.33339H8.83333V12.3334H7.5V8.33339H3.5V7.00006H7.5V3.00006H8.83333V7.00006H12.8333V8.33339Z" fill="#343434"/>
+                            </svg>
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                    <div class="additional-settings-group">
+                      <div>Additional Settings</div>
+                      <div class="checkbox-option">
+                        <input type="checkbox" formControlName="isAddInstructionSlide" name="isAddInstructionSlide" id="isAddInstructionSlide" />
+                        <label for="isAddInstructionSlide">Add Instruction Slides</label>
+                      </div>
+                      <div class="checkbox-option">
+                        <input type="checkbox" formControlName="isAddImages" name="isAddImages" id="isAddImages" />
+                        <label for="isAddImages">Add Images</label>
+                      </div>
+                    </div>
+                  </div>
+                  <button type="submit" [disabled]="isLoading" class="btn btn-n text-white px-3 me-2 position-relative">
+                    <span *ngIf="!isLoading" class="align-text-bottom me-2 icon-d">
+                        <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19.7639 13.3412C14.4595 14.4511 13.1905 15.7201 12.0807 21.0246C12.0148 21.3394 11.5675 21.3394 11.5016 21.0246C10.3918 15.7201 9.12279 14.4511 3.81842 13.3412C3.50356 13.2753 3.50356 12.828 3.81842 12.7621C9.12279 11.6523 10.3918 10.3833 11.5016 5.07877C11.5675 4.7639 12.0148 4.7639 12.0807 5.07877C13.1905 10.3833 14.4595 11.6523 19.7639 12.7621C20.0787 12.828 20.0787 13.2753 19.7639 13.3412Z" fill="#F8F8FF"/>
+                        <path d="M8.09104 4.98853C5.43884 5.54347 4.80439 6.17797 4.24942 8.83024C4.21647 8.98765 3.99284 8.98765 3.95992 8.83024C3.405 6.17797 2.77051 5.54351 0.1183 4.98853C-0.0391078 4.95557 -0.0391078 4.73194 0.1183 4.69898C2.77051 4.14404 3.40495 3.50954 3.95992 0.857316C3.99288 0.699905 4.21651 0.699905 4.24942 0.857316C4.80435 3.50958 5.43884 4.14404 8.09104 4.69898C8.24845 4.73194 8.24845 4.95562 8.09104 4.98853Z" fill="#F8F8FF"/>
+                        </svg>
+                    </span>
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            *ngIf="isLoading"></span>
+                    <span class="d-md-inline-block d-none t-content me-4">Generate</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- Stage 3: Theme Selection -->
+            <div *ngSwitchCase="3" class="stage-layout" style="width: 100%; height: 100%; margin: 0 auto;">
+              <div class="bold-label-text">
+                Pick a theme that fits your style
+              </div>
+
+              <div class="theme-select">
+                <ng-container *ngFor="let theme of allThemes">
+                  <div (click)="applyTheme(theme.themeName)" class="theme-card-wrapper">
+                    <div class="slide-list-hover theme-card-container"
+                         [ngClass]="{ 'selected-theme': theme.themeName === selectedThemeName }"
+                         (click)="selectedThemeName = theme.themeName"
+                    >
+                      <div class="bg-image-themes"
+                          style="background-image: url(''); background-size: cover; inset: 0; height: 100%; position: absolute; width: 100%; z-index: 9; border-radius: 5px;">
+                      </div>
+                      <div class="bg-color-themes"
+                          style="inset: 0; height: 100%; opacity: 1; position: absolute; width: 100%; z-index: 99; border-radius: 5px;"
+                          [style.background-color]="theme.themesBackgroundColor">
+                      </div>
+
+                      <div class="theme-type-card text-center">
+                        <div>
+                          <h5 class="theme-title" [style.color]="theme.themesFontColor">{{ theme?.themeName }}</h5>
+                        </div>
+                        <div class="bar-chart">
+                          <ng-container *ngFor="let chartcolor of theme.themesChartColor">
+                            <div class="bars"
+                                [style.height.px]="chartcolor.height"
+                                [style.background-color]="chartcolor.color">
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+
+              <div>
+                You can always change this later.
+              </div>
+            </div>
+
+            <!-- Stage 4: Presentation Generation -->
+            <div *ngSwitchCase="4" class="stage-layout" style="justify-content: flex-start;">
+              <img src="assets/images/ai-loader.gif" alt="Generating your Presentation..." width="300" />
+
+              <div class="bold-label-text">
+                Your presentation is being generated
+              </div>
+
+              <div class="progress-messages mt-3">
+                <div class="progress-message" *ngFor="let message of progressMessages">
+                  {{ message }}
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </div>
+  

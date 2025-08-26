@@ -1,0 +1,119 @@
+<div class="row" appDrag (files)="slidefilesDropped($event)">
+    <div class="box py-3 px-0 col-2">
+        <div class="d-flex justify-content-center align-items-center border w-100 h-100"
+            *ngIf="this.slideDetails?.slideImage == ''" (click)="getModal()">
+            <img src="assets/images/staticslideimages.png"
+                width="26" height="26">
+        </div>
+        <div class=" d-flex justify-content-center align-items-center border w-100 h-100"
+            *ngIf="this.slideDetails?.slideImage != ''" (click)="getModalUpdate()">
+            <img [src]="slideDetails?.slideImage" width="26"
+                height="26">
+        </div>
+    </div>
+    <div class="col-8 py-3 d-block pe-3 text-start"
+        *ngIf="this.slideDetails?.slideImage == ''" (click)="getModal()">
+        <h5 class="fs-low fw-six text-gray"> Drag and drop or <br>
+            <span class="text-primary" style="text-decoration: underline;">Click to add image</span>
+        </h5>
+    </div>
+    <div class="col-8 py-3 d-block pe-3 text-start"
+        *ngIf="this.slideDetails?.slideImage != ''" (click)="getModalUpdate()">
+        <h5 class="fw-six text-gray mb-0">
+            <span class="fs-low text-primary d-block" style="text-decoration: underline;">Update
+                image</span>
+        </h5>
+    </div>
+    <div class="box py-3 px-0 col-2"
+        *ngIf="this.slideDetails?.slideImage != ''">
+        <div
+            class=" d-flex justify-content-center align-items-center border w-100 h-100">
+            <img src="assets/images/Trashcan.png" width="26"
+                height="26"
+                (click)="RemoveSlideImage(settingVariable?.SlideImage)">
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="imageAddModal" data-bs-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="imageAddModalLabel" aria-hidden="true">
+    <app-image-upload *ngIf="(SourceImageDatabase == '' && imageEvent == '')" [SlideDetails]="slideDetails" (uploadEvent)="uploadImage($event)" (PatchSource)="ImageSource($event)"></app-image-upload>
+    <app-image-crop *ngIf="(imageEvent != '' || SourceImageDatabase !='')" [SlideDetails]="slideDetails" [imageformat]="imageformat" [imageEvent]="imageEvent" [URLFromSource]="OriginalImage" [svgimagesource]="svgimage" [SourceImageFromModal]="SourceSlideImage" [isShowCropModalFromModal]="isShowCropModal" (SlideImageObject)="saveSlideImageObj($event)" (ImageEventEmpty)="emptyImageEvent($event)" (PatchSourceImage)="ImageSourceEvent($event)"></app-image-crop>
+</div>
+<!-- File Invalid Type Model -->
+<div class="modal fade" id="fileTypeInvalide" tabindex="-1" role="dialog" aria-labelledby="fileTypeInvalideLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-very-high" id="fileTypeInvalideLabel">Could not upload this file</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="2.25rem" height="2.25rem" aria-labelledby="descriptive-:r8h:" viewBox="0 0 24 24">
+                            <!-- <title id="descriptive-:r8h:">Close</title> -->
+                            <g color="#101834">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </g>
+                            </g>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mx-0">
+                    <div class="col-12 px-0">
+                        <p>This file type cannot be uploaded.The supported file type are .png,.jpg,.gif,.svg.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close">Cancel</button>
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- File Invalid Size Model -->
+<div class="modal fade" id="fileSizeInvalide" tabindex="-1" role="dialog" aria-labelledby="fileSizeInvalideLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-very-high" id="fileSizeInvalideLabel">Could not upload this file</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="2.25rem" height="2.25rem" aria-labelledby="descriptive-:r8h:" viewBox="0 0 24 24">
+                            <!-- <title id="descriptive-:r8h:">Close</title> -->
+                            <g color="#101834">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </g>
+                            </g>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mx-0">
+                    <div class="col-12 px-0">
+                        <p>The image is too big to be uploaded (max size is 2MB).Please try a smaller file.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close">Cancel</button>
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,245 @@
+<div class="feature-grid">
+<div class="Main" [ngStyle]="{'background-color': recentPresentation?.length > 0 ? '#fdfdfd' : '#F6F7FC'}">
+    <div class="top-div mp-none">
+    </div>
+    <div class="plr-features-maindiv container-fluid p-0">
+        <span class="plr-txt">Popular Features</span>
+        <div class="grid-main-div row">
+            <div class="svg-cnt-sec skel-main" *ngIf="isSkeleton">
+                <div class="skeleton-item">
+                    <div class="skeleton-sec"></div>
+                </div>
+                <div class="skeleton-item">
+                    <div class="skeleton-sec"></div>
+                </div>
+                <div class="skeleton-item">
+                    <div class="skeleton-sec"></div>
+                </div>
+                <div class="skeleton-item">
+                    <div class="skeleton-sec"></div>
+                </div>
+                <div class="skeleton-item">
+                    <div class="skeleton-sec"></div>
+                </div>
+            </div>
+            <div class="svg-cnt-sec" *ngIf="!isSkeleton">
+                <div *ngFor="let item of svgUrl" class="grid-container" (click)="openModal(item.name)">
+                    <div class="popup-sec">
+                        <div class="image-container-gif"   (mouseenter)="hoveredItem = item" 
+                        (mouseleave)="hoveredItem = null"  #imgContainer>
+                        <img class="gif-image"   [src]="hoveredItem === item ? item.gifUrl : item.backgroundUrl" 
+                        [ngStyle]="{
+                          'border': hoveredItem === item ? '.5px solid ' + item.hoverColor : '.5px solid transparent'
+                        }"  draggable="false">                   
+                        </div>
+                    </div>
+                    <p class="fs-very-low">{{ item.name }}</p>
+                </div>
+            </div>            
+        </div>
+    </div>
+</div>
+<div  class="modal fade" id="featuresView" tabindex="-1"
+    aria-labelledby="presentationFeatureslabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header" style="border-bottom:none">
+                <h4 class="fs-low ms-2">{{currentTypeName}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="closeModal()">
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_6817_62857" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="25">
+                        <rect width="25" height="25" fill="#D9D9D9"/>
+                        </mask>
+                        <g mask="url(#mask0_6817_62857)">
+                        <path d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z" fill="#999999"/>
+                        </g>
+                        </svg>
+                        </button>
+            </div>
+            <!-- <p class="mt-3 mb-3 ms-4 fs-very-low fw-four">Collect responses and highlight the most common ones in a beautiful {{currentTypeName}}! A very popular way to start or end a session.</p> -->
+            <p class="mt-3 mb-3 ms-4 fs-very-low fw-four" *ngIf="currentTypeName == masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE">
+                Let’s make it easy! Multiple choice slides’re quick, clear, and give everyone a chance to jump in.
+            </p>
+            <p class="mt-3 mb-3 ms-4 fs-very-low fw-four" *ngIf="currentTypeName == masterSlideTypeName.WORD_CLOUD_SLIDE_TYPE">
+                Let ideas flow! Word cloud slide shows what’s on everyone’s mind in a colorful visual burst.
+            </p>
+            <p class="mt-3 mb-3 ms-4 fs-very-low fw-four" *ngIf="currentTypeName == masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE">
+                Get creative answers! Let your audience share ideas without limits—this slide is all about unique perspectives.
+            </p>
+            <p class="mt-3 mb-3 ms-4 fs-very-low fw-four" *ngIf="currentTypeName == masterSlideTypeName.RANKING_SLIDE_TYPE">
+                Move things around! Let your audience organize your picks and see how opinions stack up.
+            </p>
+            <p class="mt-3 mb-3 ms-4 fs-very-low fw-four" *ngIf="currentTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE">
+                Rate it your way! Scales slide lets everyone rate it out and reveals the full spectrum of opinions.
+            </p>
+            <div #scrollContainer class="row ps-2 scrollable-content">
+                <div class="col-md-4">
+                    <div class="add-pres">
+                        <button class="plus-icon 1" #imgContainer (click)="createPopularFeature(currentTypeName)" [ngStyle]="{'height': imgContainer.offsetWidth / 1.777 + 'px'}" [class.disabled]="customerLimitationCount?.balancePresentationLimit <= 0">
+                            <ng-container *ngIf="customerLimitationCount?.balancePresentationLimit> 0">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"  *ngIf=!iscreatePopularFeature>
+                                <path class="icon-path" d="M4 12H20M12 4V20" stroke="#000000" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <div class="spinner-border spinner-border-sm small-spinner mx-1" role="status" aria-hidden="true" *ngIf="iscreatePopularFeature"></div>
+                        </ng-container>
+                        <ng-container *ngIf="customerLimitationCount?.balancePresentationLimit<= 0">
+                            <div class="layout-label justify-content-center">
+                                <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top" data-tooltip="Need subscription">
+                                  <img src="../../../../../assets/images/Crown.svg" width="25" height="25">
+                                </div>
+                            </div>
+                        </ng-container>
+                    </button>
+                        <!-- <p>Blank {{currentTypeName}}</p> -->
+                    </div>
+                </div>
+                <ng-container *ngIf="isPreviewSkeleton">
+                    <div class="col-md-4" *ngFor="let item of [1,2,3,4,5]">
+                        <div class="add-pres skeleton-loader">
+                            <div class="skeleton-preview">
+                                <div class="skeleton-image pulse"></div>
+                                <div class="skeleton-content">
+                                    <div class="skeleton-title pulse"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="!isPreviewSkeleton">
+                    <div class="col-md-4 grid-container-template"  *ngFor="let item of usercharts;let i = index">
+                        <div class="add-pres" (click)="openPreviewModal(item,i)">
+                            <button class="plus-icon" #imgContainer [ngStyle]="{'height': imgContainer.offsetWidth / 1.777 + 'px', 'width': imgContainer.offsetWidth + 'px'}">
+                                <div class="chart-section">
+                                    <section id="main-stage" class="middle-content-section">
+                                        <div class="inside-middle-content">
+                                            <div class="inside-middle-content" #CenterPanel>
+                                                <div class="chart-main-content" #OuterScreen>
+                                                    <div class="dynamic-component center-panel-chart1 position-relative" #InnerScreen
+                                                        [ngStyle]="{ 'width' : panelWidth, 'height' : panelHeight }">
+                                                        <div class="remote-chart-content-area" [ngStyle]="{ 'width' : panelWidth}">
+                                                            <div class="remote-chart-inner-content-area">
+                                                                <div class="slide-card"
+                                                                    [appThemes]="item?.template?.slides?.design | slideThemes:item?.template?.presentationThemes">
+                
+                                                                    <div class="bs-body-content">
+                                                                        <ng-container
+                                                                            *ngIf="item?.template?.slides?.slideContentType != masterSlideTypeName.QUIZ && item?.template?.slides?.slideTypeName !== masterSlideTypeName.ImportDocument && item?.template?.slides?.slideTypeName !== masterSlideTypeName.POWER_POINT && item?.template?.slides?.slideTypeName !== masterSlideTypeName.GoogleSlides && item?.template?.slides?.slideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                                                                            <div class="theme-background-image"
+                                                                                [ngStyle]="{'background-image': 'url(' + item?.template?.presentationThemes?.themesBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':item?.template?.presentationThemes?.themesBackgroundImage?.themeBackgroundImageCroppedUrl ? item?.template?.presentationThemes?.backgroundColorOpacity:1}">
+                                                                            </div>
+                                                                        </ng-container>
+                
+                                                                        <div class="content-center-panel" [hidden]="isLoading">
+                                                                            <ng-container *ngIf="item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl">
+                                                                                <div class="brand-logo" [style.width]="workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) =='Landscape'? '10%':'5%'">
+                                                                                    <div class="logo-icon">
+                                                                                        <img [src]="item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl" alt="Logo" class="logo-image">
+                                                                                    </div>
+                                                                                </div>
+                                                                              </ng-container>
+                                                                            <div
+                                                                                [ngClass]="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+                
+                                                                                <div *ngIf="(getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Image right' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Image left') && item?.template?.slides?.slideTypeName != 'Import Document'"
+                                                                                    class="background-left-right-image"
+                                                                                    [ngStyle]="loadBGLayout(item?.template?.slides?.slideTypeName,item?.template?.slides?.contentImage?.croppedUrl)">
+                                                                                </div>
+                                                                                <div *ngIf="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side right' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left'"
+                                                                                    class="background-slide-by-slide-left-right-image"
+                                                                                    [ngStyle]="loadBGLayout(item?.template?.slides?.slideTypeName,item?.template?.slides?.contentImage?.croppedUrl)">
+                                                                                </div>
+                                                                                <div
+                                                                                    [ngClass]="{'background-image-panel-top': getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image top', 'background-image-panel-bottom': getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image bottom', 'background-image-panel': getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) != 'Image top' && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) != 'Image bottom', 'img-opacity': item?.template?.slides?.slideTypeName != 'Import Document' && item?.template?.slides?.slideTypeName !=masterSlideTypeName.POWER_POINT && item?.template?.slides?.slideTypeName !=masterSlideTypeName.GoogleSlides && item?.template?.slides?.slideTypeName !=masterSlideTypeName.INSTRUCTION_SLIDE_TYPE && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Full Image' }">
+                                                                                    <div *ngIf="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Full Image' && item?.template?.slides?.slideTypeName != 'Import Document'"
+                                                                                        [ngStyle]="{'background-image': 'url(' +(item?.template?.slides?.contentImage?.croppedUrl || '/assets/images/static_bg_image.svg')+')','width': '100%','position': 'absolute','height': '100%','opacity':item?.template?.slides?.contentImage?.backgroundImageOpacity, 'background-position': 'center center', 'background-repeat': 'no-repeat', 'background-size': 'cover'}">
+                                                                                    </div>
+                                                                                    <div class="inner-top-bottom-image"
+                                                                                        *ngIf="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image top' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image bottom'"
+                                                                                        [ngStyle]="loadBGLayout(item?.template?.slides?.slideTypeName,item?.template?.slides?.contentImage?.croppedUrl)">
+                                                                                    </div>
+                                                                                    <ng-container
+                                                                                        *ngIf="item?.template?.slides?.slideTypeName == 'Import Document'">
+                                                                                        <img #slideImage
+                                                                                            [src]="workSpaceService.changepptImgDataFormat(item?.template?.slides?.slideContentData)"
+                                                                                            (load)="checkImageOrientation($any($event.target))"    
+                                                                                            draggable="false">
+                                                                                    </ng-container>
+                
+                                                                                    <div class="remote-inside-chart-area">
+                                                                                        <ng-container
+                                                                                            *ngIf="item?.template?.slides?.slideTypeName != masterSlideTypeName.GoogleSlides && item?.template?.slides?.slideTypeName != masterSlideTypeName.POWER_POINT">
+                                                                                            <div class="remote-content-text-area"
+                                                                                                [hidden]="isLoading">
+                                                                                                <div class="chart-question" [style.width]="
+                                                                                                (item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl == null || item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl == '') ? '100%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Landscape' && (getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Full Image' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Default')) ? '75%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Portrait'  && (getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Full Image' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Default')) ? '90%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Landscape' && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left')? '75%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Portrait' && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left')? '90%':'100%'">
+                                                                                                    <span
+                                                                                                        class="font-style-template-list"
+                                                                                                        class="font-styling-empty-class">
+                                                                                                        {{getQuestionData(item)}}</span>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </ng-container>
+                                                                                        <!-- (mouseenter)="onTemplateHover(dynamicComponent)" (mouseleave)="onTemplateLeave(dynamicComponent)" -->
+                                                                                        <div class="remote-chart-content-area"
+                                                                                            [style.font-size]="item?.template?.slides?.slideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? '17px':'24px'"
+                                                                                            [style.marginTop.px]="item?.template?.slides?.slideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? 60:20">
+                                                                                            <div
+                                                                                                [ngClass]="[(item?.template?.slides?.slideTypeName == masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE || item?.template?.slides?.slideTypeName == masterSlideTypeName.QA_QUESTIONS_AND_ANSWER_SLIDE_TYPE)  ? 'remote-dynamic-chart-scroll': 'remote-dynamic-chart']">
+                                                                                                <app-dynamic-slide-type
+                                                                                                (mouseenter)="onTemplateHover(dynamicComponent)" (mouseleave)="onTemplateLeave(dynamicComponent)"
+                                                                                                    #dynamicComponent
+                                                                                                    [activeSlideTypeId]="item?.template?.slides?.slideTypeId"
+                                                                                                    [activeslideVisualizationId]="item?.template?.slides?.design?.slideVisualizationId"
+                                                                                                    [slideDetails]="item?.template?.slides"
+                                                                                                    [template]="item"
+                                                                                                    [presentationTheme]="item?.template?.presentationThemes"
+                                                                                                    [viewfrom]="'popular-features'"
+                                                                                                    [screenOptions]="'presentationScreen'"
+                                                                                                    [isPresenterEditorScreen]="false"
+                                                                                                    [isPreview]="true"></app-dynamic-slide-type>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                            </button>
+                            <p class="ms-3 fs-very-low-12 fw-four text-truncate tempalte-name">{{item.templateName}}</p>
+                        </div>
+                        <!-- <button type="button" class="btn btn-primary btn-use-template" (click)="useTemplate(item.template[0]?.id)">Use Template</button> -->
+                    </div>
+                    <div class="spinner-wrapper" *ngIf="isLoading">
+                        <div class="spinner-border small-spinner spinner-border-sm fs-very-low" role="status" aria-hidden="true"></div>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+<app-modal [isShowModal]="isPreviewClicked" (closePreviewModal)="closePreviewModal($event)" modalType="preview">
+    <ng-container *ngIf="isPreviewClicked">
+      <h4 modalTitle>{{userPreviewData?.templateName}}</h4>
+      <app-templates-preview [SlideImage]="userPreviewData?.template?.slides?.slideTypeImage"
+        [templateDetails]="userPreviewData" [slideCount]="userPreviewData?.template?.slidesCount"
+        [downloadCount]="userPreviewData?.downloadCount" [categoryName]="getCategoryNames()"
+        [templateId]="userPreviewData?.templateId" [templateDescription]="userPreviewData?.description"
+        [createdBy]="userPreviewData?.customerName" [index]="previewindex" [customerLimitation]="customerLimitationCount">
+      </app-templates-preview>
+    </ng-container>
+  </app-modal>
+</div>

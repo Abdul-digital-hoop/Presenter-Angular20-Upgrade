@@ -1,0 +1,202 @@
+@import '/src/assets/variablesScss/varaiabledecalaration.scss';
+@import '/src/assets/variablesScss/common.scss';
+.red-text {
+    color: red;
+  }
+  .reached-maximum {
+    font-size: $fs-10;
+    color: $danger;
+    margin-bottom: 0px;
+}
+.remaining-padding-ppt {
+    padding-right: 40px;
+}
+.remaining-padding-ppt:focus {
+    padding-right: 40px;
+}
+.font-size-btn{
+    background: none;
+    width: 30px;
+    height: 30px;
+    border: 1px solid #f0f0f0;
+    font-size: 17px;
+    font-weight: 300;
+}
+.embedded-text{
+    text-align: left;
+    display: flex;
+    margin-left: 5px;
+    font-size: 12px;
+}
+.font-family-select{
+    border: 1px solid var(--Color-Gray-Gray-200, #DEDEDE);
+    border-radius: 5px !important;
+    font-size: 12px;
+    color: var(--Color-Text-Text-500, #525252);
+    height: 37px;
+}
+.style-heading{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--Content-Body, #525252);
+    padding: 12px 0px;
+    margin-right: 94px;
+}
+.btn.button {
+    background-color: $gray-100;
+    color: #7C7C7C;
+    border: none;
+    border-radius: 0px;
+    padding-top: 0;
+    padding-bottom: 0;
+    cursor: pointer;
+    font-size: 22px;
+    border: 1px solid transparent;
+    transition: all .5s ease-in-out;
+}
+.btn.button:hover {
+    background-color: $gray-100;
+    color: #7C7C7C;
+    border: none;
+    border-radius: 0px;
+    padding-top: 0;
+    padding-bottom: 0;
+    cursor: pointer;
+    font-size: 22px;
+    border: 1px solid $product-primary;
+}
+.custom-text-button {
+    border: 1px solid #DEDEDE;
+    background-color: #ffffff;
+    border-radius: 3px;
+    padding: 0px 0px;
+    margin: 5px 0px;
+    text-align: center;
+    height: 26px;
+    width: 29px;
+}
+.custom-text-button b{
+    font-size: 14px;
+}
+.Font-heading{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--Content-Body, #525252);
+    padding: 12px 0px;
+    margin-right: 10em;
+}
+.custom-bg-color{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--Content-Body, #525252);
+    padding: 12px 0px;
+    margin-right: 6px;
+}
+.vl{
+    border-left: 1px solid var(--Color-Gray-Gray-100, #d6d6d6);
+    height: 20px;
+    margin-right: 8px;
+  }
+  .text-color{
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--Content-Body, #525252);
+    padding: 12px 0px;
+    margin-right: 35px;
+  }
+  .hr-text{
+    border: 1px solid #EEEEEE;
+  }
+  .font-color-picker {
+    cursor: pointer;
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    border-radius: 10px;
+    border: 0;
+    height: 100%;
+    padding: 0;
+    width: 100%;
+} 
+.background-color-picker {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+.bg-picker-color {
+    width: 26px;
+    border: 1px solid;
+    height: 25px;
+    border-radius: 8%;
+    // border: 1px solid #5c5c5c;
+}
+.bg-picker-color-custome {
+    width: 28px;
+    height: 28px;
+    //border-radius: 50%;
+    border: 1px solid #5c5c5c;
+}
+.backgroundcolor-active{
+border: 1px solid #4848FF !important;
+}
+.active-textcolor{
+    color:#4848FF;
+    border: 1px solid #4848FF !important;
+    }
+.bg-text-picker-color{
+    width: 23px;
+    border: 1px solid;
+    height: 23px;
+    border-radius: 8%;
+}
+.image-fit{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.remaning-one {
+    position: absolute;
+    top: 113px;
+    right: 25px;
+    font-size: 10px;
+    color: #495057;
+  }
+  .active{
+    border-color: $product-primary;
+}
+.hover-border:hover {
+    border: 1px solid #4848FF !important;
+}
+.hover-border-radius:hover {
+    border: 1px solid #4848FF !important;
+    border-radius: 8%;
+}
+.hover-text:hover{
+    color: #4848FF !important;
+}
+//* pricing plan CSS
+.layout-label{
+    display: flex;
+    align-items: start;
+    justify-content: start;
+}
+.pricing-icon{
+    display: flex;
+    background-color: rgb(204 248 233 / 1);
+    border-radius: 50%;
+    padding: 4px;
+    position: relative;
+    align-items: start;
+    justify-content: space-evenly;
+    margin: 2px;
+}
+select{
+    cursor: pointer;
+}
+option{
+    cursor: pointer;
+}

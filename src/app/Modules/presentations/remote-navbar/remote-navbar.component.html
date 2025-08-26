@@ -1,0 +1,56 @@
+<div class="remote-header">
+    <div class="remote-nav">
+        <div class="remote-logo">
+            <img src="/assets/images/product-logo.svg" width="128" height="42" alt="" class="img-fluid">
+        </div>
+        <div class="remote-presentation-name">
+            <span class="presentation-name" [ngClass]="workspaceService?.presentationName?.length > 50 ? 'presentation-name-with-max-character':'presentation-name'">{{workspaceService?.presentationName}}</span>
+        </div>
+    </div>
+    <ul class="nav nav-tabs tabs-navbar tabs" role="tablist">
+        <li class="nav-item" role="setting" (click)="changeRemoteChange(RemoteTabString.Setting)">
+            <a class="nav-link  fs-very-low d-flex" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0"
+                role="tab" aria-controls="simple-tabpanel-0" aria-selected="true" [class.active]="activeTab == RemoteTabString.Setting">Settings
+                <ng-container *ngIf="activeTab != RemoteTabString.Setting">
+                    <img src="/assets/new-icons/tab_settings.svg" class="tab-icon">
+                </ng-container>
+                <ng-container *ngIf="activeTab == RemoteTabString.Setting">
+                    <img src="/assets/new-icons/settings_active.svg" class="tab-icon">
+                </ng-container>
+            </a>
+        </li>
+        <li class="nav-item" role="presentation" (click)="changeRemoteChange(RemoteTabString.Present)">
+            <a class="nav-link fs-very-low d-flex" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab"
+                aria-controls="simple-tabpanel-0" aria-selected="true" [class.active]="activeTab == RemoteTabString.Present">Present
+                <ng-container *ngIf="activeTab != RemoteTabString.Present">
+                    <img src="/assets/new-icons/presentation.svg" class="tab-icon">
+                </ng-container>
+                <ng-container *ngIf="activeTab == RemoteTabString.Present">
+                    <img src="/assets/new-icons/presentation_active.svg" class="tab-icon">
+                </ng-container>
+            </a>
+        </li>
+        <li class="nav-item" role="qa" (click)="changeRemoteChange(RemoteTabString.QA)">
+            <a class="nav-link fs-very-low d-flex" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab"
+                aria-controls="simple-tabpanel-0" aria-selected="true" [class.active]="activeTab == RemoteTabString.QA">Q & A
+              <ng-container *ngIf="isAllQuestionsAnswered">
+                <ng-container *ngIf="activeTab != RemoteTabString.QA">
+                    <img src="/assets/new-icons/message.svg" class="tab-icon">
+                </ng-container> 
+                <ng-container *ngIf="activeTab == RemoteTabString.QA">
+                    <img src="/assets/new-icons/QA_active.svg" class="tab-icon">
+                </ng-container>
+              </ng-container>
+              <ng-container *ngIf="!isAllQuestionsAnswered">
+                <ng-container *ngIf="activeTab != RemoteTabString.QA">
+                    <img src="/assets/new-icons/QandAIcon.svg" class="tab-icon">
+                </ng-container> 
+                <ng-container *ngIf="activeTab == RemoteTabString.QA">
+                    <img src="/assets/new-icons/QA_Active_In_Tab.svg" class="tab-icon">
+                </ng-container>
+              </ng-container>
+
+            </a>
+        </li>
+    </ul>
+</div>

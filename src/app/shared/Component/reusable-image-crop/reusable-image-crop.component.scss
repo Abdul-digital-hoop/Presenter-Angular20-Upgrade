@@ -1,0 +1,50 @@
+.btn.btn-backtoupload {
+    background-color:rgb(232, 233, 234);
+    color: black !important;
+    border-radius: 40px;
+    transition: 1s all ease;
+}
+.btn.btn-backtoupload:hover {
+    background-color:rgb(217, 218, 219);
+    transition: 1s all ease;
+}
+.btn.btn-save {
+    width: 70px;
+    font-weight: 400;
+    background-color: #486af3;
+    border-radius: 40px;
+    transition: 1s all ease;
+}
+.btn.btn-save:hover {
+    background-color: #0d31bd;
+    transition: 1s all ease;
+}
+.btn.btn-crop{
+    color: initial;
+    border-color: rgb(152, 153, 153);
+    border-radius: 10px;
+}
+.active{
+    background-color: #e9edff;
+    border: 1px solid #6987fc !important;
+    border-radius: 5px;
+}
+.crop-button{
+    display: flex;
+    justify-content: center;
+}
+.img-cropper{
+    max-width: 50%;
+    max-height: 45vh;
+    margin-left: auto;
+    margin-right: auto;
+}
+.ngx-ic-source-image{
+    visibility: visible !important;
+}
+.svgimage{
+    max-width: 50%;
+    max-height: 45vh;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -1,0 +1,201 @@
+<header>
+    <div class="cstm-header-card">
+        <div class="first-part-header">
+        <!--  Presentation Actions   -->
+            <div class="gap-3 d-flex align-items-center">
+                <!-- ========  Back to Home  ============ -->
+                <a class="arrow-hover" (click)="backToPresentationList()">
+                    <img src="/assets/new-icons/arrow-left.svg" class="common-icon-size" />
+                </a>
+                <!-- ========  Edit Presentation Name ============ -->
+                <app-presentation-name></app-presentation-name>
+                <!-- ========  Audience URL ============ -->
+                <div class="copy-input-relative align-items-center d-lg-flex d-none w-50" *ngIf="!IntegrationMediumOffice">
+                    <input type="text" class="form-control copy-input" [value]="workSpaceService.presentationURL" readonly />
+                    <!-- <div class="edit-input-icon">
+                                        <img src="/assets/new-icons/edit-icon.svg" class="common-icon-size" />
+                                    </div> -->
+                    <span class="ms-2 cursor-pointer" (click)="copyToClipboard()">
+                        <svg *ngIf="!copied" width="16" height="16" fill="#878787" xmlns="http://www.w3.org/2000/svg" name="copy"
+                            class="icon-svg">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M5 2a.333.333 0 00-.333.333v1H11c.92 0 1.666.746 1.666 1.667v6.333h1c.185 0 .334-.149.334-.333V2.333A.333.333 0 0013.666 2H5zm7.666 10.667h1c.921 0 1.667-.747 1.667-1.667V2.333c0-.92-.746-1.666-1.667-1.666H5c-.92 0-1.667.746-1.667 1.666v1h-1C1.413 3.333.667 4.08.667 5v8.667c0 .92.746 1.666 1.666 1.666H11c.92 0 1.666-.746 1.666-1.666v-1zm-10.333-8A.333.333 0 002 5v8.667c0 .184.15.333.333.333H11c.184 0 .333-.15.333-.333V5A.333.333 0 0011 4.667H2.333z">
+                            </path>
+                        </svg>
+                        <svg *ngIf="copied" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20Z" fill="#00BA00"/>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M6.87814 14.877L3.22082 10.9626C2.72011 10.4267 2.74885 9.57886 3.28476 9.07815C3.82066 8.57744 4.66854 8.60626 5.16924 9.14209L7.99035 12.1615L12.4558 7.98925C12.4959 7.95169 12.5379 7.91729 12.5813 7.88563L14.6812 5.92366C15.2171 5.42296 16.0651 5.45177 16.5657 5.98768C17.0664 6.52351 17.0376 7.37146 16.5018 7.87217L10.0881 13.8647L10.0812 13.8574L7.86263 15.9303L6.87814 14.877Z" fill="white"/>
+                            </svg>                            
+                    </span>
+                </div>
+            </div>
+            
+            <!-- <div class="d-lg-block d-none">
+                <button class="btn p-0 mx-3">
+                    <img src="/assets/new-icons/redo.svg"/>
+                </button>
+                <button class="btn p-0 mx-3">
+                    <img src="/assets/new-icons/undo.svg"/>
+                </button>
+            </div> -->
+            <div class="d-flex justify-content-between align-items-center">
+                <button 
+                class="btn btn-secondary d-flex justify-content-between align-items-center me-lg-3 me-1 toggle-button text-nowrap pointer-event remote-pricing-tooltip" 
+                [ngClass]="workSpaceService.slideParticipantCount >= 1 || workSpaceService.slideVotersCount >= 1 ? '' : 'disabled'" 
+                [ngStyle]="{'cursor': customerPlan?.reset_result ? '' : 'not-allowed'}" 
+                [disabled]="((workSpaceService.isTemplate) || !(workSpaceService.slideParticipantCount >= 1 || workSpaceService.slideVotersCount >= 1))"(click)="showPopOver($event)" 
+                [attr.data-tooltip]="customerPlan?.reset_result === false ? 'Upgrade your plan to reset presentation results.' : null" [attr.data-bs-placement]="'bottom'">
+                    <div class="me-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_20618_470618" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                            <rect width="24" height="24" fill="currentColor"/>
+                            </mask>
+                            <g mask="url(#mask0_20618_470618)">
+                            <path d="M12 21C9.7 21 7.69583 20.2375 5.9875 18.7125C4.27917 17.1875 3.3 15.2833 3.05 13H5.1C5.33333 14.7333 6.10417 16.1667 7.4125 17.3C8.72083 18.4333 10.25 19 12 19C13.95 19 15.6042 18.3208 16.9625 16.9625C18.3208 15.6042 19 13.95 19 12C19 10.05 18.3208 8.39583 16.9625 7.0375C15.6042 5.67917 13.95 5 12 5C10.85 5 9.775 5.26667 8.775 5.8C7.775 6.33333 6.93333 7.06667 6.25 8H9V10H3V4H5V6.35C5.85 5.28333 6.8875 4.45833 8.1125 3.875C9.3375 3.29167 10.6333 3 12 3C13.25 3 14.4208 3.2375 15.5125 3.7125C16.6042 4.1875 17.5542 4.82917 18.3625 5.6375C19.1708 6.44583 19.8125 7.39583 20.2875 8.4875C20.7625 9.57917 21 10.75 21 12C21 13.25 20.7625 14.4208 20.2875 15.5125C19.8125 16.6042 19.1708 17.5542 18.3625 18.3625C17.5542 19.1708 16.6042 19.8125 15.5125 20.2875C14.4208 20.7625 13.25 21 12 21Z" fill="currentColor"/>
+                            <path d="M14 16V12.5H16V16H14ZM11 16V8H13V16H11ZM8 16V11.5H10V16H8Z" fill="currentColor"/>
+                            </g>
+                        </svg>
+                      </div>        
+                    <span *ngIf="!IntegrationMediumOffice">Reset results</span>
+            </button>
+                <div class="me-3 d-lg-block d-none">
+                    <ul class="list-unstyled m-0 d-flex align-items-center avatar-group">
+                        <li class="avatar">
+                            <div class="user-profile-generater" *ngIf="!profileImageURL">
+                                <span class="fw-normal">{{userName}}</span>
+                            </div>
+                            <div *ngIf="profileImageURL">
+                                <img class="profile-image-generator" src="{{profileImageURL}}"/>
+                            </div>
+                        </li>
+                        <!-- <li class="avatar">
+                            <img src="/assets/new-icons/plus-round.svg"/>
+                        </li> -->
+                    </ul>
+                </div>
+                <!-- <app-share-presenatation></app-share-presenatation>
+                <button class="btn p-0 mx-3 d-lg-block d-none">
+                    <img src="/assets/new-icons/help.svg"/>
+                </button> -->
+                <app-presentation-setting (reactionUpdate)="updateReactions($event)"></app-presentation-setting>
+                <!-- <app-preview-presentation></app-preview-presentation> -->
+                <app-presentation-result></app-presentation-result>
+                <app-presentation-present></app-presentation-present>
+                <div class="dropdown d-lg-none ms-2" *ngIf="!IntegrationMediumOffice">
+                    <button class="btn p-0 d-block" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="40" height="40" rx="20" fill="#F8F9FA"/>
+                            <rect x="32" y="8" width="24" height="24" rx="12" transform="rotate(90 32 8)" fill="#F8F9FA"/>
+                            <mask id="mask0_24977_201648" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="8" y="8" width="24" height="24">
+                            <rect x="32" y="8" width="24" height="24" transform="rotate(90 32 8)" fill="#D9D9D9"/>
+                            </mask>
+                            <g mask="url(#mask0_24977_201648)">
+                            <path d="M18 14C18 13.45 18.1958 12.9792 18.5875 12.5875C18.9792 12.1958 19.45 12 20 12C20.55 12 21.0208 12.1958 21.4125 12.5875C21.8042 12.9792 22 13.45 22 14C22 14.55 21.8042 15.0208 21.4125 15.4125C21.0208 15.8042 20.55 16 20 16C19.45 16 18.9792 15.8042 18.5875 15.4125C18.1958 15.0208 18 14.55 18 14ZM18 20C18 19.45 18.1958 18.9792 18.5875 18.5875C18.9792 18.1958 19.45 18 20 18C20.55 18 21.0208 18.1958 21.4125 18.5875C21.8042 18.9792 22 19.45 22 20C22 20.55 21.8042 21.0208 21.4125 21.4125C21.0208 21.8042 20.55 22 20 22C19.45 22 18.9792 21.8042 18.5875 21.4125C18.1958 21.0208 18 20.55 18 20ZM18 26C18 25.45 18.1958 24.9792 18.5875 24.5875C18.9792 24.1958 19.45 24 20 24C20.55 24 21.0208 24.1958 21.4125 24.5875C21.8042 24.9792 22 25.45 22 26C22 26.55 21.8042 27.0208 21.4125 27.4125C21.0208 27.8042 20.55 28 20 28C19.45 28 18.9792 27.8042 18.5875 27.4125C18.1958 27.0208 18 26.55 18 26Z" fill="#343434"/>
+                            </g>
+                            </svg>                            
+                    </button>
+                    <ul class="dropdown-menu menu-arrow">
+                        <li>
+                            <a class="dropdown-item" href="javascript:void(0)" data-bs-target="modal" data-bs-toggle="shareModal">
+                                <span class="me-2">
+                                    <img src="/assets/new-icons/share.svg" width="20" height="20" class="img-fluid">
+                                </span>Share
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="viewResult()">
+                                <span class="me-2">
+                                    <img src="/assets/new-icons/result.svg" width="20" height="20" class="img-fluid">
+                                </span>Result
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="javascript:void(0)" (click)="openPreview()">
+                                <span class="me-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 11" fill="none">
+                                        <path d="M8 8.72727C8.90909 8.72727 9.68182 8.40909 10.3182 7.77273C10.9545 7.13636 11.2727 6.36364 11.2727 5.45455C11.2727 4.54545 10.9545 3.77273 10.3182 3.13636C9.68182 2.5 8.90909 2.18182 8 2.18182C7.09091 2.18182 6.31818 2.5 5.68182 3.13636C5.04545 3.77273 4.72727 4.54545 4.72727 5.45455C4.72727 6.36364 5.04545 7.13636 5.68182 7.77273C6.31818 8.40909 7.09091 8.72727 8 8.72727ZM8 7.41818C7.45455 7.41818 6.99091 7.22727 6.60909 6.84546C6.22727 6.46364 6.03636 6 6.03636 5.45455C6.03636 4.90909 6.22727 4.44545 6.60909 4.06364C6.99091 3.68182 7.45455 3.49091 8 3.49091C8.54545 3.49091 9.00909 3.68182 9.39091 4.06364C9.77273 4.44545 9.96364 4.90909 9.96364 5.45455C9.96364 6 9.77273 6.46364 9.39091 6.84546C9.00909 7.22727 8.54545 7.41818 8 7.41818ZM8 10.9091C6.2303 10.9091 4.61818 10.4152 3.16364 9.42727C1.70909 8.43939 0.654545 7.11515 0 5.45455C0.654545 3.79394 1.70909 2.4697 3.16364 1.48182C4.61818 0.493939 6.2303 0 8 0C9.7697 0 11.3818 0.493939 12.8364 1.48182C14.2909 2.4697 15.3455 3.79394 16 5.45455C15.3455 7.11515 14.2909 8.43939 12.8364 9.42727C11.3818 10.4152 9.7697 10.9091 8 10.9091ZM8 9.45455C9.3697 9.45455 10.6273 9.09394 11.7727 8.37273C12.9182 7.65152 13.7939 6.67879 14.4 5.45455C13.7939 4.2303 12.9182 3.25758 11.7727 2.53636C10.6273 1.81515 9.3697 1.45455 8 1.45455C6.6303 1.45455 5.37273 1.81515 4.22727 2.53636C3.08182 3.25758 2.20606 4.2303 1.6 5.45455C2.20606 6.67879 3.08182 7.65152 4.22727 8.37273C5.37273 9.09394 6.6303 9.45455 8 9.45455Z" fill="#525252"/>
+                                    </svg>
+                                </span>Preview
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="javascript:void(0)">
+                                <span class="me-2">
+                                    <img src="/assets/new-icons/help.svg" width="20" height="20" class="img-fluid">
+                                </span>Help
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div >
+<div *ngIf="isResetSlideAction" class="cstm-popover-result" #toggleDiv>
+    <div class="dropdown-content position-tooltip-dropdown" id="popup">
+        <div class="reset-pop-dropdown"  >
+            <ul class="nav flex-column" *ngIf="!isShowAfterDuplicatePresentation">
+                <form id="resetResult" class="reset-result" style="text-align: left;">
+                <li>
+                
+                    <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="resetPresentation"
+                            (change)="onRadioChange($event)" [checked]="selectedOption === 'resetPresentation'">
+                        <label class="form-check-label ms-1" for="exampleRadios1">
+                            Reset results for presentation
+                        </label>
+                    </div>
+                
+                    <div class="form-check w-100 d-flex">
+                        <input class="form-check-input" type="radio" name="exampleRadios2" id="exampleRadios2"
+                            value="resetPresentationDuplicate" (change)="onRadioChange($event)"
+                            [checked]="selectedOption === 'resetPresentationDuplicate'"
+                            [disabled]="customerLimitationCount?.balancePresentationLimit <= 0">
+                        <label class="form-check-label ms-1" for="exampleRadios2">
+                            Duplicate presentation before reset
+                        </label>
+                        <ng-container *ngIf="customerLimitationCount?.balancePresentationLimit <= 0">
+                            <div class="layout-label">
+                                <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top" data-tooltip="Need subscription">
+                                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                                        width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16">
+                                        <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                            <path
+                                                d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z">
+                                            </path>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </li>
+                <li>
+                    <div class="d-flex ms-7">
+                        <button type="button" class="btn btn-secondary  me-2 py-2" (click)="closeResetPopup()">Cancel</button>
+                        <button type="button" class="btn btn-primary  py-2" (click)="resetResultPresentation(workSpaceService.presentationId)"><div 
+                            class="spinner-border spinner-border-sm small-spinner mx-1"
+                            role="status"
+                            aria-hidden="true"
+                            *ngIf="isLoading"
+                          ></div>  Reset results</button>
+                    </div>     
+                </li>
+               
+            </form>
+            </ul> 
+            <ul class="nav flex-column" *ngIf="isShowAfterDuplicatePresentation">
+                    <li>
+                        <p>The presentation was duplicated without <br>the desired results. Should we proceed with<br> the original or use the duplicate?</p>
+                        <div class="d-flex ms-7">
+                            <button type="button" class="btn btn-secondary  me-2 py-2" (click)="closeResetPopup()">Continue</button>
+                            <button type="button" class="btn btn-primary  py-2" (click)="openDuplicateResetResult()">Open Duplicate</button>
+                        </div>     
+                    </li>
+              </ul>
+        </div>
+    </div>
+</div>    
+</div>

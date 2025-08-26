@@ -1,0 +1,150 @@
+<div class="bg-color">
+    <div class="d-flex justify-content-between align-items-center header-section ">
+        <div class="text-start">
+            <a href="https://slidea.com/">
+                <img  src="assets/images/product-logo.svg" width="120" height="38" alt="logo">
+            </a>
+        </div>
+        <div class="text-end">
+            <button class="header-signin mw-width"><a href="javascript:void(0)" routerLink="/auth/signin">Sign In</a></button>
+            <button class="header-signup mw-width">Sign Up</button>
+        </div>    
+    </div>
+    <div class="container-fluid box-c d-flex" >
+        <div class="col-lg-8 center-d m-d-flex col-sm-10">
+            <div class="col-md-6 signup-left">
+                <div class="signup-content">
+                    <h1 class="min-none">Sign Up</h1>
+                    <h1 class=" mw-width">We’re Excited to Have You!</h1>
+                    <p class="f-size  mw-width">Create your free account and join the Slidea community to start <br> designing interactive presentations with live polls, Q&As, and more. </p>
+                </div>
+            </div>
+            <div class="col-md-6 pa-0signup-right">
+                <div class="text-start">
+                    <form [formGroup]="registerForm" (ngSubmit)="this.isLoading == true ?null:onSubmit()">
+                        <div class="row g-2">
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="firstNameInput" class="fs-very-low fw-five">First name*</label>
+                                <div class="position-relative">
+                                <input type="text" class="form-control bg-n w-100 border-0 rounded-0 f-size add-name" id="firstNameInput"  placeholder="Enter your first name"
+                                    formControlName="FirstName" 
+                                    [ngClass]="{ 'is-invalid': submitted && f['FirstName'].errors }"  maxlength="30">
+                                
+                                <span class="remaining"
+                                [ngClass]="{ 'over-limit': registerForm.controls.FirstName.value.length > 20,
+                                 'remaining-i': (submitted && registerForm.controls.FirstName.errors && registerForm.controls.FirstName.errors.required)
+                                }">
+                               {{ (30 - registerForm.controls.FirstName.value.length) > 0 ? 30 - registerForm.controls.FirstName.value.length : 0 }}
+                            </span>
+                            <span *ngIf="submitted && f['FirstName'].errors" class="invalid-feedback validation-color">
+                                <div *ngIf="f['FirstName'].errors['required']" class="f-size">Please fill in this field!</div>
+                            </span>
+                            </div>
+                           
+                            </div>
+                            <div class="form-group col-md-6 mb-3">
+                                <label for="lastNameInput" class="fs-very-low fw-five">Last name*</label>
+                                <div class="position-relative">
+                                <input type="text" class="form-control bg-n w-100 border-0 rounded-0 f-size add-name" id="lastNameInput" placeholder="Enter your last name"
+                                    formControlName="LastName"  [ngClass]="{ 'is-invalid': submitted && f['LastName'].errors }" maxlength="30">
+                                
+                                <span class="remaining"
+                                [ngClass]="{ 'over-limit': registerForm.controls.LastName.value.length > 20 ,
+                                 'remaining-i': (submitted && registerForm.controls.LastName.errors && registerForm.controls.LastName.errors.required)
+                                }">
+                               {{ (30 - registerForm.controls.LastName.value.length) > 0 ? 30 - registerForm.controls.LastName.value.length : 0 }}
+                               </span>
+                               <span *ngIf="submitted && f['LastName'].errors" class="invalid-feedback validation-color">
+                                <div *ngIf="f['LastName'].errors['required']" class="f-size">Please fill in this field!</div>
+                               </span>
+                               </div>
+                              
+                               <!-- <span *ngIf="registerForm.controls.LastName.value.length == 30" class="f-size">You've reached the maximum length of characters!</span> -->
+                            </div>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="emailInput" class="fs-very-low fw-five">Email*</label>
+                            <input type="email" class="form-control bg-n w-100 border-0 rounded-0 f-size" id="emailInput" placeholder="Enter your email" formControlName="Email" [ngClass]="{ 'is-invalid': submitted && f['Email'].errors || f['Email'].errors }">
+                            <div *ngIf="submitted && f['Email'].errors" class="invalid-feedback validation-color">
+                                <div *ngIf="f['Email'].errors['required']" class="f-size">Please fill in this field!</div>
+                                <div *ngIf="f['Email'].errors['email']" class="f-size">Please enter valid email!</div>
+                            </div>
+                            <div *ngIf="f['Email'].errors" class="invalid-feedback validation-color">
+                                <div *ngIf="!(submitted && f['Email'].errors)">
+                                    <div *ngIf="f['Email'].errors['email']" class="f-size">Please enter valid email!</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 position-relative">
+                            <label for="passwordInput" class="fs-very-low fw-five">Password*</label>
+                            <input [type]="passwordType" class="form-control bg-n w-100 border-0 rounded-0 f-size" id="passwordInput" placeholder="Enter your password" formControlName="Password" [ngClass]="{ 'is-invalid': submitted && f['Password'].errors || f['Password'].errors }">
+                            <div *ngIf="submitted && f['Password'].errors" class="invalid-feedback validation-color">
+                                <div *ngIf="f['Password'].errors['required']" class="f-size">Please fill in this field!</div>
+                                <div *ngIf="f['Password'].errors['pattern']" class="f-size">
+                                    <ul class="validation-list">
+                                        <li>Password must contain 8 characters</li>
+                                        <li>Include at least one lowercase and one uppercase</li>
+                                        <li>Include at least one numerical character and special character </li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div *ngIf=" f['Password'].errors" class="invalid-feedback validation-color">
+                                <div *ngIf="!(submitted && f['Password'].errors)">
+                                    <div *ngIf="f['Password'].errors['pattern']" class="f-size" >
+                                        <ul class="validation-list">
+                                            <li>Password must contain 8 characters</li>
+                                            <li>Include at least one lowercase and one uppercase</li>
+                                            <li>Include at least one numerical character and special character </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="password-eye-icon" type="button" *ngIf="!isText"  [ngClass]="{ 'iconPadding': submitted && f['Password'].errors }">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20" height="20" aria-labelledby="descriptive-:r15:" viewBox="0 0 24 24" (click)="hideshowpass()">
+                                    <title id="descriptive-:r15:"></title>
+                                    <g color="#101834">
+                                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                            <button class="password-eye-icon" type="button" *ngIf="isText" [ngClass]="{ 'iconPadding': submitted && f['Password'].errors }">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20" height="20" aria-labelledby="descriptive-:r16:" viewBox="0 0 24 24" (click)="hideshowpass()">
+                                    <title id="descriptive-:r16:"></title>
+                                    <g color="#101834">
+                                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                            <line x1="1" y1="1" x2="23" y2="23"></line>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </button>
+                        </div>
+                        <button type="submit" class="btn w-100 border-0 text-white btn-bg mb-3 py-2 fs-very-low">
+                            <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                            Sign Up
+                        </button>
+                    </form>
+                </div>
+                <div class="text-center mb-2">
+                    <div class="line fs-very-low"></div>
+                    <div class="d-flex justify-content-center">
+                        <div class="text-center">
+                            <div id="googleSignupBtn" [ngStyle]="{ 'font-weight': '700','height':'50px' }"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <p class="f-size mb-2 fw-four">You accept our <a href="https://slidea.com/terms-and-conditions/" class="text-decoration-none signin-link">Terms of Use</a> and <a href="https://slidea.com/privacy-policy/" class="text-decoration-none signin-link" >Policy </a>by proceeding.</p>
+                    <h5 class=" f-size mb-2 fw-four">Existing user? Click here to
+                        <span class="fw-five " >
+                            <a href="javascript:void(0)" class="text-decoration-none signin-link" routerLink="/auth/signin">Sign In</a>
+                        </span>
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

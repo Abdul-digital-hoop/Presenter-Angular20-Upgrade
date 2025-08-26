@@ -1,0 +1,31 @@
+<!-- * label Biding  -->
+<label class="normal-content-text fw-semi-normal fs-14 me-1">{{label}}</label>
+<!-- * Input Box  -->
+<div class="position-relative mb-2">
+    <input type="text"
+    class="form-control remaining-padding"
+    [placeholder]="placeholder"
+    [(ngModel)]="questionValue"
+    (input)="setValueToServiceVariable()"   
+    [ngModelOptions]="{ standalone: true }"
+    (focus)="checkDefaultInputValue()"
+    (blur)="assignInputValue(questionInput.control)"
+    (click)="questionInput.control.markAsTouched()"
+    [maxlength]="inputTextLength.toString()"
+    #questionInput="ngModel">
+<!-- * validation Part  -->
+    <div class="position-absolute-remaing position-absolute end-0">
+        <span 
+            [ngStyle]="{ color: questionInput?.value?.length > inputTextLengthColors?.Text_Length_Danger_Min_Length  && questionInput?.value?.length < inputTextLength ? inputTextLengthColors?.Text_Length_Danger_Color_Code : inputTextLengthColors?.Text_Length_Normal_Color_Code }">
+            {{ inputTextLength - questionInput?.value?.length }}
+        </span>
+    </div>
+    <ng-container  *ngIf="(questionInput.touched) && (questionInput.value.length == inputTextLength)">
+        <p class="reached-maximum mt-2" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+            You’re over the 150-character limit. Try trimming it down.
+        </p>
+        <p class="reached-maximum mt-2"*ngIf="workSpaceService.activeSlideTypeName == masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+            You’re over the 100-character limit. Try trimming it down.
+        </p>
+    </ng-container>
+</div>

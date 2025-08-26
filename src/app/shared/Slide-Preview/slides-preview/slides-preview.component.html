@@ -1,0 +1,142 @@
+<ng-container>
+    <main class="preview-img">
+        <section class="grid-img-cmt">
+            <div id="main-stage" class="middle-content-section" [ngClass]="{ 'background-preview': isAdminPreview }">
+                <div class="inside-middle-content">
+                    <div class="inside-middle-content" #CenterPanel>
+                        <div class="chart-main-content" #OuterScreen>
+                            <div [appThemes]="activeSlide?.design | slideThemes:presentationLevelTheme"
+                                class="center-panel-chart1 position-relative" #InnerScreen
+                                [ngStyle]="{ 'width' : panelWidth}">
+                                <ng-container
+                                    *ngIf="activeSlide?.contentType != workSpaceService.masterSlideTypeName.QUIZ && activeSlide?.slideTypeName !== masterSlideTypeName.ImportDocument && activeSlide?.slideTypeName !== masterSlideTypeName.POWER_POINT && activeSlide?.slideTypeName !== masterSlideTypeName.GoogleSlides && activeSlide?.slideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                                    <div class="theme-background-image"
+                                        [ngStyle]="{'background-image': 'url(' + presentationLevelTheme?.themesBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':presentationLevelTheme?.themesBackgroundImage?.themeBackgroundImageCroppedUrl ? presentationLevelTheme?.backgroundColorOpacity:1}">
+                                    </div>
+                                </ng-container>
+                                <div class="content-center-panel" [ngStyle]='{ height : panelHeight }'>
+                                    <ng-container *ngIf="isInitialLoad">
+                                        <div class="skeleton-background animate-pulse"></div>
+                                        <div class="content-center-panel">
+                                            <div class="skeleton-content-area">
+                                                <div class="skeleton-text-section">
+                                                    <div class="skeleton-text-line animate-pulse"></div>
+                                                    <div class="skeleton-text-line animate-pulse" style="width: 85%">
+                                                    </div>
+                                                    <div class="skeleton-text-line animate-pulse" style="width: 70%">
+                                                    </div>
+                                                </div>
+                                                <div class="skeleton-chart-section">
+                                                    <div class="skeleton-chart animate-pulse"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="!isInitialLoad">
+                                        <ng-container *ngIf="presentationLevelTheme?.themesLogo?.logoCroppedUrl">
+                                                <div class="brand-logo" [style.width]="workSpaceService.checkOrientation(presentationLevelTheme?.themesLogo?.croppedposition) =='Landscape'? '15%':'5%'">
+                                                    <div class="logo-icon">
+                                                        <img [src]="presentationLevelTheme?.themesLogo?.logoCroppedUrl" [alt]="presentationLevelTheme?.themesLogo?.logoCroppedUrl" class="logo-image">
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        <div
+                                            [ngClass]="this.layoutImageType == 'Image left' || this.layoutImageType == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+                                            <div *ngIf="this.layoutImageType == 'Image right' || this.layoutImageType == 'Image left'"
+                                                class="background-left-right-image" [ngStyle]="loadBGLayout()"></div>
+                                            <div *ngIf="this.layoutImageType == 'Side by side right' || this.layoutImageType == 'Side by side left'"
+                                                class="background-slide-by-slide-left-right-image"
+                                                [ngStyle]="loadBGLayout()"></div>
+                                            <div
+                                                [ngClass]="{'background-image-panel-top': layoutImageType == 'Image top', 'background-image-panel-bottom': layoutImageType == 'Image bottom', 'background-image-panel': layoutImageType != 'Image top' && layoutImageType != 'Image bottom', 'img-opacity': layoutImageType === 'Full Image' && !activePptImage && !workSpaceService.isPdf && activeSlide?.slideTypeName !=masterSlideTypeName.POWER_POINT && activeSlide?.slideTypeName !=masterSlideTypeName.GoogleSlides && activeSlide?.slideTypeName !=masterSlideTypeName.INSTRUCTION_SLIDE_TYPE}">
+                                                <div *ngIf="(layoutImageType === 'Full Image' && activeSlide?.slideTypeName != 'Import Document')"
+                                                    [ngStyle]="{'background-image': 'url(' +(activeSlide?.contentImage?.croppedUrl || '/assets/images/static_bg_image.svg')+')','width': '100%','position': 'absolute','height': '100%','opacity': activeSlide?.contentImage?.backgroundImageOpacity, 'background-position': 'center center', 'background-repeat': 'no-repeat', 'background-size': 'cover'}">
+                                                </div>
+                                                <div class="inner-top-bottom-image"
+                                                    *ngIf="layoutImageType == 'Image top' || layoutImageType == 'Image bottom'"
+                                                    [ngStyle]="loadBGLayout()"></div>
+                                                <img #slideImage [src]="slidePdfImage" (load)="checkImageOrientation()"
+                                                    *ngIf="showPdf" draggable="false">
+                                                <div class="center-chart-content">
+                                                    <div class="inside-chart-content">
+                                                        <div class="main-chart-area">
+                                                            <div class="inside-chart-area"
+                                                                [ngStyle]="{'height': activeSlide?.slideTypeName === masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE ? '100%' : '100%'}">
+                                                                <div class="content-text-area" *ngIf="activeSlide?.slideTypeName !== masterSlideTypeName.MULTIMEDIA">
+                                                                    <div class="inside-text-area">
+                                                                        <div class="text-area-div" [style.width]="
+                                                                        (presentationLevelTheme?.themesLogo?.logoCroppedUrl == null || presentationLevelTheme?.themesLogo?.logoCroppedUrl == '') ? '100%':
+                                                                        (workSpaceService.checkOrientation(presentationLevelTheme?.themesLogo?.croppedposition) == 'Landscape' && (layoutImageType == 'Image left' || layoutImageType == 'Full Image' || layoutImageType == 'Default')) ? '75%':
+                                                                        (workSpaceService.checkOrientation(presentationLevelTheme?.themesLogo?.croppedposition) == 'Portrait'  && (layoutImageType == 'Image left' || layoutImageType == 'Full Image' || layoutImageType == 'Default')) ? '90%':
+                                                                        (workSpaceService.checkOrientation(presentationLevelTheme?.themesLogo?.croppedposition) == 'Landscape' && layoutImageType == 'Side by side left')? '75%':
+                                                                        (workSpaceService.checkOrientation(presentationLevelTheme?.themesLogo?.croppedposition) == 'Portrait' && layoutImageType == 'Side by side left')? '90%':'100%'">
+                                                                            <span id="font-style"
+                                                                                class="font-styling-empty-class"
+                                                                                [ngClass]="(activeSlide?.slideTypeName == masterSlideTypeName.POWER_POINT || activeSlide?.slideTypeName == masterSlideTypeName.GoogleSlides) ? 'd-none' : ''">
+                                                                                {{workSpaceService.changeQuestionDataFormat(activeSlide?.slideContentData)}}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="chart-content-area" [ngStyle]="{'overflow': activeSlide?.slideTypeName === masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE ? 'scroll' : 'hidden'}">
+                                                                    <div>
+                                                                        <app-dynamic-slide-type #dynamicChart
+                                                                            [activeSlideTypeId]="activeSlide?.slideTypeId"
+                                                                            [activeslideVisualizationId]="activeSlide?.design?.slideVisualizationId"
+                                                                            [slideDetails]="activeSlide"
+                                                                            [template]="isPresentation ? slidesRenderingData : slidesRenderingData?.template"
+                                                                            [presentationTheme]="presentationLevelTheme"
+                                                                            [viewfrom]="'IndividualTemplatePreview'"
+                                                                            [screenOptions]="'presentationScreen'"
+                                                                            [isPresenterEditorScreen]="true"
+                                                                            [isPreview]="true"
+                                                                            [isAdminPreview]="isAdminPreview"
+                                                                            ></app-dynamic-slide-type>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="slide-navigation-overlay">
+                                    <div class="navigation-button">
+                                        <svg class="prev-slide" [class.disabled]="currentIndex === 0"
+                                            [attr.disabled]="currentIndex === 0 ? true : null"
+                                            (click)="moveToPreviousSlide(this.activeSlide?.slideId)" width="20" height="20" viewBox="0 0 20 20"
+                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10 14L11.4 12.6L9.8 11H14V9H9.8L11.4 7.4L10 6L6 10L10 14ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C12.2333 18 14.125 17.225 15.675 15.675C17.225 14.125 18 12.2333 18 10C18 7.76667 17.225 5.875 15.675 4.325C14.125 2.775 12.2333 2 10 2C7.76667 2 5.875 2.775 4.325 4.325C2.775 5.875 2 7.76667 2 10C2 12.2333 2.775 14.125 4.325 15.675C5.875 17.225 7.76667 18 10 18Z"
+                                                fill="#001d66" />
+                                        </svg>
+                                        <p class="slide-counter">
+                                            <span class="rolling-number">
+                                                {{ currentIndex + 1 }}
+                                            </span> /
+                                            {{ isPresentation ? slidesRenderingData?.slideCount : slidesRenderingData?.template?.slidesCount }}
+                                        </p>
+                                        <svg class="next-slide" [class.disabled]="currentIndex === currentRenderingSlidesList?.length - 1"
+                                            [attr.disabled]="currentIndex === currentRenderingSlidesList?.length - 1 ? true : null"
+                                            (click)="moveToNextSlide(this.activeSlide?.slideId)" width="20" height="20" viewBox="0 0 20 20"
+                                            fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M10 14L8.6 12.6L10.2 11H6V9H10.2L8.6 7.4L10 6L14 10L10 14ZM10 20C11.3833 20 12.6833 19.7375 13.9 19.2125C15.1167 18.6875 16.175 17.975 17.075 17.075C17.975 16.175 18.6875 15.1167 19.2125 13.9C19.7375 12.6833 20 11.3833 20 10C20 8.61667 19.7375 7.31667 19.2125 6.1C18.6875 4.88333 17.975 3.825 17.075 2.925C16.175 2.025 15.1167 1.3125 13.9 0.7875C12.6833 0.2625 11.3833 0 10 0C8.61667 0 7.31667 0.2625 6.1 0.7875C4.88333 1.3125 3.825 2.025 2.925 2.925C2.025 3.825 1.3125 4.88333 0.7875 6.1C0.262501 7.31667 0 8.61667 0 10C0 11.3833 0.262501 12.6833 0.7875 13.9C1.3125 15.1167 2.025 16.175 2.925 17.075C3.825 17.975 4.88333 18.6875 6.1 19.2125C7.31667 19.7375 8.61667 20 10 20ZM10 18C7.76667 18 5.875 17.225 4.325 15.675C2.775 14.125 2 12.2333 2 10C2 7.76667 2.775 5.875 4.325 4.325C5.875 2.775 7.76667 2 10 2C12.2333 2 14.125 2.775 15.675 4.325C17.225 5.875 18 7.76667 18 10C18 12.2333 17.225 14.125 15.675 15.675C14.125 17.225 12.2333 18 10 18Z"
+                                                fill="#001d66" />
+                                        </svg>
+                                    </div>
+                                    <div class="slidetype" [ngClass]="{ 'slideType-preview': isAdminPreview }">
+                                        <!-- From the initialize development, didn't change the slide type name in the DB collection, so I will hardcode the slide type name here.(Pick the number) -->
+                                        {{this.activeSlide?.slideTypeName == masterSlideTypeName.GUESS_THE_NUMBER_QUIZ ? masterSlideTypeName.PICK_THE_NUMBER : this.activeSlide?.slideTypeName}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+</ng-container>

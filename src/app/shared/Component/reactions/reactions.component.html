@@ -1,0 +1,9 @@
+<ng-container *ngFor="let reaction of presentationReactionArray">
+    <div class="" [ngClass]="presentationMode == true ? '':'position-menu-bottom-info-toolbar'">
+        <button class="btn btn-list-menu d-flex justify-content-between align-items-center tooltip-top cursor-default"
+            [attr.data-tooltip]="reaction?.reactionName" [ngClass]="presentationMode == true ? '':'center-panel-icon-section'">
+            <img [src]="workSpaceService.newIconURL+reaction.reactionURL" width="15" height="15" class="img-fluid" />
+            <span class="position-text user-count-number-section" [ngStyle]="{'font-size': workSpaceService.presentationMode ? '18px' : '16px'}">{{getReactionsCount(reaction?.reactionId)}}</span>
+        </button>
+    </div>
+</ng-container>

@@ -1,0 +1,60 @@
+
+<div class="bg-color">
+    <div class="d-flex justify-content-between align-items-center header-section">
+        <div class="text-start">
+            <a href="https://slidea.com/">
+                <img  src="assets/images/product-logo.svg" width="120" height="38" alt="logo">
+            </a>
+        </div>
+        <div class="text-end">
+            <button class="header-signin mw-width"><a href="javascript:void(0)" routerLink="/auth/signin">Sign In</a></button>
+            <button class="header-signup mw-width"><a href="javascript:void(0)" routerLink="/auth/signup">Sign Up</a></button>
+        </div>    
+    </div>
+    <div class="container-fluid box-c d-flex" >
+        <div class="col-lg-7 center-d m-d-flex col-sm-10 col-12">
+            <div class="col-md-6 resend-left">
+                <div class="resend-content">
+                    <h1>Resend Email?</h1>
+                    <p class="f-size mw-width">Complete the verification now to access slidea without interruption.</p>
+                </div>
+            </div>
+            <div class="col-md-6 pa-0 resend-right">
+                <form name="logIn" [formGroup]="resendEmailForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group mb-3">
+                        <label for="emailInput"  class="fs-very-low fw-five">Email*</label>
+                        <input type="email" class="form-control bg-n w-100 border-0 rounded-0 fs-very-low-12 " id="emailInput" formControlName="Email" [ngClass]="{ 'is-invalid': submitted && f['Email'].errors ||  f['Email'].errors}" placeholder="Enter your email">
+                        <div *ngIf="submitted && f['Email'].errors" class="invalid-feedback validation-color">
+                            <div *ngIf="f['Email'].errors['required']" class="fs-very-low-12">Please fill in this field!</div>
+                            <div *ngIf="f['Email'].errors['email']"  class="fs-very-low-12">Please enter valid email!</div>
+                        </div>
+                        <div *ngIf=" f['Email'].errors" class="invalid-feedback validation-color">
+                            <div *ngIf="!(submitted && f['Email'].errors)">
+                                <div *ngIf="f['Email'].errors['email']"  class="fs-very-low-12">Please enter valid email!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn w-100 border-0 text-white btn-confirm-main mb-3 py-2 btn-bg fs-very-low">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                        Submit
+                    </button>
+                </form>
+                <!-- <div class="text-center mb-3">
+                    <div class="line fs-very-low"></div>
+                    <div class="d-flex justify-content-center">
+                        <div class="text-center">
+                            <div id="googleSigninBtn"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <h5 class=" f-size mb-2 fw-four">You  have remember your password?&nbsp;
+                        <span class="fw-five " >
+                            <a href="javascript:void(0)"  routerLink="/auth/signin">Sign In</a>
+                        </span>
+                    </h5>
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>

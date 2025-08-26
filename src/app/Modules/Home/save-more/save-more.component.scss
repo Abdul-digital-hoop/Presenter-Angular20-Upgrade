@@ -1,0 +1,308 @@
+
+.edu-plans {
+    text-align: center;
+    padding: 20px;
+}
+.edu-description{
+    margin-bottom: 6.5rem;
+}
+.edu-offer{
+    margin-bottom: 2.5rem;
+}
+.learn-more {
+    color: rgba(52, 142, 246);
+    text-decoration: none; 
+    display: inline-flex;
+    align-items: center;
+}
+
+.learn-more .arrow {
+    margin-left: 5px;
+    font-size: 0.9em;
+    transition: transform 0.3s;
+}
+
+.learn-more:hover .arrow {
+    transform: translateX(5px);
+}
+.offer-expiry {
+    color: #777070;
+    padding: 3px 9px;
+    border-radius: 5px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+.license-count {
+    width: 55px !important;
+    padding: 5px !important;
+    margin: 0 5px !important;
+    font-size: 1rem !important;
+    height: 35px !important;
+    background: white;
+}
+.selected-plan-cost{
+    width: 160px !important;
+    padding: 5px !important;
+    margin: 0 5px !important;
+    font-size: 1rem !important;
+    height: 35px !important;
+}
+.selected-plan-cost {
+    padding: 10px;
+    font-size: 1rem;
+    width: 200px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    appearance: none;  
+    -moz-appearance: none; 
+    padding-right: 30px; 
+    position: relative;
+}
+.selected-plan-cost:focus-visible,.license-count:focus-visible{
+    outline-color: rgb(217 234 228);
+}
+.selected-plan-cost:hover{
+    outline-color: rgb(217 234 228);
+}
+.selected-plan-cost + .dropdown-arrow {
+    position: relative;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;  
+}
+.offer-head{
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+.difference-value{
+    text-decoration: line-through;
+    color: #6a6d70;
+    font-weight: 500;
+}
+.discount-now{
+    color: #198d00;
+    background-color: #e0fff0;
+    font-weight: 500;
+    font-size: small;
+}
+
+p {
+    word-spacing: 7px;
+}
+.btn-buy{
+    border-radius: 5px;
+    width: 130px;
+    box-shadow: 0 0.385rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    background: #3d3dee;
+    font-size: small;
+}
+@media only screen and (max-width: 1158px) {
+.edu-plans {
+    text-align: center;
+    padding: 20px;
+}
+.edu-description{
+    margin-bottom: 6.5rem;
+}
+.edu-offer{
+    margin-bottom: 2.5rem;
+}
+.learn-more {
+    color: rgba(52, 142, 246);
+    text-decoration: none; 
+    display: inline-flex;
+    align-items: center;
+}
+
+.learn-more .arrow {
+    margin-left: 5px;
+    font-size: 0.9em;
+    transition: transform 0.3s;
+}
+
+.learn-more:hover .arrow {
+    transform: translateX(5px);
+}
+.offer-expiry {
+    color: #777070;
+    padding: 3px 9px;
+    border-radius: 5px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+.license-count {
+    width: 55px !important;
+    padding: 5px !important;
+    margin: 0 5px !important;
+    font-size: 1rem !important;
+    height: 35px !important;
+    background: white;
+}
+.selected-plan-cost{
+    width: 160px !important;
+    padding: 5px !important;
+    margin: 0 5px !important;
+    font-size: 1rem !important;
+    height: 35px !important;
+}
+.selected-plan-cost {
+    padding: 10px;
+    font-size: 1rem;
+    width: 200px;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    appearance: none;  
+    -moz-appearance: none; 
+    padding-right: 30px; 
+    position: relative;
+}
+.selected-plan-cost:focus-visible,.license-count:focus-visible{
+    outline-color: rgb(217 234 228);
+}
+.selected-plan-cost:hover{
+    outline-color: rgb(217 234 228);
+}
+.selected-plan-cost + .dropdown-arrow {
+    position: relative;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;  
+}
+.offer-head{
+    font-weight: 500;
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+.difference-value{
+    text-decoration: line-through;
+    color: #6a6d70;
+    font-weight: 500;
+}
+.discount-now{
+    color: #198d00;
+    background-color: #e0fff0;
+    font-weight: 500;
+    font-size: small;
+}
+
+p {
+    word-spacing: 7px;
+}
+.btn-buy{
+    border-radius: 5px;
+    width: 130px;
+    box-shadow: 0 0.385rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+    background: #3d3dee;
+    font-size: small;
+}
+}
+@media only screen and (max-width: 568px) {
+    .edu-plans {
+        text-align: center;
+        padding: 20px;
+    }
+    .edu-description{
+        margin-bottom: 6.5rem;
+    }
+    .edu-offer{
+        margin-bottom: 2.5rem;
+    }
+    .learn-more {
+        color: rgba(52, 142, 246);
+        text-decoration: none; 
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    .learn-more .arrow {
+        margin-left: 5px;
+        font-size: 0.9em;
+        transition: transform 0.3s;
+    }
+    
+    .learn-more:hover .arrow {
+        transform: translateX(5px);
+    }
+    .offer-expiry {
+        color: #777070;
+        padding: 3px 9px;
+        border-radius: 5px;
+        border-radius: 20px;
+        font-size: 12px;
+    }
+    .license-count {
+        width: 55px !important;
+        padding: 5px !important;
+        margin: 0 5px !important;
+        font-size: 1rem !important;
+        height: 35px !important;
+        background: white;
+    }
+    .selected-plan-cost{
+        width: 160px !important;
+        padding: 5px !important;
+        margin: 0 5px !important;
+        font-size: 1rem !important;
+        height: 35px !important;
+    }
+    .selected-plan-cost {
+        padding: 10px;
+        font-size: 1rem;
+        width: 200px;
+        border-radius: 5px;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        appearance: none;  
+        -moz-appearance: none; 
+        padding-right: 30px; 
+        position: relative;
+    }
+    .selected-plan-cost:focus-visible,.license-count:focus-visible{
+        outline-color: rgb(217 234 228);
+    }
+    .selected-plan-cost:hover{
+        outline-color: rgb(217 234 228);
+    }
+    .selected-plan-cost + .dropdown-arrow {
+        position: relative;
+        right: 20px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;  
+    }
+    .offer-head{
+        font-weight: 500;
+        font-size: 1.5rem;
+        line-height: 2rem;
+    }
+    .difference-value{
+        text-decoration: line-through;
+        color: #6a6d70;
+        font-weight: 500;
+    }
+    .discount-now{
+        color: #198d00;
+        background-color: #e0fff0;
+        font-weight: 500;
+        font-size: small;
+    }
+    
+    p {
+        word-spacing: 7px;
+    }
+    .btn-buy{
+        border-radius: 5px;
+        width: 150px;
+        box-shadow: 0 0.385rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+        background: #3d3dee;
+        font-size: small;
+    }
+}
+.discounted-price{
+    font-weight: 600 !important;
+}

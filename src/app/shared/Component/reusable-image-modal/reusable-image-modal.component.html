@@ -1,0 +1,147 @@
+<div class="align-items-center allow" appDrag (files)="imageUploade($event)">
+    <!-- if you don't have a image  -->
+    <ng-container *ngIf="imageURL === null && !isImageUploadingLoader">
+        <p class="normal-content-text fs-14 mb-2" *ngIf="workSpaceService.activeSlideTypeName != 'Multimedia'"> We support .png, .gif, .jpg and .svg</p>
+        <p class="normal-content-text fs-14 mb-2" *ngIf="workSpaceService.activeSlideTypeName == 'Multimedia'"> We support .png, .jpg and .svg</p>
+        <div class="image-upload-div mb-3" (click)="openImageUploadModal()">
+            <img src="/assets/new-icons/Paper-Upload.svg" class="img-fluid mt-2">
+            <p class="normal-content-text my-2 fs-14">Drag & Drop or <a href="javascript:void(0)"
+                    class="text-primary">choose</a> file to upload</p>
+        </div>
+    </ng-container>
+     <!-- if you have a image  -->
+    <ng-container *ngIf="imageURL !== null && !isImageUploadingLoader">
+        <div class="d-flex justify-content-center align-items-center border w-100 h-100">
+            <div class=" d-flex justify-content-center align-items-center border col-2 h-100" (click)="imageUploadModalUpdate()">
+                <img [src]="imageURL" width="26"height="26">
+            </div>
+            <div class="col-8 py-3 d-flex pe-3 text-start" (click)="imageUploadModalUpdate()">
+                <h5 class="fw-six text-gray mb-0">
+                    <span class="fs-low text-primary d-block" style="text-decoration: underline; cursor: pointer;" >Update
+                        image</span>
+                </h5>
+            </div>
+            <div class="box py-3 px-0 col-2" (click)="removeImage(this.workSpaceService?.slideContentImage?.croppedUrl)">
+                <div class=" d-flex justify-content-center align-items-center border w-100 h-100 allow">
+                    <img src="assets/images/Trashcan.png" width="26" height="26">
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <!-- if you uploading a image -->
+    <ng-container *ngIf="isImageUploadingLoader">
+            <div class=" d-flex justify-content-center align-items-center border w-100 h-100">
+                <div class=" d-flex justify-content-center align-items-center border col-2 h-100">
+                    <div id="loading-bar-spinner" class="spinner">
+                        <div class="spinner-icon"></div>
+                    </div>
+                </div>
+                <div class="col-8 py-3 d-flex pe-3 text-start" >
+                    <h5 class="fw-six text-gray mb-0">
+                        <span class="fs-low text-primary d-block" style="cursor:not-allowed">Uploading
+                            image</span>
+                    </h5>
+                </div>
+            </div>
+    </ng-container>
+</div>
+<div class="modal fade" id="imageUploadModal-{{ instanceId }}" data-bs-backdrop="static" data-keyboard="false" tabindex="-1"
+    [attr.aria-labelledby]="'imageAddModalLabel-' + instanceId" aria-hidden="true">
+    <ng-container *ngIf="!isShowCrop">
+        <app-reusable-image-upload
+        (closeUploadComponentModal)="closeUploadComponentModal()"
+        (selectedFileEvent)="selectedFileEvents($event)"></app-reusable-image-upload>
+    </ng-container>
+    <ng-container *ngIf="isShowCrop">
+       <app-reusable-image-crop
+       [currentImageFormat] = "currentImageformat"
+       [currentOrginalImage] = "currentlyOrginalImage"
+       [currentCroppedImage] = "currentlyUploadedImage"
+       [currentUploadedImageEvent] ="currentUploadedImageEvent"
+       [existingCroppedPossition] ="currentImageURLEntity?.croppedposition"
+       [instanceId]="instanceId"
+       (isInticateImageUploading)="inticateImageUploading($event)"
+       (inticateCustomerBackToUpload)="customerTriggerBackToUploadEvent()"
+       (savedImageEntityDetails)="savedImageEntityDetails($event)"
+       ></app-reusable-image-crop>
+    </ng-container>
+</div>
+<!-- File Invalid Type Model -->
+<div class="modal fade" id="fileTypeInvalide-{{ instanceId }}" tabindex="-1" role="dialog" aria-labelledby="fileTypeInvalideLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-very-high" id="fileTypeInvalideLabel">Could not upload this file</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="closeCropComponentModal()">
+                    <span aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="2.25rem" height="2.25rem" aria-labelledby="descriptive-:r8h:" viewBox="0 0 24 24">
+                            <!-- <title id="descriptive-:r8h:">Close</title> -->
+                            <g color="#101834">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </g>
+                            </g>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mx-0">
+                    <div class="col-12 px-0">
+                        <p *ngIf="workSpaceService.activeSlideTypeName != 'Multimedia'">This file type cannot be uploaded.The supported file type are .png,.jpg,.gif,.svg.</p>
+                        <p *ngIf="workSpaceService.activeSlideTypeName == 'Multimedia'">This file type cannot be uploaded.The supported file type are .png,.jpg,.svg.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close" (click)="closeCropComponentModal()">Cancel</button>
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close" (click)="customerTriggerBackToUploadEvent()">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- File Invalid Size Model -->
+<div class="modal fade" id="fileSizeInvalide-{{ instanceId }}" tabindex="-1" role="dialog" aria-labelledby="fileSizeInvalideLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-very-high" id="fileSizeInvalideLabel">Could not upload this file</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="closeCropComponentModal()">
+                    <span aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="2.25rem" height="2.25rem" aria-labelledby="descriptive-:r8h:" viewBox="0 0 24 24">
+                            <!-- <title id="descriptive-:r8h:">Close</title> -->
+                            <g color="#101834">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </g>
+                            </g>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row mx-0">
+                    <div class="col-12 px-0">
+                        <p>The image is too big to be uploaded (max size is 2MB).Please try a smaller file.</p>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close" (click)="closeCropComponentModal()">Cancel</button>
+                    <button type="button" class="btn btn-confirm-main text-white mx-2" data-bs-dismiss="modal"
+                        aria-label="Close" (click)="customerTriggerBackToUploadEvent()">Try Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

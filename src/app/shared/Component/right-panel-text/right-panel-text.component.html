@@ -1,0 +1,114 @@
+<ng-container *ngIf="customerPlan?.custom_colours == true;else noAccessText">
+    <h5 class="modal-title mb-3">Text</h5>
+</ng-container>
+<ng-template #noAccessText>
+    <div class="layout-label">
+        <h5 class="modal-title mb-3">Text</h5>
+        <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top options-tooltip" data-tooltip="Upgrade for more font styles!">
+            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z"></path></g></svg>
+        </div>
+    </div>
+</ng-template>
+<div class=" justify-content-between align-items-center mb-2">
+    <div class="w-100 me-2"> 
+        <select class="form-select rounded-0 font-family-select hover-border" [disabled]="!customerPlan?.custom_colours" [(ngModel)]="workSpaceService.fontFamily" (change)="designSlideChangeTextFamily(workSpaceService.fontFamily)">
+            <option value="Lexend Deca,-apple-system">Lexend Deca</option>
+            <option value="'Ga Maamli', sans-serif">Ga Maamli</option>
+            <option value="'Baskervville SC', serif">Baskervville</option>
+            <option value="'Anton SC', sans-serif">Anton</option>
+            <option value="'Playwrite DE Grund', cursive">Playwrite</option>
+        </select>
+    </div> 
+    <div>
+        <div class="d-flex justify-content-start mx-0 py-2">
+            <span class="style-heading">Style</span>
+            <button class="custom-text-button mx-1 hover-border" [disabled]="!customerPlan?.custom_colours" [ngClass]="workSpaceService?.slideTextBold? 'active':''"  (click)="designSlideTextOptionsBold(!workSpaceService?.slideTextBold)"><b>B</b></button>
+            <button class="custom-text-button mx-1 hover-border" [disabled]="!customerPlan?.custom_colours" [ngClass]="workSpaceService?.slideTextItalic? 'active':''" (click)="designSlideTextOptionsItalic(!workSpaceService?.slideTextItalic)"><b>/</b></button>
+            <button class="custom-text-button mx-1 hover-border" [disabled]="!customerPlan?.custom_colours" [ngClass]="workSpaceService?.slideTextStrikeThrough? 'active':''" (click)="designSlideTextOptionsStrikeThrough(!workSpaceService?.slideTextStrikeThrough)"><b><s>S</s></b></button>
+            <button class="custom-text-button mx-1 hover-border" [disabled]="!customerPlan?.custom_colours" [ngClass]="workSpaceService?.slideTextUnderLine? 'active':''"  (click)="designSlideTextOptionsUnderLine(!workSpaceService?.slideTextUnderLine)"><b><u>U</u></b></button>
+        </div>
+        <div class="d-flex">
+            <span class="Font-heading">Font size</span>
+            <button class="font-size-btn me-2 hover-border" [disabled]="workSpaceService.fontSize == 16 || !customerPlan?.custom_colours" (click)="designSlideChangeTextFontSize(false)"  [ngClass]="{'active-textcolor': workSpaceService.activeFontSizeButton === 'decrease' && workSpaceService.fontSize != 16}">-</button>
+            <button class="font-size-btn hover-border" [disabled]="workSpaceService.fontSize == 24 || !customerPlan?.custom_colours" (click)="designSlideChangeTextFontSize(true)"    [ngClass]="{'active-textcolor': workSpaceService.activeFontSizeButton === 'increase' && workSpaceService.fontSize != 24}">+</button>
+        </div>
+    </div>
+</div>
+<div class="justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="text-color">Text color</span>
+        <div class="position-relative me-2 hover-border-radius">
+            <input  value="#FFFFFF" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangeTextColor($any($event).target.value)">
+            <div class="bg-text-picker-color"  [ngClass]="customerPlan?.custom_colours == false ? 'disabled': workSpaceService.slideTextColor == '#FFFFFF'? 'backgroundcolor-active':''" style="background-color: #FFFFFF;"></div>
+        </div>
+        <div class="position-relative me-2 hover-border-radius">
+            <input  value="#252B36" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangeTextColor($any($event).target.value)">
+            <div class="bg-text-picker-color"  [ngClass]="customerPlan?.custom_colours == false ? 'disabled': workSpaceService.slideTextColor == '#252B36'? 'backgroundcolor-active':''" style="background-color: #252B36;"></div>
+        </div>
+        <div class="vl"></div>
+        <span class="custom-bg-color">Custom</span>
+        <div class="position-relative me-2 border-0 hover-border">
+            <input type="color" [value]="workSpaceService.slideTextColor" [disabled]="!customerPlan?.custom_colours" class="background-color-picker" [ngModel]="workSpaceService.slideTextColor" (change)="designSlideChangeTextColor($any($event).target.value)">
+            <div class="bg-picker-color-custome border-0" [ngClass]="customerPlan?.custom_colours == false ? 'disabled':(workSpaceService.slideTextColor !== '#252B36' && workSpaceService.slideTextColor !== '#FFFFFF') ? 'active-textcolor' : ''" >
+                <img class="image-fit" src ="/assets/new-icons/images/custom-font-color.png">
+            </div>
+        </div>
+    </div>
+</div>
+<ng-container *ngIf="(workSpaceService.activeSlideTypeName == workSpaceService.masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE || workSpaceService.activeSlideTypeName == workSpaceService.masterSlideTypeName.SCALES_SLIDE_TYPE || workSpaceService.activeSlideTypeName == workSpaceService.masterSlideTypeName.GUESS_TEHE_NUMBER_SLIDE_TYPE)">
+    <div class="justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center">
+            <span class="text-color">Line color</span>
+            <div class="position-relative me-2 hover-border-radius">
+                <input  value="#FFFFFF" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangelineColor($any($event).target.value)">
+                <div class="bg-text-picker-color"  [ngClass]="customerPlan?.custom_colours == false ? 'disabled': workSpaceService.slideLineColor == '#FFFFFF'? 'backgroundcolor-active':''" style="background-color: #FFFFFF;"></div>
+            </div>
+            <div class="position-relative me-2 hover-border-radius">
+                <input  value="#252B36" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangelineColor($any($event).target.value)">
+                <div class="bg-text-picker-color"  [ngClass]="customerPlan?.custom_colours == false ? 'disabled': workSpaceService.slideLineColor == '#252B36'? 'backgroundcolor-active':''" style="background-color: #252B36;"></div>
+            </div>
+            <div class="vl"></div>
+            <span class="custom-bg-color">Custom</span>
+            <div class="position-relative me-2 border-0 hover-border">
+                <input type="color" [value]="workSpaceService.slideLineColor" [disabled]="!customerPlan?.custom_colours" class="background-color-picker" [ngModel]="workSpaceService.slideLineColor" (change)="designSlideChangelineColor($any($event).target.value)">
+                <div class="bg-picker-color-custome border-0" [ngClass]="customerPlan?.custom_colours == false ? 'disabled':(workSpaceService.slideLineColor !== '#252B36' && workSpaceService.slideLineColor !== '#FFFFFF') ? 'active-textcolor' : ''" >
+                    <img class="image-fit" src ="/assets/new-icons/images/custom-font-color.png">
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+<div class="hr-text"></div>
+<h5 class="modal-title mb-3 mt-3">Background color</h5>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="position-relative me-2 hover-border-radius">
+            <input  value="#FFD584" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangebackgroundClour($any($event).target.value)">
+            <div class="bg-picker-color" [ngClass]="customerPlan?.custom_colours == false ? 'disabled':workSpaceService.slideBackgroundColor == '#FFD584'? 'backgroundcolor-active':''" style="background-color: #FFD584;"></div>
+        </div>
+        <div class="position-relative me-2 hover-border-radius" >
+            <input  value="#82B4FE" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangebackgroundClour($any($event).target.value)">
+            <div class="bg-picker-color" [ngClass]="customerPlan?.custom_colours == false ? 'disabled':workSpaceService.slideBackgroundColor == '#82B4FE'? 'backgroundcolor-active':''"  style="background-color: #82B4FE;"></div>
+        </div>
+        <div class="position-relative me-2 hover-border-radius">
+            <input  value="#83D2FF" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangebackgroundClour($any($event).target.value)">
+            <div class="bg-picker-color" [ngClass]="customerPlan?.custom_colours == false ? 'disabled':workSpaceService.slideBackgroundColor == '#83D2FF'? 'backgroundcolor-active':''" style="background-color: #83D2FF;"></div>
+        </div>
+        <div class="position-relative me-2 hover-border-radius">
+            <input  value="#FF8383" class="background-color-picker" [disabled]="!customerPlan?.custom_colours" (click)="designSlideChangebackgroundClour($any($event).target.value)">
+            <div class="bg-picker-color" [ngClass]="customerPlan?.custom_colours == false ? 'disabled':workSpaceService.slideBackgroundColor == '#FF8383'? 'backgroundcolor-active':''" style="background-color: #FF8383;"></div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center ps-2">
+        <div class="vl"></div>
+        <span class="custom-bg-color">Custom</span>
+        <div class="position-relative me-2 border-0 hover-border">
+            <input type="color" [disabled]="!customerPlan?.custom_colours" [value]="workSpaceService.slideBackgroundColor" class="background-color-picker"[ngModel]="workSpaceService.slideBackgroundColor" (change)="designSlideChangebackgroundClour($any($event).target.value)">
+            <div class="bg-picker-color-custome border-0" [ngClass]="customerPlan?.custom_colours == false ? 'disabled':(workSpaceService.slideBackgroundColor === '#FFD584' || workSpaceService.slideBackgroundColor === '#82B4FE' || workSpaceService.slideBackgroundColor === '#83D2FF' || workSpaceService.slideBackgroundColor === '#FF8383' || workSpaceService.slideBackgroundColor === '#FFFFFF') ? '' : 'backgroundcolor-active'">
+                <img class="image-fit" src ="/assets/new-icons/images/custom-color.png">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="hr-text mb-2"></div>
+<a href="javascript:void(0)" class="fs-14"  [ngClass]="(workSpaceService.resetThemes && customerPlan?.custom_colours) ? '' : 'disabled'" (click)="workSpaceService.resetThemes ? designSlideResetThemeDefault() : $event.preventDefault()" [attr.disabled]="!workSpaceService.resetThemes ? true : null">Reset to theme defaults</a>

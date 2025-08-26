@@ -1,0 +1,22 @@
+<div class="modal fade" id="changeThemeModal" tabindex="-1" aria-labelledby="changeThemeModalLabel"  data-bs-backdrop="static" data-bs-keyboard="false"  aria-hidden="true"  [style.display]="workSpceService.isShowThemeChange ? 'block' : 'none'" [ngClass]="workSpceService.isShowThemeChange? 'show bg-color modal-animation ':'modal-animationout'">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center border-bottom-0">
+                <h1 class="modal-title mb-0" id="changeThemeModalLabel">Change Theme</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" (click)="onDismissClick()"></button>
+            </div>
+            <div class="modal-body border-bottom-0">
+                <div class="modal-body">
+                    Changing theme will not affect your customized slides and Quiz slides. Slide <span>{{slideIndexArray|numberList}}</span> will keep their colors.
+                    To reset customizations, go to the slide's customize tab, and reset colors to theme defaults.
+                  </div>
+            </div>
+            <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" (click)="onDismissClick()">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary" (click)="onSaveChangeThemes()">Save</button>
+        </div>
+        </div>
+    </div>
+</div>

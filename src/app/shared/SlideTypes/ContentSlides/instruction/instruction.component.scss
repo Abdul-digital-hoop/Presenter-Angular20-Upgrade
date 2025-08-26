@@ -1,0 +1,92 @@
+
+.instructions h1 {
+    font-size: 36px;
+    margin-bottom: 20px;
+}
+
+.instructions p {
+    margin: 10px 0;
+}
+
+.instructions .code {
+    font-weight: bold;
+    margin-top: 20px;
+}
+
+.qr-code img {
+    width: 100%;
+    max-width: 250px;
+    height: auto;
+}
+.qr-code.large img {
+    width: 500px;
+    max-width: 500px;
+}
+
+.qr-code p {
+    font-size: 18px;
+    margin-top: 10px;
+}
+.qr-code p.large{
+    font-size: 43px;
+    margin-top: -60px;
+}
+.divider {
+    border-left: 1px solid rgb(191, 191, 191);
+    height: 100%;
+    min-height: 80px;
+}
+.divider.large{
+    border-left: 1px solid rgb(191, 191, 191);
+    height: 100%;
+    min-height: 175px;
+}
+.instructions-large{
+    font-size: 56px;
+    margin: 10px 0;
+    scale: 0.9;
+}
+/* Example CSS to use with Input */
+.instruction-container{
+    width: 100%;
+    position: absolute;
+}
+.instruction-container.large {
+    font-size: 3rem;
+  }
+  
+  .instruction-container.small {
+    font-size: 2rem;
+    width: 100%;
+    position: absolute;
+  }
+.or-text{
+    position: relative;
+    right: 50%;
+}
+.qr-btn{
+    padding: 15px;
+    border: 1px solid rgb(191, 191, 191);
+    font-size: large;
+    border-radius: 10px;
+}
+.hash-tag-text.large{
+    position: relative;
+    bottom: 25px;
+    margin-right: 10px;
+    color: #999999;
+    font-size: 70px;
+}
+.hash-tag-text{
+    position: relative;
+    bottom: 5px;
+    margin-right: 5px;
+    color: #999999;
+    font-size: 18px;
+}
+.code{
+    font-size: 30px;
+}
+.code.large{
+    font-size: 90px;
+}

@@ -1,0 +1,47 @@
+<div class="modal fade" id="changeThemeNameModal" tabindex="-1" aria-labelledby="changeThemeNameModalLabel"
+    data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true"
+    [style.display]="workSpceService.isShowThemeNameChange ? 'block' : 'none'"
+    [ngClass]="workSpceService.isShowThemeNameChange? 'show bg-color modal-animation ':'modal-animationout'">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center border-bottom-0">
+                <h1 class="modal-title mb-0" id="changeThemeModalLabel">Enter theme name</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="cancelThemeName()"></button>
+            </div>
+            <div class="modal-body border-bottom-0">
+                <form name="newPresentation" [formGroup]="myForm">
+                    <div class="modal-body ">
+                        <div class="form-group position-relative">
+                            <input type="text"
+                                class="form-control remaining-padding w-100 border-0 rounded-0 fs-very-low bg-color-input pr-5"
+                                id="slideName" placeholder="Ex: Marketing strategy" formControlName="themeName"
+                                #themeName maxlength="75" autocomplete="off"
+                                [ngClass]="{ 'is-invalid': myForm.get('themeName').invalid && myForm.get('themeName').touched }">
+                            <span class="character-counter" [ngClass]="{
+                                'remaning': !myForm.get('themeName').touched || !myForm.get('themeName').errors,
+                                'remaning-i': myForm.get('themeName').touched && myForm.get('themeName').errors
+                              }">
+                                {{ (75 - themeName.value.length) > 0 ? 75 - themeName.value.length : 0 }}
+                            </span>
+                            <span *ngIf="(myForm.get('themeName').invalid && myForm.get('themeName').touched) || (myForm.get('themeName')?.hasError('whitespace') && myForm.get('themeName')?.touched)"
+                                class="invalid-feedback d-block">
+                                Enter a name for Theme
+                            </span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            (click)="cancelThemeName()">
+                            Cancel
+                        </button>
+                        <button type="button" class="btn btn-primary" (click)="onSaveChangeThemes()"><span
+                                class="spinner-border spinner-border-sm mx-1" role="status" aria-hidden="true"
+                                *ngIf="isLoadingButton"></span>Save</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>

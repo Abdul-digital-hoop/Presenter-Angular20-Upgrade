@@ -1,0 +1,44 @@
+@import '/src/assets/variablesScss/SettingVariables.scss';
+
+.main {
+  min-height: 100vh; // Ensures .main always fills the viewport
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #F6F7FC;
+}
+
+@media (min-width: 0px) and (max-width: 991.9px) {
+  .main {
+    position: relative;
+    top: 50px;
+  }
+}
+
+.presentation-loading {
+    font-size: 13px;
+    width: 2rem;
+    height: 2rem;
+    margin-top: 13px;
+    color: #4848ff;
+}
+
+.empty-presentations {
+    width: 100%;
+    text-align: center;
+}
+
+.empty-presentations p {
+    color: $text-secondary-color;
+}
+
+.spinner-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+}
+@media (max-width: 480px) {
+    .empty-search-img {
+      width: 100%;
+    }
+  }

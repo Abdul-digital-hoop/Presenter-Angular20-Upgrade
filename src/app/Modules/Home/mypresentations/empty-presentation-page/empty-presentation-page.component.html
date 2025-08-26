@@ -1,0 +1,530 @@
+<div class="empty-state-container">
+    <div class="page-header">
+        <h4 *ngIf="!IntegrationMediumZoom">My Presentations</h4>
+        <h4 class="fs-low fw-five" *ngIf="IntegrationMediumZoom">Recently Viewed</h4>
+    </div>
+    <div class="empty-state-content">
+        <div class="empty-presentations">
+            <div class="empty-state-message">
+                <h5 class="fs-low fw-five empty-text mb-3">No presentations here yet</h5>
+                <p class="fs-very-low-12 mb-4" *ngIf="!IntegrationMediumZoom">You can create and import a presentation here.</p>
+                <p class="fs-very-low-12 mb-4" *ngIf="IntegrationMediumZoom">You can create a presentation here.</p>
+                <div class="d-flex justify-content-center" *ngIf="!IntegrationMediumZoom">
+                    <div class="">
+                        <button class="btn create-presentation-btn text-white px-3 me-2" (click)="createNewPresentation()">
+                            <span class="align-text-bottom me-2 icon-d">
+                                <svg width="17" height="16" viewBox="0 0 17 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg" class="ms-4">
+                                    <g clip-path="url(#clip0_3144_43989)">
+                                        <path d="M8.5 0.617142V15.4743" stroke="white" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                        <path d="M1.07031 8H15.9275" stroke="white" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round" />
+                                    </g>
+                                    <defs>
+                                        <clipPath id="clip0_3144_43989">
+                                            <rect width="16" height="16" fill="white" transform="translate(0.5)" />
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </span>
+                            <span class="d-md-inline-block d-none t-content me-4">New Presentation</span>
+                            <span class="d-md-none d-inline-block t-content me-4">New Presentation</span>
+                            <ng-container *ngIf="customerLimitationCount?.balancePresentationLimit <= 0">
+                                <div class="pricing-icon-container">
+                                    <div class="pricing-icon-recently-view slide-list-hover right-side-bar-tooltip-right" data-tooltip="Need subscription">
+                                        <img src="/assets/images/Crown.svg" />
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </button>
+                    </div>
+                    <div class="">
+                        <button data-bs-toggle="modal" data-bs-target="#Folder"
+                            [ngStyle]="{'cursor':customerPlan?.folder?'':'not-allowed'}"
+                            class="btn create-folder-btn px-3 me-2">
+                            <span class="align-text-bottom me-2 icon-d">
+                                <svg class="ms-5" width="21" height="16" viewBox="0 0 21 16" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path class="folder-icon"
+                                        d="M12.5 12H14.5V10H16.5V8H14.5V6H12.5V8H10.5V10H12.5V12ZM2.5 16C1.95 16 1.47917 15.8042 1.0875 15.4125C0.695833 15.0208 0.5 14.55 0.5 14V2C0.5 1.45 0.695833 0.979167 1.0875 0.5875C1.47917 0.195833 1.95 0 2.5 0H8.5L10.5 2H18.5C19.05 2 19.5208 2.19583 19.9125 2.5875C20.3042 2.97917 20.5 3.45 20.5 4V14C20.5 14.55 20.3042 15.0208 19.9125 15.4125C19.5208 15.8042 19.05 16 18.5 16H2.5ZM2.5 14H18.5V4H9.675L7.675 2H2.5V14Z"
+                                        fill="currentColor" />
+                                </svg>
+                            </span>
+                            <span class="d-md-inline-block d-none t-content me-5">New Folder</span>
+                            <span class="d-md-none d-inline-block t-content me-5">New Folder</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="template-grid" *ngIf="!IntegrationMediumZoom">
+        <div class="Main-d" *ngIf="userPresentation?.length>0"
+            [ngStyle]="{'background-color': recentPresentation.length > 0 ? '#F6F7FC' : '#FCFCFC'}">
+            <div class="popular-text">
+                <div class="populartemplate-text">
+                    <p>Popular Templates</p>
+                </div>
+                <div class="selectall">
+                    <a class="see-all-template" routerLink="/app/templates"
+                        [queryParams]="{ isPublished: 'true', selectedCategory: 'All Templates' }">View all
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <mask id="mask0_370_32127" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                width="20" height="20">
+                                <rect y="20" width="20" height="20" transform="rotate(-90 0 20)" fill="#D9D9D9" />
+                            </mask>
+                            <g mask="url(#mask0_370_32127)">
+                                <path
+                                    d="M14.9896 10L9.98958 15L8.82292 13.8333L11.8229 10.8333L4.15625 10.8333L4.15625 9.16667L11.8229 9.16667L8.82292 6.16667L9.98958 5L14.9896 10Z"
+                                    fill="#6C6CFF" />
+                            </g>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="grid-row skel-main" *ngIf="isSkeleton">
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+                <div class="skeleton-item"></div>
+            </div>
+            <div class="grid-row" *ngIf="!isSkeleton">
+                <div class="grid-container" *ngFor="let item of userPresentation.slice(0, 4); let index = index">
+                    <a class="container-anchor" (click)="openPreviewModal(item,index)">
+                        <div class="templates-grid d-flex justify-content-center align-items-center z-index-top mb-2 hover-effect"
+                            #imgContainer [ngStyle]="{'height': (imgContainer.offsetWidth / 1.77) + 'px'  }">
+                            <div class="chart-section">
+                                <section id="main-stage" class="middle-content-section">
+                                    <div class="inside-middle-content">
+                                        <div class="inside-middle-content" #CenterPanel>
+                                            <div class="chart-main-content" #OuterScreen>
+                                                <div class="dynamic-component center-panel-chart1 position-relative"
+                                                    #InnerScreen
+                                                    [ngStyle]="{ 'width' : panelWidth, 'height' : panelHeight }">
+                                                    <div class="remote-chart-content-area"
+                                                        [ngStyle]="{ 'width' : panelWidth}">
+                                                        <div class="remote-chart-inner-content-area">
+                                                            <div class="slide-card"
+                                                                [appThemes]="item?.template?.slides?.design | slideThemes:item?.template?.presentationThemes">
+
+                                                                <div class="bs-body-content">
+                                                                    <ng-container
+                                                                        *ngIf="item?.template?.slides?.contentType?.slideContentType != masterSlideTypeName.QUIZ && item?.template?.slides?.slideTypeName !== masterSlideTypeName.ImportDocument && item?.template?.slides?.slideTypeName !== masterSlideTypeName.POWER_POINT && item?.template?.slides?.slideTypeName !== masterSlideTypeName.GoogleSlides && item?.template?.slides?.slideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                                                                        <div class="theme-background-image"
+                                                                            [ngStyle]="{'background-image': 'url(' + item?.template?.presentationThemes?.themesBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':item?.template?.presentationThemes?.themesBackgroundImage?.themeBackgroundImageCroppedUrl ? item?.template?.presentationThemes?.backgroundColorOpacity:1}">
+                                                                        </div>
+                                                                    </ng-container>
+
+                                                                    <div class="content-center-panel"
+                                                                        [hidden]="isLoading">
+                                                                        <ng-container
+                                                                            *ngIf="item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl">
+                                                                            <div class="brand-logo"
+                                                                                [style.width]="workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) =='Landscape'? '15%':'5%'">
+                                                                                <div class="logo-icon">
+                                                                                    <img [src]="item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl"
+                                                                                        alt="Logo" class="logo-image">
+                                                                                </div>
+                                                                            </div>
+                                                                        </ng-container>
+                                                                        <div
+                                                                            [ngClass]="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+
+                                                                            <div *ngIf="(getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Image right' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Image left') && item?.template?.slides?.slideTypeName != 'Import Document'"
+                                                                                class="background-left-right-image"
+                                                                                [ngStyle]="loadBGLayout(item?.template?.slides?.slideTypeName,item?.template?.slides?.contentImage?.croppedUrl)">
+                                                                            </div>
+                                                                            <div *ngIf="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side right' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left'"
+                                                                                class="background-slide-by-slide-left-right-image"
+                                                                                [ngStyle]="loadBGLayout(item?.template?.slides?.slideTypeName,item?.template?.slides?.contentImage?.croppedUrl)">
+                                                                            </div>
+                                                                            <div
+                                                                                [ngClass]="{'background-image-panel-top': getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image top', 'background-image-panel-bottom': getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image bottom', 'background-image-panel': getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) != 'Image top' && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) != 'Image bottom', 'img-opacity': item?.template?.slides?.slideTypeName != 'Import Document' && item?.template?.slides?.slideTypeName !=masterSlideTypeName.POWER_POINT && item?.template?.slides?.slideTypeName !=masterSlideTypeName.GoogleSlides && item?.template?.slides?.slideTypeName !=masterSlideTypeName.INSTRUCTION_SLIDE_TYPE && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Full Image' }">
+                                                                                <div *ngIf="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) === 'Full Image' && item?.template?.slides?.slideTypeName != 'Import Document'"
+                                                                                    [ngStyle]="{'background-image': 'url(' +item?.template?.slides?.contentImage?.croppedUrl+')','width': '100%','position': 'absolute','height': '100%','opacity':item?.template?.slides?.contentImage?.backgroundImageOpacity, 'background-position': 'center center', 'background-repeat': 'no-repeat', 'background-size': 'cover'}">
+                                                                                </div>
+                                                                                <div class="inner-top-bottom-image"
+                                                                                    *ngIf="getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image top' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image bottom'"
+                                                                                    [ngStyle]="loadBGLayout(item?.template?.slides?.slideTypeName,item?.template?.slides?.contentImage?.croppedUrl)">
+                                                                                </div>
+                                                                                <ng-container
+                                                                                    *ngIf="item?.template?.slides?.slideTypeName == 'Import Document'">
+                                                                                    <img #slideImage
+                                                                                        [src]="workSpaceService.changepptImgDataFormat(item?.template?.slides?.slideContentData)"
+                                                                                        (load)="checkImageOrientation($any($event.target))"
+                                                                                        draggable="false"
+                                                                                        class="img-fluid">
+                                                                                </ng-container>
+
+                                                                                <div class="remote-inside-chart-area">
+                                                                                    <ng-container
+                                                                                        *ngIf="item?.template?.slides?.slideTypeName != masterSlideTypeName.GoogleSlides && item?.template?.slides?.slideTypeName != masterSlideTypeName.POWER_POINT">
+                                                                                        <div class="remote-content-text-area"
+                                                                                            [hidden]="isLoading">
+                                                                                            <div class="chart-question"
+                                                                                                [style.width]="
+                                                                                                (item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl == null || item?.template?.presentationThemes?.themesLogo?.logoCroppedUrl == '') ? '100%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Landscape' && (getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Full Image' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Default')) ? '75%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Portrait'  && (getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Full Image' || getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Default')) ? '90%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Landscape' && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left')? '75%':
+                                                                                                (workSpaceService.checkOrientation(item?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Portrait' && getMasterLayoutData(item?.template?.slides?.design?.slideLayoutId) == 'Side by side left')? '90%':'100%'">
+                                                                                                <span
+                                                                                                    class="font-style-template-list"
+                                                                                                    class="font-styling-empty-class">
+                                                                                                    {{getQuestionData(item?.template)}}</span>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </ng-container>
+                                                                                    <!-- (mouseenter)="onTemplateHover(dynamicComponent)" (mouseleave)="onTemplateLeave(dynamicComponent)" -->
+                                                                                    <div class="remote-chart-content-area"
+                                                                                        [style.font-size]="item?.template?.slides?.slideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? '17px':'24px'"
+                                                                                        [style.marginTop.px]="item?.template?.slides?.slideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? 60:20">
+                                                                                        <div
+                                                                                            [ngClass]="[(item?.template?.slides?.slideTypeName == masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE || item?.template?.slides?.slideTypeName == masterSlideTypeName.QA_QUESTIONS_AND_ANSWER_SLIDE_TYPE)  ? 'remote-dynamic-chart-scroll': 'remote-dynamic-chart']">
+                                                                                            <app-dynamic-slide-type
+                                                                                                (mouseenter)="onTemplateHover(dynamicComponent)"
+                                                                                                (mouseleave)="onTemplateLeave(dynamicComponent)"
+                                                                                                #dynamicComponent
+                                                                                                [activeSlideTypeId]="item?.template?.slides?.slideTypeId"
+                                                                                                [activeslideVisualizationId]="item?.template?.slides?.design?.slideVisualizationId"
+                                                                                                [slideDetails]="item?.template?.slides"
+                                                                                                [template]="item?.template"
+                                                                                                [presentationTheme]="item?.template?.presentationThemes"
+                                                                                                [viewfrom]="'popular-template'"
+                                                                                                [screenOptions]="'presentationScreen'"
+                                                                                                [isPresenterEditorScreen]="true"
+                                                                                                [isPreview]="true"></app-dynamic-slide-type>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </div>
+                        <div class="main-content ">
+                            <div class="Present-n ">
+                                <p class="presentation-name">{{ item.templateName }}</p>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="showTempModal" tabindex="-1" aria-labelledby="Label" aria-hidden="true">
+            <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 1000px;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="Label">Templates</h5>
+                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body" style="overflow-y: auto;">
+                        <div class="container-fluid">
+                            <div class="row">
+
+                                <div class="col-md-4" style="padding-right: 10px;">
+                                    <button (click)="onBackButtonClick()" *ngIf="!showAnotherComponent">Back</button>
+                                    <div class="side-menu">
+
+                                        <ul style="list-style-type: none; padding: 0;">
+                                            <li style="cursor: pointer; padding: 5px; color: #000;">
+
+                                            </li>
+                                            <!-- <li (click)="toggleLogo('zoom')" style="cursor: pointer; padding: 5px; color: #000;">Zoom</li>  -->
+                                            <h4 *ngIf="!showAnotherComponent">{{PresentationName}}</h4>
+                                            <button class="btn btn-primary" *ngIf="!showAnotherComponent"><a
+                                                    [href]="'/presentation/new-presentation/' + Id">Use
+                                                    Template</a></button>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-8" style="padding-left: 10px;">
+
+                                    <div class="main-content" style="height: 400px; overflow-y: auto;">
+
+
+                                        <div class="tool-item">
+                                            <!-- <h4 class="main-content-title" style="margin-bottom: 20px;">Connect Slidea with your favorite tools</h4>
+                                            <div class="tool-title" style="margin-bottom: 10px;">
+                                                <h6 ></h6>
+                                            </div> -->
+                                            <div class="tool-logo">
+
+                                                <!-- <img src="assets/images/zoomlogo.png" alt="Zoom Logo" style="max-width: 85px;"> -->
+                                                <!-- <p *ngIf="showAnotherComponent"><app-all-templates></app-all-templates></p> -->
+                                                <div class="grid-row">
+                                                    <div class="grid-container" *ngFor="let item of userSlides ">
+
+                                                        <a href="javascript:void(0);"
+                                                            class="text-decoration-hover-none zoom-effect">
+                                                            <div _ngcontent-wkf-c44=""
+                                                                class="d-flex justify-content-center align-items-center z-index-top mb-2 hover-effect"
+                                                                style="min-height: 90px;border: 1px solid #cecece;border-radius: 10px;box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px; z-index: 0 !important;"
+                                                                [style.background-color]="item?.slide[0]?.slideThemes?.themesBackgroundColor"
+                                                                [style.background-image]="'url('+item?.slide[0]?.slideImage+')'"
+                                                                [style.background-size]="'cover'">
+                                                                <div class="position-absolute bottom-0 right-0 d-none">
+                                                                    <button type="button"
+                                                                        class="btn btn-transparent w-100">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            role="img"
+                                                                            preserveAspectRatio="xMidYMid meet"
+                                                                            width="16px" height="16px"
+                                                                            aria-labelledby="descriptive-:r1bh:"
+                                                                            viewBox="0 0 24 24">
+                                                                            <title id="descriptive-:r1bh:">Trash can
+                                                                            </title>
+                                                                            <g color="currentColor">
+                                                                                <g fill="none" stroke="currentColor"
+                                                                                    stroke-width="2"
+                                                                                    stroke-linecap="round"
+                                                                                    stroke-linejoin="round">
+                                                                                    <polyline points="3 6 5 6 21 6">
+                                                                                    </polyline>
+                                                                                    <path
+                                                                                        d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                                                    </path>
+                                                                                    <line x1="10" y1="11" x2="10"
+                                                                                        y2="17">
+                                                                                    </line>
+                                                                                    <line x1="14" y1="11" x2="14"
+                                                                                        y2="17">
+                                                                                    </line>
+                                                                                </g>
+                                                                            </g>
+                                                                        </svg>
+                                                                    </button>
+                                                                </div>
+                                                                <div class="d-block text-center">
+                                                                    <div
+                                                                        *ngIf="item?.properties.slide[0]?.slideType?.imageURL != null">
+                                                                        <p class="mb-0 icon"
+                                                                            [innerHTML]="GetSVGtoIMG(item?.properties.slide[0]?.slideType?.imageURL)">
+                                                                        </p>
+                                                                    </div>
+                                                                    <div
+                                                                        *ngIf="(item?.properties.slide[0]?.slideType?.imageURL == '')||(item?.properties.slide[0]?.slideType?.imageURL == null)">
+                                                                        <p>
+                                                                            <svg _ngcontent-dbw-c37="" role="img"
+                                                                                preserveAspectRatio="xMidYMid meet"
+                                                                                width="30" height="30"
+                                                                                aria-labelledby="descriptive-:rk:"
+                                                                                viewBox="0 0 48 48">
+                                                                                <!-- <title _ngcontent-dbw-c37="" id="descriptive-:rk:">Bar Chart Icon</title> -->
+                                                                                <rect _ngcontent-dbw-c37="" x="32.73"
+                                                                                    y="17.04" width="11.4"
+                                                                                    height="25.25"
+                                                                                    fill="rgb(233, 234, 235)"></rect>
+                                                                                <rect _ngcontent-dbw-c37="" x="3.87"
+                                                                                    y="26.22" width="11.4"
+                                                                                    height="16.06"
+                                                                                    fill="rgb(59, 64, 74)"></rect>
+                                                                                <rect _ngcontent-dbw-c37="" x="18.3"
+                                                                                    y="4.31" width="11.4" height="37.97"
+                                                                                    fill="rgb(194, 196, 199)"></rect>
+                                                                                <rect _ngcontent-dbw-c37="" y="42.28"
+                                                                                    width="48" height=".99"
+                                                                                    fill="#000000"></rect>
+                                                                            </svg>
+                                                                        </p>
+                                                                    </div>
+                                                                    <span class="d-block fs-very-low"></span>
+
+                                                                    <div class="position-absolute bottom-0 right-0 button-container"
+                                                                        *ngIf="IntegrationMediumZoom">
+                                                                        <button class="btn btn-primary"
+                                                                            *ngIf="IntegrationMediumZoom">Present</button>
+                                                                    </div>
+                                                                    <div
+                                                                        class="position-absolute bottom-0 right-0 d-none">
+                                                                        <button type="button"
+                                                                            class="btn btn-transparent w-100">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                role="img"
+                                                                                preserveAspectRatio="xMidYMid meet"
+                                                                                width="16px" height="16px"
+                                                                                aria-labelledby="descriptive-:r1bh:"
+                                                                                viewBox="0 0 24 24">
+                                                                                <title id="descriptive-:r1bh:">Trash can
+                                                                                </title>
+                                                                                <g color="currentColor">
+                                                                                    <g fill="none" stroke="currentColor"
+                                                                                        stroke-width="2"
+                                                                                        stroke-linecap="round"
+                                                                                        stroke-linejoin="round">
+                                                                                        <polyline points="3 6 5 6 21 6">
+                                                                                        </polyline>
+                                                                                        <path
+                                                                                            d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                                                                        </path>
+                                                                                        <line x1="10" y1="11" x2="10"
+                                                                                            y2="17">
+                                                                                        </line>
+                                                                                        <line x1="14" y1="11" x2="14"
+                                                                                            y2="17">
+                                                                                        </line>
+                                                                                    </g>
+                                                                                </g>
+                                                                            </svg>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div style="margin-top: 20px;">
+                                            <h3></h3>
+                                            <p></p>
+                                            <div style="position: relative;">
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <!-- <div class="side-menu" *ngIf="showAnotherComponent">
+                                
+                                <div class="main-content" style="height: 400px; overflow-y: auto;" *ngIf="showAnotherComponent">
+                                     
+                                   <div class="tool-item">
+                                        <h4 class="main-content-title" style="margin-bottom: 20px;">Connect Slidea with your favorite tools</h4>
+                                        <div class="tool-title" style="margin-bottom: 10px;">
+                                            <h6 >Zoom</h6>
+                                        </div>
+                                        <div class="tool-logo"  style="width: 200px; height: 150px; display: flex; align-items: center; justify-content: center; background-color: #f8f1f1; padding: 10px; border-radius: 5px; cursor: pointer;">
+                                        
+                                            <img src="assets/images/zoomlogo.png" alt="Zoom Logo" style="max-width: 85px;">
+                                        </div>
+                                    </div> 
+                                    <div style="margin-top: 20px;" >
+                                        <h3></h3>
+                                        <p></p>
+                                        <div style="position: relative;">
+                                         
+                                          
+                                        </div>
+                                    </div>
+                                </div>
+                              </div> -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <app-modal [isShowModal]="isPreviewClicked" (closePreviewModal)="closePreviewModal($event)" modalType="preview">
+            <ng-container *ngIf="isPreviewClicked">
+                <h4 modalTitle>{{userPreviewData?.templateName}}</h4>
+                <app-templates-preview [SlideImage]="userPreviewData?.template?.slides?.slideTypeImage"
+                    [templateDetails]="userPreviewData" [slideCount]="userPreviewData?.template?.slidesCount"
+                    [downloadCount]="userPreviewData?.downloadCount" [categoryName]="getCategoryNames()"
+                    [templateId]="userPreviewData?.templateId" [templateDescription]="userPreviewData?.description"
+                    [createdBy]="userPreviewData?.customerName" [index]="previewindex"
+                    [customerLimitation]="customerLimitationCount">
+                </app-templates-preview>
+            </ng-container>
+        </app-modal>
+    </div>
+</div>
+<!-- folder create modal -->
+<div class="modal fade" id="Folder" tabindex="-1" aria-labelledby="createNewFolderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered rename-modal wih-100">
+        <div class="modal-content content-popup">
+            <div class="modal-header bb-none">
+                <h5 class="modal-title" id="createNewFolderLabel">Create Folder</h5>
+                <button type="button" class="close-presentaion" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="CancelFolder()">
+                    &times;
+                </button>
+            </div>
+            <form name="newFolder" [formGroup]="folderForm" (ngSubmit)="createFolder()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control w-100 border-0 rounded-0 fs-very-low" id="slideName"
+                            placeholder="Give a name to get started." formControlName="folderName" #FolderName
+                            maxlength="100"
+                            [ngClass]="{ 'is-invalid': submitted && folderForm.get('folderName').errors }" />
+                        <div *ngIf="submitted && folderForm.get('folderName').errors" class="invalid-feedback">
+                            <div *ngIf="folderForm.get('folderName').errors['required']">
+                                Type a name for your new folder
+                            </div>
+                            <div *ngIf="folderForm.get('folderName').errors['maxlength']">
+                                Maximum length exceeded (100 characters).
+                            </div>
+                        </div>
+                        <span
+                            [ngClass]="{'remaning': !submitted || !folderForm.get('folderName').errors, 'remaning-i': submitted && folderForm.get('folderName').errors}">{{100
+                            - FolderName.value.length}}</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                        (click)="CancelFolder()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn rename-button fs-very-low"><span
+                            class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isLoading"
+                            (click)="createFolder()"></span> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- create presentation modal -->
+<div class="modal fade" id="createNewPresentation" tabindex="-1" aria-labelledby="createNewPresentationLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered rename-modal wih-100">
+        <div class="modal-content content-popup">
+            <div class="modal-header bb-none">
+                <h5 class="modal-title" id="createNewPresentationLabel">What’s the title of your presentation?</h5>
+                <button type="button" class="close-presentaion" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="cancelPresentation()">
+                    &times;
+                </button>
+            </div>
+            <form name="newPresentation" [formGroup]="presentationForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control w-100 border-0 rounded-0 fs-very-low bg-color"
+                            id="slideName" placeholder="Ex:Marketing strategy" formControlName="presentationName"
+                            #presentationname maxlength="100" autocomplete="off"
+                            [ngClass]="{ 'is-invalid': presentationForm.get('presentationName').invalid && presentationForm.get('presentationName').touched }">
+                        <span
+                            [ngClass]="{'remaning': !presentationForm.get('presentationName').touched || !presentationForm.get('presentationName').errors,
+                          'remaning-i': presentationForm.get('presentationName').touched && presentationForm.get('presentationName').errors}">
+                            {{ (100 - presentationname.value.length) > 0 ? 100 - presentationname.value.length : 0 }}
+                        </span>
+                        <span
+                            *ngIf="presentationForm.get('presentationName').invalid && presentationForm.get('presentationName').touched"
+                            class="invalid-feedback">
+                            Enter a name for presentation
+                        </span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                        (click)="cancelPresentation()">Cancel</button>
+                    <button type="submit" class="btn rename-button fs-very-low"><span
+                            class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            *ngIf="isLoading"></span> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

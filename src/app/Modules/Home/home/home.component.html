@@ -1,0 +1,264 @@
+<app-header *ngIf="!IntegrationMediumZoom"></app-header>
+<div class="home">
+    <div class="Menu md-none" *ngIf="!IntegrationMediumZoom">
+        <app-menu></app-menu>
+    </div>
+    <div class="Content width-100 " [ngClass]="{'integration-medium-zoom': IntegrationMediumZoom}">
+        <div class="container-fluid slidea-menu d-lg-none fixed-top">
+            <div class="row">
+                <div class="slidea-logo col-4" *ngIf="!IntegrationMediumZoom">
+                    <a class="" href="/app/home">
+                        <img src="/assets/images/product-logo.svg" width="100" height="50" alt="" class="img-fluid">
+                    </a>
+                </div>
+                <div class="slidea-logo col-7" *ngIf="IntegrationMediumZoom">
+                    <p class="presentation-p">Presentations</p>
+                </div>
+                <div class="responsive-menu d-lg-none .d-xl-block col-8" *ngIf="!IntegrationMediumZoom">
+                    <div class="col-6 px-0 text-end">
+                        <div class="dropdown">
+                            <button class="px-0 py-0 btn dropdown-toggle border-0" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <div class="d-inline-flex justify-content-center">
+                                    <div class="rounded-circle px-py-user-profile bg-user-profile mhv-0">
+                                        <span class="text-black fs-very-low">{{userName}}</span>
+                                    </div>
+                                    <div class="d-none rounded-circle bg-user-transparent">
+                                        <img class="img-fluid rounded-circle" src="/assets/images/user.jpg">
+                                    </div>
+                                </div>
+                            </button>
+                            <div class="dropdown-menu">
+                                <div class="mv-popup"></div>
+                                <div class="dropdown-item1">
+                                    <p class="text-black fs-medium mb-1 fw-four">
+                                        {{profile?.ProfileFirstName}}&nbsp;{{profile?.ProfileSecondName}}</p>
+                                    <p class="text-gray fs-very-low mb-0 fw-three">{{profile?.ProfileEMail}}</p>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item mt-2" href="/app/user-profile" *ngIf="!IntegrationMediumZoom && !IntegrationMediumOffice">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_4140_14086" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                        <rect width="20" height="20" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_4140_14086)">
+                                        <path d="M4.8763 14.25C5.58464 13.7083 6.3763 13.2812 7.2513 12.9687C8.1263 12.6562 9.04297 12.5 10.0013 12.5C10.9596 12.5 11.8763 12.6562 12.7513 12.9687C13.6263 13.2812 14.418 13.7083 15.1263 14.25C15.6124 13.6805 15.9909 13.0347 16.2617 12.3125C16.5326 11.5902 16.668 10.8194 16.668 9.99996C16.668 8.15274 16.0187 6.57982 14.7201 5.28121C13.4214 3.9826 11.8485 3.33329 10.0013 3.33329C8.15408 3.33329 6.58116 3.9826 5.28255 5.28121C3.98394 6.57982 3.33464 8.15274 3.33464 9.99996C3.33464 10.8194 3.47005 11.5902 3.74089 12.3125C4.01172 13.0347 4.39019 13.6805 4.8763 14.25ZM10.0013 10.8333C9.18186 10.8333 8.49089 10.552 7.92839 9.98954C7.36589 9.42704 7.08464 8.73607 7.08464 7.91663C7.08464 7.09718 7.36589 6.40621 7.92839 5.84371C8.49089 5.28121 9.18186 4.99996 10.0013 4.99996C10.8207 4.99996 11.5117 5.28121 12.0742 5.84371C12.6367 6.40621 12.918 7.09718 12.918 7.91663C12.918 8.73607 12.6367 9.42704 12.0742 9.98954C11.5117 10.552 10.8207 10.8333 10.0013 10.8333ZM10.0013 18.3333C8.84852 18.3333 7.76519 18.1145 6.7513 17.677C5.73741 17.2395 4.85547 16.6458 4.10547 15.8958C3.35547 15.1458 2.76172 14.2638 2.32422 13.25C1.88672 12.2361 1.66797 11.1527 1.66797 9.99996C1.66797 8.84718 1.88672 7.76385 2.32422 6.74996C2.76172 5.73607 3.35547 4.85413 4.10547 4.10413C4.85547 3.35413 5.73741 2.76038 6.7513 2.32288C7.76519 1.88538 8.84852 1.66663 10.0013 1.66663C11.1541 1.66663 12.2374 1.88538 13.2513 2.32288C14.2652 2.76038 15.1471 3.35413 15.8971 4.10413C16.6471 4.85413 17.2409 5.73607 17.6784 6.74996C18.1159 7.76385 18.3346 8.84718 18.3346 9.99996C18.3346 11.1527 18.1159 12.2361 17.6784 13.25C17.2409 14.2638 16.6471 15.1458 15.8971 15.8958C15.1471 16.6458 14.2652 17.2395 13.2513 17.677C12.2374 18.1145 11.1541 18.3333 10.0013 18.3333ZM10.0013 16.6666C10.7374 16.6666 11.4319 16.559 12.0846 16.3437C12.7374 16.1284 13.3346 15.8194 13.8763 15.4166C13.3346 15.0138 12.7374 14.7048 12.0846 14.4895C11.4319 14.2743 10.7374 14.1666 10.0013 14.1666C9.26519 14.1666 8.57075 14.2743 7.91797 14.4895C7.26519 14.7048 6.66797 15.0138 6.1263 15.4166C6.66797 15.8194 7.26519 16.1284 7.91797 16.3437C8.57075 16.559 9.26519 16.6666 10.0013 16.6666ZM10.0013 9.16663C10.3624 9.16663 10.661 9.04857 10.8971 8.81246C11.1332 8.57635 11.2513 8.27774 11.2513 7.91663C11.2513 7.55551 11.1332 7.2569 10.8971 7.02079C10.661 6.78468 10.3624 6.66663 10.0013 6.66663C9.64019 6.66663 9.34158 6.78468 9.10547 7.02079C8.86936 7.2569 8.7513 7.55551 8.7513 7.91663C8.7513 8.27774 8.86936 8.57635 9.10547 8.81246C9.34158 9.04857 9.64019 9.16663 10.0013 9.16663Z" fill="#525252"/>
+                                        </g>
+                                        </svg>
+                                    <span class="fs-very-low-12 fw-four text-gray ms-2">My Profile</span>
+                                </a>
+                                <a class="dropdown-item mt-2 mb-2" href="javascript:void(0)" (click)="logout()">
+                                    <span class="fs-very-low-12 fw-four text-gray">
+                                        <span class="me-1">
+                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <mask id="mask0_4140_14096" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                <rect width="20" height="20" fill="#D9D9D9"/>
+                                                </mask>
+                                                <g mask="url(#mask0_4140_14096)">
+                                                <path d="M16.7917 10.8333H6.66667V9.16667H16.7917L15.5 7.875L16.6667 6.66667L20 10L16.6667 13.3333L15.5 12.125L16.7917 10.8333ZM12.5 7.5V4.16667H4.16667V15.8333H12.5V12.5H14.1667V15.8333C14.1667 16.2917 14.0035 16.684 13.6771 17.0104C13.3507 17.3368 12.9583 17.5 12.5 17.5H4.16667C3.70833 17.5 3.31597 17.3368 2.98958 17.0104C2.66319 16.684 2.5 16.2917 2.5 15.8333V4.16667C2.5 3.70833 2.66319 3.31597 2.98958 2.98958C3.31597 2.66319 3.70833 2.5 4.16667 2.5H12.5C12.9583 2.5 13.3507 2.66319 13.6771 2.98958C14.0035 3.31597 14.1667 3.70833 14.1667 4.16667V7.5H12.5Z" fill="#525252"/>
+                                                </g>
+                                                </svg>
+                                        </span>
+                                        Sign Out
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <button height="40px" class="btn-sidebar" (click)="sidebar()" *ngIf="!IntegrationMediumZoom">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="28" height="28" aria-label="Menu" viewBox="0 0 24 24">
+                            <g color="#101834">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+                <div class="responsive-menu d-lg-none .d-xl-block col-5" *ngIf="IntegrationMediumZoom">
+                    <div class="col-6 px-0 text-end">
+                        <div class="dropdown">
+                            <button class="px-0 py-0 btn dropdown-toggle border-0" type="button" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                                <div class="d-inline-flex justify-content-center">
+                                    <div class="rounded-circle px-py-user-profile bg-user-profile mhv-0">
+                                        <span class="text-black fs-very-low">{{userName}}</span>
+                                    </div>
+                                    <div class="d-none rounded-circle bg-user-transparent">
+                                        <img class="img-fluid rounded-circle" src="/assets/images/user.jpg">
+                                    </div>
+                                </div>
+                            </button>
+                            <div class="dropdown-menu popub-drop">
+                                <div class="mv-popup"></div>
+                                <div class="dropdown-item1">
+                                    <p class="text-black fs-medium mb-1 fw-four">
+                                        {{profile?.ProfileFirstName}}&nbsp;{{profile?.ProfileSecondName}}</p>
+                                    <p class="text-gray fs-very-low mb-0 fw-three">{{profile?.ProfileEMail}}</p>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item mt-2" href="/app/user-profile" *ngIf="!IntegrationMediumZoom || !IntegrationMediumOffice">
+                                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <mask id="mask0_4140_14086" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                        <rect width="20" height="20" fill="#D9D9D9"/>
+                                        </mask>
+                                        <g mask="url(#mask0_4140_14086)">
+                                        <path d="M4.8763 14.25C5.58464 13.7083 6.3763 13.2812 7.2513 12.9687C8.1263 12.6562 9.04297 12.5 10.0013 12.5C10.9596 12.5 11.8763 12.6562 12.7513 12.9687C13.6263 13.2812 14.418 13.7083 15.1263 14.25C15.6124 13.6805 15.9909 13.0347 16.2617 12.3125C16.5326 11.5902 16.668 10.8194 16.668 9.99996C16.668 8.15274 16.0187 6.57982 14.7201 5.28121C13.4214 3.9826 11.8485 3.33329 10.0013 3.33329C8.15408 3.33329 6.58116 3.9826 5.28255 5.28121C3.98394 6.57982 3.33464 8.15274 3.33464 9.99996C3.33464 10.8194 3.47005 11.5902 3.74089 12.3125C4.01172 13.0347 4.39019 13.6805 4.8763 14.25ZM10.0013 10.8333C9.18186 10.8333 8.49089 10.552 7.92839 9.98954C7.36589 9.42704 7.08464 8.73607 7.08464 7.91663C7.08464 7.09718 7.36589 6.40621 7.92839 5.84371C8.49089 5.28121 9.18186 4.99996 10.0013 4.99996C10.8207 4.99996 11.5117 5.28121 12.0742 5.84371C12.6367 6.40621 12.918 7.09718 12.918 7.91663C12.918 8.73607 12.6367 9.42704 12.0742 9.98954C11.5117 10.552 10.8207 10.8333 10.0013 10.8333ZM10.0013 18.3333C8.84852 18.3333 7.76519 18.1145 6.7513 17.677C5.73741 17.2395 4.85547 16.6458 4.10547 15.8958C3.35547 15.1458 2.76172 14.2638 2.32422 13.25C1.88672 12.2361 1.66797 11.1527 1.66797 9.99996C1.66797 8.84718 1.88672 7.76385 2.32422 6.74996C2.76172 5.73607 3.35547 4.85413 4.10547 4.10413C4.85547 3.35413 5.73741 2.76038 6.7513 2.32288C7.76519 1.88538 8.84852 1.66663 10.0013 1.66663C11.1541 1.66663 12.2374 1.88538 13.2513 2.32288C14.2652 2.76038 15.1471 3.35413 15.8971 4.10413C16.6471 4.85413 17.2409 5.73607 17.6784 6.74996C18.1159 7.76385 18.3346 8.84718 18.3346 9.99996C18.3346 11.1527 18.1159 12.2361 17.6784 13.25C17.2409 14.2638 16.6471 15.1458 15.8971 15.8958C15.1471 16.6458 14.2652 17.2395 13.2513 17.677C12.2374 18.1145 11.1541 18.3333 10.0013 18.3333ZM10.0013 16.6666C10.7374 16.6666 11.4319 16.559 12.0846 16.3437C12.7374 16.1284 13.3346 15.8194 13.8763 15.4166C13.3346 15.0138 12.7374 14.7048 12.0846 14.4895C11.4319 14.2743 10.7374 14.1666 10.0013 14.1666C9.26519 14.1666 8.57075 14.2743 7.91797 14.4895C7.26519 14.7048 6.66797 15.0138 6.1263 15.4166C6.66797 15.8194 7.26519 16.1284 7.91797 16.3437C8.57075 16.559 9.26519 16.6666 10.0013 16.6666ZM10.0013 9.16663C10.3624 9.16663 10.661 9.04857 10.8971 8.81246C11.1332 8.57635 11.2513 8.27774 11.2513 7.91663C11.2513 7.55551 11.1332 7.2569 10.8971 7.02079C10.661 6.78468 10.3624 6.66663 10.0013 6.66663C9.64019 6.66663 9.34158 6.78468 9.10547 7.02079C8.86936 7.2569 8.7513 7.55551 8.7513 7.91663C8.7513 8.27774 8.86936 8.57635 9.10547 8.81246C9.34158 9.04857 9.64019 9.16663 10.0013 9.16663Z" fill="#525252"/>
+                                        </g>
+                                        </svg>
+                                    <span class="fs-very-low-12 fw-four text-gray ms-2">My Profile</span>
+                                </a>
+                                <a class="dropdown-item mt-2 mb-2" href="javascript:void(0)" (click)="logout()">
+                                    <span class="fs-very-low-12 fw-four text-gray">
+                                        <span class="me-1">
+                                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <mask id="mask0_4140_14096" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                <rect width="20" height="20" fill="#D9D9D9"/>
+                                                </mask>
+                                                <g mask="url(#mask0_4140_14096)">
+                                                <path d="M16.7917 10.8333H6.66667V9.16667H16.7917L15.5 7.875L16.6667 6.66667L20 10L16.6667 13.3333L15.5 12.125L16.7917 10.8333ZM12.5 7.5V4.16667H4.16667V15.8333H12.5V12.5H14.1667V15.8333C14.1667 16.2917 14.0035 16.684 13.6771 17.0104C13.3507 17.3368 12.9583 17.5 12.5 17.5H4.16667C3.70833 17.5 3.31597 17.3368 2.98958 17.0104C2.66319 16.684 2.5 16.2917 2.5 15.8333V4.16667C2.5 3.70833 2.66319 3.31597 2.98958 2.98958C3.31597 2.66319 3.70833 2.5 4.16667 2.5H12.5C12.9583 2.5 13.3507 2.66319 13.6771 2.98958C14.0035 3.31597 14.1667 3.70833 14.1667 4.16667V7.5H12.5Z" fill="#525252"/>
+                                                </g>
+                                                </svg>
+                                        </span>
+                                        Sign Out
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <button height="40px" class="btn-sidebar" (click)="sidebar()" *ngIf="!IntegrationMediumZoom">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="28" height="28" aria-label="Menu" viewBox="0 0 24 24">
+                            <g color="#101834">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="sidebar " [ngClass]="{ 'open': isSidebarOpen }">
+            <div class="main-d">
+                <div class="form-container">
+                    <form>
+                        <div class="Main-menu">
+                            <div class="default-home">
+                                
+                            </div>
+                            <div class="ps-4 pt-2">
+                                <ul class="list-unstyled sidebarlist">
+                                    <li><a class="text-white text-decoration-none mb-2" [routerLink]="['/app/home']" (click)="closeSidebar()"
+                                    routerLinkActive="active">Home</a></li>
+                                    <li><a class="text-white text-decoration-none mb-2" [routerLink]="['/app/mypresentations']" (click)="closeSidebar()"
+                                        routerLinkActive="active">My Presentations</a></li>
+                                        <li><a class="text-white text-decoration-none mb-2" [routerLink]="['/app/templates']"[queryParams]="{ isPublished: 'true', selectedCategory: 'All Templates' }" (click)="closeSidebar()"
+                                            routerLinkActive="active">All Templates</a></li>
+                                            <!-- <li *ngIf="!hasTeam"> <a class="text-white text-decoration-none mb-2 "(click)="openPopup()" routerLinkActive="active" (click)="closeSidebar()">
+                                             Create a Team</a></li>
+                                             <li *ngIf="hasTeam"> <a class="text-white text-decoration-none mb-2"  (click)="onMyTeamMenuClick()" [routerLink]="['/app/team-members']" routerLinkActive="active" [ngClass]="{'active': isActiveTeam}" (click)="closeSidebar()">
+                                           My Team</a></li> -->
+                                    <!-- <li><a class="text-white text-decoration-none mb-2" [routerLink]="['/app/shared-with-me']" (click)="closeSidebar()"
+                                            routerLinkActive="active">Shared with Me</a></li> -->
+                                    <li><a class="text-white text-decoration-none mb-2" *ngIf="!IntegrationMediumOffice" [routerLink]="['/app/myplan']" (click)="closeSidebar()"
+                                            routerLinkActive="active">My Plan</a></li>
+                                    <!-- <li><a class="text-white text-decoration-none mb-2" [routerLink]="['/app/integration']" (click)="closeSidebar()"
+                                            routerLinkActive="active">Integrations</a></li> -->
+                                    <li><a class="text-white text-decoration-none mb-2" *ngIf="!IntegrationMediumOffice" [routerLink]="['/app/trash']" (click)="closeSidebar()"
+                                            routerLinkActive="active">Trash</a></li>
+                                </ul>
+                            </div>
+                            <div class="intents">
+                                <ul></ul>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="btn-c">
+                    <button class="btn-close p-2 position-relative" (click)="closeSidebar()">
+                        <img class="searchicon" src="assets/Icon/menu-close.svg"></button>
+                </div>
+            </div>
+        </div>
+        <router-outlet></router-outlet>
+<div class="popup-container"  *ngIf="createteampopupvisible">
+    <div class="popup">
+        <div class="popup-header">
+            <p class="fs-low fw-five">Add Team members</p>
+            <button (click)="closePopup()">
+                <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <mask id="mask0_4447_8974" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
+                        height="25">
+                        <rect width="25" height="25" fill="#D9D9D9" />
+                    </mask>
+                    <g mask="url(#mask0_4447_8974)">
+                        <path
+                            d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z"
+                            fill="#999999" />
+                    </g>
+                </svg>
+            </button>
+        </div>
+        <div class="main-content">
+            <h5 class="team-heading">Team name</h5>
+            <div class="fs-very-low d-flex mb-2" > 
+                <input formControlName="profilename" style="border: 1px solid #bcbdc2 ;" placeholder="Enter team name"
+                [value]="defaultTeamName" maxlength="100" 
+                type="text" 
+                class="form-control text-fs-size" >
+            </div>
+        </div>
+        
+        <div class="main-content">
+            <h5 class="team-heading">Invite members</h5>
+            <div class="d-flex justify-content-end  Member">
+                <div class="dropdown m-9">
+                    <button class="btn member-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="fs-very-low" id="SelectedRole">Member</span>
+                      <svg data-v-5a777a42="" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg" name="arrow" class="down-arrow absolute top-3.5 right-2 path-fill-current inline-block text-primary-90" viewBox="0 0 24 24" data-v-06731762="">
+                        <path d="M13.12 16.523a1.554 1.554 0 01-2.24 0L4.437 9.828c-.95-.987-.25-2.632 1.12-2.632h12.886c1.37 0 2.07 1.645 1.12 2.632l-6.443 6.695z" fill="#282E3E"></path>
+                      </svg>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <li><a class="dropdown-item fs-very-low fw-five" (click)="changeRole('Admin')">Admin
+                        <p>Invite, remove member,<br> manage member role</p>
+                      </a></li>
+                      <li><a class="dropdown-item fs-very-low fw-five" (click)="changeRole('Member')">Member</a></li>
+                    </ul>
+                  </div>
+                  
+                  
+            </div>
+            <div [formGroup]="form" class="invite-emailbox">
+            <div class="editor-tag" (click)="focusTagInput()">
+            <span class="tag-item" *ngFor="let tag of tags">
+                {{tag}}
+                <span class="remove-tag" (click)="removeTag(tag)">×</span>
+              </span>
+                <input formControlName="tag"  [placeholder]="tags.length === 0 ? 'Emails, comma separated' : ''"  (keydown)="onKeyDown($event)"
+                #tagInput type="text" style="width:35%"  
+                class="input-tag text-fs-size input-d"
+               >
+        </div>
+    </div>
+
+        <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+        </div>
+        <div class="d-flex justify-content-end ">
+            <button class="btn btn-light cancel fs-very-low" (click)="closePopup()">Cancel</button>
+            <button class="btn btn-primary invite fs-very-low disableds" id="invite" (click)="invite()">
+                <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                Invite</button>
+        </div>
+    </div>
+  </div>
+    </div>
+</div>

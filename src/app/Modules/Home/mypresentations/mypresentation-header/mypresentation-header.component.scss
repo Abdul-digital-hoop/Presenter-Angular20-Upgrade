@@ -1,0 +1,403 @@
+@import '/src/assets/variablesScss/SettingVariables.scss';
+
+.main-container {
+    padding: 30px 30px 0px 30px;
+}
+
+.mypresentation-header {
+    display: flex;
+    margin-top: 18px;
+    width: 100%;
+}
+
+.breadcrumbs-Text {
+    font-size: 24px;
+    font-weight: 400;
+    transition: font-size 0.3s ease;
+}
+
+.create-presentation-btn {
+    background-color: $button-color;
+    display: flex;
+    flex-direction: row;
+    border-radius: 60px;
+    padding: 15px;
+}
+
+.create-presentation-btn:hover {
+    background-color: $button-hover-bluecolor;
+}
+
+.create-folder-btn {
+    background-color: #ffffff;
+    color: black;
+    display: flex;
+    flex-direction: row;
+    border-radius: 60px;
+    padding: 15px;
+}
+
+.create-folder-btn:hover {
+    background-color: $button-hover-bluecolor;
+    color: $button-hover-whitecolor;
+    transition: none;
+}
+
+.create-folder-btn:hover .icon-d svg path {
+    stroke: $button-hover-whitecolor;
+}
+
+.toggle-delete-btn.delete-btn {
+    background-color: #FF0000;
+    border: none;
+    border-radius: 25px;
+    padding: 8px 60px;
+    color: white;
+    font-weight: 400;
+    transition: all 0.2s ease;
+    width: auto;
+    height: 50px;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    top: 5px;
+    margin-right: 25px;
+}
+
+.toggle-delete-btn.delete-btn:hover:not([disabled]) {
+    background-color: #E60000;
+}
+
+.toggle-delete-btn.delete-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    background-color: #FFB3B3;
+}
+
+.toggle-delete-btn.delete-btn {
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+
+    &:not(:disabled):hover {
+        background-color: #c82333;
+    }
+}
+
+.toggle-container {
+    display: flex;
+    width: 100px;
+    height: 45px;
+    border-radius: 50px;
+    border: 1px solid #DEDEDE;
+    background: #f8f8f8;
+    overflow: hidden;
+    position: relative;
+    top: 6px;
+    margin-left: auto;
+}
+
+.toggle-active-btn {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    color: #777;
+}
+
+.toggle-active-btn.active {
+    background: #ECECFF;
+    color: #4040E5;
+    border: 1px solid #DADAFF;
+    position: relative;
+}
+
+.toggle-active-btn.active:first-child {
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    z-index: 1;
+}
+
+.toggle-active-btn.active:last-child {
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    z-index: 1;
+}
+
+.close-presentaion {
+    background: none;
+    border: none;
+    font-weight: 200;
+    font-weight: 200;
+    font-size: 34px;
+    color: $text-secondary-color;
+    margin: 0;
+    padding: 0;
+    line-height: 1;
+    height: 15px;
+    display: flex;
+    align-items: center;
+}
+
+.rename-modal {
+    width: 37%;
+}
+
+.content-popup {
+    border-radius: 10px !important;
+    box-shadow: 4px 4px 20px 0px #4848FF26;
+    border: none !important;
+}
+
+.bb-none {
+    border-bottom: none !important;
+}
+
+.cancel-button {
+    color: #696969;
+    border-radius: 20px;
+}
+
+.cancel-button:hover {
+    border-radius: 20px;
+    background-color: $button-bg-color;
+
+}
+
+.rename-button {
+    border-radius: 20px;
+    background-color: $button-color;
+    color: white;
+    font-weight: 400 !important;
+}
+
+.breadcrumb-separator {
+    margin-left: 5px;
+    font-weight: 400;
+    color: #000000;
+    font-size: 24px;
+}
+
+.breadcrumbs-icon {
+    margin-left: 10px;
+    font-size: 18px;
+    margin-top: 0px;
+}
+
+.remaning-i {
+    position: absolute;
+    bottom: 36px;
+    right: 14px;
+    font-size: 13px;
+    color: #495057;
+}
+
+.custom-popup {
+    border-radius: 15px;
+    height: 100%;
+}
+
+.wi-90 {
+    width: 90%;
+}
+
+.close-folder {
+    margin-top: -16px;
+    background: none;
+    border: none;
+    font-weight: 200;
+    font-size: 34px;
+    color: $text-secondary-color;
+}
+
+.delete-button {
+    border-radius: 20px;
+    background-color: $button-color;
+    color: white;
+    width: 25%;
+    font-weight: 400 !important;
+}
+
+.delete-button:hover {
+    background-color: $button-hover-bluecolor;
+}
+
+.modal-footer {
+    border: none !important;
+    border-radius: none !important;
+}
+
+.is-invalid {
+    border-color: red !important;
+}
+
+.form-control.is-invalid {
+    background-image: none !important;
+}
+
+.pricing-icon-recently-view {
+    width: 21px;
+    height: 21px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    margin-left: 2px !important;
+}
+
+.pricing-icon-recently-view img {
+    width: 16px;
+    height: 16px;
+}
+
+.right-side-bar-tooltip-right {
+    position: relative;
+}
+
+.right-side-bar-tooltip-right:hover::after,
+.right-side-bar-tooltip-right:hover::before {
+    visibility: visible;
+    opacity: 1 !important;
+}
+
+.right-side-bar-tooltip-right::after {
+    content: attr(data-tooltip);
+    visibility: hidden;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 7px;
+    padding: 5px;
+    position: absolute;
+    z-index: 99999;
+    bottom: 0%;
+    left: 50%;
+    transform: translateX(18%);
+    font-size: 12px;
+    font-weight: 400;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+}
+
+.right-side-bar-tooltip-right::before {
+    content: "";
+    position: absolute;
+    top: 5px;
+    left: 28px;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+    opacity: 0;
+    rotate: 90deg;
+}
+.header-input {
+    border: none;
+    border-radius: 30px;
+    background: #f8f9fb;
+    padding: 10px 40px 10px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+    font-size: 15px;
+    width: 100%;
+    outline: none;
+    color: #333;
+  }
+  
+  .header-input::placeholder {
+    color: #b0b0b0;
+    font-weight: 400;
+    padding: none !important;
+  }
+  .header-input {
+    border: 1px #CACACA;
+    border-radius: 58px !important;
+    font-size: 14px;
+    box-shadow: 0px 0px 4px 0px #0000001A;
+  }
+  .search-icon {
+    position: absolute;
+    right: 1px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 35px;
+    height: 35px;
+    background: #EDF0F2;     
+    border-radius: 50%;        
+    border: none;
+  }
+  .search-input-wrapper {
+    position: relative;
+    width: 100%;
+  }
+  .search-box {
+    padding: 10px, 24px, 10px, 24px;
+  }
+  input[type=text]:focus, input[type=password]:focus, textarea:focus, input[type=email]:focus, input[type=number]:focus {
+    background-color: #fff;
+    padding: 10px 40px 10px 20px !important;
+    border: 1px solid #4848FF !important;
+    box-shadow: none;
+  }
+  .zoom-recent{
+    margin-top: 50px;
+  }
+.button-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+@media(max-width: 575px) {
+    .button-container {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+    }
+}
+
+@media(min-width: 0px) and (max-width: 991.9px) {
+    .mypresentation-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .button-container {
+        display: flex !important;
+        // flex-direction: column !important;
+        width: 100%;
+        margin-bottom: 1rem;
+        gap: 0.75rem;
+    }
+
+    .button-container>div {
+        width: 100%;
+    }
+
+    .button-container .btn {
+        width: 100%;
+        justify-content: center;
+        white-space: nowrap;
+        overflow: visible;
+        text-overflow: clip;
+        padding: 15px 20px;
+    }
+
+    .ms-auto {
+        order: 2;
+        width: 100%;
+        justify-content: flex-start;
+    }
+}

@@ -1,0 +1,151 @@
+.bg-color {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-header {
+    display: none;
+}
+
+.modal-fullscreen {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    width: 90%;
+    max-width: 654px;
+    height: auto;
+    max-height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    overflow-y: hidden;
+}
+
+.modal-body {
+    width:100%;
+    max-width:650px;
+    height: auto;
+    max-height: 80%;
+    overflow-x: hidden;
+}
+
+.modal-animation {
+    animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-animationout {
+    animation: slideOut 0.5s ease-in-out;
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+}
+
+.btn-close {
+    position:static;
+    top:2%;
+    right:5%;
+    z-index: 1;
+}
+
+.modal-header{
+    width: 100%;
+    display: flex;
+    justify-content:flex-end;
+    align-items: center;
+}
+
+@media (max-height: 360px) {
+    .modal-content {
+        width: 95%;
+        max-width:300px;
+        max-height:300px;
+    }
+    .modal-body {
+        width: 95%;
+        max-width: 480px;
+        max-height: 50%;
+        overflow-y: auto;
+    }
+
+    .btn-close {
+        top: 10px;
+        right: 10px;
+    }
+}
+
+.modal-publish
+.modal-content{
+    max-width:65%;
+    max-height:90%;
+}
+.modal-publish
+.modal-body{
+ max-width:980px;
+}
+
+.modal-edit
+.modal-body{
+    width: 100%;
+    max-width:650px;
+}
+
+.modal.custom-scrollbar .modal-body {
+    max-height: 80vh;  
+    overflow-y: auto; 
+    
+    
+    &::-webkit-scrollbar {
+      width: 8px;  
+    }
+  
+    &::-webkit-scrollbar-track {
+      background:#ebedff; 
+      border-radius: 4px;
+    }
+  
+    &::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg,#f0f0f0,#bfbfbf); 
+      border-radius: 4px;
+    }
+  
+    &::-webkit-scrollbar-thumb:hover {
+      background: linear-gradient(180deg, #0056b3, #003580); 
+    }
+  }
+  
+  .modal-edit
+  .modal-footer{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }

@@ -1,0 +1,24 @@
+@import '/src/assets/variablesScss/varaiabledecalaration.scss';
+@import '/src/assets/variablesScss/common.scss';
+.reached-maximum {
+    font-size: $fs-10;
+    color: $danger;
+    margin-bottom: 0px;
+}
+
+input.ng-valid.ng-untouched {
+    padding: 10px 35px 8px 13px;
+  }
+  
+  input.ng-invalid.ng-touched {
+    padding: 10px 35px 8px 13px;
+  }
+  
+  input.ng-valid.ng-touched {
+    padding: 10px 35px 8px 13px;
+  }
+  
+  input.ng-invalid.ng-touched {
+    padding: 10px 35px 8px 13px;
+  }
+  

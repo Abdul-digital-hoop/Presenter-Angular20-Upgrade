@@ -1,0 +1,433 @@
+<ng-container *ngIf="!workspaceService.presentationMode && isPageLoading || workspaceService.isPreviewMode">
+    <div class="disable-presentationmode-container">
+        <div class="presentPresentation">
+            <h1>Want to use the remote?</h1>
+            <p class="presentationmodefalse-content">Hit <b>'Present'</b> to begin. You can control the session<br> with the remote once it’s live.</p>
+            <button class="btn btn-confirm-main text-white px-3"[ngClass]="workspaceService.isPreviewMode ? 'disableds' : ''"  (click)="workspaceService.isPreviewMode === false && presentAnyway()">Present</button>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="isLoading && !isPageLoading">
+    <div class="disable-presentationmode-container">
+        <div class="presentPresentation">
+            <app-spinner></app-spinner>
+        </div>
+    </div>
+</ng-container>
+<ng-container *ngIf="!isMobile && isPageLoading">
+    <div class="remote-contianer" [hidden]="!workspaceService.presentationMode || workspaceService.isPreviewMode">
+        <button  [ngClass]="isOpenQAWhenTabView == true? 'toggle-right-absolute':'toggle-right'" (click)="openQA()">
+            <ng-container *ngIf="!isOpenQAWhenTabView">
+                <img src="/assets/new-icons/message.svg" class="tab-icon">
+            </ng-container> 
+            <ng-container *ngIf="isOpenQAWhenTabView">
+                <img src="/assets/new-icons/QA_active.svg" class="tab-icon">
+            </ng-container>
+        </button>
+        <!-- * ============ Header Template ============== -->
+        <app-remote-navbar></app-remote-navbar>
+        <!-- * ============ Main Contant Template ============== -->
+        <div class="content">
+            <!-- * ============ Main Contant Template ============== -->
+            <div class="control-section active">
+                <app-remote-leftbar (dynamicComponentUpdate)="remoteCenterPanel.dynamicComponentUpdate($event)"></app-remote-leftbar>
+            </div>
+            <!-- * ============ Presentation Contant Template ============== -->
+            <div class="presentation-section">
+                <app-remote-center-panel [isLoading]="isLoading" [presenterTime]="presenterTime"
+                    #remoteCenterPanel (isPresentationResetResults)="manageResetResults($event)" (closeModalsEmitter)="closeModals()"></app-remote-center-panel>
+            </div>  
+            <!-- * ============ QA Contant Template ============== -->
+            <div [ngClass]="isOpenQAWhenTabView == true? 'QA-section-absolute':'QA-section'">
+                <ng-container *ngIf="!isLoading">
+                    <app-remote-rightbar [itHasQASlides]="itHasQASlides"
+                        (deleteQuestion)="deleteQuestionIdSet($event)"></app-remote-rightbar>
+                </ng-container>
+            </div>
+        </div>
+
+    </div>
+</ng-container>
+
+<ng-container *ngIf="isMobile && isPageLoading">
+    <div class="remote-contianer" [hidden]="!workspaceService.presentationMode || workspaceService.isPreviewMode">
+        <!-- * ============ Header Template ============== -->
+        <app-remote-navbar (activeTabChange)="changeActiveTab($event)" [isAllQuestionsAnswered]="true" #remoteNavBar></app-remote-navbar>
+        <!-- * ============ Main Contant Template ============== -->
+        <div class="content">
+            <!-- * ============ Main Contant Template ============== -->
+            <div class="control-section" [class.active-tab]="activeTab === RemoteTabString.Setting">
+                <app-remote-leftbar
+                    (dynamicComponentUpdate)="remoteCenterPanel.dynamicComponentUpdate($event)"></app-remote-leftbar>
+            </div>
+            <!-- * ============ Presentation Contant Template ============== -->
+            <div class="presentation-section" [class.active-tab]="activeTab === RemoteTabString.Present">
+                <app-remote-center-panel [isLoading]="isLoading" [presenterTime]="presenterTime"
+                    #remoteCenterPanel (isPresentationResetResults)="manageResetResults($event)" (closeModalsEmitter)="closeModals()"></app-remote-center-panel>
+            </div>
+            <!-- * ============ QA Contant Template ============== -->
+            <div class="QA-section" [class.active-tab]="activeTab === RemoteTabString.QA">
+                <ng-container *ngIf="!isLoading">
+                    <app-remote-rightbar [itHasQASlides]="itHasQASlides"
+                        (deleteQuestion)="deleteQuestionIdSet($event)"
+                        (allQuestionsAnswered)="remoteNavBar.changeQuestionsNotifications($event)"></app-remote-rightbar>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<!-- Start Timer Modal -->
+<div class="modal fade" id="startTimerModal" tabindex="-1" role="dialog" aria-labelledby="startTimerModalTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered align-items-end my-0 mvh-100" role="document">
+        <div class="modal-content bg-color-black">
+            <div class="modal-header border-bottom-0">
+                <h5 class="notes-big-text" id="startTimerModalTitle">Start timer</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20"
+                        height="20" aria-label="Close" viewBox="0 0 24 24">
+                        <g color="black">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ng-container *ngIf="!workspaceService.slideTimerCountShow">
+                    <div class="timer-section">
+                        <button class="btn btn-control mt-2" (click)="presenterStartTimer(10)">
+                            <span class="full-span-position"></span>
+                            <span class="icon-svg-span mx-1">
+                                <img src="/assets/new-icons/timer1.svg" class="control-btn-icon">
+                            </span>
+                            <span class="btn-name">10 seconds</span>
+                        </button>
+                        <button class="btn btn-control mt-2" (click)="presenterStartTimer(30)">
+                            <span class="full-span-position"></span>
+                            <span class="icon-svg-span mx-1">
+                                <img src="/assets/new-icons/timer1.svg" class="control-btn-icon">
+                            </span>
+                            <span class="btn-name">30 seconds</span>
+                        </button>
+                        <button class="btn btn-control mt-2" (click)="presenterStartTimer(60)">
+                            <span class="full-span-position"></span>
+                            <span class="icon-svg-span mx-1">
+                                <img src="/assets/new-icons/timer1.svg" class="control-btn-icon">
+                            </span>
+                            <span class="btn-name">1 minute</span>
+                        </button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="workspaceService.slideTimerCountShow">
+                    <div class="time-count-stop">
+                        <span font-size="7" font-weight="semiBold" font-family="body"
+                            class="count-down-seconds">{{workspaceService.slideTimerCountsToDisplay}}</span>
+                    </div>
+                    <div class="time-count-stop">
+                        <button class="btn btn-control mt-2" (click)="presenterStartTimer(0)">
+                            <span class="full-span-position"></span>
+                            <span class="icon-svg-span mx-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                                    width="16" height="16" aria-label="Clock" viewBox="0 0 24 24">
+                                    <g color="inherit">
+                                        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                            stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"></circle>
+                                            <polyline points="12 6 12 12 16 14"></polyline>
+                                        </g>
+                                    </g>
+                                </svg>
+                            </span>
+                            <span class="btn-name">Stop countdown</span>
+                        </button>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Reset Timer Modal -->
+<div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered align-items-end my-0 mvh-100" role="document">
+        <div class="modal-content bg-color-black">
+            <div class="modal-header border-bottom-0">
+                <h5 class="notes-big-text" id="resetModal">Reset timer</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20"
+                        height="20" aria-label="Close" viewBox="0 0 24 24">
+                        <g color="black">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="reset-timer">
+                    <!-- <span class="heading">Reset timer?</span> -->
+                    <span class="content">Pressing the "Reset" button will restart the presentation timer.</span>
+                </div>
+                <div class="reset-action">
+                    <div class="control-button">
+                        <button class="btn btn-control" (click)="closeTimerModal()">
+                            <span class="btn-name">Cancel</span>
+                        </button>
+                    </div>
+                    <div class="control-button">
+                        <button class="btn btn-control danger" (click)="resetTimer()">
+                            <span class="btn-name">Reset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Reset Timer Modal -->
+<div class="modal fade" id="deleteQuestionModal" tabindex="-1" role="dialog" aria-labelledby="deleteQuestionModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered align-items-end my-0 mvh-100" role="document">
+        <div class="modal-content bg-color-black">
+            <div class="modal-header border-bottom-0">
+                <h5 class="notes-big-text" id="deleteQuestionModal">Delete Question</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeQuestionDeleteModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20"
+                        height="20" aria-label="Close" viewBox="0 0 24 24">
+                        <g color="black">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="reset-timer">
+                    <span class="heading">Are you sure?</span>
+                    <span class="content">If you delete a question, you will not be able to recover it later.</span>
+                </div>
+                <div class="reset-action">
+                    <div class="control-button">
+                        <button class="btn btn-control" (click)="closeQuestionDeleteModal()">
+                            <span class="btn-name">Cancel</span>
+                        </button>
+                    </div>
+                    <div class="control-button">
+                        <button class="btn btn-control danger" (click)="deleteQuestion()">
+                            <span class="btn-name">Delete</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Moderation Modal -->
+<div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered align-items-end my-0 mvh-100" role="document">
+        <div class="modal-content bg-color-black">
+            <div class="modal-header border-bottom-0">
+                <h5 class="notes-big-text" id="deleteQuestionModal">Moderate answers</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModerationModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20"
+                        height="20" aria-label="Close" viewBox="0 0 24 24">
+                        <g color="black">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body ">
+                <div class="remote-response">
+                    <ng-container *ngIf="workspaceService.profanityWordsChecksForWord(workspaceService.options)?.length == 0">
+                        <span class="content d-flex justify-content-center align-items-center">There is no answers to moderate.</span>
+                    </ng-container>
+                    <ng-container *ngIf="workspaceService.profanityWordsChecksForWord(workspaceService.options)?.length > 0">
+                        <ng-container *ngFor="let option of workspaceService.profanityWordsChecksForWord(workspaceService.options)">
+                            <div [ngClass]="!option?.ModerateAnswer ? 'remote-single-response':'remote-single-response-hide'">
+                                <span [ngClass]="!option?.ModerateAnswer ? 'remote-response-value':'remote-response-value-hide'">
+                                    <ng-container *ngIf="option?.ModerateAnswer">
+                                        <img src="/assets/new-icons/block.svg">
+                                    </ng-container>
+                                    {{option?.Answer}}
+                                </span>
+                                <ng-container *ngIf="!option?.ModerateAnswer">
+                                    <button class="icon-button" (click)="moderateResponse(option)">
+                                        <img src="/assets/new-icons/block.svg">
+                                    </button>
+                                </ng-container>
+                                <ng-container *ngIf="option?.ModerateAnswer">
+                                    <button class="icon-button" (click)="moderateResponse(option)">
+                                        <img src="/assets/new-icons/device_reset.svg">
+                                    </button>
+                                </ng-container>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+            <ng-container *ngIf="workspaceService.profanityWordsChecksForWord(workspaceService.options)?.length > 0">
+                <div class="modal-footer">
+                    <div class="control-button">
+                        <button class="btn btn-control" (click)="resetModerateResponse()">
+                            <span class="btn-name">Reset moderation</span>
+                            <img src="/assets/new-icons/device_reset.svg" class="control-btn-icon">
+                        </button>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+<!-- MarkCorrect Modal -->
+<div class="modal fade" id="markCorrectAnswersModal" tabindex="-1" role="dialog" aria-labelledby="markCorrectAnswersModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered align-items-end my-0 mvh-100" role="document">
+        <div class="modal-content bg-color-black">
+            <div class="modal-header border-bottom-0">
+                <h5 class="notes-big-text" id="deleteQuestionModal">Mark correct</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeModerationModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20"
+                        height="20" aria-label="Close" viewBox="0 0 24 24">
+                        <g color="black">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body ">
+                <div class="remote-response">
+                    <ng-container *ngIf="!hasAnswersToMark">
+                        <span class="content d-flex justify-content-center align-items-center">There is no answers to mark correct.</span>
+                    </ng-container>
+                    <ng-container *ngIf="workspaceService.profanityWordsChecksForWord(workspaceService.quizPlayers)?.length > 0">
+                        <ng-container *ngFor="let option of  workspaceService.profanityWordsChecksForWord(workspaceService.quizPlayers)">
+                            <ng-container *ngIf="option?.answerdOptionId != '' && option?.isVoted == true">
+                                <div [ngClass]="!option?.isHide ? 'remote-single-response':'remote-single-response-hide'">
+                                    <ng-container *ngIf="option?.isCorrectAnswers && !option?.isHide">
+                                        <span [ngClass]="!option?.isHide ? 'remote-response-value':'remote-response-value-hide'">
+                                            {{option?.answerdOptionId}}
+                                        </span>
+                                        <div class="button-alignment">
+                                            <button class="icon-button" *ngIf="!option?.isHide" (click)="hideandShowAnswers(option,true)">
+                                                <!-- Hide Icon -->
+                                                <img src="/assets/new-icons/block.svg">
+                                            </button>
+                                            <button class="icon-button" (click)="makeCorrectorWrongAnswer(option,option?.isCorrectAnswers)">
+                                                <!-- Wrong Icon -->
+                                                <img src="/assets/new-icons/Wrong_Icon.svg">
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="!option?.isCorrectAnswers && !option?.isHide">
+                                        <span [ngClass]="!option?.isHide ? 'remote-response-value':'remote-response-value-hide'">
+                                            {{option?.answerdOptionId}}
+                                        </span>
+                                        <div class="button-alignment">
+                                            <button class="icon-button" *ngIf="!option?.isHide" (click)="hideandShowAnswers(option,true)">
+                                                <!-- Hide Icon -->
+                                                <img src="/assets/new-icons/block.svg">
+                                            </button>
+                                            <button class="icon-button" (click)="makeCorrectorWrongAnswer(option,option?.isCorrectAnswers)">
+                                                <!-- Correct Icon -->
+                                                <img src="/assets/new-icons/Answered.svg">
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="option?.isHide">
+                                        <span [ngClass]="!option?.isHide ? 'remote-response-value':'remote-response-value-hide'">
+                                            {{option?.answerdOptionId}}
+                                        </span>
+                                        <div class="button-alignment">
+                                            <button class="icon-button" (click)="hideandShowAnswers(option,false)">
+                                                <img src="/assets/new-icons/device_reset.svg">
+                                            </button>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Reset Modal -->
+<div class="modal fade" id="resetResultModal" tabindex="-1" role="dialog" aria-labelledby="resetResultModal"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered align-items-end my-0 mvh-100" role="document">
+        <div class="modal-content bg-color-black">
+            <div class="modal-header border-bottom-0">
+                <h5 class="notes-big-text" id="deleteQuestionModal">Reset this slide?</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="closeResetModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20"
+                        height="20" aria-label="Close" viewBox="0 0 24 24">
+                        <g color="black">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body ">
+                <div class="remote-reset">
+                    <span class="reset-content">This will reset results (votes, reactions and responses). Your previous results are saved and accessed from the home screen by clicking on the three dots on the right column of the presentation, and then clicking "View results".</span>
+                    <div class="reset-controls">
+                        <div  [ngClass]="isPresentationResultReset? 'presentation-reset-active':'presentation-reset'">
+                            <div class="form-check d-flex justify-content-between bg-color-gray-100 p-3 mb-2 rounded">
+                                <label class="form-check-label mb-0" for="exampleRadios1">Reset result for the entire presentation.</label>
+                                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" [checked]="isPresentationResultReset" (change)="changeResutMethod()">
+                            </div>
+                        </div>
+                        <div [ngClass]="isPresentationResultReset? 'slide-reset':'slide-reset-active'">
+                            <div class="form-check d-flex justify-content-between bg-color-gray-100 p-3 mb-2 rounded">
+                                <label class="form-check-label mb-0" for="exampleRadios2">Reset results for this slide.</label>
+                                <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option1" [checked]="!isPresentationResultReset" (change)="changeResutMethod()">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="reset-action">
+                    <div class="control-button">
+                        <button class="btn btn-control" (click)="closeResetModal()">
+                            <span class="btn-name">Cancel</span>
+                        </button>
+                    </div>
+                    <div class="control-button">
+                        <button class="btn btn-control reset" (click)="resetResults()">
+                            <span class="btn-name reset">Reset</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</div>

@@ -1,0 +1,386 @@
+.annotation-toolbar {
+  position: fixed;
+  z-index: 10003; // Increased to be above all other annotation elements
+  background: rgba(0, 0, 0, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  user-select: none;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .toolbar-header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: move;
+
+    .toolbar-title {
+    color: #d0d0d0;
+    font-weight: 800;
+    font-size: 20px;
+    }
+
+    .close-btn {
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      cursor: pointer;
+      padding: 4px;
+      transition: all 0.2s ease;
+      position: absolute;
+      top: -17px;
+      background: #191919;
+      border-radius: 17px;
+      right: -11px;
+
+    }
+  }
+
+  .toolbar-content {
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .toolbar-section {
+      padding: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .section-title {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 12px;
+        font-weight: 500;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+    }
+
+    .mode-toggle-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 16px rgba(102, 126, 234, 0.4);
+      }
+
+      &.active {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+
+        &:hover {
+          box-shadow: 0 4px 16px rgba(255, 107, 107, 0.4);
+        }
+      }
+
+      svg {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .tools-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .tool-btn {
+        aspect-ratio: 1;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+          transform: translateY(-2px);
+        }
+
+        &.active {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border-color: #667eea;
+          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+        }
+
+        .tool-icon {
+          font-size: 26px;
+        }
+      }
+    }
+
+    .controls-row {
+      display: flex;
+      gap: 12px;
+
+      .control-group {
+        position: relative;
+        flex: 1;
+
+        .control-btn {
+          width: 100%;
+          height: 40px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 8px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-1px);
+          }
+
+          &.color-btn {
+            border: 2px solid white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+          }
+
+          &.size-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+          }
+        }
+
+        .picker-panel {
+          position: absolute;
+          top: 0;
+          right: 90px;
+          margin-top: 8px;
+          background: rgba(0, 0, 0, 0.95);
+          border-radius: 8px;
+          padding: 12px;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+          border: 1px solid rgba(255, 255, 255, 0.1);
+          z-index: 10004; // Increased to be above toolbar
+
+          &.color-picker {
+            .color-grid {
+              display: grid;
+              grid-template-columns: repeat(6, 1fr);
+              gap: 6px;
+
+              .color-option {
+                width: 24px;
+                height: 24px;
+                border-radius: 50%;
+                border: 2px solid transparent;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &:hover {
+                  transform: scale(1.1);
+                }
+
+                &.selected {
+                  border-color: white;
+                  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+                }
+              }
+            }
+          }
+
+          &.size-picker {
+            .size-options {
+              display: flex;
+              flex-direction: column;
+              gap: 8px;
+              min-width: 120px;
+
+              .size-option {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 8px 12px;
+                background: none;
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 6px;
+                color: white;
+                cursor: pointer;
+                transition: all 0.2s ease;
+
+                &:hover {
+                  background: rgba(255, 255, 255, 0.1);
+                }
+
+                &.selected {
+                  background: rgba(102, 126, 234, 0.3);
+                  border-color: #667eea;
+                }
+
+                .size-preview {
+                  background: currentColor;
+                  border-radius: 50%;
+                  min-width: 8px;
+                  min-height: 8px;
+                }
+
+                span {
+                  font-size: 12px;
+                  font-weight: 500;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .action-btn {
+        flex: 1;
+        padding: 10px 12px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-size: 12px;
+        font-weight: 500;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.2);
+          transform: translateY(-1px);
+        }
+
+        &.clear-btn:hover {
+          background: rgba(255, 107, 107, 0.2);
+          border-color: rgba(255, 107, 107, 0.4);
+        }
+
+        &.settings-btn:hover {
+          background: rgba(102, 126, 234, 0.2);
+          border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        svg {
+          width: 14px;
+          height: 14px;
+        }
+      }
+    }
+
+    .settings-panel {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+
+      .setting-item {
+        .setting-label {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: white;
+          font-size: 13px;
+          cursor: pointer;
+
+          input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #667eea;
+          }
+        }
+      }
+    }
+  }
+}
+
+.annotation-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10002; // Increased to be above annotation overlay but below toolbar
+  background: transparent;
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .annotation-toolbar {
+    .toolbar-content {
+      padding: 12px;
+
+      .tools-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .controls-row {
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  }
+}
+
+// Animation keyframes
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.color-picker{
+  right: 50px !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

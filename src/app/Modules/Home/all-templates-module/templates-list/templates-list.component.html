@@ -1,0 +1,414 @@
+<ng-container *ngIf="!hasMoreTemplates">
+  <div class="container" class="loader">
+    <div class="row">
+      <div [class]="'col-12 col-sm-6 col-md-' + (12/cardsPerRow)" *ngFor="let i of [].constructor(6)">
+        <app-skeleton-loader [type]="'card'"></app-skeleton-loader>
+      </div>
+    </div>
+  </div>
+</ng-container>
+<ng-container *ngIf="hasMoreTemplates">
+  <div class="templates-list-title">
+    <h2>{{ _templateService.selectedCategory}}</h2>
+  </div>
+    <div #scrollContainer class="container list custom-scrollbar">
+      <div class="container">
+        <ng-container *ngIf="templateList?.length > 0">
+        <div class="row">
+          <div [class]="'col-12 col-sm-6 col-md-' + (12/cardsPerRow) + ' card-row'"
+            *ngFor="let templateCard of templateList; let i; as: index">
+            <div class="ml-5" [ngClass]="{
+                'published-card': templateCard?.isPublished,
+                'default-card': !templateCard?.isPublished
+              }">
+              <div class="card-content">
+                <div class="chart-section">
+                  <section id="main-stage" class="middle-content-section">
+                    <div class="inside-middle-content">
+                      <div class="inside-middle-content" #CenterPanel>
+                        <div class="chart-main-content" #OuterScreen>
+                          <div class="dynamic-component center-panel-chart1 position-relative" #InnerScreen
+                            [ngStyle]="{ 'width' : panelWidth, 'height' : panelHeight }">
+                            <div class="remote-chart-content-area" [ngStyle]="{ 'width' : panelWidth}">
+                              <div class="remote-chart-inner-content-area">
+                                <div class="slide-card"
+                                  [appThemes]="templateCard?.template?.slides?.design | slideThemes:templateCard?.template?.presentationThemes">
+                                  <div class="bs-body-content">
+                                    <ng-container
+                                      *ngIf="templateCard?.template?.slides?.contentType?.slideContentType != masterSlideTypeName.QUIZ && templateCard?.template?.slides?.slideTypeName !== masterSlideTypeName.ImportDocument && templateCard?.template?.slides?.slideTypeName !== masterSlideTypeName.POWER_POINT && templateCard?.template?.slides?.slideTypeName !== masterSlideTypeName.GoogleSlides && templateCard?.template?.slides?.slideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                                      <div class="theme-background-image"
+                                        [ngStyle]="{'background-image': 'url(' + templateCard?.template?.presentationThemes?.themesBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':templateCard?.template?.presentationThemes?.themesBackgroundImage?.themeBackgroundImageCroppedUrl ? templateCard?.template?.presentationThemes?.backgroundColorOpacity:1}">
+                                      </div>
+                                    </ng-container>
+                                    <div class="content-center-panel" [hidden]="isLoading">
+                                      <ng-container
+                                        *ngIf="templateCard?.template?.presentationThemes?.themesLogo?.logoCroppedUrl">
+                                        <div class="brand-logo"
+                                          [style.width]="workSpaceService.checkOrientation(templateCard?.template?.presentationThemes?.themesLogo?.croppedposition) =='Landscape'? '15%':'5%'">
+                                          <div class="logo-icon">
+                                            <img
+                                              [src]="templateCard?.template?.presentationThemes?.themesLogo?.logoCroppedUrl"
+                                              alt="Logo" class="logo-image">
+                                          </div>
+                                        </div>
+                                      </ng-container>
+                                      <div
+                                        [ngClass]="getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+
+                                        <div
+                                          *ngIf="(getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) === 'Image right' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) === 'Image left') && templateCard?.template?.slides?.slideTypeName != 'Import Document'"
+                                          class="background-left-right-image"
+                                          [ngStyle]="loadBGLayout(templateCard?.template?.slides?.slideTypeName,templateCard?.template?.slides?.contentImage?.croppedUrl)">
+                                        </div>
+                                        <div
+                                          *ngIf="getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Side by side right' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Side by side left'"
+                                          class="background-slide-by-slide-left-right-image"
+                                          [ngStyle]="loadBGLayout(templateCard?.template?.slides?.slideTypeName,templateCard?.template?.slides?.contentImage?.croppedUrl)">
+                                        </div>
+                                        <div
+                                          [ngClass]="{'background-image-panel-top': getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Image top', 'background-image-panel-bottom': getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Image bottom', 'background-image-panel': getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) != 'Image top' && getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) != 'Image bottom', 'img-opacity': templateCard?.template?.slides?.slideTypeName != 'Import Document' && templateCard?.template?.slides?.slideTypeName !=masterSlideTypeName.POWER_POINT && templateCard?.template?.slides?.slideTypeName !=masterSlideTypeName.GoogleSlides && templateCard?.template?.slides?.slideTypeName !=masterSlideTypeName.INSTRUCTION_SLIDE_TYPE && getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) === 'Full Image' }">
+                                          <div
+                                            *ngIf="getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) === 'Full Image'  && templateCard?.template?.slides?.slideTypeName != 'Import Document'"
+                                            [ngStyle]="{'background-image': 'url(' +(templateCard?.template?.slides?.contentImage?.croppedUrl || '/assets/images/static_bg_image.svg')+')','width': '100%','position': 'absolute','height': '100%','opacity':templateCard?.template?.slides?.contentImage?.backgroundImageOpacity, 'background-position': 'center center', 'background-repeat': 'no-repeat', 'background-size': 'cover'}">
+                                          </div>
+                                          <div class="inner-top-bottom-image"
+                                            *ngIf="getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Image top' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Image bottom'"
+                                            [ngStyle]="loadBGLayout(templateCard?.template?.slides?.slideTypeName,templateCard?.template?.slides?.contentImage?.croppedUrl)">
+                                          </div>
+                                          <ng-container
+                                            *ngIf="templateCard?.template?.slides?.slideTypeName == 'Import Document'">
+                                            <img #slideImage
+                                              [src]="workSpaceService.changepptImgDataFormat(templateCard?.template?.slides?.slideContentData)"
+                                              (load)="checkImageOrientation($any($event.target))" draggable="false"
+                                              [style.visibility]="isChartVisible ? 'visible' : 'hidden'">
+                                          </ng-container>
+
+                                          <div class="remote-inside-chart-area">
+                                            <ng-container
+                                              *ngIf="templateCard?.template?.slides?.slideTypeName != masterSlideTypeName.GoogleSlides && templateCard?.template?.slides?.slideTypeName != masterSlideTypeName.POWER_POINT">
+                                              <div class="remote-content-text-area" [hidden]="isLoading">
+                                                <div class="chart-question"
+                                                  [style.width]="
+                                                                                  (templateCard?.template?.presentationThemes?.themesLogo?.logoCroppedUrl == null || templateCard?.template?.presentationThemes?.themesLogo?.logoCroppedUrl == '') ? '100%':
+                                                                                  (workSpaceService.checkOrientation(templateCard?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Landscape' && (getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Full Image' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Default')) ? '75%':
+                                                                                  (workSpaceService.checkOrientation(templateCard?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Portrait'  && (getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Full Image' || getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Default')) ? '90%':
+                                                                                  (workSpaceService.checkOrientation(templateCard?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Landscape' && getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Side by side left')? '75%':
+                                                                                  (workSpaceService.checkOrientation(templateCard?.template?.presentationThemes?.themesLogo?.croppedposition) == 'Portrait' && getMasterLayoutData(templateCard?.template?.slides?.design?.slideLayoutId) == 'Side by side left')? '90%':'100%'">
+                                                  <span class="font-style-template-list"
+                                                    class="font-styling-empty-class">{{workSpaceService.changeQuestionDataFormat(templateCard?.template?.slides?.slideContentData)}}</span>
+                                                </div>
+                                              </div>
+                                            </ng-container>
+                                            <div class="remote-chart-content-area"
+                                              [style.font-size]="templateCard?.template?.slides?.slideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? '17px':'24px'"
+                                              [style.marginTop.px]="templateCard?.template?.slides?.slideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? 60:20">
+                                              <div
+                                                [ngClass]="[(templateCard?.template?.slides?.slideTypeName == masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE || templateCard?.template?.slides?.slideTypeName == masterSlideTypeName.QA_QUESTIONS_AND_ANSWER_SLIDE_TYPE)  ? 'remote-dynamic-chart-scroll': 'remote-dynamic-chart']">
+                                                <app-dynamic-slide-type
+                                                  [style.visibility]="isChartVisible ? 'visible' : 'hidden'"
+                                                  (mouseenter)="onTemplateHover(dynamicComponent)"
+                                                  (mouseleave)="onTemplateLeave(dynamicComponent)" #dynamicComponent
+                                                  [activeSlideTypeId]="templateCard?.template?.slides?.slideTypeId"
+                                                  [activeslideVisualizationId]="templateCard?.template?.slides?.design?.slideVisualizationId"
+                                                  [slideDetails]="templateCard?.template?.slides"
+                                                  [template]="templateCard?.template"
+                                                  [presentationTheme]="templateCard?.template?.presentationThemes"
+                                                  [viewfrom]="''" [screenOptions]="'presentationScreen'"
+                                                  [isPresenterEditorScreen]="true"
+                                                  [isPreview]="true"></app-dynamic-slide-type>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+                <div class="template-details">
+                  <div class="template-name">
+                    <div class="name-text">
+                      <p [attr.title]="templateCard?.templateName">
+                        {{ templateCard?.templateName }}
+                      </p>
+                    </div>
+                    <div *ngIf="!templateSection" class="grid-btn">
+                      <button type="button" (click)="toggleMenu($event, i)" class="mat-menu-trigger md-none"
+                        aria-haspopup="menu" aria-expanded="false">
+                        <svg width="24" height="24" fill="rgb(130, 130, 130)" viewBox="0 0 24 24"
+                          class="icon-size20 f-grey1 f-h-blue toggle-icon">
+                          <path
+                            d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z">
+                          </path>
+                        </svg>
+                      </button>
+
+                      <!-- View Menu (Dropdown) -->
+                      <div class="view-menu menu-list" *ngIf="activeCardMenu === i">
+                        <div class="presentation-arrow"></div>
+                        <ul class="view-list">
+                          <li class="d-flex" (click)="openEditTemplate(templateCard)">
+                            <img src="/assets/svg-icons/edit-pencil.svg" alt="">
+                            <span>
+                              Edit
+                            </span>
+                          </li>
+                          <li class="d-flex" (click)="openDeleteTemplate(templateCard.template.id)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                              fill="none">
+                              <mask id="mask0_2515_128289" style="mask-type: alpha;" maskUnits="userSpaceOnUse" x="0"
+                                y="0" width="20" height="20">
+                                <rect width="20" height="20" fill="#D9D9D9" />
+                              </mask>
+                              <g mask="url(#mask0_2515_128289)">
+                                <path
+                                  d="M5.83398 17.5C5.37565 17.5 4.98329 17.3368 4.6569 17.0104C4.33051 16.684 4.16732 16.2917 4.16732 15.8333V5H3.33398V3.33333H7.50065V2.5H12.5007V3.33333H16.6673V5H15.834V15.8333C15.834 16.2917 15.6708 16.684 15.3444 17.0104C15.018 17.3368 14.6257 17.5 14.1673 17.5H5.83398ZM14.1673 5H5.83398V15.8333H14.1673V5ZM7.50065 14.1667H9.16732V6.66667H7.50065V14.1667ZM10.834 14.1667H12.5007V6.66667H10.834V14.1667Z"
+                                  fill="#383838" />
+                              </g>
+                            </svg>
+                            <span>
+                              Delete
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+
+                  </div>
+                  <p class="template-description" [attr.title]="templateCard?.description">
+                    {{
+                    templateCard?.description ||
+                    "Unleashing Leadership Potential for Success , Unleashing Leadership Potential for Success
+                    ,Unleashing Leadership Potential for Success"
+                    }}
+                  </p>
+                  <div class="template-owner-details">
+                    <div class="template-owner-name" *ngIf="templateSection">
+                      <p *ngIf="templateSection" class="created-by">
+                        by {{ templateCard?.customerName }}
+                      </p>
+                    </div>
+                    <div class="status-sec" *ngIf="!templateSection">
+                      <div class="status" [ngClass]="
+                          'status-' +
+                          (templateCard?.status
+                            ? templateCard?.status
+                                .split(' ')
+                                .join('-')
+                                .toLowerCase()
+                            : 'unknown')
+                        ">
+                        <span class="svg"></span>{{ templateCard?.status }}
+                        <span *ngIf="
+                            templateCard?.status === template_Status.rejected
+                          " class="status-info">
+                          <img src="/assets/svg-icons/rejected-info.svg" />
+                          <span class="info-details-arrow"></span>
+                          <span class="tooltip-text">
+                            {{ templateCard.reason }}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                    <div class="template-reach-details">
+                      <span class="slide-count" tooltip="No of Slides">
+                        <div class="plan-details-arrow"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                          <mask id="mask0_9605_105937" style="mask-type: alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                            width="16" height="16">
+                            <rect width="16" height="16" fill="#D9D9D9" />
+                          </mask>
+                          <g mask="url(#mask0_9605_105937)">
+                            <path
+                              d="M2.66536 14C2.2987 14 1.98481 13.8694 1.7237 13.6083C1.46259 13.3472 1.33203 13.0333 1.33203 12.6667V8H2.66536V12.6667H8.66536V14H2.66536ZM5.33203 11.3333C4.96536 11.3333 4.65148 11.2028 4.39036 10.9417C4.12925 10.6806 3.9987 10.3667 3.9987 10V5.33333H5.33203V10H11.332V11.3333H5.33203ZM7.9987 8.66667C7.63203 8.66667 7.31814 8.53611 7.05703 8.275C6.79592 8.01389 6.66536 7.7 6.66536 7.33333V3.33333C6.66536 2.96667 6.79592 2.65278 7.05703 2.39167C7.31814 2.13056 7.63203 2 7.9987 2H13.332C13.6987 2 14.0126 2.13056 14.2737 2.39167C14.5348 2.65278 14.6654 2.96667 14.6654 3.33333V7.33333C14.6654 7.7 14.5348 8.01389 14.2737 8.275C14.0126 8.53611 13.6987 8.66667 13.332 8.66667H7.9987ZM7.9987 7.33333H13.332V4.66667H7.9987V7.33333Z"
+                              fill="#696969" />
+                          </g>
+                        </svg><span>{{
+                          templateCard?.template?.slidesCount || 0
+                          }}</span>
+                      </span>
+                      <span class="download-count" tooltip="No of downloads">
+                        <div class="plan-details-arrow"></div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                          <path
+                            d="M6.0013 8.66699L2.66797 5.33366L3.6013 4.36699L5.33464 6.10033V0.666992H6.66797V6.10033L8.4013 4.36699L9.33463 5.33366L6.0013 8.66699ZM2.0013 11.3337C1.63464 11.3337 1.32075 11.2031 1.05964 10.942C0.798524 10.6809 0.667969 10.367 0.667969 10.0003V8.00033H2.0013V10.0003H10.0013V8.00033H11.3346V10.0003C11.3346 10.367 11.2041 10.6809 10.943 10.942C10.6819 11.2031 10.368 11.3337 10.0013 11.3337H2.0013Z"
+                            fill="#696969" />
+                        </svg>
+                        <span>{{ templateCard?.downloadCount }}</span>
+                      </span>
+                    </div>
+                  </div>
+                  <div *ngIf="templateSection" class="grid-btn-sec">
+                    <button class="use-template-button" (click)="useTemplate(templateCard?.template?.id, i)"
+                      [disabled]="usedTemplateIndex == i && isUseTemplate">
+
+                      <ng-container *ngIf="customerLimitation?.balancePresentationLimit > 0">
+                        <div class="layout-label">
+                          Use
+                          <div class="spinner-border spinner-border-sm small-spinner mx-1" role="status"
+                            aria-hidden="true" *ngIf="usedTemplateIndex == i && isUseTemplate"></div>
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="
+                          customerLimitation?.balancePresentationLimit <= 0
+                        ">
+                        <div class="layout-label">
+                          Use
+                          <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top"
+                            data-tooltip="Need subscription">
+                            <img src="/assets/images/Crown.svg" />
+                          </div>
+                        </div>
+                      </ng-container>
+                    </button>
+                    <ng-container *ngIf="templateSection && templateCard?.isPublished">
+                      <button class="Publish-btn" (click)="openPreviewModal(templateCard, i)">
+                        Preview
+                      </button>
+                    </ng-container>
+                  </div>
+                  <div *ngIf="!templateSection" class="grid-btn-sec">
+                    <div class="mytemplates-btn-sec">
+                      <button class="use-template-button" (click)="openPreviewModal(templateCard, i)"> Preview
+                      </button>
+                    </div>
+                    <ng-container *ngIf="!templateSection">
+                      <button
+                        *ngIf="templateCard.status === template_Status.private || templateCard.status === template_Status.rejected"
+                        class="use-template-button" (click)="openPublishModal(templateCard)">
+                        Publish
+                      </button>
+                      <button *ngIf="templateCard.status !== template_Status.private &&
+                               templateCard.status !== template_Status.rejected &&
+                               templateCard.status !== template_Status.approved" class="use-template-button"
+                        (click)="cancelPublishModal(templateCard?.templateId)">
+                        Cancel
+                        <!-- <img src="../../../../../assets/svg-icons/cancel-round.svg" alt=""> -->
+                      </button>
+
+                      <button *ngIf="templateCard.status === template_Status.approved" class="use-template-button"
+                        (click)="editPublishModal(templateCard)">
+                        Edit
+                        <!-- <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+                          width="16" height="16">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931ZM16.862 4.487L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
+                        </svg> -->
+                      </button>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="templateList?.length == 0 && hasMoreTemplates">
+        <div class="no-template-container">
+          <img src="assets/images/search_no_template.svg" width="300" height="300" />
+          <div class="no-templates-txt">
+            Oops! No Templates Found. Try Something Else.
+          </div>
+        </div>
+      </ng-container>
+      </div>
+    </div>
+</ng-container>
+
+<app-modal [isShowModal]="isPreviewClicked" (closePreviewModal)="closePreviewModal($event)" modalType="preview">
+  <ng-container *ngIf="isPreviewClicked">
+    <app-templates-preview [SlideImage]="userPreviewData?.template?.slides?.slideTypeImage"
+      [templateDetails]="userPreviewData" [slideCount]="userPreviewData?.template?.slidesCount"
+      [downloadCount]="userPreviewData?.downloadCount" [categoryName]="getCategoryNames()"
+      [templateId]="userPreviewData?.templateId" [templateDescription]="userPreviewData?.description"
+      [createdBy]="userPreviewData?.customerName" [index]="previewindex" [customerLimitation]="customerLimitation">
+    </app-templates-preview>
+  </ng-container>
+</app-modal>
+
+<app-modal [isShowModal]="isPublishClicked" (closePublishModal)="closePublishModal($event)" modalType="publish">
+  <ng-container *ngIf="isPublishClicked">
+    <h6 modalTitle>Templates Info </h6>
+    <app-templates-publish [templateId]="userPreviewData?.templateId" [templateName]="userPreviewData?.templateName"
+      [categoryName]="getCategoryNames()" [categoryList]="categoryList" [templateTags]="userPreviewData?.tags"
+      [templatePrice]="userPreviewData?.price" [templateDescription]="userPreviewData?.description"
+      [templateType]="userPreviewData?.type" [previewSlideId]="userPreviewData?.previewSlideId"
+      (updatedTemplateCard)="updatedTemplateList($event)" (closedForm)="closePublishModal($event)">
+    </app-templates-publish>
+  </ng-container>
+</app-modal>
+<!-- Edit PopUp Modal -->
+<app-modal [isShowModal]="isEditClicked" (closeEditModal)="closeEditModal($event)" modalType="edit">
+  <h6 modalTitle>Edit Templates</h6>
+  <app-templates-edit [templateCard] = "userPreviewData">
+  </app-templates-edit>
+  <div class="edit-footer" modalFooter>
+    <button type="button" class="btn btn-secondary edit-cancel" (click)="closeEditModal($event)">Cancel</button>
+    <button type="button" class="btn btn-primary" (click)="confirmedEdit()">Continue Editing</button>
+  </div>
+</app-modal>
+
+<div class="modal fade" id="cancelPublishingProgress" tabindex="-1"
+  aria-labelledrenamePresentationLabelby="cancelPublishingProgress" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered custom-popup">
+    <div class="modal-content content-popup">
+      <div class="modal-body d-flex">
+        <div class="wi-90">
+          <p class="fw-five delete-pop-font">
+            Are you sure you want to cancel the publishing process?
+          </p>
+        </div>
+        <div>
+          <button type="button " class="close-folder" data-bs-dismiss="modal" aria-label="Close">
+            &times;
+          </button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary cancel-button fs-very-low" data-bs-dismiss="modal">
+          No
+        </button>
+        <button type="submit" class="btn btn-primary delete-button" (click)="cancelPublish()">
+          <span class="spinner-border spinner-border-sm fs-very-low" role="status" aria-hidden="true"
+            *ngIf="isLoading"></span>
+          Yes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="templateDelete" tabindex="-1" aria-labelledby="templateDeleteLabel">
+  <div class="modal-dialog  modal-dialog-centered custom-popup">
+      <div class="modal-content content-popup">
+          <div class="modal-body d-flex">
+              <div class="wi-90">
+                  <p class="fw-five mobile-delete-text">Are you sure you want to delete this?</p>
+              </div>
+              <div>
+                  <button type="button" class="close-delete-template" data-bs-dismiss="modal" aria-label="Close"
+                      (click)="cancelTemplateDelete()">
+                      &times;
+                  </button>
+              </div>
+          </div>
+          <div class="modal-footer">
+              <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                  (click)="cancelTemplateDelete()">
+                  Cancel
+              </button>
+              <button type="submit" class="btn delete-template-button fs-very-low" (click)="deleteTemplate(removeTemplateId)"><span
+                      class="spinner-border spinner-border-sm fs-very-low" role="status" aria-hidden="true"
+                      *ngIf="isLoading"></span> Yes</button>
+          </div>
+      </div>
+  </div>
+</div>
+

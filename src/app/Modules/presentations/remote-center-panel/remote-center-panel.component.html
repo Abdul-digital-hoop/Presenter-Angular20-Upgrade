@@ -1,0 +1,183 @@
+<section id="main-stage" class="middle-content-section">
+    <div class="inside-middle-content">
+        <div class="inside-middle-content" #CenterPanel>
+            <div class="chart-main-content" #OuterScreen>
+                <div class="dynamic-component center-panel-chart1 position-relative" #InnerScreen
+                    [ngStyle]="{ 'width' : panelWidth }">
+                    <div class="remote-chart-content-area" [ngStyle]="{ 'height':panelHeight }">
+                        <div class="remote-chart-inner-content-area">
+                            <div class="slide-card" [ngStyle]="{ 'height':panelHeight }"
+                                [appThemes]="workspaceService.slideDesign | slideThemes:null">
+                                <ng-container *ngIf="isLoading">
+                                    <app-spinner [spinnerColor]="contrastColor"></app-spinner>
+                                </ng-container>
+                                <div class="bs-body-content">
+                                    <ng-container *ngIf="workspaceService.slideContentType != workspaceService.masterSlideTypeName.QUIZ && workspaceService.activeSlideTypeName !== masterSlideTypeName.ImportDocument && workspaceService.activeSlideTypeName !== masterSlideTypeName.POWER_POINT && workspaceService.activeSlideTypeName !== masterSlideTypeName.GoogleSlides && workspaceService.activeSlideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                                        <div class="theme-background-image" [ngStyle]="{'background-image': 'url(' + workspaceService.presentationTheme.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':workspaceService.presentationTheme.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl ? workspaceService.presentationTheme.backgroundColorOpacity:1}"></div>
+                                    </ng-container>
+                                    
+                                    <div class="content-center-panel" [hidden]="isLoading">
+                                        <ng-container *ngIf="workspaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl">
+                                            <div class="brand-logo" [style.width]="logoPositionType =='Landscape'? '10%':'5%'">
+                                                <div class="logo-icon">
+                                                    <img [src]="workspaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl" alt="Logo" class="logo-image">
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                        <div
+                                            [ngClass]="workspaceService.slideLayoutType == 'Image left' || workspaceService.slideLayoutType == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+                                            <div *ngIf="(workspaceService.slideLayoutType === 'Image right' || workspaceService.slideLayoutType === 'Image left') && workspaceService.activeSlideTypeName != 'Import Document'"
+                                                class="background-left-right-image" [ngStyle]="loadBGLayout()"></div>
+                                            <div *ngIf="workspaceService.slideLayoutType == 'Side by side right' || workspaceService.slideLayoutType == 'Side by side left'"
+                                                class="background-slide-by-slide-left-right-image"
+                                                [ngStyle]="loadBGLayout()"></div>
+                                            <div [ngClass]="{'background-image-panel-top': workspaceService.slideLayoutType == 'Image top', 'background-image-panel-bottom': workspaceService.slideLayoutType == 'Image bottom', 'background-image-panel': workspaceService.slideLayoutType != 'Image top' && workspaceService.slideLayoutType != 'Image bottom', 'img-opacity': workspaceService.activeSlideTypeName != 'Import Document' && workspaceService.activeSlideTypeName !=masterSlideTypeName.POWER_POINT && workspaceService.activeSlideTypeName !=masterSlideTypeName.GoogleSlides && workspaceService.activeSlideTypeName !=masterSlideTypeName.INSTRUCTION_SLIDE_TYPE && workspaceService.slideLayoutType === 'Full Image' }"
+                                                >
+                                                <div *ngIf="workspaceService.slideLayoutType === 'Full Image' && !showPdf" [ngStyle]="{'background-image': 'url(' +workspaceService.slideLayoutImage+')','width': '100%','position': 'absolute','height': '100%','opacity':workspaceService.slideLayoutImageOpacity, 'background-position': 'center center', 'background-repeat': 'no-repeat', 'background-size': 'cover'}"></div>
+                                                <div class="inner-top-bottom-image"
+                                                    *ngIf="workspaceService.slideLayoutType == 'Image top' || workspaceService.slideLayoutType == 'Image bottom'"
+                                                    [ngStyle]="loadBGLayout()"></div>
+                                                <img #slideImage [src]="slidePdfImage" (load)="checkImageOrientation()"
+                                                    draggable="false" *ngIf="showPdf">
+                                                <ng-container *ngIf="!isLoading">
+                                                    <ng-container
+                                                        *ngIf="workspaceService.presentationSettingJoiningInstructions">
+                                                        <div class="access-code"
+                                                            [style.position]="workspaceService.activeSlideTypeName == masterSlideTypeName.ImportDocument ? 'absolute':'relative'">
+                                                            <app-access-code
+                                                                [presentationURL]="workspaceService.presentationURL"
+                                                                [presentationCode]="workspaceService.presentationCode"
+                                                                [fontSize]="(workspaceService.slideLayoutType == 'Image left' || workspaceService.slideLayoutType == 'Side by side left') ? 1:1.55"></app-access-code>
+                                                        </div>
+                                                    </ng-container>
+                                                </ng-container>
+                                                <div class="remote-inside-chart-content" (click)="clickEventPrevent()">
+                                                    <div class="remote-main-chart-area">
+                                                        <div class="remote-inside-chart-area">
+                                                            <ng-container
+                                                                *ngIf="workspaceService.activeSlideTypeName != masterSlideTypeName.GoogleSlides && workspaceService.activeSlideTypeName != masterSlideTypeName.POWER_POINT">
+                                                                <div class="remote-content-text-area"
+                                                                    [hidden]="isLoading">
+                                                                    <div class="chart-question"
+                                                                        [style.font-size.px]="workspaceService?.questions?.length >=60 ? 25:40">
+                                                                        <span id="font-style-remote" class="font-styling-empty-class">{{workspaceService.questions}}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-container>
+                                                            <div class="remote-chart-content-area" [style.font-size]="workspaceService.activeSlideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? '17px':'24px'" 
+                                                            [style.marginTop.px]="workspaceService.activeSlideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE ? 60:20">
+                                                                <div  [ngClass]="[(workspaceService.activeSlideTypeName == masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE || workspaceService.activeSlideTypeName == masterSlideTypeName.QA_QUESTIONS_AND_ANSWER_SLIDE_TYPE)  ? 'remote-dynamic-chart-scroll': 'remote-dynamic-chart']">
+                                                                    <!-- <app-dynamic-chart #dynamicChartComponent
+                                                                        [hidden]="isLoading"
+                                                                        appPreventClick></app-dynamic-chart> -->
+                                                                        <div class="chart-content-area"> 
+                                                                            <app-dynamic-slide-type
+                                                                            [hidden]="isLoading"
+                                                                            appPreventClick
+                                                                            #dynamicSlideComponent
+                                                                            [activeSlideTypeId]="workspaceService.currentMasterSlideTypeId"
+                                                                            [activeslideVisualizationId]="workspaceService.currentActiveSlide?.design?.slideVisualizationId"
+                                                                            [slideDetails]="workspaceService.currentActiveSlide"
+                                                                            [template]="workspaceService.currentPresentation"
+                                                                            [presentationTheme]="workspaceService.currentPresentation?.presentationThemes"
+                                                                            [viewfrom]="'Remote'"
+                                                                            [screenOptions]="'presentationScreen'"
+                                                                            [isPresenterEditorScreen]="true"
+                                                                            [isPreview]="false"
+                                                                            ></app-dynamic-slide-type>
+                                                                        </div>
+                                                                </div>
+                                                            </div>
+                                                            <ng-container *ngIf="workspaceService.isShowQRCode">
+                                                                <div class="position-menu-bottom-last">
+                                                                    <div class="position-menu-bottom-info">
+                                                                        <div
+                                                                            class="d-flex justify-content-center align-items-center p-2 w-100">
+                                                                            <div class="d-block text-center">
+                                                                                <div
+                                                                                    class="position-relative text-center">
+                                                                                    <p class="fs-18 mb-1 text-white">QR is Enable
+                                                                                    </p>
+                                                                                    <img src="{{workspaceService.presentationQRCode}}"
+                                                                                        class="img-fluid mx-auto"
+                                                                                        width="100" height="100">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="slide-info">
+                                <span class="slide-name">
+                                    <!-- From the initialize development, didn't change the slide type name in the DB collection, so I will hardcode the slide type name here.(Pick the number) -->
+                                    {{workspaceService.activeSlideTypeName == masterSlideTypeName.GUESS_THE_NUMBER_QUIZ ? masterSlideTypeName.PICK_THE_NUMBER : workspaceService.activeSlideTypeName}}
+                                </span>
+                                <ng-container *ngIf="workspaceService?.presentationMode">
+                                    <span class="slide-timer">{{presenterTime < '00:00' ? '00:00:00' : presenterTime}}</span>
+                                </ng-container>
+                                <span class="slide-count">{{workspaceService.currentSlideIndex +
+                                    1}}/{{workspaceService.slideCount+1}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-controls">
+        <button class="left" (click)="movePreviousSlide()"
+            [disabled]="this.workspaceService.activeSlideIdIndex == 1 ? true:false"
+            [ngClass]="this.workspaceService.activeSlideIdIndex == 1 ?'nav-button-disabled':'nav-button'">
+            <img src="/assets/new-icons/Icon_Left.svg">
+        </button>
+        <ng-container
+            *ngIf="workspaceService.chooseCorrectAnswers && workspaceService.activeSlideTypeName == masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE">
+            <button class="show-answer-button" (click)="multipleChoiceCorrectAnswersUpdate()">
+                {{correctAnswersButtonText}}
+            </button>
+        </ng-container>
+        <ng-container *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.GUESS_TEHE_NUMBER_SLIDE_TYPE">
+            <button class="show-answer-button" (click)="guesstheNumberCorrectAnswersUpdate()">
+                {{correctAnswersButtonGuessTheNumberText}}
+            </button>
+        </ng-container>
+        <ng-container *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE">
+            <button class="show-answer-button" (click)="truthOrLieCorrectAnswersUpdate()">
+                {{correctAnswersButtonTruthOrLieNumberText}}
+            </button>
+        </ng-container>
+        <ng-container *ngIf="workspaceService.slideContentType == masterSlideTypeName.QUIZ &&
+             workspaceService.activeSlideTypeName != masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE && !isStartQuiz && 
+             workspaceService.quizState == quizPresenterScreenManageConstant.WAITING_FOR_QUIZ_PLAYERS">
+            <button class="show-answer-button" (click)="startQuizFromRemote()">Start quiz</button>
+        </ng-container>
+        <button class="nav-button right" (click)="moveNextSlide()" [disabled]="workspaceService.isLastSlide"
+            [ngClass]="workspaceService.isLastSlide ?'nav-button-disabled':'nav-button'">
+            <img src="/assets/new-icons/Icon_Right.svg">
+        </button>
+    </div>
+    <div class="speaker-notes">
+        <span class="speaker-notes-tittle">Speaker Notes:</span>
+        <ng-container *ngIf="workspaceService.presentationSpeakerNotes == null">
+            <div class="empty-notes">
+                <span class="speaker-notes-empty">This slide has no notes.</span>
+                <span class="speaker-notes-empty">
+                    Add some important points for this slide using the editor to show them here.</span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="workspaceService.presentationSpeakerNotes != null">
+            <span class="speaker-notes-value">{{workspaceService.presentationSpeakerNotes}}</span>
+        </ng-container>
+
+    </div>
+</section>

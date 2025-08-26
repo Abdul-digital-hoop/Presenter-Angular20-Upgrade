@@ -1,0 +1,111 @@
+<div class="main" id="dashboardpage">
+    <app-mypresentation-header
+        *ngIf="(_mypresentationsService.presentations.length > 0 || _mypresentationsService.mainFolders.length > 0 || _mypresentationsService.subFolders.length > 0) || _mypresentationsService.isInSubFolder || _mypresentationsService.searchTerm"></app-mypresentation-header>
+    
+    <div class="spinner-container" *ngIf="_mypresentationsService.isLoading">
+        <span class="spinner-border spinner-border-sm presentation-loading" role="status" aria-hidden="true"
+            *ngIf="_mypresentationsService.isLoading"></span>
+    </div>
+    <ng-container *ngIf="!_mypresentationsService.isLoading">
+        <ng-container *ngIf="_mypresentationsService.isInSubFolder">
+            <ng-container *ngIf="!_mypresentationsService.isListView">
+                <app-mypresentation-gridview [presentations]="_mypresentationsService.presentations"
+                    [mainFolders]="_mypresentationsService.mainFolders"
+                    [subFolders]="_mypresentationsService.subFolders"></app-mypresentation-gridview>
+            </ng-container>
+            <ng-container *ngIf="_mypresentationsService.isListView">
+                <app-mypresentation-listview [presentations]="_mypresentationsService.presentations"
+                    [mainFolders]="_mypresentationsService.mainFolders"
+                    [subFolders]="_mypresentationsService.subFolders"></app-mypresentation-listview>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="!_mypresentationsService.isInSubFolder && (_mypresentationsService.presentations.length > 0 || _mypresentationsService.mainFolders.length > 0)">
+            <ng-container *ngIf="!_mypresentationsService.isListView">
+                <app-mypresentation-gridview [presentations]="_mypresentationsService.presentations"
+                    [mainFolders]="_mypresentationsService.mainFolders"
+                    [subFolders]="_mypresentationsService.subFolders"></app-mypresentation-gridview>
+            </ng-container>
+            <ng-container *ngIf="_mypresentationsService.isListView">
+                <app-mypresentation-listview [presentations]="_mypresentationsService.presentations"
+                    [mainFolders]="_mypresentationsService.mainFolders"
+                    [subFolders]="_mypresentationsService.subFolders"></app-mypresentation-listview>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+    <app-empty-presentation-page
+        *ngIf="!_mypresentationsService.isLoading && !_mypresentationsService.isInSubFolder && _mypresentationsService.presentations.length === 0 && _mypresentationsService.mainFolders.length === 0 && _mypresentationsService.subFolders.length === 0 && !_mypresentationsService.searchTerm && !_mypresentationsService.isSearchTransitioning && _mypresentationsService.hasInitialDataLoaded">
+    </app-empty-presentation-page>
+    <ng-container
+        *ngIf="!_mypresentationsService.isLoading && _mypresentationsService.searchTerm && ((_mypresentationsService.isInSubFolder && _mypresentationsService.presentations.length === 0 && _mypresentationsService.subFolders.length === 0) || (!_mypresentationsService.isInSubFolder && _mypresentationsService.presentations.length === 0 && _mypresentationsService.mainFolders.length === 0))">
+        <div class="vh-sub-header">
+            <div class="empty-presentations">
+                <div>
+                    <img class="empty-search-img" src="assets/images/empty-search.svg" />
+                    <h5 *ngIf="!IntegrationMediumZoom" class="fs-low fw-five empty-text mt-5">We couldn't find what you're looking for. Check for typos
+                        or browse your folders for more.</h5>
+                        <h5 *ngIf="IntegrationMediumZoom" class="fs-low fw-five empty-text mt-5">We couldn't find what you're looking for. Check for typos
+                            or browse your presenations for more.</h5>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+</div>
+
+<div id="dynamicContent" *ngIf="_mypresentationsService.zoomMeeting">
+    <style>
+        body {
+            overflow: hidden;
+        }
+        #dynamicContent {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            padding: 20px;
+            max-width: 100%;
+            background-color: black;
+            overflow: hidden;
+            margin: 0;
+            height: 100vh;
+        }
+        #textDiv {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        #box {
+            height: 74vh;
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 6px;
+            border: 3px solid white;
+            border-radius: 20px;
+            width: 49%;
+        }
+        #customIframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 9px;
+        }
+        @media screen and (max-width: 1280px) {
+            #box {
+                height: 75vh;
+                width: 150vh;
+            }
+        }
+    </style>
+    <div id="wrapper">
+        <div id="textDiv">This is what your audience can see</div>
+        <div id="box">
+            <iframe id="customIframe" src="" title="Custom Iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+    </div>
+</div> 

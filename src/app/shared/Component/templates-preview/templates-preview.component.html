@@ -1,0 +1,69 @@
+<div class="main-sec">
+  <ng-container *ngIf="templateDetails">
+    <app-slides-preview [isPresentation]="false" [slidesRenderingData]="templateDetails">
+    </app-slides-preview>
+  </ng-container>
+</div>
+
+<div class="template-details-container">
+  <!-- Row 1: Template Name and Use Template Button -->
+  <div class="template-header">
+    <span class="template-name">{{templateDetails?.templateName}}</span>
+    <div class="use-template-button">
+    <button class="template-button" (click)="useTemplate(templateId,index)" [disabled]="usedTemplateIndex == index && isUseTemplate">
+      <ng-container *ngIf="customerLimitation?.balancePresentationLimit> 0">
+        <div class="layout-label">
+          Use Template
+          <div class="spinner-border spinner-border-sm small-spinner mx-1" role="status" aria-hidden="true" *ngIf="usedTemplateIndex == index && isUseTemplate"></div>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="customerLimitation?.balancePresentationLimit<= 0">
+        <div class="layout-label">
+          Use Template
+          <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top" data-tooltip="Need subscription">
+            <img src="../../../../../assets/images/Crown.svg">
+          </div>
+        </div>
+      </ng-container>
+    </button>
+    </div>
+  </div>
+
+  <!-- Row 2: Slides Count and Download Count -->
+  <div class="template-stats">
+    <div class="stat-item">
+      <span class="stat-icon" tooltip="No of Slides" class="slide-count">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M2.66536 14C2.2987 14 1.98481 13.8694 1.7237 13.6083C1.46259 13.3472 1.33203 13.0333 1.33203 12.6667V8H2.66536V12.6667H8.66536V14H2.66536ZM5.33203 11.3333C4.96536 11.3333 4.65148 11.2028 4.39036 10.9417C4.12925 10.6806 3.9987 10.3667 3.9987 10V5.33333H5.33203V10H11.332V11.3333H5.33203ZM7.9987 8.66667C7.63203 8.66667 7.31814 8.53611 7.05703 8.275C6.79592 8.01389 6.66536 7.7 6.66536 7.33333V3.33333C6.66536 2.96667 6.79592 2.65278 7.05703 2.39167C7.31814 2.13056 7.63203 2 7.9987 2H13.332C13.6987 2 14.0126 2.13056 14.2737 2.39167C14.5348 2.65278 14.6654 2.96667 14.6654 3.33333V7.33333C14.6654 7.7 14.5348 8.01389 14.2737 8.275C14.0126 8.53611 13.6987 8.66667 13.332 8.66667H7.9987ZM7.9987 7.33333H13.332V4.66667H7.9987V7.33333Z" fill="#696969"/>
+        </svg>
+        <span class="stat-value">{{ slideCount }}</span>
+      </span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-icon" tooltip="No of Downloads" class="download-count">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
+          <path d="M6.0013 8.66699L2.66797 5.33366L3.6013 4.36699L5.33464 6.10033V0.666992H6.66797V6.10033L8.4013 4.36699L9.33463 5.33366L6.0013 8.66699ZM2.0013 11.3337C1.63464 11.3337 1.32075 11.2031 1.05964 10.942C0.798524 10.6809 0.667969 10.367 0.667969 10.0003V8.00033H2.0013V10.0003H10.0013V8.00033H11.3346V10.0003C11.3346 10.367 11.2041 10.6809 10.943 10.942C10.6819 11.2031 10.368 11.3337 10.0013 11.3337H2.0013Z" fill="#696969"/>
+        </svg>
+        <span class="stat-value">{{ downloadCount }}</span>
+      </span>
+    </div>
+    <div class="stat-item">
+      <span class="created-by">by {{createdBy}}</span>
+    </div>
+  </div>
+
+  <!-- Row 3: Description -->
+  <div class="template-description">
+    <p>{{templateDescription || 'Unleashing Leadership Potential for Success , Unleashing Leadership Potential for Success , Unleashing Leadership Potential for Success' }}</p>
+  </div>
+
+  <!-- Row 4: Categories -->
+  <div class="template-categories">
+    <span class="categories-label">Categories</span>
+    <div class="categories-list">
+      <span *ngFor="let category of categoryName.split(',')" class="category-item">
+        {{ category.trim() }}
+      </span>
+    </div>
+  </div>
+</div> 

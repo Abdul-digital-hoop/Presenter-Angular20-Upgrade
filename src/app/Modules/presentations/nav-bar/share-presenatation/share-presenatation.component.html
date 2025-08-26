@@ -1,0 +1,40 @@
+<button class="btn btn-cstm-secondar d-lg-flex d-none justify-content-between align-items-center me-3" data-bs-target="modal" data-bs-toggle="shareModal">
+    <img src="/assets/new-icons/share.svg" class="me-2" />
+    <span>Share</span>
+</button>
+
+
+<div class="modal fade" id="shareModal" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header d-flex justify-content-between align-items-center border-bottom-0">
+          <h1 class="modal-title mb-0" id="shareModalLabel">Settings</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="row mx-0">
+          <div class="design-tab col-4 px-0" [ngClass]="shareTabNumber == 1 ? 'active' : ' '">
+            <h5 class="modal-title mb-0" (click)="selectTabForShare(1)">
+              Invite Audience
+            </h5>
+          </div>
+          <div class="design-tab col-4 px-0" [ngClass]="shareTabNumber == 2 ? 'active' : ' '">
+            <h5 class="modal-title mb-0" (click)="selectTabForShare(2)">
+              Share Slides
+            </h5>
+          </div>
+          <div class="design-tab col-4 px-0" [ngClass]="shareTabNumber == 3 ? 'active' : ' '">
+            <h5 class="modal-title mb-0" (click)="selectTabForShare(3)">
+              Publish
+            </h5>
+          </div>
+        </div>
+        <div class="modal-body border-bottom-0"></div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            Cancel
+          </button>
+          <button type="button" class="btn btn-primary">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>

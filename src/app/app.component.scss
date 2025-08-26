@@ -1,0 +1,26 @@
+.offline-heading h2{
+    font-weight: 500;
+    color:#343434;
+    font-size: 22px;
+    text-align: center;
+    padding-top: 20px;
+}
+.offline-heading p{
+    font-weight: 400;
+    color:#696969;
+    font-size: 12px;
+    text-align: center;
+    padding-top: 10px;
+}
+
+.custom-modal-width {
+    max-width: 400px; 
+    margin: 0 auto; 
+}
+.model-content-offline{
+    box-shadow: 4px 4px 10px 0px rgba(72, 72, 255, 0.1490196078);
+}
+
+.offline-backdrop {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+}

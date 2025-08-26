@@ -1,0 +1,786 @@
+@import '/src/assets/variablesScss/varaiabledecalaration.scss';
+@import '/src/assets/variablesScss/common.scss';
+
+// * ============= Nav Bar CSS ===============
+.remote-header {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 8px;
+    background-color: white;
+    border-bottom: 1px solid #e0e0e0;
+    box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.1490196078);
+}
+
+.remote-nav {
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    padding: 12px;
+}
+
+.remote-logo {
+    width: 30%;
+    display: flex;
+    justify-content: start;
+    padding-left: 40px;
+}
+
+.remote-presentation-name {
+    width: 70%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+.presentation-name{
+    color: #343434;
+    font-size: 17px;
+}
+.presentation-name-with-max-character{
+    font-size: 17px
+}
+
+// * ============= Content and Controls CSS ===============
+.content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+}
+
+.control-section {
+    width: 25%;
+    height: 100%;
+    background-color: white;
+    padding: 8px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.more-tab {
+    width: 85%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding: 10px;
+    margin-left: 10px;
+}
+
+.more-txt {
+    color: #696969;
+    font-size: 20px;
+}
+
+.more-icon {
+    margin-left: 20px;
+}
+
+.border-line {
+    width: 100%;
+    border-bottom: 1px solid #e0e0e0;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.controls {
+    width: 100%;
+    padding: 10px 0px 10px 20px;
+    height: calc(100vh - 146px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.settings {
+    width: 86%;
+    margin-top: 25px;
+}
+
+.label {
+    color: #343434;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.control-name {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.control-txt {
+    color: #525252;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.control-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.btn-name {
+    color: #525252;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+.control-btn-icon {
+    margin-left: 10px;
+}
+
+.btn-control {
+    width: 85%;
+    padding: 11px 15px;
+    border-radius: 25px;
+    color: #353535;
+    background-color: #F4F4FF;
+    border-color: transparent;
+}
+
+
+// * ============= presentation  CSS =============== 
+
+.presentation-section {
+    width: 45%;
+    height: auto;
+    background-color: #F5F5F5;
+    padding: 8px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.dynamic-component {
+    width: 100%;
+    padding: 25px;
+}
+
+.slide-card {
+    height: 250px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    position: relative;
+}
+
+.slide-info {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-top: 5px;
+}
+
+.slide-name {
+    color: #525252;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.slide-timer {
+    color: #525252;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.slide-count {
+    color: #525252;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.slide-controls {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: start;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.nav-button {
+    transition: all 0.3s ease 0s;
+    appearance: none;
+    outline-color: #4848FF;
+    cursor: pointer;
+    background-color: #4848FF;
+    border-radius: 9999px;
+    opacity: 1;
+    text-decoration: none;
+    border-color: transparent;
+    // padding: 25px;
+    width: 65px;
+    height: 65px;
+}
+
+.nav-button.left {
+    margin-right: 20px;
+}
+
+.nav-button.right {
+    margin-left: 20px;
+}
+
+.nav-button:hover {
+    transform: scale(1.05);
+}
+
+.show-answer-button {
+    padding: 20px 10px;
+    background-color: #FFFFFF;
+    border: 2px solid #DEDEDE;
+    border-radius: 12px;
+    color: #525252;
+    font-size: 13px;
+    font-weight: 400;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.speaker-notes {
+    width: 100%;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.speaker-notes-tittle {
+    color: #343434;
+    font-weight: 500;
+    font-size: 16px;
+}
+
+.speaker-notes-empty {
+    font-size: 13px;
+    font-weight: 500;
+    color: #525252;
+    margin-top: 5px;
+}
+
+.speaker-notes-value {
+    font-weight: 400;
+    color: #525252;
+    font-size: 13px;
+    max-height: 119px;
+    overflow-y: auto;
+}
+
+.access-code {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+    padding: 7px 0px 0px 0px;
+}
+
+.chart-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: row;
+    padding: 15px 0px 0px 15px;
+}
+
+.empty-notes {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 40px;
+}
+
+// * ============= QA  CSS =============== 
+
+.QA-section {
+    width: 30%;
+    height: 100%;
+    background-color: white;
+    padding: 8px;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+}
+
+.QA-tab {
+    width: 85%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding: 10px;
+    margin-left: 10px;
+}
+
+.QA-txt {
+    color: #696969;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+.QA-icon {
+    margin-left: -5px;
+}
+
+.QA-filter {
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    align-items: start;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.btn-filter {
+    padding: 5px 12px 5px 12px;
+    border-radius: 25px;
+    color: #696969;
+    background-color: #F8F9FA;
+    border-color: transparent;
+    margin: 2px;
+}
+
+.btn-filter.active {
+    padding: 5px 12px 5px 12px;
+    border-radius: 25px;
+    color: #4848FF;
+    background-color: #F4F4FF;
+    border-color: transparent;
+}
+
+.btn-filter-name {
+    color: #4848FF;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.empty-question {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+    margin-top: 10px;
+}
+
+.no-qa-slide {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.no-qa-slide-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #525252;
+}
+
+.no-qa-slide-content-empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #525252;
+    margin-left: 40px;
+}
+
+.question-section {
+    width: 100%;
+    height: calc(80vh - 100px);
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.question-info {
+    width: 100%;
+    padding: 10px 25px 10px 25px;
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    flex-direction: column;
+}
+
+.active-Question {
+    background-color: #F4F4FF;
+    border-radius: 10px;
+}
+
+.user-details {
+    width: 75%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: row;
+}
+
+.user-info {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: row;
+    margin-bottom: 15px;
+}
+
+.user-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #FFD5D5;
+    color: #343434;
+    font-size: 18px;
+    // font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+}
+
+.user-name {
+    display: flex;
+    flex-direction: column;
+}
+
+.name {
+    // font-weight: bold;
+    color: #343434;
+}
+
+.question-createdAt {
+    font-size: 10px;
+    color: #999999;
+}
+
+.likes {
+    margin-top: 7px;
+    display: flex;
+    align-items: center;
+    color: #343434;
+    margin-left: auto;
+}
+
+.like-icon {
+    margin-left: 5px;
+}
+
+.question {
+    font-size: 12px;
+    font-weight: 500;
+    color: #525252;
+    margin-left: 50px;
+}
+
+.btn-action {
+    padding: 11px 15px;
+    color: #696969;
+    background-color: #F8F9FA;
+    border-color: transparent;
+    margin: 5px;
+    display: flex;
+}
+
+.action-button {
+    margin-left: 43px;
+    margin-top: 10px;
+    display: flex;
+}
+
+.action-btn-icon {
+    margin-top: 5px;
+}
+
+.btn-action-name {
+    width: 100%;
+    font-size: 12px;
+    color: #696969;
+    margin: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: row;
+}
+
+.collapse-button {
+    display: none;
+    /* Initially hidden on larger screens */
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.empty-slide {
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.ctsm-toggle-btn:checked+.slider {
+    background-color: #F4F4FF;
+}
+
+.ctsm-toggle-btn:checked+.slider:before {
+    -webkit-transform: translateX(19px);
+    -ms-transform: translateX(19px);
+    transform: translateX(19px);
+    background-color: #4848FF;
+}
+
+.visualization {
+    margin-top: 20px;
+    width: 100%;
+    justify-content: start;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+}
+
+.visualization-type {
+    width: 100%;
+    display: flex;
+    margin-top: 20px;
+    align-items: start;
+    justify-content: space-evenly;
+    gap: 29px;
+}
+
+.slide-list-hover {
+    text-decoration: none;
+    position: relative;
+}
+
+.slide-list-hover:hover .normal-svg,
+.slide-list-hover.active .normal-svg {
+    display: none;
+}
+
+.slide-list-hover:hover .active-svg,
+.slide-list-hover.active .active-svg {
+    display: inline;
+}
+
+.slide-list-hover:hover .slide-type-text,
+.slide-list-hover.active .slide-type-text {
+    color: $product-primary;
+}
+
+.slide-list-hover:hover .theme-type-card,
+.slide-list-hover.active .theme-type-card {
+    border: 1px solid $product-primary;
+    border-radius: $sizepx-5;
+    box-shadow: 0px 4px 6px 0px #4848FF26;
+}
+
+.slide-list-hover .theme-type-card {
+    border: 1px solid #4848FF26;
+    border-radius: $sizepx-5;
+}
+
+.normal-svg {
+    display: inline;
+}
+
+.active-svg {
+    display: none;
+}
+
+.slide-type-text {
+    color: $gray-500;
+    font-size: $fs-12;
+}
+
+// * =========== Timer CSS =========================
+.timer-section {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.time-count-stop {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.count-down-seconds {
+    padding: 46px;
+    font-size: xxx-large;
+    font-weight: 500;
+}
+
+.reset-timer {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    flex-direction: column;
+}
+
+.heading {
+    color: #525252;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.content {
+    color: #525252;
+    font-size: 13px;
+    font-weight: 400;
+}
+
+.reset-action {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: start;
+    flex-direction: row;
+}
+
+.btn-control.danger {
+    background-color: #ff706e !important;
+    color: white !important;
+}
+
+// * ============= Scrollbar Styling  CSS =============== 
+::-webkit-scrollbar {
+    width: 7px;
+    padding: 10px;
+    display: flex;
+    align-items: start;
+    flex-direction: row;
+}
+
+::-webkit-scrollbar-track {
+    background-color: transparent;
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #DEDEDE;
+    display: flex;
+    flex-direction: row;
+}
+
+// * =========== Tabs ==================
+.tabs {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: space-around;
+}
+.nav-item{
+    padding-bottom: 2px;
+}
+.tab-icon {
+    margin-left: 5px;
+    width: 12px;
+}   
+.nav-link{
+    color: #696969 !important;
+}
+.nav-link.active{
+    color: #4848FF !important;
+}
+.nav-tabs .nav-link.active {
+    border-color: #4848FF !important;
+    border-bottom: 2px solid #4848FF !important;
+}
+
+@media (max-width: 967px) {
+    .btn-action {
+        padding: 11px 13px;
+    }
+}
+
+@media (max-width: 400px) {
+    .nav-item{
+        padding-bottom: 2px;
+        width: 33%;
+    }
+}
+@media (max-width: 768px) {
+    .tabs {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: start;
+        justify-content: space-around;
+    }
+
+    .remote-logo {
+        display: flex;
+        justify-content: start;
+        padding-left: 0px;
+    }
+
+    .remote-presentation-name {
+        width: 100%;
+        display: flex;
+        justify-content: start;
+        align-items: center;
+    }
+    .remote-header {
+        border-bottom: none;
+        box-shadow: none;
+    }
+    .presentation-name{
+        font-size: 13px;
+        margin-left: 15px;
+        display: none;
+    }
+    .presentation-name-with-max-character{
+        font-size: 9px;
+        width: 100%;
+        display: none;
+    }
+}
+@media (min-width: 769px) {
+    .tabs {
+        display: none;
+    }
+}

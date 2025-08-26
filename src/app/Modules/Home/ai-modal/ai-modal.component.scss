@@ -1,0 +1,491 @@
+@import '/src/assets/variablesScss/settingVariables.scss';
+@import '/src/app/Modules/presentations/presentation-themes/presentation-themes.component.scss';
+@import 'src/app/shared/Component/modal/modal.component.scss';
+
+
+// Modal Structure
+.ai-modal-header {
+    display: none;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 16px;
+}
+
+.modal-content {
+    max-width: 90%;
+    height: 90%;
+}
+
+.modal-body {
+    max-width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+}
+
+
+// Stage Layout
+.stage-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    
+    width: 100%;
+    height: 100%;
+    gap: 32px;
+}
+
+.stage-layout form {
+  width: 80%;
+}
+
+// Typography
+.bold-label-text {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+    line-height: 38px;
+    font-style: normal;
+}
+
+
+// Prompt Textarea Section
+.prompt-textarea-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: stretch;
+}
+
+.prompt-textarea-section button {
+  margin-left: auto;
+}
+
+.prompt-textarea-section textarea {
+    display: flex;
+    width: calc(100% - 20px);
+    height: 175px;
+    padding: 24px;
+    flex-direction: column;
+    align-items: flex-start;
+    resize: none;
+}
+
+
+// User Prompt Section
+.user-prompt-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    width: 100%;
+    gap: 16px;
+}
+
+
+// Topic Suggestion Section
+.topic-suggestion-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 80%
+}
+
+.suggestion-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.suggestion-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    gap: 8px;
+    align-self: stretch;
+    flex-wrap: wrap;
+}
+
+.suggestion-pill {
+    display: flex;
+    padding: 8px 12px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    border-radius: 32px;
+    border: 1px solid #DEDEDE;
+
+    color: #696969;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.suggestion-pill text {
+    color: #696969;
+    font-size: 10px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.suggestion-pill:hover {
+    background-color: #F2F2F2;
+    color: #343434;
+    cursor: pointer;
+}
+
+
+// Buttons
+.btn-n {
+    display: flex;
+    width: 180px;
+    height: 44px;
+    padding: 24px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    border-radius: 30px;
+    background: #4848FF;
+
+    box-shadow: 
+        0px 1px 1px 0px rgba(241, 227, 227, 0.25) inset,
+        0px -1px 1px 0px rgba(0, 0, 0, 0.25) inset;
+}
+
+.btn-n:hover {
+    background-color: $button-hover-bluecolor;
+}
+
+
+// Additional Settings Section
+.additional-settings-section {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.slide-count {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    align-self: stretch;
+}
+
+.number-of-slide-label {
+    color: #343434;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px;
+}
+
+.number-of-slide-button-input-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-self: stretch;
+    border-radius: 4px;
+    border: 1px solid #DEDEDE;
+}
+
+.number-of-slide-button {
+    display: flex;
+    width: 36px;
+    height: 36px;
+    padding: 8px 16px;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    background-color: #ffffff;
+
+    &:first-child {
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  &:last-child {
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+  }
+}
+
+.number-of-slide-button:disabled {
+    background-color: #f1f1f1;
+    cursor: not-allowed;
+}
+
+.number-of-slide-value {
+    display: flex;
+    height: 100%;
+    width: 65px;
+    padding: 0px 10px;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    border-left: 1px solid #DEDEDE;
+    border-right: 1px solid #DEDEDE;
+}
+
+.edit-mode {
+  .number-of-slide-value{
+    width: 100px;
+    justify-content: flex-start;
+  }
+}
+
+// Checkbox and Theme Select
+.additional-settings-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    align-self: stretch;
+}
+
+.checkbox-option {
+    display: flex;
+    align-self: stretch;
+    gap: 8px;
+    height: 24px;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+}
+
+// Theme Card Styles
+.theme-select {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 28px;
+  padding: 20px 0;
+  overflow: auto;
+}
+
+.theme-card-wrapper {
+  width: 150px;
+  height: 150px;
+  padding: 4px;
+  position: relative;
+}
+
+.theme-card-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  border-radius: 5px;
+  overflow: hidden;
+  background-color: #fff;
+}
+
+.theme-type-card {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.theme-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  text-align: center;
+  word-break: break-word;
+}
+
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.bars {
+  width: 8px;
+  border-radius: 2px 2px 0 0;
+  transform-origin: bottom;
+  opacity: 1;
+}
+
+.theme-card-container:hover .bars {
+  animation: growBar 0.5s ease-out;
+}
+
+@keyframes growBar {
+  0% {
+    height: 0;
+    opacity: 0.2;
+    transform: scaleY(0.1);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+.selected-theme {
+  border: 3px solid #007bff;
+  border-radius: 5px;
+  box-sizing: border-box;
+  box-shadow: 0 0 12px rgba(0, 123, 255, 0.5);
+  transform: scale(1.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+  z-index: 101;
+}
+
+.loading-bar-container {
+  width: 100%;
+  height: 12px;
+  background-color: #e0e0e0;
+  border-radius: 22px;
+  overflow: hidden;
+}
+
+.loading-bar {
+  height: 100%;
+  border-radius: 22px;
+  transition: width 0.4s ease-in-out;
+  background: linear-gradient(270deg, #CBACFA 0%, #4848FF 100%);
+}
+
+.progress-message {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4a4aff; // or another brand color
+  background: linear-gradient(90deg, #eef1ff, #dbe4ff);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  animation: fadeSlideIn 0.4s ease forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.new-message {
+  animation: bounceIn 0.5s ease;
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-height: 720px) {
+  .stage-layout{
+    gap: 16px;
+  }
+
+  .user-prompt-section {
+    gap: 8px;
+  }
+
+  .prompt-textarea-section textarea {
+    height: 145px;
+    padding: 12px;
+  }
+
+  .bold-label-text {
+    font-size: 24px;
+    line-height: normal;
+  }
+
+  .suggestion-pill {
+    padding: 2px 3px;
+    font-size: 12px;
+    font-weight: 300;
+  }
+
+  .number-of-slide-button {
+    width: 25px;
+    height: 25px;
+    padding: 4px 10px;
+  }
+
+  .additional-settings-group {
+    gap: 4px;
+    font: 12px;
+  }
+
+}
+
+@media (max-height: 585px) {
+  .stage-layout{
+    gap: 16px;
+  }
+
+  .user-prompt-section {
+    gap: 8px;
+  }
+
+  .prompt-textarea-section textarea {
+    height: 100px;
+    padding: 12px;
+  }
+
+  .bold-label-text {
+    font-size: 18px;
+    line-height: normal;
+  }
+
+  .suggestion-pill {
+    gap: 4px;
+    padding: 4px 6px;
+    font-size: 6px;
+    font-weight: 300;
+  }
+
+  .number-of-slide-button {
+    width: 25px;
+    height: 25px;
+    padding: 4px 10px;
+  }
+
+  .additional-settings-group {
+    gap: 4px;
+    font: 12px;
+  }
+
+  .invalid-feedback {
+    font-size: 10px;
+  }
+}

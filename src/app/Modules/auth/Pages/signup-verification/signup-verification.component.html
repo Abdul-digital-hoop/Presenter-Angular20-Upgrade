@@ -1,0 +1,36 @@
+<div class="bg-color">
+<section *ngIf="!EmailVerifiedStatus">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-center mvh-100 h-100">
+            <div class="col-lg-6 col-12 mx-auto px-md-5 px-0">
+                <div class="uniform-box-shadow border-0  center-d">
+                    <div class="text-center">
+                        <h1 class="my-3 fw-seven fs-very-high">Email verification</h1>
+                    </div>
+                    <div class="text-left">
+                        <p class="">Verification mail sent to your registered email. Please check and verify your account</p>
+                        <button type="submit" class="btn w-100 border-0 text-white btn-bg mb-3 py-2" routerLink="/auth">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<section *ngIf="EmailVerifiedStatus">
+    <div class="container">
+        <div class="d-flex align-items-center justify-content-center mvh-100 h-100">
+            <div class="col-lg-6 col-12 mx-auto px-md-5 px-0">
+                <div class="uniform-box-shadow border-0">
+                    <div class="text-center">
+                        <h1 class="my-3 fw-seven fs-very-high">Email verification</h1>
+                    </div>
+                    <div class="text-left">
+                        <p class="">Email already verified.Please login your account</p>
+                        <button type="submit" class="btn w-100 border-0 text-white btn-bg mb-3 py-2" routerLink="/auth">Login</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</div>

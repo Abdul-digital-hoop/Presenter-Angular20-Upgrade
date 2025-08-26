@@ -1,0 +1,20 @@
+<div class="modal-body edit-modal-body">
+  <p class="modal-intro" *ngIf="templateCard?.status">
+      <ng-container *ngIf="templateCard.status === template_Status.waitingForApproval">
+        This template is <strong>waiting for approval</strong>. Changes can still be made before final approval.
+      </ng-container>
+      <ng-container *ngIf="templateCard.status === template_Status.approved">
+        This template has been <strong>approved</strong>. Editing will require re-approval.
+      </ng-container>
+  </p>
+    <ul class="process-list">
+      <li>Re-submission Required</li>
+      <li>Previous Version Unpublished</li>
+      <li>Admin Review</li>
+      <li>Approval or Rejection</li>
+      <li>Finally Published</li>
+    </ul>
+    <div class="alert alert-warning">
+      ⚠ <strong>Note:</strong> While the new version is under review, the previous template will not be available.
+    </div>
+  </div>

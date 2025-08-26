@@ -1,0 +1,64 @@
+<ng-container *ngIf="isLoadingshow;else previewScreen">
+    <div class="preview-loading">
+        <div class="preview-loadingWrapper">
+            <div id="preview-loading"> </div>
+        </div>
+    </div>
+</ng-container>
+<ng-template #previewScreen>
+    <div class="preview-content">
+        <div class="preview-close-btn">
+            <a _ngcontent-xrl-c126="" class="hover-rounded" (click)="updatePreview(false)">
+                <img _ngcontent-xrl-c126="" src="/assets/new-icons/arrow-left.svg" class="common-icon-size">
+            </a>
+        </div>
+        <div class="preview-header-content">
+            <span>You were viewing the preview tab. Your responses won't be stored.</span>
+        </div>
+        <ng-container *ngIf="clientWidth >= 992">
+            <div class="d-none d-lg-block">
+                <div class="preview-screen">
+                    <div class="preview-fullscreen">
+                        <span class="preview-title-name">Presenter screen</span>
+                        <div class="presenter-section">
+                            <iframe [src]="presenterURL" frameborder="1" width="750px" height="425px"></iframe>
+                        </div>
+                    </div>
+                    <div class="preview-fullscreen">
+                        <span class="preview-title-name audince-title">Audience screen</span>
+                        <div class="audience-section">
+                            <iframe class="audience-iframe" [src]="AudienceURL" frameborder="1" width="340px" height="620px" allow="clipboard-read; clipboard-write; web-share"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="clientWidth < 992">
+            <div class="preview-screen d-block d-lg-none" style="padding: 20px;">
+                <ng-container *ngIf="currentScreen == 'presenter'">
+                    <div class="preview-fullscreen">
+                        <div class="presenter-section">
+                            <iframe [src]="presenterURL" frameborder="1" width="750px" height="425px"></iframe>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="currentScreen == 'audience'">
+                    <div class="preview-fullscreen">
+                        <div class="audience-section">
+                            <iframe class="audience-iframe" [src]="AudienceURL" frameborder="1" width="360px" height="620px" allow="clipboard-read; clipboard-write; web-share"></iframe>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+        <div class="preview-mobile-screen">
+            <div class="toggle-switch">
+                <input type="radio" name="role" id="presenter" (click)="onChangeScreen('presenter')" checked>
+                <label for="presenter" class="toggle-label">Presenter</label>
+                <input type="radio" name="role" id="audience">
+                <label for="audience" class="toggle-label" (click)="onChangeScreen('audience')">Audience</label>
+                <span class="toggle-dot"></span>
+            </div>
+        </div>
+    </div>
+</ng-template>

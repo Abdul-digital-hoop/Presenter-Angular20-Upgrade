@@ -1,0 +1,144 @@
+<div [ngClass]="!isPresenterEditorScreen ? '':'d-none'">
+    <div class="center-div">
+        <!-- Waiting for Quiz -->
+        <ng-container *ngIf="screenState === _workspaceservice?.quizPresenterScreen.WAITING_FOR_QUIZ_PLAYERS">
+            <div class="content-div">
+              <div class="waiting-board">
+                <div class="waiting-board-text" >On to Question 
+                    <strong>{{_workspaceservice?.currentQuizSlideIndex}}</strong>
+                </div>
+                <div class="waiting-board-text-count" >
+                    <span>Players : </span>{{playersList?.length}}
+                </div>
+              </div>
+              <div class="waiting-board-text" >
+                <strong>Waiting for players...</strong>
+              </div>
+              <div class="image-container">
+                <ng-container *ngFor="let player of playersList">
+                  <div class="waiting-board-players">
+                    <div class="player-emoji-name">
+                      <span class="emoji"> {{player?.playerImageURL}}</span>
+                      <span class="short-name" >{{ player?.playerName?.length > 20 ? (player.playerName | slice:0:20) + '...' : player?.playerName }}</span>
+                    </div>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            <div class="bottom-section">
+              <div class="position-menu-bottom-last-lineup" (click)="startQuiz()">
+                <span>Let's go</span>
+              </div>
+            </div>
+          </ng-container>
+        <!-- Start Quiz -->
+        <ng-container *ngIf="screenState == _workspaceservice?.quizPresenterScreen.FAST_ANSWERS_SCREEN">
+            <ng-container *ngIf="isFastAnswerGetMorePoints">
+                <div class="content-div">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="80" height="80" aria-label="Clock" viewBox="0 0 24 24">
+                            <g color="#0000FF">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="message" >Answer fast to get more points!
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="!isFastAnswerGetMorePoints">
+                <div class="content-div">
+                    <div class="icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                            width="80" height="80" aria-label="Time's up" viewBox="0 0 24 24">
+                            <g color="#0000FF">
+                                <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round">
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                    <path d="M16.49,3.07A10,10,0,0,0,3.13,16.6"></path>
+                                    <path d="M5.23,19.41c4.93,3.9,11.41,3,14.74-1.37a10,10,0,0,0-.19-12.3"></path>
+                                    <line x1="1" y1="23" x2="23" y2="1"></line>
+                                </g>
+                            </g>
+                        </svg>
+                    </div>
+                    <div class="message" >All correct answers give max points!
+                    </div>
+                </div>
+            </ng-container>
+        </ng-container>
+        <!-- Quiz Loader -->
+        <ng-container *ngIf="screenState == _workspaceservice?.quizPresenterScreen.LOADER_SCREEN">
+            <div class="content-div">
+                <div class="loader-icon">
+                    <div role="progressbar" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100" style="--value:100"
+                        [ngStyle]="{'--circlecolor':quizTheme.ThemesChartColor[0]?.Color,'--center-color': 'white'}">
+                    </div>
+                </div>
+                <div class="loader-message" >Look at your device</div>
+            </div>
+        </ng-container>
+        <!-- Every one has voted -->
+    </div>
+</div>
+<div [ngClass]="((screenState == _workspaceservice?.quizPresenterScreen.VOTING_SCREEN || screenState == _workspaceservice?.quizPresenterScreen.RESULT_SCREEN) || screenState == _workspaceservice?.quizPresenterScreen.EVERY_ONE_HAS_VOTED) || (isPresenterEditorScreen) ? 'h-100':'d-none'">
+    <!-- Quiz Timer Loaded -->
+    <ng-container *ngIf="screenState == _workspaceservice?.quizPresenterScreen.VOTING_SCREEN">
+        <div class="content">
+            <div class="timer-container">
+                <div class="select-answers-timer">{{ minutes | number:'2.0-0' }} : {{ seconds | number:'2.0-0' }}</div>
+                <div class="button">{{respondPlayerCount}}</div>
+            </div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="screenState == _workspaceservice?.quizPresenterScreen.EVERY_ONE_HAS_VOTED">
+        <div class="content">
+            <div class="timer-container">
+                <div class="select-answers-warning-messages" >Everyone has
+                    voted!</div>
+            </div>
+        </div>
+    </ng-container>
+    <!-- Lineup Orders-->
+    <div class="lineup-center-order">
+        <ng-container *ngIf="screenState != _workspaceservice?.quizPresenterScreen.VOTING_SCREEN">
+            <div class="order-content" [ngStyle]="{'margin-top':isPresenterEditorScreen?'6%':'4%'}">
+                <ng-container *ngFor="let order of lineupData;let i=index">
+                    <div class="order-content-details">
+                        <div class="order-arrow">
+                            <div class="order-circle" [ngStyle]="{'background-color':order.color,'height':lineupData.length == i+1 && isPresenterEditorScreen?'30px':isPresenterEditorScreen?'30px':'45px','width':lineupData.length == i+1 && isPresenterEditorScreen?'30px':isPresenterEditorScreen?'45px':lineupData.length == i+1?'45px':'58px'}">
+                                <span class="order-text" [ngStyle]="{'font-size':isPresenterEditorScreen?'16px':'30px'}">{{i+1}}</span>
+                            </div>
+                            <ng-container *ngIf="(i+1) < lineupData.length">
+                                <div class="order-circle1">
+                                </div>
+                            </ng-container>
+                        </div>
+                        <a class="lineup-order">
+                            <div class="custom-common-box d-flex align-items-center" [ngStyle]="{'border': '1px solid','color': order.color}">
+                                <span class="range-label" [ngStyle]="{'font-size':isPresenterEditorScreen?'14px':'30px'}">{{ order.name }}</span>
+                            </div>
+                        </a>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+
+        <ng-container *ngIf="screenState == _workspaceservice?.quizPresenterScreen.VOTING_SCREEN">
+            <div class="order-content">
+                <ng-container *ngFor="let order of _workspaceservice?.suffledOrder;let i=index">
+                    <a class="lineup-order">
+                        <div class="custom-common-box d-flex align-items-center" [ngStyle]="{'border': '1px solid','color': order.visualizationColor}">
+                            <span class="range-label" [ngStyle]="{'font-size':isPresenterEditorScreen?'14px':'30px'}">{{ order.OptionTitle }}</span>
+                        </div>
+                    </a>
+                </ng-container>
+            </div>
+        </ng-container>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+.Top-d{
+    margin: 15px 0px 20px 10px;
+}
+.hrcolor{
+  border: 1px solid #C1C1C1
+}
+.bottom-d{
+    display: flex;
+}
+ul{
+    padding-left: 0px;
+    margin-top: -20px;
+}
+li{
+    list-style-type: none;
+    padding-top: 25px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+}
+.hr-l{
+    background-color: rgb(219, 220, 225);
+    height: 1px;
+    width: 96%;
+    margin-bottom: 32px;
+}
+.menu{
+    width: 20%;
+}
+.content{
+    width: 100%;
+}
+h4{
+    font-weight:400;
+}
+a:hover{
+    color: #878885d6;
+}
+a{
+    text-decoration: none;
+    color: black;
+}
+
+.responsive-menu{
+    display: flex;
+    justify-content: end;
+}
+
+.sidebar {
+    display: none;
+    border: 1px black;
+    width: 50%;
+    height: 100%;
+    position: fixed;
+    z-index: 999;
+    top: 0px;
+    right: 0;
+    padding-top: 70px;
+    transition: width 0.3s ease-in-out;
+    background-color: #2e76e7;
+  }
+  .open {
+    display: block;
+  }
+  .form-container{
+    width: 80%;
+  }
+  .main-d{
+    display: flex;
+  }
+  .searchicon{
+    height: 20px;
+   
+  }
+  .btn-close{
+    background: none;
+    border: none;
+  }
+  .btn-sidebar{
+    background: none;
+    border: none;
+  }
+  .active {
+    color: rgb(25, 108, 255); /* Change this to your desired color for the active link */
+}
+.Main-int{
+  padding: 10px;
+}
+.search-box{
+  border-radius: 60px !important;
+  width: 320px;
+  font-size: 14px;
+}

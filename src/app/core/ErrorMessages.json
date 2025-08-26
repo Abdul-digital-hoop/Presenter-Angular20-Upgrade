@@ -1,0 +1,50 @@
+{
+    "UserSection-1000":{
+        "1001":"",
+        "1002": "",
+        "1003":"Signed Up Successfully. Please Verify Your Email.",
+        "1004":"Ensure that both password fields contain the same password",
+        "1005":"",
+        "1006":"We’ve already verified your email ID."
+    },
+    "PresentationSection-2000":{
+     "2001":"Failed to rename the presentation",
+     "2002":"Cannot create more than 5 copies of the presentation",
+     "2003":"Failed to delete the presentation",
+     "2004":"Failed to move the presentation",
+     "2005":"Failed to create the presentation"
+    },
+    "TrashSection-3000":{
+      "3001":"Failed to restore the presentation",
+      "3002":"Failed to restore the folder",
+      "3003":"Failed to delete the presentation",
+      "3004":"Failed to delete the folder"
+    },
+    "TemplatesSection-6000":{
+        "6001":"Failed to create the template",
+        "6002":"Uh-oh! Chart template must contain only one slide",
+        "6003":"Hold on! You need to add a slide to create a template."
+    },
+    "TeamSection-8000":{
+        "8001":"Failed to send the invite",
+        "8002":"Failed: Failed to withdraw the invite",
+        "8003":"Failed to leave the team",
+        "8004":"Failed to remove the user",
+        "8005":"Failed to delete the team",
+        "8006":"The entered email id is valid. Please enter a valid email id"
+    },
+    "FolderSection-9000":{
+        "9001":"Maximum folder depth reached.",
+        "9002":"Failed to rename the folder",
+        "9003":"Failed to move the folder",
+        "9004":"Failed to delete the folder"
+    },
+    "UserProfile-10000":{
+        "10001":"Failed to update the image",
+        "10002":"Failed to remove the image",
+        "10003":"Failed to update the profile details",
+        "10004":"Failed to change the email id",
+        "10005":"Failed to change the password",
+        "10006":"Failed to deactivate the account. Please contact the support team."
+    }
+}

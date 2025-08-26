@@ -1,0 +1,104 @@
+<div class="preview-present-btn" [ngClass]="{'gap-md-3': IntegrationMediumOffice}">
+    <div class="d-none d-lg-block" *ngIf="!IntegrationMediumOffice">
+        <button class="preview-btn me-lg-3 me-0" [disabled]="workSpaceService?.slideListArray?.length > 0 ? false:true" (click)="openPreview()">
+            <span class="fs-very-low fw-four">Preview</span>
+        </button>
+    </div>
+    <button *ngIf="!IntegrationMediumOffice" class="btn btn-primary d-flex justify-content-between align-items-center me-lg-3 me-0 ms-2 ms-sm-0 pointer-event" [disabled]="(workSpaceService?.slideListArray?.length > 0 && !workSpaceService?.isTemplate)  ? false:true" (click)="presentThePresentation()">
+        <img src="/assets/new-icons/play_arrow.svg" class="me-sm-2" />
+        <span class="fs-very-low fw-four d-none d-sm-block">Present</span>
+    </button>
+    <button *ngIf="IntegrationMediumOffice" class="btn d-flex justify-content-between align-items-center me-lg-3 me-0 ms-2 ms-sm-0 pointer-event present-slide-btn  text-nowrap" [disabled]="(workSpaceService?.slideListArray?.length > 0 && !workSpaceService?.isTemplate)  ? false:true" (click)="presentThePresentation('single')">
+        <svg class="me-sm-2" width="12" height="14" viewBox="0 0 12 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M0.5 14V0L11.5 7L0.5 14ZM2.5 10.35L7.75 7L2.5 3.65V10.35Z" fill="black"/>
+        </svg>
+        <span class="fs-very-low fw-four d-none d-sm-block">Present Slide</span>
+    </button>
+    <button *ngIf="IntegrationMediumOffice" class=" text-nowrap btn btn-primary d-flex justify-content-between align-items-center me-lg-3 me-0 ms-2 ms-sm-0 pointer-event" [disabled]="(workSpaceService?.slideListArray?.length > 0 && !workSpaceService?.isTemplate)  ? false:true" (click)="presentThePresentation('full')">
+        <img src="/assets/new-icons/play_arrow.svg" class="me-sm-2" />
+        <span class="fs-very-low fw-four d-none d-sm-block">Start Presentation</span>
+    </button>
+    <button *ngIf="IntegrationMediumOffice" class=" text-nowrap present-slide-btn me-lg-3 me-0" [disabled]="workSpaceService?.slideListArray?.length > 0 ? false:true" (click)="openShareModal()">
+        <img src="/assets/new-icons/share.svg" class="me-sm-2 share-icon" />
+        <span class="fs-very-low fw-four">Share</span>
+    </button>
+</div>
+<!--LeaderboardModal-->
+<div class="modal fade pt-2" id="quizModal" tabindex="-1" aria-labelledby="quizModal" aria-hidden="true">
+    <div class="modal-dialog mt-5">
+        <div class="modal-content quiz-modal-content">
+            <div class="btn py-0 text-end px-2">
+                <button type="button" class="close close-icon-absolute" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="1.25rem" height="1.25rem" aria-label="" viewBox="0 0 24 24">
+                        <g color="#ffffff">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12 px-0">
+                    <h5 class="modal-title quiz-modal-title">
+                        The Quiz will not have a winner!
+                    </h5>
+                    <p class="text-start quiz-modal-text">Reveal the winner of the Quiz by adding a leaderboard after the last question.</p>
+                    <button type="button" class="btn item-popup" data-bs-dismiss="modal" (click)="presentAnyway(currentMode)">Present anyway</button>
+                    <button type="button" class="btn btn-primary mx-1 add-leaderboard-btn" data-bs-dismiss="modal" (click)="addLeaderBoard()">Add leaderboard</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--ShareModal-->
+<div class="modal fade" id="shareModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="shareModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="fs-5 mb-0" id="shareModalLabel">Share Presentation</h1>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close" (click)="closeShareModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <path d="M1.48916 14.5833L0 13.125L5.95666 7.29167L0 1.45833L1.48916 0L7.44582 5.83333L13.4025 0L14.8916 1.45833L8.93499 7.29167L14.8916 13.125L13.4025 14.5833L7.44582 8.75L1.48916 14.5833Z" fill="#999999"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <div class="qr-section">
+                            <img src="{{workSpaceService.presentationQRCode}}" class="img-fluid mx-auto qr-code-image" alt="QR Code">
+                            <p class="mb-0">Scan to join</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6 d-flex align-items-center justify-content-center">
+                        <div class="vr me-4 vertical-divider"></div>
+                        <div class="link-section">
+                            <p class="text-center mb-4">OR</p>
+                            <div class="url-container" *ngIf="isLinkVisible && loadPresentationPage">
+                                <div class="mb-3">
+                                    <label class="form-label">Join via link:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control url-input" [value]="workSpaceService.audienceURL" readonly>
+                                        <div class="copy-button-container">
+                                            <button class="btn copy-button" type="button" (click)="copyToClipboard()">
+                                                <svg *ngIf="!copied" width="16" height="16" viewBox="0 0 25 20" fill="#878787" xmlns="http://www.w3.org/2000/svg" name="copy">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M5 2a.333.333 0 00-.333.333v1H11c.92 0 1.666.746 1.666 1.667v6.333h1c.185 0 .334-.149.334-.333V2.333A.333.333 0 0013.666 2H5zm7.666 10.667h1c.921 0 1.667-.747 1.667-1.667V2.333c0-.92-.746-1.666-1.667-1.666H5c-.92 0-1.667.746-1.667 1.666v1h-1C1.413 3.333.667 4.08.667 5v8.667c0 .92.746 1.666 1.666 1.666H11c.92 0 1.666-.746 1.666-1.666v-1zm-10.333-8A.333.333 0 002 5v8.667c0 .184.15.333.333.333H11c.184 0 .333-.15.333-.333V5A.333.333 0 0011 4.667H2.333z"></path>
+                                                </svg>
+                                                <svg *ngIf="copied" width="16" height="16" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20Z" fill="#00BA00"/>
+                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.87814 14.877L3.22082 10.9626C2.72011 10.4267 2.74885 9.57886 3.28476 9.07815C3.82066 8.57744 4.66854 8.60626 5.16924 9.14209L7.99035 12.1615L12.4558 7.98925C12.4959 7.95169 12.5379 7.91729 12.5813 7.88563L14.6812 5.92366C15.2171 5.42296 16.0651 5.45177 16.5657 5.98768C17.0664 6.52351 17.0376 7.37146 16.5018 7.87217L10.0881 13.8647L10.0812 13.8574L7.86263 15.9303L6.87814 14.877Z" fill="white"/>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,93 @@
+<div class="modal-body template-form-body myForm" [formGroup]="myForm">
+  <div class="form-loader" *ngIf="isComponentLoading">
+    <div class="spinner"></div>
+  </div>
+  <div   [class.blur]="isComponentLoading">
+    <div class="hint-container">
+      <div class="alert type-hint alert-primary w-80 h-20" role="alert">
+        Converting this into a template will remove it from your presentation lists
+      </div>
+    </div>
+    <div class="form-group mb-2" (click)="toggleDropdown('type')">
+      <label for="typeDropdown">Type</label>
+      <div class="custom-dropdown-container">
+        <select class="form-control myForm custom-dropdown-selected" id="typeDropdown" formControlName="Type">
+          <option value="" disabled>Select type</option>
+          <option *ngFor="let type of popularFeatures" [value]="type">{{ type }}</option>
+        </select>
+        <svg [ngClass]="{'rotated': isTypeDropdownOpen}" class="dropdown-svg-icon" xmlns="http://www.w3.org/2000/svg" width="10" height="7" viewBox="0 0 10 7" fill="none">
+          <path d="M5 6.83464L0 1.83464L1.16667 0.667969L5 4.5013L8.83333 0.667969L10 1.83464L5 6.83464Z" fill="#4848FF"/>
+        </svg>
+      </div>
+      <div *ngIf="myForm.controls['Type'].invalid && myForm.controls['Type'].touched" class="text-danger">
+        Type is required.
+      </div>
+    </div>
+    <div class="form-group mb-2" (click)="toggleDropdown('category')">
+      <label for="customDropdown">Category</label>
+      <div class="custom-dropdown-container">
+        <div class="custom-dropdown-selected custom-dropdown-container">
+          {{ selectedCategory || 'Select category' }}
+        </div>
+        <ul class="custom-dropdown-options" *ngIf="isCategoryDropdownOpen" formControlName="CategoryName">
+          <li *ngFor="let category of categoryList" (click)="selectCategory(category)">
+            {{ category.categoryName }}
+          </li>
+        </ul>
+        <svg [ngClass]="{'rotated': isCategoryDropdownOpen}" class="dropdown-svg-icon" xmlns="http://www.w3.org/2000/svg" width="10" height="7" viewBox="0 0 10 7" fill="none">
+          <path d="M5 6.83464L0 1.83464L1.16667 0.667969L5 4.5013L8.83333 0.667969L10 1.83464L5 6.83464Z" fill="#4848FF"/>
+        </svg>
+      </div>
+      <div *ngIf="myForm.controls['CategoryName'].invalid && myForm.controls['CategoryName'].touched" class="text-danger">
+        Category is required.
+      </div>
+    </div>
+    <div class="formGroup mb-2">
+      <label class="form-label">Description</label>
+      <div class="position-relative">
+        <textarea #descriptioninput class="form-control templateForm" formControlName="Description" rows="3" maxlength="{{ maxDescriptionLength }}"></textarea>
+        <small class="char-counter" [ngStyle]="{ color: (maxDescriptionLength - (descriptioninput?.value?.length)) <= 10 ? 'red' : 'black' }">
+          {{ maxDescriptionLength - (descriptioninput?.value?.length) }}
+        </small>
+      </div>
+      <div *ngIf="myForm.controls['Description'].invalid && myForm.controls['Description'].touched" class="text-danger">
+        Description is required
+      </div>
+      <div *ngIf="myForm.controls['Description'].hasError('whitespace') && myForm.controls['Description'].touched" class="text-danger">
+        Empty spaces are not allowed
+      </div>
+      <div *ngIf="(maxDescriptionLength - (descriptioninput?.value?.length || 0)) === 0" class="text-danger">
+        Maximum character limit reached!
+      </div>
+    </div>
+    <label for="typeDropdown">Select the first slide for your template</label>
+    <div class="container slide-card">
+      <div class="row">
+        <div class="scrollable-container d-flex flex-wrap align-items-center">
+        <div class="col-4 pad-left-0" *ngFor="let slide of selectedslideList || []" (click)="selectSlide(slide.slideId)">
+            <div class="card selectable-card position-relative m-2 p-2 d-flex flex-row align-items-center" [class.selected]="slide.slideId === selectedSlideId">
+              <div class="selection-marker" [class.selected-marker]="slide.slideId === selectedSlideId"></div>
+              <div class="content-container">
+                
+                <p class="slide-title">{{slide.slideTypeName == masterSlideTypeName.GUESS_THE_NUMBER_QUIZ ? masterSlideTypeName.PICK_THE_NUMBER :  slide.slideTypeName}}</p>
+                <p class="slide-content" *ngIf="slide.slideTypeName != 'Multimedia'">
+                  {{ isEditorScreen ?
+                  slide?.slideTypeName == "Import Document" ? slide.slideContentData?.[0]?.value?.[1]?.value || 'No content' :
+                  slide?.slideContentData?.[0]?.value?.[0]?.value || 'No content' :
+                  slide?.slideQuestion || 'No content' }}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="myForm.controls['SlideId'].invalid && myForm.controls['SlideId'].touched" class="text-danger">
+      Please select a slide.
+    </div>
+    <button class="btn btn-primary mt-3" (click)="storeTemplate()">Save
+      <span class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true" *ngIf="isSaveTemplateLoading"></span>
+    </button>
+  </div>
+  
+</div>

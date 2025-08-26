@@ -1,0 +1,160 @@
+<!-- This is the start of the selection -->
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="modal-title mb-3">Default Themes</h5>
+    <button [ngStyle]="{'cursor': customerPlan?.custom_themes ? '' : 'not-allowed',
+    'opacity': customerPlan?.custom_themes ? '1' : '0.5'}"  class="btn btn-secondary tooltip-left-custom-themes" 
+    (click)="createThemeConditionCheck()" [attr.data-tooltip]="!customerPlan?.custom_themes ? 'Need Subscription' : null">
+        <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true"
+            *ngIf="isCreateThemeLoader"></span>
+        <img src="/assets/new-icons/normal-add.svg" class="img-fluid" *ngIf="!isCreateThemeLoader">
+        Create
+    </button>
+</div>
+<div class="row me-0">
+    <ng-container *ngIf="isSkeletonLoading">
+        <div class="col-6 mb-2" *ngFor="let skeleton of skeletons">
+            <div class="position-relative skeleton-item"></div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!isSkeletonLoading">
+        <ng-container *ngFor="let theme of presentationThemeService.defaultThemes">
+            <div class="col-6 pe-0 mb-3" (click)="setDefaultThemeToPresentaion(theme)">
+                <div class="slide-list-hover" [ngClass]="workSpceService.currentThemeId === theme?.id ?'theme-active':''">
+                    <div class="bg-image-themes"
+                        style="background-image: url(&quot;&quot;);background-size: cover;inset: 0px;height: 100%;position: absolute;width: 100%;z-index: 9;border-radius: 5px;">
+                    </div>
+                    <div class="bg-color-themes"
+                        style="inset: 0px;height: 100%;opacity: 1;position: absolute;width: 100%;z-index: 99;border-radius: 5px;"
+                        [style.background-color]="theme.themesBackgroundColor"></div>
+                    <div class="theme-type-card text-center">
+                        <div>
+                            <h5 class="theme-title" [style.color]="theme.themesFontColor">{{theme?.themeName}}</h5>
+                        </div>
+                        <div class="bar-chart w-50 mx-auto">
+                            <ng-container *ngFor="let chartcolor of theme.themesChartColor;index as i">
+                                <div class="bars" [style.height.%]="chartcolor.height"
+                                    [style.background-color]="chartcolor.color"></div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>
+<div class="custom-line"></div>
+<ng-container *ngIf="presentationThemeService.customerThemes.length > 0">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="modal-title mb-3">My Themes</h5>
+    </div>
+</ng-container>
+<div class="row me-0">
+    <ng-container *ngIf="isSkeletonLoading">
+        <div class="col-6 mb-2" *ngFor="let skeleton of skeletons">
+            <div class="position-relative skeleton-item"></div>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!isSkeletonLoading">
+        <ng-container *ngFor="let theme of presentationThemeService.customerThemes">
+            <div class="col-6 pe-0 mb-3" (click)="setDefaultThemeToPresentaion(theme)">
+                <div class="slide-list-hover" [ngClass]="workSpceService.currentThemeId === theme?.id ?'theme-active':''">
+                    <div class="bg-image-themes" [ngStyle]="{'background-image': 'url(' + theme?.themesBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':theme?.backgroundColorOpacity}"></div>
+                    <div class="bg-color-themes" style="inset: 0px;height: 100%;position: absolute;width: 100%;border-radius: 5px;" [style.background-color]="theme.themesBackgroundColor"></div>
+                    <div class="theme-type-card text-center">
+                        <div class="position-absolute-icon">
+                            <button class="btn theme-btn-circle" (click)="showPopover($event,theme)">
+                                <img src="/assets/new-icons/three-dot-horz.svg">
+                            </button>
+                        </div>
+                        <div class="theme-name-logo">
+                            <h5 class="theme-title" [style.color]="theme.themesFontColor"[style.width]="theme?.themesLogo?.logoCroppedUrl ? '70%':'100%'">{{theme?.themeName}}</h5>
+                            <ng-container *ngIf="theme?.themesLogo?.logoCroppedUrl">
+                                <div class="brand-logo" [style.width]="checkOrientation(theme?.themesLogo?.croppedposition) =='Landscape'? '20%':'15%'">
+                                    <div class="logo-icon">
+                                        <img [src]="theme?.themesLogo.logoCroppedUrl" alt="Logo" class="logo-image">
+                                    </div>
+                                </div> 
+                            </ng-container>
+                        </div>
+                        <div class="bar-chart w-50 mx-auto">
+                            <ng-container *ngFor="let chartcolor of theme.themesChartColor;index as i">
+                                <div class="bars" [style.height.%]="chartcolor.height"
+                                    [style.background-color]="chartcolor.color"></div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </ng-container>
+</div>
+<!-- Themes Edit Share Delete Options -->
+<div *ngIf="isVisible" [style.top.px]="top" [style.left.px]="left" class="cstm-popover-delete">
+    <div class="dropdown-content position-tooltip-dropdown">
+        <div class="thumbnail-list-dropdown">
+            <ul class="nav flex-column">
+                <li>
+                    <a class="dropdown-item dropdown-text-style" href="javascript:void(0)" (click)="editThemeConditionCheck()">
+                        <span class="me-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                fill="none">
+                                <mask id="mask0_9684_57998" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                    y="0" width="20" height="20">
+                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                </mask>
+                                <g mask="url(#mask0_9684_57998)">
+                                    <path
+                                        d="M1.66797 20.0003V16.667H18.3346V20.0003H1.66797ZM5.0013 13.3337H6.16797L12.668 6.85449L11.4805 5.66699L5.0013 12.167V13.3337ZM3.33464 15.0003V11.4587L12.668 2.14616C12.8207 1.99338 12.9978 1.87533 13.1992 1.79199C13.4006 1.70866 13.6124 1.66699 13.8346 1.66699C14.0569 1.66699 14.2721 1.70866 14.4805 1.79199C14.6888 1.87533 14.8763 2.00033 15.043 2.16699L16.1888 3.33366C16.3555 3.48644 16.477 3.66699 16.5534 3.87533C16.6298 4.08366 16.668 4.29894 16.668 4.52116C16.668 4.72949 16.6298 4.93435 16.5534 5.13574C16.477 5.33713 16.3555 5.52116 16.1888 5.68783L6.8763 15.0003H3.33464Z"
+                                        fill="#525252" />
+                                </g>
+                            </svg>
+                        </span>
+                        <span>Edit</span>
+                    </a>
+                </li>
+                <!-- <li>
+                        <a class="dropdown-item dropdown-text-style" href="javascript:void(0)">
+                            <span class="me-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                    fill="none">
+                                    <mask id="mask0_9684_58003" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                        y="0" width="20" height="20">
+                                        <rect width="20" height="20" fill="#D9D9D9" />
+                                    </mask>
+                                    <g mask="url(#mask0_9684_58003)">
+                                        <path
+                                            d="M15 18.3333C14.3056 18.3333 13.7153 18.0903 13.2292 17.6042C12.7431 17.118 12.5 16.5278 12.5 15.8333C12.5 15.7361 12.5069 15.6354 12.5208 15.5312C12.5347 15.4271 12.5556 15.3333 12.5833 15.25L6.70833 11.8333C6.47222 12.0417 6.20833 12.2049 5.91667 12.3229C5.625 12.441 5.31944 12.5 5 12.5C4.30556 12.5 3.71528 12.2569 3.22917 11.7708C2.74306 11.2847 2.5 10.6944 2.5 9.99999C2.5 9.30555 2.74306 8.71527 3.22917 8.22916C3.71528 7.74305 4.30556 7.49999 5 7.49999C5.31944 7.49999 5.625 7.55902 5.91667 7.67707C6.20833 7.79513 6.47222 7.95832 6.70833 8.16666L12.5833 4.74999C12.5556 4.66666 12.5347 4.57291 12.5208 4.46874C12.5069 4.36457 12.5 4.26388 12.5 4.16666C12.5 3.47221 12.7431 2.88193 13.2292 2.39582C13.7153 1.90971 14.3056 1.66666 15 1.66666C15.6944 1.66666 16.2847 1.90971 16.7708 2.39582C17.2569 2.88193 17.5 3.47221 17.5 4.16666C17.5 4.8611 17.2569 5.45138 16.7708 5.93749C16.2847 6.4236 15.6944 6.66666 15 6.66666C14.6806 6.66666 14.375 6.60763 14.0833 6.48957C13.7917 6.37152 13.5278 6.20832 13.2917 5.99999L7.41667 9.41666C7.44444 9.49999 7.46528 9.59374 7.47917 9.69791C7.49306 9.80207 7.5 9.90277 7.5 9.99999C7.5 10.0972 7.49306 10.1979 7.47917 10.3021C7.46528 10.4062 7.44444 10.5 7.41667 10.5833L13.2917 14C13.5278 13.7917 13.7917 13.6285 14.0833 13.5104C14.375 13.3924 14.6806 13.3333 15 13.3333C15.6944 13.3333 16.2847 13.5764 16.7708 14.0625C17.2569 14.5486 17.5 15.1389 17.5 15.8333C17.5 16.5278 17.2569 17.118 16.7708 17.6042C16.2847 18.0903 15.6944 18.3333 15 18.3333ZM15 4.99999C15.2361 4.99999 15.434 4.92013 15.5938 4.76041C15.7535 4.60068 15.8333 4.40277 15.8333 4.16666C15.8333 3.93055 15.7535 3.73263 15.5938 3.57291C15.434 3.41318 15.2361 3.33332 15 3.33332C14.7639 3.33332 14.566 3.41318 14.4062 3.57291C14.2465 3.73263 14.1667 3.93055 14.1667 4.16666C14.1667 4.40277 14.2465 4.60068 14.4062 4.76041C14.566 4.92013 14.7639 4.99999 15 4.99999ZM5 10.8333C5.23611 10.8333 5.43403 10.7535 5.59375 10.5937C5.75347 10.434 5.83333 10.2361 5.83333 9.99999C5.83333 9.76388 5.75347 9.56596 5.59375 9.40624C5.43403 9.24652 5.23611 9.16666 5 9.16666C4.76389 9.16666 4.56597 9.24652 4.40625 9.40624C4.24653 9.56596 4.16667 9.76388 4.16667 9.99999C4.16667 10.2361 4.24653 10.434 4.40625 10.5937C4.56597 10.7535 4.76389 10.8333 5 10.8333ZM15 16.6667C15.2361 16.6667 15.434 16.5868 15.5938 16.4271C15.7535 16.2674 15.8333 16.0694 15.8333 15.8333C15.8333 15.5972 15.7535 15.3993 15.5938 15.2396C15.434 15.0799 15.2361 15 15 15C14.7639 15 14.566 15.0799 14.4062 15.2396C14.2465 15.3993 14.1667 15.5972 14.1667 15.8333C14.1667 16.0694 14.2465 16.2674 14.4062 16.4271C14.566 16.5868 14.7639 16.6667 15 16.6667Z"
+                                            fill="#525252" />
+                                    </g>
+                                </svg>
+                            </span>
+                            <span>Share</span>
+                        </a>
+                    </li> -->
+                <li>
+                    <a class="dropdown-item dropdown-text-style text-danger pop-hover" href="javascript:void(0)"
+                        (click)="deleteTheme()">
+                        <span class="pop-hover me-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"
+                                fill="none">
+                                <mask id="mask0_9684_58008" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                    y="0" width="20" height="20">
+                                    <rect width="20" height="20" fill="#D9D9D9" />
+                                </mask>
+                                <g mask="url(#mask0_9684_58008)">
+                                    <path
+                                        d="M5.83203 17.5C5.3737 17.5 4.98134 17.3368 4.65495 17.0104C4.32856 16.684 4.16536 16.2917 4.16536 15.8333V5H3.33203V3.33333H7.4987V2.5H12.4987V3.33333H16.6654V5H15.832V15.8333C15.832 16.2917 15.6688 16.684 15.3424 17.0104C15.0161 17.3368 14.6237 17.5 14.1654 17.5H5.83203ZM14.1654 5H5.83203V15.8333H14.1654V5ZM7.4987 14.1667H9.16536V6.66667H7.4987V14.1667ZM10.832 14.1667H12.4987V6.66667H10.832V14.1667Z"
+                                        fill="#FF1717" />
+                                </g>
+                            </svg>
+                        </span>
+                        <span class="pop-hover">Delete</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<app-change-themes [slideIndexArray]="slideThemesAppliedSlidesIndexArray"
+    (changeThemeEvent)="saveThemesChanges($event)"></app-change-themes>
+<app-theme-name-component (changeThemeNameEvent)="saveThemeNameChanges($event)"></app-theme-name-component>

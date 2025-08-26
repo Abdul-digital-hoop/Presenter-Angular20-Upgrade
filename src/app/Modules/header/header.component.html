@@ -1,0 +1,209 @@
+<section class="presentation-box-shadow header-hide fixed-top custom-shadow">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-4 px-0 text-left align-self-center">
+                <a class="" [routerLink]="IntegrationMediumOffice ? '/app/mypresentations' : '/app/home'">
+                    <img src="/assets/images/product-logo.svg" width="120" height="38" alt="header-logo" class="img-fluid">
+                </a>
+            </div>
+            <div class="col-4">
+                <div class="search-box" *ngIf="showSearch">
+                    <div class="search-input-wrapper">
+                        <input type="text" placeholder="Search presentations and folders" class="form-control header-input"
+                            [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" (input)="onInputChange()">
+                        <button class="search-icon" (click)="onSearch()">
+                            <svg width="20" height="20" fill="none" stroke="black" stroke-width="2" viewBox="0 0 24 24">
+                                <circle cx="11" cy="11" r="8" />
+                                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 px-0 text-end">
+                <div class="dropdown">
+                    <!-- <button class="btn position-relative" title="Notification"><svg width="24" height="28"
+                            viewBox="0 0 24 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 6C13.7504 6 15.4292 6.69588 16.6669 7.93455C17.9046 9.17322 18.6 10.8532 18.6 12.605C18.6 19.949 21.2769 21.3962 22 21.3962H2C2.73846 21.3962 5.4 19.9336 5.4 12.605C5.4 10.8532 6.09536 9.17322 7.3331 7.93455C8.57084 6.69588 10.2496 6 12 6V6Z"
+                                stroke="#000001" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path
+                                d="M9.69141 24.2148C9.82439 24.726 10.1231 25.1786 10.5407 25.5017C10.9583 25.8248 11.4713 26 11.9991 26C12.5269 26 13.0399 25.8248 13.4575 25.5017C13.8751 25.1786 14.1738 24.726 14.3068 24.2148"
+                                stroke="#000001" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="18" cy="5" r="5" fill="#39DB00" />
+                        </svg>
+                    </button>
+                    <button class="btn me-2 position-relative" title="Help"><svg width="24" height="24"
+                            viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <mask id="mask0_3035_23892" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                width="24" height="24">
+                                <rect width="24" height="24" fill="#D9D9D9" />
+                            </mask>
+                            <g mask="url(#mask0_3035_23892)">
+                                <path
+                                    d="M12 22C17.5228 22 22 17.5228 22 12C22 6.47715 17.5228 2 12 2C6.47715 2 2 6.47715 2 12C2 17.5228 6.47715 22 12 22Z"
+                                    stroke="#000001" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path
+                                    d="M9.69531 9.69051C9.69531 9.23409 9.83066 8.78792 10.0842 8.40842C10.3378 8.02892 10.6982 7.73314 11.1199 7.55848C11.5416 7.38381 12.0056 7.33811 12.4532 7.42716C12.9009 7.5162 13.3121 7.73598 13.6348 8.05872C13.9575 8.38146 14.1773 8.79265 14.2664 9.2403C14.3554 9.68795 14.3097 10.1519 14.135 10.5736C13.9604 10.9953 13.6646 11.3557 13.2851 11.6093C12.9056 11.8629 12.4594 11.9982 12.003 11.9982V13.5367"
+                                    stroke="#000001" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path
+                                    d="M12.0018 17.3825C11.7894 17.3825 11.6172 17.2103 11.6172 16.9979C11.6172 16.7855 11.7894 16.6133 12.0018 16.6133"
+                                    stroke="#000001" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path
+                                    d="M12 17.3825C12.2124 17.3825 12.3846 17.2103 12.3846 16.9979C12.3846 16.7855 12.2124 16.6133 12 16.6133"
+                                    stroke="#000001" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            </g>
+                        </svg>
+                    </button>
+                  -->
+                        <button   *ngIf="customerPlan?.plan_name === 'Free' || customerPlan?.plan_name === 'Basic'" class="upgrade me-2"  (click)="upgrade()"><svg xmlns="http://www.w3.org/2000/svg" width="29" height="28" viewBox="0 0 29 28" fill="none" >
+                            <g filter="url(#filter0_d_370_19922)">
+                            <path d="M2.4375 14C2.4375 7.37258 7.81008 2 14.4375 2C21.0649 2 26.4375 7.37258 26.4375 14C26.4375 20.6274 21.0649 26 14.4375 26C7.81008 26 2.4375 20.6274 2.4375 14Z" fill="#FEF6E6" shape-rendering="crispEdges"/>
+                            <path d="M2.6875 14C2.6875 7.51065 7.94815 2.25 14.4375 2.25C20.9268 2.25 26.1875 7.51065 26.1875 14C26.1875 20.4893 20.9268 25.75 14.4375 25.75C7.94815 25.75 2.6875 20.4893 2.6875 14Z" stroke="#FDDC9B" stroke-width="0.5" shape-rendering="crispEdges"/>
+                            <path d="M20.1738 13.4877L20.0401 14.9083C19.8198 17.249 19.7097 18.4194 19.0198 19.125C18.33 19.8307 17.296 19.8307 15.2282 19.8307H13.6416C11.5737 19.8307 10.5398 19.8307 9.84995 19.125C9.16009 18.4194 9.04994 17.249 8.82964 14.9083L8.69595 13.4877C8.59094 12.3721 8.53844 11.8142 8.72931 11.5836C8.83255 11.4589 8.97295 11.3824 9.12306 11.3692C9.40054 11.3449 9.74902 11.7416 10.446 12.535C10.8064 12.9454 10.9866 13.1505 11.1877 13.1823C11.2991 13.1999 11.4126 13.1818 11.5155 13.13C11.7011 13.0366 11.8249 12.783 12.0724 12.2757L13.3773 9.6019C13.845 8.64334 14.0789 8.16406 14.4349 8.16406C14.7908 8.16406 15.0248 8.64334 15.4925 9.60189L16.7973 12.2757C17.0449 12.783 17.1687 13.0366 17.3543 13.13C17.4572 13.1818 17.5707 13.1999 17.6821 13.1823C17.8832 13.1505 18.0633 12.9454 18.4238 12.535C19.1208 11.7416 19.4692 11.3449 19.7467 11.3692C19.8968 11.3824 20.0372 11.4589 20.1405 11.5836C20.3313 11.8142 20.2788 12.3721 20.1738 13.4877Z" fill="#F4980A"/>
+                            </g>
+                            <defs>
+                            <filter id="filter0_d_370_19922" x="0.4375" y="0" width="28" height="28" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                            <feOffset/>
+                            <feGaussianBlur stdDeviation="1"/>
+                            <feComposite in2="hardAlpha" operator="out"/>
+                            <feColorMatrix type="matrix" values="0 0 0 0 0.988235 0 0 0 0 0.74902 0 0 0 0 0.286275 0 0 0 0.2 0"/>
+                            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_370_19922"/>
+                            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_370_19922" result="shape"/>
+                            </filter>
+                            </defs>
+                            </svg>
+                        Upgrade</button>
+                    <button class="px-0 py-0 btn dropdown-toggle btn border-0" type="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <div class="d-inline-flex justify-content-center" *ngIf="!profileImage">
+                            <div class="rounded-circle px-py-user-profile bg-user-profile mhv-0"
+                                style="width: 40px; height: 40px; display: flex; justify-content: center; align-items: center;">
+                                <span class="text-black font-weight-bold fs-low">{{userName}}</span>
+                            </div>
+                            <div class="d-none rounded-circle bg-user-transparent">
+                                <img class="img-fluid rounded-circle" src="/assets/images/user.jpg">
+                            </div>
+                        </div>
+                        <div class="drp-subhead px-3 py-3" *ngIf="profileImage">
+                            <div _ngcontent-tkp-c102="" class="profile-pic px-py-user-profile">
+                                <img [src]="profileImage" id="output" width="35">
+                            </div>
+                        </div>
+                    </button>
+                    <div class="dropdown-menu">
+                        <div class="popup"></div>
+                        <!-- <div class="arrow-border"></div> -->
+                        <div class="dropdown-item1 d-flex align-items-center mt-2">
+                            <div class="d-inline-flex justify-content-center" *ngIf="!profileImage">
+                                <div class="rounded-circle px-py-user-profile bg-user-profile mhv-0 profile">
+                                    <span class="text-black font-weight-bold fs-low">{{userName}}</span>
+                                </div>
+                                <div class="d-none rounded-circle bg-user-transparent">
+                                    <img class="img-fluid rounded-circle" src="/assets/images/user.jpg">
+                                </div>
+                            </div>
+                            <div class="drp-subhead px-3 py-3" *ngIf="profileImage">
+                                <div _ngcontent-tkp-c102="" class="profile-pic px-py-user-profile">
+                                    <img [src]="profileImage" id="output" width="35">
+                                </div>
+                            </div>
+                            <div class="ms-1">
+                                <p class="text-black fs-very-low-12 mb-1 fw-four">
+                                    {{profile?.ProfileFirstName}}&nbsp;{{profile?.ProfileSecondName}}
+                                </p>
+                                <p class="text-gray fs-very-low-12 mb-0 fw-three">{{profile?.ProfileEMail}}</p>
+                            </div>
+                        </div>
+                        <!-- <div class="dropdown-divider"></div> -->
+                        <div class="profile-popup">
+                            <a class="dropdown-item mt-2" href="/app/user-profile" *ngIf="!IntegrationMediumOffice">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <mask id="mask0_4140_14086" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
+                                        y="0" width="20" height="20">
+                                        <rect width="20" height="20" fill="#D9D9D9" />
+                                    </mask>
+                                    <g mask="url(#mask0_4140_14086)">
+                                        <path
+                                            d="M4.8763 14.25C5.58464 13.7083 6.3763 13.2812 7.2513 12.9687C8.1263 12.6562 9.04297 12.5 10.0013 12.5C10.9596 12.5 11.8763 12.6562 12.7513 12.9687C13.6263 13.2812 14.418 13.7083 15.1263 14.25C15.6124 13.6805 15.9909 13.0347 16.2617 12.3125C16.5326 11.5902 16.668 10.8194 16.668 9.99996C16.668 8.15274 16.0187 6.57982 14.7201 5.28121C13.4214 3.9826 11.8485 3.33329 10.0013 3.33329C8.15408 3.33329 6.58116 3.9826 5.28255 5.28121C3.98394 6.57982 3.33464 8.15274 3.33464 9.99996C3.33464 10.8194 3.47005 11.5902 3.74089 12.3125C4.01172 13.0347 4.39019 13.6805 4.8763 14.25ZM10.0013 10.8333C9.18186 10.8333 8.49089 10.552 7.92839 9.98954C7.36589 9.42704 7.08464 8.73607 7.08464 7.91663C7.08464 7.09718 7.36589 6.40621 7.92839 5.84371C8.49089 5.28121 9.18186 4.99996 10.0013 4.99996C10.8207 4.99996 11.5117 5.28121 12.0742 5.84371C12.6367 6.40621 12.918 7.09718 12.918 7.91663C12.918 8.73607 12.6367 9.42704 12.0742 9.98954C11.5117 10.552 10.8207 10.8333 10.0013 10.8333ZM10.0013 18.3333C8.84852 18.3333 7.76519 18.1145 6.7513 17.677C5.73741 17.2395 4.85547 16.6458 4.10547 15.8958C3.35547 15.1458 2.76172 14.2638 2.32422 13.25C1.88672 12.2361 1.66797 11.1527 1.66797 9.99996C1.66797 8.84718 1.88672 7.76385 2.32422 6.74996C2.76172 5.73607 3.35547 4.85413 4.10547 4.10413C4.85547 3.35413 5.73741 2.76038 6.7513 2.32288C7.76519 1.88538 8.84852 1.66663 10.0013 1.66663C11.1541 1.66663 12.2374 1.88538 13.2513 2.32288C14.2652 2.76038 15.1471 3.35413 15.8971 4.10413C16.6471 4.85413 17.2409 5.73607 17.6784 6.74996C18.1159 7.76385 18.3346 8.84718 18.3346 9.99996C18.3346 11.1527 18.1159 12.2361 17.6784 13.25C17.2409 14.2638 16.6471 15.1458 15.8971 15.8958C15.1471 16.6458 14.2652 17.2395 13.2513 17.677C12.2374 18.1145 11.1541 18.3333 10.0013 18.3333ZM10.0013 16.6666C10.7374 16.6666 11.4319 16.559 12.0846 16.3437C12.7374 16.1284 13.3346 15.8194 13.8763 15.4166C13.3346 15.0138 12.7374 14.7048 12.0846 14.4895C11.4319 14.2743 10.7374 14.1666 10.0013 14.1666C9.26519 14.1666 8.57075 14.2743 7.91797 14.4895C7.26519 14.7048 6.66797 15.0138 6.1263 15.4166C6.66797 15.8194 7.26519 16.1284 7.91797 16.3437C8.57075 16.559 9.26519 16.6666 10.0013 16.6666ZM10.0013 9.16663C10.3624 9.16663 10.661 9.04857 10.8971 8.81246C11.1332 8.57635 11.2513 8.27774 11.2513 7.91663C11.2513 7.55551 11.1332 7.2569 10.8971 7.02079C10.661 6.78468 10.3624 6.66663 10.0013 6.66663C9.64019 6.66663 9.34158 6.78468 9.10547 7.02079C8.86936 7.2569 8.7513 7.55551 8.7513 7.91663C8.7513 8.27774 8.86936 8.57635 9.10547 8.81246C9.34158 9.04857 9.64019 9.16663 10.0013 9.16663Z"
+                                            fill="#525252" />
+                                    </g>
+                                </svg>
+                                <span class="fs-very-low-12 fw-four text-gray ms-2">My Profile</span>
+                            </a>
+                            <!-- <a class="dropdown-item mt-2" href="/app/settings">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <mask id="mask0_4140_14091" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                <rect width="20" height="20" fill="#D9D9D9"/>
+                                </mask>
+                                <g mask="url(#mask0_4140_14091)">
+                                <path d="M4.16667 17.5C3.70833 17.5 3.31597 17.3368 2.98958 17.0104C2.66319 16.684 2.5 16.2917 2.5 15.8333V4.16667C2.5 3.70833 2.66319 3.31597 2.98958 2.98958C3.31597 2.66319 3.70833 2.5 4.16667 2.5H15.8333C16.2917 2.5 16.684 2.66319 17.0104 2.98958C17.3368 3.31597 17.5 3.70833 17.5 4.16667V6.25H15.8333V4.16667H4.16667V15.8333H15.8333V13.75H17.5V15.8333C17.5 16.2917 17.3368 16.684 17.0104 17.0104C16.684 17.3368 16.2917 17.5 15.8333 17.5H4.16667ZM10.8333 14.1667C10.375 14.1667 9.98264 14.0035 9.65625 13.6771C9.32986 13.3507 9.16667 12.9583 9.16667 12.5V7.5C9.16667 7.04167 9.32986 6.64931 9.65625 6.32292C9.98264 5.99653 10.375 5.83333 10.8333 5.83333H16.6667C17.125 5.83333 17.5174 5.99653 17.8438 6.32292C18.1701 6.64931 18.3333 7.04167 18.3333 7.5V12.5C18.3333 12.9583 18.1701 13.3507 17.8438 13.6771C17.5174 14.0035 17.125 14.1667 16.6667 14.1667H10.8333ZM16.6667 12.5V7.5H10.8333V12.5H16.6667ZM13.3333 11.25C13.6806 11.25 13.9757 11.1285 14.2188 10.8854C14.4618 10.6424 14.5833 10.3472 14.5833 10C14.5833 9.65278 14.4618 9.35764 14.2188 9.11458C13.9757 8.87153 13.6806 8.75 13.3333 8.75C12.9861 8.75 12.691 8.87153 12.4479 9.11458C12.2049 9.35764 12.0833 9.65278 12.0833 10C12.0833 10.3472 12.2049 10.6424 12.4479 10.8854C12.691 11.1285 12.9861 11.25 13.3333 11.25Z" fill="#525252"/>
+                                </g>
+                                </svg>
+                            <span class="fs-very-low-12 fw-four text-gray ms-2">Refer a Friend</span>
+                        </a> -->
+                            <!-- <a class="dropdown-item" href="/app/billing">
+                            <span class="fs-low fw-four text-gray">Billing</span>
+                        </a>
+                        <a class="dropdown-item" href="/app/team-settings">
+                            <span class="fs-low fw-four text-gray">Team settings</span>
+                        </a>
+                        <a class="dropdown-item" href="/app/manage-members">
+                            <span class="fs-low fw-four text-gray">Manage members</span>
+                        </a>
+                        <a class="dropdown-item" href="/app/find-your-team">
+                            <span class="fs-low fw-four text-gray">Find available teams</span>
+                        </a> -->
+                            <!-- <div class="dropdown-divider"></div> -->
+                            <a class="dropdown-item mt-2 mb-2" href="javascript:void(0)" (click)="confirmLogout()">
+                                <span class="fs-very-low-12 fw-four text-gray">
+                                    <span class="me-1">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <mask id="mask0_4140_14096" style="mask-type:alpha"
+                                                maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                <rect width="20" height="20" fill="#D9D9D9" />
+                                            </mask>
+                                            <g mask="url(#mask0_4140_14096)">
+                                                <path
+                                                    d="M16.7917 10.8333H6.66667V9.16667H16.7917L15.5 7.875L16.6667 6.66667L20 10L16.6667 13.3333L15.5 12.125L16.7917 10.8333ZM12.5 7.5V4.16667H4.16667V15.8333H12.5V12.5H14.1667V15.8333C14.1667 16.2917 14.0035 16.684 13.6771 17.0104C13.3507 17.3368 12.9583 17.5 12.5 17.5H4.16667C3.70833 17.5 3.31597 17.3368 2.98958 17.0104C2.66319 16.684 2.5 16.2917 2.5 15.8333V4.16667C2.5 3.70833 2.66319 3.31597 2.98958 2.98958C3.31597 2.66319 3.70833 2.5 4.16667 2.5H12.5C12.9583 2.5 13.3507 2.66319 13.6771 2.98958C14.0035 3.31597 14.1667 3.70833 14.1667 4.16667V7.5H12.5Z"
+                                                    fill="#525252" />
+                                            </g>
+                                        </svg>
+                                    </span>
+                                    Sign Out
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledrenamePresentationLabelby="logoutlabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered custom-popup">
+        <div class="modal-content content-popup">
+            <div class="modal-body d-flex">
+                <div class="wi-95">
+                    <p class="fw-five">Do you want to sign out of your account?</p>
+                </div>
+                <div>
+                    <button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close" (click)="closeLogout()">
+                        &times;
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal" (click)="closeLogout()">
+                    Cancel
+                </button>
+                <button type="submit" class="btn logout-button" (click)="logout()">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>

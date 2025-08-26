@@ -1,0 +1,58 @@
+<div class="edu-plans">
+    <div class="edu-description">
+        <p>
+            <b>Educational Plans</b> - Special rates for teachers, students, and nonprofit organisations. 
+            <a class="learn-more">
+                Learn more 
+                <span class="arrow">➔</span>
+            </a>
+        </p>
+    </div>
+    <div class="edu-offer">
+        <h2 class="offer-head">
+          <span>More Accounts, More Savings!</span>   <br> <span class="offer-expiry">Choose a plan below and watch your bill go down.</span>
+        </h2>
+    </div>
+    <div class="edu-pricing">
+        <p>
+            Get licence of 
+            <select 
+                class="selected-plan-cost" 
+                [(ngModel)]="selectedPlanCost" 
+                aria-label="Select plan" (change)="setPlan($event)" required
+            >
+                <option value="0" disabled selected>Select Plan</option>
+                <option *ngFor="let plan of plans" [value]="plan.value">{{ plan.name }}</option>
+            </select>
+           
+            <svg class="dropdown-arrow" width="10" height="5" viewBox="0 0 10 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M5.0026 4.49967L0.835938 0.333008H9.16927L5.0026 4.49967Z" fill="#525252"></path>
+            </svg>  for
+            <input 
+                class="license-count" 
+                type="number" 
+                [(ngModel)]="licenseCount" 
+                (blur)="validateLicenseCount($event)" 
+                (input)="validateLicenseCount($event)" 
+                min="2" 
+                max="100" 
+                aria-label="Number of licenses" 
+                required
+            > 
+            accounts and pay just 
+            <span class="discounted-price" *ngIf="licenseCount >= 2 && licenseCount <= 100">$<span class="ms-1">{{ calculateDiscountedPrice()}}</span></span> 
+            <span class="discounted-price" *ngIf="licenseCount < 2 || licenseCount > 100">$<span class="ms-1">---</span></span> 
+        <!-- </p>
+        <p class="savings"> -->
+            <span class="discount-now ms-1" *ngIf="licenseCount >= 2 && licenseCount <= 100">
+                SAVE <b>{{getFormattedDiscountPercentage() }}%  </b></span> <span class="difference-value ms-1" *ngIf="licenseCount >= 2 && licenseCount <= 100">{{ calculateSavings() | currency }}</span>
+        </p>
+        
+        <div *ngIf="licenseError" class="text-danger mt-1">
+            {{ licenseError }}
+        </div>
+        <div class="edu-btn mt-5" *ngIf="licenseCount >= 2 && licenseCount <= 100">
+            <button class="btn btn-primary btn-buy" *ngIf="this.selectedPlanCost != 0">Buy More</button>
+        </div>
+    </div>
+</div>

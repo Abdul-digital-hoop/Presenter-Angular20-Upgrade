@@ -1,0 +1,874 @@
+<section class="presentation-main-screen">
+    <div class="inside-presentation-screen">
+        <div class="position-max-width" #OuterScreen>
+            <div class="main-center-div" #InnerScreen [ngStyle]="{'width':this.panelWidth,'height':this.panelHeight}">
+                <div class="inside-main-div">
+                    <div class="top-first-div"></div>
+                    <!-- <div class="top-second-div"></div> -->
+                    <!-- [appThemes]="workSpaceService.presentationTheme" -->
+                    <div class="scale-resize-div" [ngClass]="{'hidden': workSpaceService.isLastSlide}" >
+                        <div class="div-width-height"[appThemes]="workSpaceService.slideDesign | slideThemes:null">
+                            <div class="presentation-slide-end">
+                                <div class="w-h-300"></div>
+                                <span>The session has ended. Well done on delivering a memorable presentation!</span>
+                            </div>
+                            <!-- * ===== Instruction Nab Bar ====== -->
+                                <div class="position-absolute-menu-top hover-target position-menu-bottom-info-toolbar-icon" *ngIf="!IntegrationMediumZoom" [ngClass]=" workSpaceService.isPreviewMode ? 'preview-border-removed':''" (mouseover)="onHover()" (mouseleave)="onHoverOut()">
+                                    <div class="d-flex flex-row justify-content-between align-items-center">
+                                        <ng-container *ngIf="!this.workSpaceService.isPreviewMode">
+                                            <button  style="border-radius: 25px;"
+                                                class="back-to-edit-page-section btn btn-list-menu mx-2" (click)="backToWorkSpace()">
+                                                <!-- <img class="img-fluid" src="/assets/new-icons/arrow-left.svg"> -->
+                                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <mask id="mask0_3596_18857" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                                        width="20" height="20">
+                                                        <rect width="20" height="20" [attr.fill]="ContrastColor" />
+                                                    </mask>
+                                                    <g mask="url(#mask0_3596_18857)">
+                                                        <path
+                                                            d="M6.51953 10.833L11.1862 15.4997L9.9987 16.6663L3.33203 9.99967L9.9987 3.33301L11.1862 4.49967L6.51953 9.16634H16.6654V10.833H6.51953Z"
+                                                            [attr.fill]="'black'" />
+                                                    </g>
+                                                </svg>
+                                            </button>
+                                        </ng-container>
+                                        <ng-container *ngIf="workSpaceService.slideContentType == workSpaceService.masterSlideTypeName.QUIZ">
+                                            <ng-container *ngIf="!workSpaceService?.isMusicMute">
+                                                <button [ngStyle]="{'background-color':getContrastColor()}" style="border-radius: 25px;"
+                                                    class="back-to-edit-page-section btn btn-list-menu" data-bs-custom-class="opacity-07"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom" [attr.data-bs-title]="musicTooltipTittle"
+                                                    (click)="muteAndMunte()">
+                                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <mask id="mask0_8191_322049" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="3" y="3"
+                                                            width="24" height="24">
+                                                            <rect x="3" y="3" width="24" height="24" [attr.fill]="ContrastColor" />
+                                                        </mask>
+                                                        <g mask="url(#mask0_8191_322049)">
+                                                            <path
+                                                                d="M17 23.7246V21.6746C18.5 21.2413 19.7083 20.4079 20.625 19.1746C21.5417 17.9413 22 16.5413 22 14.9746C22 13.4079 21.5417 12.0079 20.625 10.7746C19.7083 9.54128 18.5 8.70794 17 8.27461V6.22461C19.0667 6.69128 20.75 7.73711 22.05 9.36211C23.35 10.9871 24 12.8579 24 14.9746C24 17.0913 23.35 18.9621 22.05 20.5871C20.75 22.2121 19.0667 23.2579 17 23.7246ZM6 17.9996V11.9996H10L15 6.99961V22.9996L10 17.9996H6ZM17 18.9996V10.9496C17.7833 11.3163 18.3958 11.8663 18.8375 12.5996C19.2792 13.3329 19.5 14.1329 19.5 14.9996C19.5 15.8496 19.2792 16.6371 18.8375 17.3621C18.3958 18.0871 17.7833 18.6329 17 18.9996ZM13 11.8496L10.85 13.9996H8V15.9996H10.85L13 18.1496V11.8496Z"
+                                                                [attr.fill]="ContrastColor" />
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </ng-container>
+                                            <ng-container *ngIf="workSpaceService?.isMusicMute">
+                                                <button [ngStyle]="{'background-color':getContrastColor()}" style="border-radius: 25px;"
+                                                    class="back-to-edit-page-section btn btn-list-menu" data-bs-custom-class="opacity-07"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-title="UnMute"
+                                                    (click)="muteAndMunte()">
+                                                    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <mask id="mask0_8191_322076" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                                                            width="24" height="24">
+                                                            <rect width="24" height="24" [attr.fill]="ContrastColor" />
+                                                        </mask>
+                                                        <g mask="url(#mask0_8191_322076)">
+                                                            <path
+                                                                d="M19.8004 22.6008L16.7754 19.5758C16.3587 19.8424 15.9171 20.0716 15.4504 20.2633C14.9837 20.455 14.5004 20.6091 14.0004 20.7258V18.6758C14.2337 18.5924 14.4629 18.5091 14.6879 18.4258C14.9129 18.3424 15.1254 18.2424 15.3254 18.1258L12.0004 14.8008V20.0008L7.00039 15.0008H3.00039V9.00078H6.20039L1.40039 4.20078L2.80039 2.80078L21.2004 21.2008L19.8004 22.6008ZM19.6004 16.8008L18.1504 15.3508C18.4337 14.8341 18.6462 14.2924 18.7879 13.7258C18.9296 13.1591 19.0004 12.5758 19.0004 11.9758C19.0004 10.4091 18.5421 9.00912 17.6254 7.77578C16.7087 6.54245 15.5004 5.70911 14.0004 5.27578V3.22578C16.0671 3.69245 17.7504 4.73828 19.0504 6.36328C20.3504 7.98828 21.0004 9.85912 21.0004 11.9758C21.0004 12.8591 20.8796 13.7091 20.6379 14.5258C20.3962 15.3424 20.0504 16.1008 19.6004 16.8008ZM16.2504 13.4508L14.0004 11.2008V7.95078C14.7837 8.31745 15.3962 8.86745 15.8379 9.60078C16.2796 10.3341 16.5004 11.1341 16.5004 12.0008C16.5004 12.2508 16.4796 12.4966 16.4379 12.7383C16.3962 12.9799 16.3337 13.2174 16.2504 13.4508ZM12.0004 9.20078L9.40039 6.60078L12.0004 4.00078V9.20078ZM10.0004 15.1508V12.8008L8.20039 11.0008H5.00039V13.0008H7.85039L10.0004 15.1508Z"
+                                                                [attr.fill]="ContrastColor" />
+                                                        </g>
+                                                    </svg>
+                                                </button>
+                                            </ng-container>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                                <!--* ======= Slieone Remote ======= -->
+                            <ng-container *ngIf="isLinkVisible && loadPresentationPage && !workSpaceService.isPreviewMode && !IntegrationMediumOffice">
+                                    <div class="position-absolute-menu-top hover-target mt-2 position-menu-bottom-info-toolbar-icon" [style.margin-left]="(imageType === 'Image left'&& workSpaceService.presentationSettingJoiningInstructions) ? '100px':''" (mouseover)="onHover()" (mouseleave)="onHoverOut()" [style.left]="imageType === 'Side by side left' ? '91% !important':'87% !important'">
+                                        <div class="d-flex flex-row justify-content-end w-100">
+                                            <ng-container *ngIf="((imageType === 'Image left' || imageType === 'Side by side left') && workSpaceService.presentationSettingJoiningInstructions)">
+                                                <button [ngStyle]="{'cursor': customerPlan?.remote ? '' : 'not-allowed'}" 
+                                                        style="border-radius: 25px;" 
+                                                        class="back-to-edit-page-section btn btn-list-menu ms-2" 
+                                                        (click)="openSlideOneRemote()" 
+                                                        [style.color]="ContrastColor" 
+                                                        [attr.data-bs-toggle]="customerPlan?.remote ? null : 'tooltip'" 
+                                                        data-tooltip="Slidea Remote" [attr.data-bs-placement]="'bottom'"> <!-- Optional: Add tooltip text for remote -->
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" [attr.fill]="ContrastColor" xmlns="http://www.w3.org/2000/svg">
+                                                        <path d="M15.625 17.5C15.5255 17.5 15.4302 17.5395 15.3598 17.6098C15.2895 17.6802 15.25 17.7755 15.25 17.875V20.0425C15.25 20.0644 15.2413 20.0854 15.2258 20.1008C15.2104 20.1163 15.1894 20.125 15.1675 20.125H1.8325C1.81062 20.125 1.78964 20.1163 1.77416 20.1008C1.75869 20.0854 1.75 20.0644 1.75 20.0425V10.4575C1.75 10.4356 1.75869 10.4146 1.77416 10.3992C1.78964 10.3837 1.81062 10.375 1.8325 10.375H5.875C5.97446 10.375 6.06984 10.3355 6.14016 10.2652C6.21049 10.1948 6.25 10.0995 6.25 10C6.25 9.90054 6.21049 9.80516 6.14016 9.73483C6.06984 9.66451 5.97446 9.625 5.875 9.625H1.8325C1.61171 9.625 1.39996 9.71271 1.24383 9.86883C1.08771 10.025 1 10.2367 1 10.4575L1 20.0425C1 20.2633 1.08771 20.475 1.24383 20.6312C1.39996 20.7873 1.61171 20.875 1.8325 20.875H8.125V22.375H5.125C5.02554 22.375 4.93016 22.4145 4.85984 22.4848C4.78951 22.5552 4.75 22.6505 4.75 22.75C4.75 22.8495 4.78951 22.9448 4.85984 23.0152C4.93016 23.0855 5.02554 23.125 5.125 23.125H11.875C11.9745 23.125 12.0698 23.0855 12.1402 23.0152C12.2105 22.9448 12.25 22.8495 12.25 22.75C12.25 22.6505 12.2105 22.5552 12.1402 22.4848C12.0698 22.4145 11.9745 22.375 11.875 22.375H8.875V20.875H15.1675C15.3883 20.875 15.6 20.7873 15.7562 20.6312C15.9123 20.475 16 20.2633 16 20.0425V17.875C16 17.7755 15.9605 17.6802 15.8902 17.6098C15.8198 17.5395 15.7245 17.5 15.625 17.5Z" [attr.fill]="ContrastColor" [attr.stroke]="ContrastColor" stroke-width="0.7"/>
+                                                        <path d="M14.5 0.875C12.8189 0.875 11.1755 1.37352 9.77766 2.30751C8.37984 3.2415 7.29037 4.56902 6.64703 6.12219C6.00368 7.67536 5.83535 9.38443 6.16333 11.0333C6.4913 12.6821 7.30085 14.1967 8.48959 15.3854C9.67834 16.5742 11.1929 17.3837 12.8417 17.7117C14.4906 18.0396 16.1996 17.8713 17.7528 17.228C19.306 16.5846 20.6335 15.4952 21.5675 14.0973C22.5015 12.6995 23 11.0561 23 9.375C23 7.12066 22.1045 4.95865 20.5104 3.36459C18.9164 1.77053 16.7543 0.875 14.5 0.875ZM14.5 16.8125C13.029 16.8125 11.591 16.3763 10.3679 15.5591C9.14486 14.7418 8.19158 13.5802 7.62865 12.2212C7.06572 10.8622 6.91844 9.36675 7.20541 7.92401C7.49239 6.48128 8.20074 5.15605 9.2409 4.11589C10.281 3.07574 11.6063 2.36739 13.049 2.08041C14.4918 1.79343 15.9872 1.94072 17.3462 2.50365C18.7052 3.06657 19.8668 4.01986 20.6841 5.24295C21.5013 6.46604 21.9375 7.904 21.9375 9.375C21.9375 11.3475 21.1539 13.2393 19.7591 14.6341C18.3643 16.0289 16.4725 16.8125 14.5 16.8125Z" [attr.fill]="ContrastColor" [attr.stroke]="ContrastColor" stroke-width="0.7"/>
+                                                        <path d="M17.8801 5.1158C17.8421 5.07909 17.797 5.04997 17.7474 5.0301C17.6977 5.01023 17.6445 5 17.5908 5C17.537 5 17.4838 5.01023 17.4342 5.0301C17.3845 5.04997 17.3394 5.07909 17.3015 5.1158L15.1199 7.22031C15.0819 7.25698 15.0517 7.30053 15.0312 7.34846C15.0106 7.39639 15 7.44777 15 7.49966C15 7.55155 15.0106 7.60293 15.0312 7.65086C15.0517 7.6988 15.0819 7.74234 15.1199 7.77901L17.3015 9.88352C17.3778 9.95767 17.4815 9.99956 17.5897 10C17.6437 10 17.6971 9.98977 17.747 9.96978C17.7968 9.94979 17.842 9.92047 17.8801 9.88352C17.9181 9.84685 17.9483 9.8033 17.9688 9.75537C17.9894 9.70744 18 9.65606 18 9.60417C18 9.55228 17.9894 9.5009 17.9688 9.45297C17.9483 9.40504 17.9181 9.36149 17.8801 9.32482L15.9889 7.49867L17.8801 5.67253C17.9562 5.59855 17.999 5.49848 17.999 5.39417C17.999 5.28985 17.9562 5.18978 17.8801 5.1158Z" [attr.fill]="ContrastColor" [attr.stroke]="ContrastColor" stroke-width="0.7"/>
+                                                        <path d="M12.6985 8.36571C12.6217 8.29162 12.5177 8.25 12.4092 8.25C12.3006 8.25 12.1966 8.29162 12.1198 8.36571C12.0431 8.4398 12 8.54029 12 8.64507C12 8.74985 12.0431 8.85033 12.1198 8.92442L14.0111 10.7506L12.1198 12.5768C12.0437 12.6508 12.0009 12.7508 12.0009 12.8552C12.0009 12.9595 12.0437 13.0595 12.1198 13.1335C12.1579 13.1705 12.2031 13.1998 12.2529 13.2198C12.3028 13.2398 12.3562 13.25 12.4102 13.25C12.5185 13.2496 12.6221 13.2077 12.6985 13.1335L14.8801 11.029C14.9181 10.9923 14.9482 10.9488 14.9688 10.9008C14.9894 10.8529 15 10.8015 15 10.7496C15 10.6977 14.9894 10.6463 14.9688 10.5984C14.9482 10.5505 14.9181 10.5069 14.8801 10.4703L12.6985 8.36571Z" [attr.fill]="ContrastColor" [attr.stroke]="ContrastColor" stroke-width="0.7"/>
+                                                        </svg>
+                                                        <p *ngIf="customerPlan?.remote; else inactiveIcon"></p>
+                                                </button>
+                                            </ng-container>
+                                            <ng-container *ngIf="!((imageType === 'Image left'|| imageType === 'Side by side left') && workSpaceService.presentationSettingJoiningInstructions)">
+                                                <button  style="border-radius: 25px;" class="back-to-edit-page-section btn btn-list-menu"(click)="openSlideOneRemote()" [ngStyle]="{'cursor':customerPlan?.remote?'':'not-allowed'}">
+                                                    Slidea Remote
+                                                    <!-- <img src="/assets/new-icons/Remote.svg" class="tab-icon"> -->
+                                                    <svg width="24" height="24" viewBox="0 0 24 24" [attr.fill]="'black'" xmlns="http://www.w3.org/2000/svg" *ngIf="customerPlan?.remote; else inactiveIcon">
+                                                        <path d="M15.625 17.5C15.5255 17.5 15.4302 17.5395 15.3598 17.6098C15.2895 17.6802 15.25 17.7755 15.25 17.875V20.0425C15.25 20.0644 15.2413 20.0854 15.2258 20.1008C15.2104 20.1163 15.1894 20.125 15.1675 20.125H1.8325C1.81062 20.125 1.78964 20.1163 1.77416 20.1008C1.75869 20.0854 1.75 20.0644 1.75 20.0425V10.4575C1.75 10.4356 1.75869 10.4146 1.77416 10.3992C1.78964 10.3837 1.81062 10.375 1.8325 10.375H5.875C5.97446 10.375 6.06984 10.3355 6.14016 10.2652C6.21049 10.1948 6.25 10.0995 6.25 10C6.25 9.90054 6.21049 9.80516 6.14016 9.73483C6.06984 9.66451 5.97446 9.625 5.875 9.625H1.8325C1.61171 9.625 1.39996 9.71271 1.24383 9.86883C1.08771 10.025 1 10.2367 1 10.4575L1 20.0425C1 20.2633 1.08771 20.475 1.24383 20.6312C1.39996 20.7873 1.61171 20.875 1.8325 20.875H8.125V22.375H5.125C5.02554 22.375 4.93016 22.4145 4.85984 22.4848C4.78951 22.5552 4.75 22.6505 4.75 22.75C4.75 22.8495 4.78951 22.9448 4.85984 23.0152C4.93016 23.0855 5.02554 23.125 5.125 23.125H11.875C11.9745 23.125 12.0698 23.0855 12.1402 23.0152C12.2105 22.9448 12.25 22.8495 12.25 22.75C12.25 22.6505 12.2105 22.5552 12.1402 22.4848C12.0698 22.4145 11.9745 22.375 11.875 22.375H8.875V20.875H15.1675C15.3883 20.875 15.6 20.7873 15.7562 20.6312C15.9123 20.475 16 20.2633 16 20.0425V17.875C16 17.7755 15.9605 17.6802 15.8902 17.6098C15.8198 17.5395 15.7245 17.5 15.625 17.5Z" [attr.fill]="'black'" [attr.stroke]="'black'" stroke-width="0.7"/>
+                                                        <path d="M14.5 0.875C12.8189 0.875 11.1755 1.37352 9.77766 2.30751C8.37984 3.2415 7.29037 4.56902 6.64703 6.12219C6.00368 7.67536 5.83535 9.38443 6.16333 11.0333C6.4913 12.6821 7.30085 14.1967 8.48959 15.3854C9.67834 16.5742 11.1929 17.3837 12.8417 17.7117C14.4906 18.0396 16.1996 17.8713 17.7528 17.228C19.306 16.5846 20.6335 15.4952 21.5675 14.0973C22.5015 12.6995 23 11.0561 23 9.375C23 7.12066 22.1045 4.95865 20.5104 3.36459C18.9164 1.77053 16.7543 0.875 14.5 0.875ZM14.5 16.8125C13.029 16.8125 11.591 16.3763 10.3679 15.5591C9.14486 14.7418 8.19158 13.5802 7.62865 12.2212C7.06572 10.8622 6.91844 9.36675 7.20541 7.92401C7.49239 6.48128 8.20074 5.15605 9.2409 4.11589C10.281 3.07574 11.6063 2.36739 13.049 2.08041C14.4918 1.79343 15.9872 1.94072 17.3462 2.50365C18.7052 3.06657 19.8668 4.01986 20.6841 5.24295C21.5013 6.46604 21.9375 7.904 21.9375 9.375C21.9375 11.3475 21.1539 13.2393 19.7591 14.6341C18.3643 16.0289 16.4725 16.8125 14.5 16.8125Z" [attr.fill]="'black'" [attr.stroke]="'black'" stroke-width="0.7"/>
+                                                        <path d="M17.8801 5.1158C17.8421 5.07909 17.797 5.04997 17.7474 5.0301C17.6977 5.01023 17.6445 5 17.5908 5C17.537 5 17.4838 5.01023 17.4342 5.0301C17.3845 5.04997 17.3394 5.07909 17.3015 5.1158L15.1199 7.22031C15.0819 7.25698 15.0517 7.30053 15.0312 7.34846C15.0106 7.39639 15 7.44777 15 7.49966C15 7.55155 15.0106 7.60293 15.0312 7.65086C15.0517 7.6988 15.0819 7.74234 15.1199 7.77901L17.3015 9.88352C17.3778 9.95767 17.4815 9.99956 17.5897 10C17.6437 10 17.6971 9.98977 17.747 9.96978C17.7968 9.94979 17.842 9.92047 17.8801 9.88352C17.9181 9.84685 17.9483 9.8033 17.9688 9.75537C17.9894 9.70744 18 9.65606 18 9.60417C18 9.55228 17.9894 9.5009 17.9688 9.45297C17.9483 9.40504 17.9181 9.36149 17.8801 9.32482L15.9889 7.49867L17.8801 5.67253C17.9562 5.59855 17.999 5.49848 17.999 5.39417C17.999 5.28985 17.9562 5.18978 17.8801 5.1158Z" [attr.fill]="'black'" [attr.stroke]="'black'" stroke-width="0.7"/>
+                                                        <path d="M12.6985 8.36571C12.6217 8.29162 12.5177 8.25 12.4092 8.25C12.3006 8.25 12.1966 8.29162 12.1198 8.36571C12.0431 8.4398 12 8.54029 12 8.64507C12 8.74985 12.0431 8.85033 12.1198 8.92442L14.0111 10.7506L12.1198 12.5768C12.0437 12.6508 12.0009 12.7508 12.0009 12.8552C12.0009 12.9595 12.0437 13.0595 12.1198 13.1335C12.1579 13.1705 12.2031 13.1998 12.2529 13.2198C12.3028 13.2398 12.3562 13.25 12.4102 13.25C12.5185 13.2496 12.6221 13.2077 12.6985 13.1335L14.8801 11.029C14.9181 10.9923 14.9482 10.9488 14.9688 10.9008C14.9894 10.8529 15 10.8015 15 10.7496C15 10.6977 14.9894 10.6463 14.9688 10.5984C14.9482 10.5505 14.9181 10.5069 14.8801 10.4703L12.6985 8.36571Z" [attr.fill]="'black'" [attr.stroke]="'black'" stroke-width="0.7"/>
+                                                        </svg>
+                                                        
+                                                </button>
+                                            </ng-container>
+                                            <ng-template #inactiveIcon>
+                                                <div class="pricing-icon slide-list-hover remote-pricing-tooltip" data-tooltip="Remote access is locked. Upgrade to enable this feature!" [attr.data-bs-placement]="'bottom'">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16">
+                                                        <g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd">
+                                                            <path d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z"></path>
+                                                        </g>
+                                                    </svg>
+                                                </div>
+                                              </ng-template>
+                                        </div>
+                                    </div>
+                            </ng-container>
+                            <!-- * ===== Center Panel Section ====== -->
+                            <ng-container *ngIf="!loadPresentationPage">
+                                <div class="loading">   
+                                    <div class="loadingWrapper">
+                                        <div id="loading"> </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <div class="bs-body-content" *ngIf="loadPresentationPage">
+                                <ng-container *ngIf="workSpaceService.slideContentType != workSpaceService.masterSlideTypeName.QUIZ && workSpaceService.activeSlideTypeName !== masterSlideTypeName.ImportDocument && workSpaceService.activeSlideTypeName !== masterSlideTypeName.POWER_POINT && workSpaceService.activeSlideTypeName !== masterSlideTypeName.GoogleSlides && workSpaceService.activeSlideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                                    <div class="theme-background-image" [ngStyle]="{'background-image': 'url(' + workSpaceService?.presentationTheme?.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl+ ')','opacity':workSpaceService?.presentationTheme?.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl ? workSpaceService?.presentationTheme?.backgroundColorOpacity:1}"></div>
+                                </ng-container>
+                                <div class="content-center-panel">
+                                    <ng-container *ngIf="workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl">
+                                        <div class="brand-logo" *ngIf="loadPresentationPage" [style.width]="logoPositionType =='Landscape'? '10%':'5%'">
+                                            <div class="logo-icon">
+                                                <img [src]="workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl" alt="Logo" class="logo-image">
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <div class="" [ngClass]="this.imageType == 'Image left' || this.imageType == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+                                        <div *ngIf="(imageType === 'Image right' || imageType === 'Image left') && workSpaceService.activeSlideTypeName !== 'Import Document'" class="background-left-right-image" [ngStyle]="loadBGLayout()"></div>
+                                        <div *ngIf="this.imageType == 'Side by side right' || this.imageType == 'Side by side left'" class="background-slide-by-slide-left-right-image" [ngStyle]="loadBGLayout()"></div>
+                                        <div [ngClass]="{'background-image-panel-top': imageType == 'Image top', 'background-image-panel-bottom': imageType == 'Image bottom', 'background-image-panel': imageType != 'Image top' && imageType != 'Image bottom', 'img-opacity': workSpaceService.activeSlideTypeName != 'Import Document' && workSpaceService.activeSlideTypeName !=masterSlideTypeName.POWER_POINT && workSpaceService.activeSlideTypeName !=masterSlideTypeName.GoogleSlides && workSpaceService.activeSlideTypeName !=masterSlideTypeName.INSTRUCTION_SLIDE_TYPE && imageType === 'Full Image'}">
+                                            <!-- <div class="opacity-point-seven" *ngIf="this.imageType == 'Full Image' && workSpaceService?.slideContentImage && workSpaceService.activeSlideTypeName != 'Import Document'"></div> -->
+                                            <div *ngIf="imageType === 'Full Image' && !showPdf" [ngStyle]="{'background-image': 'url(' +workSpaceService.slideLayoutImage+')','width': '100%','position': 'absolute','height': '100%','opacity':workSpaceService.slideLayoutImageOpacity, 'background-position': 'center center', 'background-repeat': 'no-repeat', 'background-size': 'cover'}"></div>
+                                            <div class="inner-top-bottom-image" *ngIf="imageType == 'Image top' || imageType == 'Image bottom'" [ngStyle]="loadBGLayout()"></div>
+                                            <img #slideImage [src]="slidePdfImage"  (load)="checkImageOrientation()" draggable="false" *ngIf="showPdf">
+                                            <div class="center-chart-content" [ngStyle]="{'padding':workSpaceService.leaderBoardState == quizPresenterScreenManageConstant.CHAMPION_SCORE || workSpaceService.activeSlideTypeName == masterSlideTypeName.MULTIMEDIA ?'0px':'32px'}" [style.position]="workSpaceService.activeSlideTypeName == masterSlideTypeName.ImportDocument ? 'absolute':'relative'">
+                                                <div class="bs-header-part" *ngIf="!this.workSpaceService.isAttendeeRole()"> 
+                                                    <div class="bs-header-section">
+                                                        <!-- * ===== Audience Instruction Bar ====== -->
+                                                        <div>
+                                                            <ng-container *ngIf="workSpaceService.presentationSettingJoiningInstructions">
+                                                                <div class="access-bar-contant position-menu-bottom-info-toolbar-icon">
+                                                                    <h1 class="mb-0 fs-24 access-bar" *ngIf="isLinkVisible && loadPresentationPage">
+                                                                        <span>To join, go to : <b class="presenter-audience-join-link"
+                                                                                (click)="copyToClipboard()">{{workSpaceService.presentationURL}}</b> <span class="ms-2 cursor-pointer" 
+                                                                                (click)="copyToClipboard()">
+                                                                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                    <mask id="mask0_24599_231420" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                                                                        <rect width="24" height="24" fill="#D9D9D9" />
+                                                                                    </mask>
+                                                                                    <g mask="url(#mask0_24599_231420)">
+                                                                                        <path
+                                                                                            d="M9 18C8.45 18 7.97917 17.8042 7.5875 17.4125C7.19583 17.0208 7 16.55 7 16V4C7 3.45 7.19583 2.97917 7.5875 2.5875C7.97917 2.19583 8.45 2 9 2H18C18.55 2 19.0208 2.19583 19.4125 2.5875C19.8042 2.97917 20 3.45 20 4V16C20 16.55 19.8042 17.0208 19.4125 17.4125C19.0208 17.8042 18.55 18 18 18H9ZM9 16H18V4H9V16ZM5 22C4.45 22 3.97917 21.8042 3.5875 21.4125C3.19583 21.0208 3 20.55 3 20V6H5V20H16V22H5Z"
+                                                                                            fill="#343434" />
+                                                                                    </g>
+                                                                                </svg>
+                                                                                <svg *ngIf="copied" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                                                                    xmlns="http://www.w3.org/2000/svg">
+                                                                                    <path
+                                                                                        d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20Z"
+                                                                                        fill="#00BA00" />
+                                                                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                                                                        d="M6.87814 14.877L3.22082 10.9626C2.72011 10.4267 2.74885 9.57886 3.28476 9.07815C3.82066 8.57744 4.66854 8.60626 5.16924 9.14209L7.99035 12.1615L12.4558 7.98925C12.4959 7.95169 12.5379 7.91729 12.5813 7.88563L14.6812 5.92366C15.2171 5.42296 16.0651 5.45177 16.5657 5.98768C17.0664 6.52351 17.0376 7.37146 16.5018 7.87217L10.0881 13.8647L10.0812 13.8574L7.86263 15.9303L6.87814 14.877Z"
+                                                                                        fill="white" />
+                                                                                </svg>
+                                                                            </span> | {{workSpaceService.presentationCode}}</span>
+                                                                    </h1>
+                                                                </div>
+                                                            </ng-container>
+                                                        </div>
+                                                        <!-- * ===== Logo ====== -->
+                                                        <!-- <div>
+                                                            <img src="/assets/images/logo.png" class="img-fluid">
+                                                        </div> -->
+                                                    </div>
+                                                    <ng-container *ngIf="activeslideTypeName == masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE">
+                                                        <div class="d-flex justify-content-between align-items-center py-2" *ngIf="!this.workSpaceService.isAttendeeRole()">
+                                                            <div class="toggle-switch-quiz">
+                                                                <input type="radio" name="role" id="quiz" [checked]="this.workSpaceService.leaderBoardState == quizPresenterScreenManageConstant.QUIZ_SCORE" (change)="updatePlayerPoints(false)">
+                                                                <label for="quiz" class="toggle-label-quiz" (change)="updatePlayerPoints(false)">{{quizPresenterScreenManageConstant.QUIZ_SCORE}}</label>
+                                                                <input type="radio" name="role" id="leading" [checked]="this.workSpaceService.leaderBoardState == quizPresenterScreenManageConstant.LEADING_SCORE || this.workSpaceService.leaderBoardState == quizPresenterScreenManageConstant.CHAMPION_SCORE" (change)="updatePlayerPoints(true)">
+                                                                <label for="leading" class="toggle-label-quiz" (change)="updatePlayerPoints(true)">{{ workSpaceService.isLastLeaderBoard ? quizPresenterScreenManageConstant.CHAMPION_SCORE : (quizPresenterScreenManageConstant.LEADING_SCORE === 'Leading Board' ? 'LeaderBoard' : quizPresenterScreenManageConstant.LEADING_SCORE) }}</label>
+                                                                <span class="toggle-dot-quiz"></span>
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                                <div class="inside-chart-content" [ngStyle]="{'margin-top' : workSpaceService.activeSlideTypeName == masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE || workSpaceService.activeSlideTypeName == masterSlideTypeName.MULTIMEDIA ? '0px' :'40px'}">
+                                                    <div class="main-chart-area">
+                                                        <div class="inside-chart-area"  [ngStyle]="{'height': activeslideTypeName === masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE ? '92%' : '100%'}">
+                                                            <!-- * ===== Presentation Content area ====== -->
+                                                            <ng-container *ngIf="workSpaceService.activeSlideTypeName| questionVisibility: workSpaceService.quizState">
+                                                                <div class="content-text-area" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA">
+                                                                    <span class="inside-text-area">
+                                                                        <div class="text-area-div" 
+                                                                            *ngIf="activeslideTypeName !== masterSlideTypeName.POWER_POINT 
+                                                                                && activeslideTypeName !== masterSlideTypeName.GoogleSlides 
+                                                                                && workSpaceService.leaderBoardState != quizPresenterScreenManageConstant.CHAMPION_SCORE 
+                                                                                && workSpaceService.leaderBoardState != quizPresenterScreenManageConstant.LEADING_SCORE">
+                                                                                <span id="font-style-presentation" class="font-styling-empty-class" [ngClass]="workSpaceService.slideContentType == masterSlideTypeName.QUIZ || workSpaceService.activeSlideTypeName == masterSlideTypeName.INSTRUCTION_SLIDE_TYPE ? getVisibilityClass() : 'visibility-hidden'"
+                                                                                (mouseenter)="checkTooltipVisibility()" 
+                                                                                (mouseleave)="showTooltip = false">
+                                                                                {{workSpaceService.questions}}
+                                                                                </span>
+                                                                        </div>
+                                                                    </span>
+                                                                </div>
+                                                                
+                                                                <div class="prester-page-longer-description" [ngClass]="{'show-tooltip': showTooltip}" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA">
+                                                                    <p>{{workSpaceService.longerDescription}}</p>
+                                                                </div>
+                                                                  
+                                                            </ng-container>
+                                                            <!-- * ===== Dynamic Chart Rendaring Area ====== -->
+                                                            <div class="chart-content-area" [style.margin-top]="workSpaceService.activeSlideTypeName == masterSlideTypeName.MULTIMEDIA ? '0px' : '16px'">
+                                                                <!-- <ng-template appDynamicComponent></ng-template> -->
+                                                                <!-- <app-dynamic-chart #dynamicChart></app-dynamic-chart> -->
+                                                                <app-dynamic-slide-type
+                                                                    #dynamicSlideComponent
+                                                                    [activeSlideTypeId]="workSpaceService.currentMasterSlideTypeId"
+                                                                    [activeslideVisualizationId]="workSpaceService.currentActiveSlide?.design?.slideVisualizationId"
+                                                                    [slideDetails]="workSpaceService.currentActiveSlide"
+                                                                    [template]="workSpaceService.currentPresentation"
+                                                                    [presentationTheme]="workSpaceService.currentPresentation?.presentationThemes"
+                                                                    [viewfrom]="'Presentation'"
+                                                                    [screenOptions]="'presentationScreen'"
+                                                                    [isPresenterEditorScreen]="false"
+                                                                    [isPreview]="false"
+                                                                ></app-dynamic-slide-type>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div [appThemes]="workSpaceService.slideDesign | slideThemes:null">
+                          <app-presenter-toolbar class="presenter-toolbar-container-layer"
+                          *ngIf="!this.workSpaceService.isAttendeeRole()"
+                          [activeslideTypeName]="activeslideTypeName"
+                          [ContrastColor]="ContrastColor"
+                          [loadPresentationPage]="loadPresentationPage"
+                          [isTimerPop]="isTimerPop"
+                          [isSingleSlideMode]="isSingleSlideMode"
+                          [showAnnotationToolbar]="showAnnotationToolbar"
+                          (moveSlides)="moveSlidesFromToolbarComponent($event)"
+                          (moveNextSlides)="nextSlide()"
+                          (movePreviewSlides)="previousSlide()"
+                          (presentationTimer)="presenterStartTimerSeconds($event)"
+                          (enableDisableHotKey)="openHotKeys()"
+                          (clearTimeInterver)="clearTimerIntervel()"
+                          (enableDisableQRCode)="presenterShowQRCode()"
+                          (selectVisualization)="designSlideSelectVisualization($event)"
+                          (updatePresentChartData)="moveSlidesFromToolbarComponent($event)"
+                          (toggleAnnotationToolbar)="toggleAnnotationToolbar()"
+                           ></app-presenter-toolbar>
+                           
+                            <!-- Annotation Overlay -->
+                            <div class="annotation-overlay" 
+                                [class.annotation-active]="isAnnotationMode"
+                                #annotationContainer 
+                                *ngIf="!workSpaceService.isPreviewMode">
+                                <canvas #annotationCanvas 
+                                    class="annotation-canvas"
+                                    [class.annotation-mode-active]="isAnnotationMode">
+                                </canvas>
+                            </div>
+                           <!-- Annotation Floating Button -->
+
+                           
+                           <!-- Annotation Toolbar -->
+                           <app-annotation-toolbar
+                               *ngIf="!workSpaceService.isPreviewMode && isAnnotationMode"
+                               [isVisible]="showAnnotationToolbar"
+                               [position]="annotationToolbarPosition"
+                               (close)="onAnnotationToolbarClose()">
+                           </app-annotation-toolbar>
+                          
+                            <div *ngIf="activeslideTypeName === masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE && workSpaceService.chooseCorrectAnswers" class="position-menu-bottom-last  position-menu-bottom-info-toolbar-icon" style="right:40%;padding: 15px 20px;cursor:pointer;" (click)="handleToggleCorrectAnswer()">
+                                <span>Press <span class="enter-btn-txt">ENTER</span> {{ workSpaceService.multiplechoicepresenterEnterClick ? 'to hide correct answer' : 'to show correct answer' }}</span>
+                            </div>
+                            <div *ngIf="activeslideTypeName === masterSlideTypeName.GUESS_TEHE_NUMBER_SLIDE_TYPE" class="position-menu-bottom-last  position-menu-bottom-info-toolbar-icon" style="right:40%;padding: 15px 20px;cursor:pointer;" (click)="handleToggleCorrectAnswer()">
+                                <span>Press <span class="enter-btn-txt">Enter</span> {{ workSpaceService.guessthenumberpresenterEnterClick ? 'to hide correct answer' : 'to show correct answer' }}</span>
+                            </div>
+                            <div *ngIf="activeslideTypeName === masterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE" class="position-menu-bottom-last  position-menu-bottom-info-toolbar-icon" style="right:40%;padding: 15px 20px;cursor:pointer;" (click)="handleToggleCorrectAnswer()">
+                                <span>Press <span class="enter-btn-txt">Enter</span> {{ workSpaceService.truthorliepresenterEnterClick ? 'to hide correct answer' : 'to show correct answer' }}</span>
+                            </div>
+                            <!-- <div *ngIf="activeslideTypeName === masterSlideTypeName.POWER_POINT" class="position-menu-bottom-last" style="right:40%;padding: 15px 20px;cursor:pointer;" (click)="handleToggleCorrectAnswer()">
+                                <span>{{ workSpaceService.EmbeddedPPTpresenterEnterClick ? 'Exit' : 'Enter'}} <span> PowerPoint</span> </span>
+                            </div> -->
+                            <ng-container *ngIf="loadPresentationPage">
+                                <div class="position-menu-bottom-last position-menu-bottom-info-toolbar-icon" >
+                                    <!-- *========= Reaction Display ========= -->
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <app-reactions class="btn btn-list-menu d-flex justify-content-between align-items-center cursor-default" [presentationReactions]="workSpaceService.presentationSettingActiveReactions"></app-reactions>
+                                        <!-- <button class="btn btn-list-menu d-flex justify-content-between align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="5 Sad">
+                                            <img src="/assets/new-icons/sad.svg" width="20" height="20" class="img-fluid"/>
+                                            <span class="position-text">5</span>
+                                        </button>
+                                        <button class="btn btn-list-menu d-flex justify-content-between align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="5 Likes">
+                                            <img src="/assets/new-icons/like.svg" width="20" height="20" class="img-fluid"/>
+                                            <span class="position-text">5</span>
+                                        </button>
+                                        <button class="btn btn-list-menu d-flex justify-content-between align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="5 Hearts">
+                                            <img src="/assets/new-icons/heart.svg" width="20" height="20" class="img-fluid"/>
+                                            <span class="position-text">5</span>
+                                        </button>
+                                        <button class="btn btn-list-menu d-flex justify-content-between align-items-center" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="5 Laughs">
+                                            <img src="/assets/new-icons/laugh.svg" width="20" height="20" class="img-fluid"/>
+                                            <span class="position-text">5</span>
+                                        </button> -->
+                                        <!-- *========= Voter Count Display ========= -->
+                                        <ng-container *ngIf="!workSpaceService.isPreviewMode">
+                                            <button class="btn btn-list-menu d-flex justify-content-between align-items-center tooltip-top cursor-default"  *ngIf="activeslideTypeName != masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE && this.workSpaceService.slideContentType != masterSlideTypeName.IMPORT && activeslideTypeName != masterSlideTypeName.MULTIMEDIA"  data-tooltip="Voter" [disabled]="this.workSpaceService.slideContentType === masterSlideTypeName.IMPORT">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                    <mask id="mask0_9340_118077" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                                        <rect width="24" height="24" fill="black"/>
+                                                    </mask>
+                                                    <g mask="url(#mask0_9340_118077)">
+                                                        <path d="M12.7992 23C11.4326 23 10.1492 22.6875 8.94922 22.0625C7.74922 21.4375 6.76589 20.5667 5.99922 19.45L1.19922 12.4L1.67422 11.925C2.00755 11.575 2.42005 11.375 2.91172 11.325C3.40339 11.275 3.84922 11.3917 4.24922 11.675L6.99922 13.575V4C6.99922 3.71667 7.09505 3.47917 7.28672 3.2875C7.47839 3.09583 7.71589 3 7.99922 3C8.28255 3 8.52005 3.09583 8.71172 3.2875C8.90339 3.47917 8.99922 3.71667 8.99922 4V17.425L5.29922 14.85L7.67422 18.3C8.25755 19.15 8.99922 19.8125 9.89922 20.2875C10.7992 20.7625 11.7659 21 12.7992 21C14.5159 21 15.9784 20.3958 17.1867 19.1875C18.3951 17.9792 18.9992 16.5167 18.9992 14.8V5C18.9992 4.71667 19.0951 4.47917 19.2867 4.2875C19.4784 4.09583 19.7159 4 19.9992 4C20.2826 4 20.5201 4.09583 20.7117 4.2875C20.9034 4.47917 20.9992 4.71667 20.9992 5V14.8C20.9992 17.0833 20.2034 19.0208 18.6117 20.6125C17.0201 22.2042 15.0826 23 12.7992 23ZM10.9992 12V2C10.9992 1.71667 11.0951 1.47917 11.2867 1.2875C11.4784 1.09583 11.7159 1 11.9992 1C12.2826 1 12.5201 1.09583 12.7117 1.2875C12.9034 1.47917 12.9992 1.71667 12.9992 2V12H10.9992ZM14.9992 12V3C14.9992 2.71667 15.0951 2.47917 15.2867 2.2875C15.4784 2.09583 15.7159 2 15.9992 2C16.2826 2 16.5201 2.09583 16.7117 2.2875C16.9034 2.47917 16.9992 2.71667 16.9992 3V12H14.9992Z" fill="black"/>
+                                                    </g>
+                                                </svg>
+                                                <span class="position-text">{{workSpaceService.slideVotersCount}}</span>
+                                            </button>
+                                        </ng-container>  
+                                        <!-- *========= Question Count Display ========= -->
+                                        <button  *ngIf="!IntegrationMediumZoom" class="btn btn-list-menu d-flex justify-content-between align-items-center tooltip-top" [ngClass]="workSpaceService.slideShowQuestions == true ? '':'d-none'" [ngStyle]="{'cursor':customerPlan?.qa?'':'not-allowed'}" data-tooltip="Question and Answer" (click)="openQAModal()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                <mask id="mask0_9340_35058" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                                    <rect width="24" height="24" fill="black"/>
+                                                </mask>
+                                                <g mask="url(#mask0_9340_35058)">
+                                                    <path d="M7 18C6.71667 18 6.47917 17.9042 6.2875 17.7125C6.09583 17.5208 6 17.2833 6 17V15H19V6H21C21.2833 6 21.5208 6.09583 21.7125 6.2875C21.9042 6.47917 22 6.71667 22 7V22L18 18H7ZM2 17V3C2 2.71667 2.09583 2.47917 2.2875 2.2875C2.47917 2.09583 2.71667 2 3 2H16C16.2833 2 16.5208 2.09583 16.7125 2.2875C16.9042 2.47917 17 2.71667 17 3V12C17 12.2833 16.9042 12.5208 16.7125 12.7125C16.5208 12.9042 16.2833 13 16 13H6L2 17ZM15 11V4H4V11H15Z" fill="black"/>
+                                                </g>
+                                            </svg>
+                                            <span class="position-text">{{workSpaceService.presentationQuestionsLegnth}}</span>
+                                        </button>
+                                        <!-- *========= Comment Count Display ========= -->
+                                        <button *ngIf="!IntegrationMediumZoom" class="btn btn-list-menu d-flex justify-content-between align-items-center tooltip-top cursor-default" [ngClass]="workSpaceService.slideShowComments == true ? '':'d-none'" data-tooltip="Comments">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                <mask id="mask0_9340_35062" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                                    <rect width="24" height="24" fill="black"/>
+                                                </mask>
+                                                <g mask="url(#mask0_9340_35062)">
+                                                    <path d="M2 22V4C2 3.45 2.19583 2.97917 2.5875 2.5875C2.97917 2.19583 3.45 2 4 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H6L2 22ZM5.15 16H20V4H4V17.125L5.15 16Z" fill="black"/>
+                                                </g>
+                                            </svg>
+                                            <!-- <span class="position-text" [style.color]="ContrastColor">{{workSpaceService.slideCommentsLegnth}}</span> -->
+                                            <span class="new-comment-recived">*</span>
+                                        </button>
+                                        <!-- *========= Participant Count Display ========= -->
+                                        <ng-container *ngIf="!workSpaceService.isPreviewMode">
+                                            <button class="btn btn-list-menu d-flex justify-content-between align-items-center participant-tooltip-top cursor-default" data-tooltip="Participant">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <path d="M3.85 15.1C4.7 14.45 5.65 13.9375 6.7 13.5625C7.75 13.1875 8.85 13 10 13C11.15 13 12.25 13.1875 13.3 13.5625C14.35 13.9375 15.3 14.45 16.15 15.1C16.7333 14.4167 17.1875 13.6417 17.5125 12.775C17.8375 11.9083 18 10.9833 18 10C18 7.78333 17.2208 5.89583 15.6625 4.3375C14.1042 2.77917 12.2167 2 10 2C7.78333 2 5.89583 2.77917 4.3375 4.3375C2.77917 5.89583 2 7.78333 2 10C2 10.9833 2.1625 11.9083 2.4875 12.775C2.8125 13.6417 3.26667 14.4167 3.85 15.1ZM10 11C9.01667 11 8.1875 10.6625 7.5125 9.9875C6.8375 9.3125 6.5 8.48333 6.5 7.5C6.5 6.51667 6.8375 5.6875 7.5125 5.0125C8.1875 4.3375 9.01667 4 10 4C10.9833 4 11.8125 4.3375 12.4875 5.0125C13.1625 5.6875 13.5 6.51667 13.5 7.5C13.5 8.48333 13.1625 9.3125 12.4875 9.9875C11.8125 10.6625 10.9833 11 10 11ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C10.8833 18 11.7167 17.8708 12.5 17.6125C13.2833 17.3542 14 16.9833 14.65 16.5C14 16.0167 13.2833 15.6458 12.5 15.3875C11.7167 15.1292 10.8833 15 10 15C9.11667 15 8.28333 15.1292 7.5 15.3875C6.71667 15.6458 6 16.0167 5.35 16.5C6 16.9833 6.71667 17.3542 7.5 17.6125C8.28333 17.8708 9.11667 18 10 18ZM10 9C10.4333 9 10.7917 8.85833 11.075 8.575C11.3583 8.29167 11.5 7.93333 11.5 7.5C11.5 7.06667 11.3583 6.70833 11.075 6.425C10.7917 6.14167 10.4333 6 10 6C9.56667 6 9.20833 6.14167 8.925 6.425C8.64167 6.70833 8.5 7.06667 8.5 7.5C8.5 7.93333 8.64167 8.29167 8.925 8.575C9.20833 8.85833 9.56667 9 10 9Z" fill="black"/>
+                                                </svg>
+                                                <span class="position-text">{{workSpaceService.slideParticipantCount}}</span>
+                                            </button>
+                                        </ng-container>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            
+                            <!-- * ========= Show alert when hide the response =========-->
+                            <div class="position-menu-bottom-info  position-menu-bottom-info-toolbar-icon" [class.active]="!workSpaceService.slideEnableVoting && loadPresentationPage"
+                            [style.bottom]="(loadPresentationPage && workSpaceService.slideEnableVoting) ? '138px' : '85px'"
+                            *ngIf="!workSpaceService.slideEnableVoting && loadPresentationPage">
+                                <div class="d-flex justify-content-center align-items-center p-2 w-100">
+                                    <div class="d-block text-center">
+                                        <p class="fs-18 mb-1">Response is off</p>
+                                        <div class="fs-14 mb-0">Press <span class="enter-btn-txt">C</span> to allow new responses</div>
+                                    </div>
+                                    <button class="btn p-0 close-ps-icon" (click)="presenterLockVoting()">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 25 25" fill="none">
+                                            <mask id="mask0_9684_77979" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="25">
+                                                <rect width="25" height="25" [attr.fill]="'black'"/>
+                                            </mask>
+                                            <g mask="url(#mask0_9684_77979)">
+                                                <path d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z" [attr.fill]="'black'"/>
+                                            </g>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- * ========= Show alert when hide the results =========-->
+                            <div class="position-menu-bottom-info position-menu-bottom-info-toolbar-icon"
+                            [class.active]="!workSpaceService.slideShowInResults && loadPresentationPage"
+                            [style.bottom]="(loadPresentationPage && !workSpaceService.slideShowInResults) ? '170px' : '74px'"
+                            *ngIf="(!workSpaceService.slideShowInResults && loadPresentationPage) && (workSpaceService.slideContentType != workSpaceService.masterSlideTypeName.QUIZ && workSpaceService.activeSlideTypeName !== masterSlideTypeName.ImportDocument && workSpaceService.activeSlideTypeName !== masterSlideTypeName.POWER_POINT && workSpaceService.activeSlideTypeName !== masterSlideTypeName.GoogleSlides && workSpaceService.activeSlideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE && workSpaceService.activeSlideTypeName !== masterSlideTypeName.MULTIMEDIA)"
+                            >
+                                <div class="d-flex justify-content-center align-items-center p-2 w-100">
+                                    <div class="d-block text-center">
+                                        <p class="fs-18 mb-1">Responses are hidden</p>
+                                        <div class="fs-14 mb-0">Press <span class="enter-btn-txt">H</span> to show responses</div>
+                                    </div>
+                                   
+                                </div>
+                            </div>
+                            <!-- * ========= Slide Timer Popup =========-->
+                            <div class="position-menu-bottom-info timer-div position-menu-bottom-info-toolbar-icon" *ngIf="workSpaceService.activeSlideTypeName !== masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE"
+                            [ngClass]="workSpaceService.slideTimerCountShow == true ? '':'d-none'" 
+                            [style.bottom]="(loadPresentationPage && workSpaceService.slideTimerCountShow) ? '250px' : '74px'">
+                                <div class="d-flex justify-content-between align-items-center text-center flex-column p-3 ms-auto me-auto">
+                                    <p class="fs-20 mb-0">{{workSpaceService.slideTimerCountsToDisplay}}</p>
+                                    <p class="fs-14 mb-0">left to respond</p>
+                                    <button class="btn p-0 close-ps-icon top-auto" (click)="presenterStartTimer(0)">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 25 25" fill="none">
+                                            <mask id="mask0_9684_77979" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="25">
+                                                <rect width="25" height="25" [attr.fill]="'black'"/>
+                                            </mask>
+                                            <g mask="url(#mask0_9684_77979)">
+                                                <path d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z" [attr.fill]="'black'"/>
+                                            </g>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="empty-slide w-100 h-100" *ngIf="workSpaceService.isLastSlide" (mouseover)="onHover()" (mouseleave)="onHoverOut()">
+                        <div class="position-absolute-menu-top hover-target">
+                            <div class="d-flex flex-row justify-content-between align-items-center">
+                                <ng-container *ngIf="!this.workSpaceService.isPreviewMode && !this.IntegrationMediumZoom">
+                                    <button style="border-radius: 25px;"
+                                        class="back-to-edit-page-section btn btn-list-menu mx-2" 
+                                        (click)="backToWorkSpace()">
+                                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <mask id="mask0_3596_18857" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                <rect width="20" height="20" [attr.fill]="'black'" />
+                                            </mask>
+                                            <g mask="url(#mask0_3596_18857)">
+                                                <path d="M6.51953 10.833L11.1862 15.4997L9.9987 16.6663L3.33203 9.99967L9.9987 3.33301L11.1862 4.49967L6.51953 9.16634H16.6654V10.833H6.51953Z"
+                                                [attr.fill]="'black'" />
+                                            </g>
+                                        </svg>
+                                    </button>
+                                </ng-container>
+                                <div class="position-fixed bottom-0 start-0 mb-3 ms-3">
+                                    <div class="d-flex justify-content-between align-items-center w-auto navigation-btn">
+                                        <!-- * ===== Previous Slide Action ====== -->
+                                        <button class="btn btn-list-menu slide-navi-tooltip previous-slide-tooltip btn-padding" (click)="previousSlide()"
+                                            (keydown.space)="$event.preventDefault()" (keydown.enter)="$event.preventDefault()"
+                                            data-tooltip="Previous Slide" [ngClass]="{'disableds': workSpaceService.currentSlideIndex === 0}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                                                <mask id="mask0_9340_37129" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24"
+                                                    height="24">
+                                                    <rect width="24" height="24" [attr.fill]="'black'" />
+                                                </mask>
+                                                <g mask="url(#mask0_9340_37129)">
+                                                    <path d="M16 22L6 12L16 2L17.775 3.775L9.55 12L17.775 20.225L16 22Z" [attr.fill]="'black'" />
+                                                </g>
+                                            </svg>
+                                        </button>
+                                        <!-- * ===== Slide Count Show ====== -->
+                                        <div>
+                                            <span class="slide-navigation-btn" [ngStyle]="{'margin-right.px': workSpaceService.isLastSlide? 30 : 0}">{{workSpaceService.currentSlideIndex + 1 + 1}} / {{workSpaceService.slideCount + 1}}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <ng-container *ngIf="workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl">
+                            <img [src]="workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl" class="img-fluid" width="250" height="250">
+                        </ng-container>
+                        <ng-container *ngIf="!workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl">
+                            <img src="/assets/images/product-logo.svg" class="img-fluid" width="250" height="250">
+                        </ng-container>
+                        
+                        <p style="font-size: 32px; font-weight: 500;">You have reached the end of the presentation!</p>
+                    </div>
+                </div>
+                <div class="show-comments-div"></div>
+            </div>
+           
+        </div>
+    </div>
+    
+</section>
+<div class="modal fade" id="hotKeyModal" tabindex="-1" aria-labelledby="hotKeyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" #hotKeyContent>
+        <div class="modal-content hotkey-content" [appThemes]="workSpaceService.presentationTheme" >
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h1 class=" fs-5 mb-0" id="exampleModalLabel">Hotkeys Overview</h1>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <path d="M1.48916 14.5833L0 13.125L5.95666 7.29167L0 1.45833L1.48916 0L7.44582 5.83333L13.4025 0L14.8916 1.45833L8.93499 7.29167L14.8916 13.125L13.4025 14.5833L7.44582 8.75L1.48916 14.5833Z" fill="#999999"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="row mx-0">
+                <div class="col-3 py-4 ps-3">
+                    <h5 class=" mb-3">Presenting</h5>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" [attr.fill]="ContrastColor == 'black'?'white':'black'" viewBox="0 0 16 16" class="bi bi-arrow-right">
+                                <path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8z"></path>
+                            </svg>
+                        </button>
+                        <span class="ms-2"> Go to next slide </span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" [attr.fill]="ContrastColor == 'black'?'white':'black'" viewBox="0 0 16 16" class="bi bi-arrow-left">
+                                <path fill-rule="evenodd" d="M15 8a.5.5 0 0 0-.5-.5H2.707l3.147-3.146a.5.5 0 1 0-.708-.708l-4 4a.5.5 0 0 0 0 .708l4 4a.5.5 0 0 0 .708-.708L2.707 8.5H14.5A.5.5 0 0 0 15 8z"></path>
+                            </svg>
+                        </button>
+                        <span class="ms-2"> Go to previous slide </span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">P</p>
+                        </button>
+                        <span class="ms-2"> Start presenting </span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">Esc</p>
+                        </button>
+                        <span class="ms-2"> Exit presentation </span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">F</p>
+                        </button>
+                        <span class="ms-2"> Toggle fullscreen </span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">B</p>
+                        </button>
+                        <span class="ms-2"> Show or hide blank screen </span>
+                    </p>
+                </div>
+                <div class="col-3 py-4 px-0">
+                    <h5 class="mb-3">Participation</h5>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">C</p>
+                        </button>
+                        <span class="ms-2">Lock or unlock voting</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">H</p>
+                        </button>
+                        <span class="ms-2">Hide or show responses</span>
+                    </p>
+                    <!-- <p class="px-2 d-flex justify-content-start align-items-center">
+                        <button class="btn-key-icon">
+                            <p class="fs-14 mb-0">D</p>
+                        </button>
+                        <span class="ms-2">Hide or show trends</span>
+                    </p> -->
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">V</p>
+                        </button>
+                        <span class="ms-2">Enable or disable commenting</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">L</p>
+                        </button>
+                        <span class="ms-2">Show joining code</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">I</p>
+                        </button>
+                        <span class="ms-2">Show joining instructions and QR code</span>
+                    </p>
+                    <!-- <p class="px-2 d-flex justify-content-start align-items-center">
+                        <button class="btn-key-icon">
+                            <p class="fs-14 mb-0">T</p>
+                        </button>
+                        <span class="ms-2">Show example responses</span>
+                    </p> -->
+                </div>
+                <div class="col-3 py-4 px-0">
+                    <h5 class=" mb-3">Q &amp; A</h5>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">Q</p>
+                        </button>
+                        <span class="ms-2"> Show questions </span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">Enter</p>
+                        </button>
+                        <span class="ms-2"> Mark question as answered</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" [attr.fill]="ContrastColor == 'black'?'white':'black'" viewBox="0 0 16 16" class="bi bi-arrow-up">
+                                <path fill-rule="evenodd" d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z"></path>
+                            </svg>
+                        </button>
+                        <span class="ms-2">Go to next question</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" [attr.fill]="ContrastColor == 'black'?'white':'black'" viewBox="0 0 16 16" class="bi bi-arrow-down">
+                                <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L7.5 13.293V1.5A.5.5 0 0 1 8 1z"></path>
+                            </svg>
+                        </button>
+                        <span class="ms-2">Go to previous question</span>
+                    </p>
+                </div>
+                <div class="col-3 py-4 px-0">
+                    <h5 class=" mb-3">Countdown</h5>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">1</p>
+                        </button>
+                        <span class="ms-2">1 minute countdown</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">2</p>
+                        </button>
+                        <span class="ms-2">2 minute countdown</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">3</p>
+                        </button>
+                        <span class="ms-2">3 minute countdown</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">4</p>
+                        </button>
+                        <span class="ms-2">4 minute countdown</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">5</p>
+                        </button>
+                        <span class="ms-2">5 minute countdown</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">8</p>
+                        </button>
+                        <span class="ms-2">30 seconds countdown</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">9</p>
+                        </button>
+                        <span class="ms-2">10 seconds countdown</span>
+                    </p>
+                    <p class="px-2 d-flex justify-content-start align-items-center spacing-custom">
+                        <button class="btn-key-icon" [ngStyle]="{'background-color':ContrastColor}">
+                            <p class="fs-14 mb-0" [ngStyle]="{'color': ContrastColor === 'black' ? 'white' : 'black'}">0</p>
+                        </button>
+                        <span class="ms-2">Cancel countdown</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- rest result modal -->
+<div class="modal fade" id="restResultModal" tabindex="-1" aria-labelledby="restResultModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header d-flex justify-content-between align-items-center border-0">
+                <h1 class="modal-title mb-0" id="restResultModalLabel">Reset this side?</h1>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 25 25" fill="none">
+                        <mask id="mask0_9684_77979" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="25">
+                            <rect width="25" height="25" fill="#D9D9D9"/>
+                        </mask>
+                        <g mask="url(#mask0_9684_77979)">
+                            <path d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z" fill="#999999"/>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="fs-14 gray-500">This will reset results (votes, reactions and responses). Your previous results are saved and accessed from the home screen by clicking on the three dots on the right column of the presentation, and then clicking "View results".</p>
+                <div class="form-check d-flex justify-content-between bg-color-gray-100 p-2 mb-2 rounded">
+                    <label class="form-check-label mb-0" for="exampleRadios1">Reset result for the entire presentation.</label>
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios1" value="option1" checked>
+                </div>
+                <div class="form-check d-flex justify-content-between bg-color-gray-100 p-2 mb-2 rounded">
+                    <label class="form-check-label mb-0" for="exampleRadios2">Reset results for this slide.</label>
+                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios2" value="option1" checked>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div #qaModal class="modal fade" id="qaModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="qaModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" #qaContentModal>
+        <div class="modal-content qa-content" [appThemes]="workSpaceService.presentationTheme">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0" id="qaModalLabel">Question from the audience</h5>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close" (click)="closeQaModal()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 25 25" fill="none">
+                        <mask id="mask0_9684_77979" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25" height="25">
+                            <rect width="25" height="25" fill="#D9D9D9"/>
+                        </mask>
+                        <g mask="url(#mask0_9684_77979)">
+                            <path d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z" fill="#999999"/>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="row mx-0">
+                <div class="col-3 px-0">
+                    <!-- bg-color-secondary  -->
+                    <div class="p-3">
+                        <button class="btn cstm-btn-secondary active w-100 mb-2" [style.color]="workSpaceService.presentationTheme?.ThemeTextColor"
+                        [class.active]="filter === 'all'" (click)="setFilterQuestion('all')">Top question</button>
+                        <button class="btn cstm-btn-secondary w-100 mb-2" [style.color]="workSpaceService.presentationTheme?.ThemeTextColor"
+                         [class.active]="filter === 'pinned'" 
+                        (click)="setFilterQuestion('pinned')">Pinned</button>
+                        <button class="btn cstm-btn-secondary w-100 mb-2" 
+                        [style.color]="workSpaceService.presentationTheme?.ThemeTextColor"
+                        [class.active]="filter === 'answered'" 
+                        (click)="setFilterQuestion('answered')">Answered</button>
+                    </div>
+                </div>
+                <div class="modal-body p-0 col-9 overflow-auto" style="height:420px;">
+                    <div class="no-question-image" *ngIf="filteredQuestions?.length === 0 && filter === 'all'">
+                        <img class="mb-2"  src="/assets/new-icons/notquestion.svg" alt="Empty">
+                        <h6 class="fs-14 fw-six mt-2">Looks like no questions have come in.</h6>
+                        <p class="fs-12 fw-four">Participant questions will pop up here once submitted.</p>
+                    </div>
+                    <div class="no-question-image" *ngIf="filteredQuestions?.length === 0 && filter === 'pinned'">
+                        <img class="mb-2"  src="/assets/new-icons/notpinned.svg" alt="Empty">
+                        <h6 class="fs-14 fw-six mt-2">No pinned questions at the moment.</h6>
+                        <p class="fs-12 fw-four">When the top questions are pinned, it will be listed here.</p>
+                    </div>
+                    <div class="no-question-image" *ngIf="filteredQuestions?.length === 0 && filter === 'answered'">
+                        <img class="mb-2"  src="/assets/new-icons/notanswered.svg" alt="Empty">
+                        <h6 class="fs-14 fw-six mt-2">No questions answered yet. </h6>
+                        <p class="fs-12 fw-four">They'll appear here once you "Mark it as answered" after responding to participant questions.</p>
+                    </div>
+                    <ng-container *ngFor="let presentationQuestion of filteredQuestions;index as idx"> 
+                        <div class="p-2">
+                            <div class="user-question-box mb-2" [ngClass]="idx == activeQuestionIndex ? 'question-active':''">
+                                <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <img src="/assets/new-icons/avatar.svg" class="img-fluid me-2"/>
+                                        <!-- <div class="bg-user-circle me-2">
+                                            <span>AM</span>
+                                        </div> -->
+                                        <!-- <div class="d-none">
+                                            <p class="user-name">Hari</p>
+                                            <span class="user-date">27-04-2024</span>
+                                        </div> -->
+                                    </div>
+                                    <div class="d-flex justify-content-start align-items-center">
+                                        <button class="btn btn-secondary svg-primary-icon me-2" [class.active]="presentationQuestion.isPinned" (click)="markAsPinned(presentationQuestion.questionId, presentationQuestion.isPinned)">
+                                            <span class="me-1">
+                                                <svg class="question-sub-svg" [class.active]="presentationQuestion.isPinned" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none">
+                                                    <mask id="mask0_9835_242663" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                        <rect width="20" height="20" fill="#D9D9D9"/>
+                                                    </mask>
+                                                    <g mask="url(#mask0_9835_242663)">
+                                                        <path d="M13.3333 10L15 11.6667V13.3333H10.8333V18.3333L10 19.1667L9.16667 18.3333V13.3333H5V11.6667L6.66667 10V4.16667H5.83333V2.5H14.1667V4.16667H13.3333V10ZM7.375 11.6667H12.625L11.6667 10.7083V4.16667H8.33333V10.7083L7.375 11.6667Z"/>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                            <span class="ques-popup-txt" >{{ presentationQuestion.isPinned ? 'Un Pin' : 'Pin' }}</span>
+                                        </button>
+                                        <button class="btn btn-secondary svg-primary-icon me-2" [class.active]="presentationQuestion.isAnswered" (click)="markAsAnswered(presentationQuestion.questionId, presentationQuestion.isAnswered)"> 
+                                            <span class="me-1">
+                                                <svg class="question-sub-svg" [class.active]="presentationQuestion.isAnswered" xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none">
+                                                    <mask id="mask0_9835_242669" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="20" height="20">
+                                                        <rect width="20" height="20" fill="#D9D9D9"/>
+                                                    </mask>
+                                                    <g mask="url(#mask0_9835_242669)">
+                                                        <path d="M8.83268 13.8327L14.7077 7.95768L13.541 6.79102L8.83268 11.4993L6.45768 9.12435L5.29102 10.291L8.83268 13.8327ZM9.99935 18.3327C8.84657 18.3327 7.76324 18.1139 6.74935 17.6764C5.73546 17.2389 4.85352 16.6452 4.10352 15.8952C3.35352 15.1452 2.75977 14.2632 2.32227 13.2493C1.88477 12.2355 1.66602 11.1521 1.66602 9.99935C1.66602 8.84657 1.88477 7.76324 2.32227 6.74935C2.75977 5.73546 3.35352 4.85352 4.10352 4.10352C4.85352 3.35352 5.73546 2.75977 6.74935 2.32227C7.76324 1.88477 8.84657 1.66602 9.99935 1.66602C11.1521 1.66602 12.2355 1.88477 13.2493 2.32227C14.2632 2.75977 15.1452 3.35352 15.8952 4.10352C16.6452 4.85352 17.2389 5.73546 17.6764 6.74935C18.1139 7.76324 18.3327 8.84657 18.3327 9.99935C18.3327 11.1521 18.1139 12.2355 17.6764 13.2493C17.2389 14.2632 16.6452 15.1452 15.8952 15.8952C15.1452 16.6452 14.2632 17.2389 13.2493 17.6764C12.2355 18.1139 11.1521 18.3327 9.99935 18.3327ZM9.99935 16.666C11.8605 16.666 13.4368 16.0202 14.7285 14.7285C16.0202 13.4368 16.666 11.8605 16.666 9.99935C16.666 8.13824 16.0202 6.56185 14.7285 5.27018C13.4368 3.97852 11.8605 3.33268 9.99935 3.33268C8.13824 3.33268 6.56185 3.97852 5.27018 5.27018C3.97852 6.56185 3.33268 8.13824 3.33268 9.99935C3.33268 11.8605 3.97852 13.4368 5.27018 14.7285C6.56185 16.0202 8.13824 16.666 9.99935 16.666Z"/>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                            <span class="ques-popup-txt-mark-as-answered">{{ presentationQuestion.isAnswered ? 'Mark as unanswered' : 'Mark as answered' }}</span>
+                                        </button>
+                                        <button class="btn p-0 d-flex align-items-center svg-primary-icon">
+                                            <span>
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none">
+                                                    <path d="M17.721 9.05798C17.4889 8.75173 17.1888 8.50366 16.8443 8.33337C16.4998 8.16309 16.1205 8.07525 15.7363 8.0768H13.2857L13.7316 5.8468C13.8304 5.37902 13.8211 4.89486 13.7043 4.43122C13.5876 3.96759 13.3666 3.53673 13.058 3.17151C12.4639 2.47327 11.361 1.90621 10.4827 2.23033C10.1771 2.35555 9.92084 2.57725 9.75294 2.86165C9.58503 3.14606 9.51473 3.47756 9.55273 3.80563C9.55273 6.04621 6.93273 7.85033 5.68155 8.58504C5.4788 8.12049 5.12222 7.73997 4.67181 7.5075C4.2214 7.27503 3.70466 7.20481 3.20854 7.30866C2.71243 7.41251 2.26724 7.68409 1.94788 8.07768C1.62852 8.47128 1.45449 8.96288 1.45508 9.46974V15.9486C1.45417 16.4487 1.62355 16.9343 1.93535 17.3254C2.24714 17.7165 2.68278 17.9899 3.17058 18.1004C3.65838 18.211 4.1693 18.1522 4.61925 17.9338C5.06921 17.7153 5.43141 17.3503 5.64626 16.8986L7.3839 18.058C7.48058 18.1224 7.59418 18.1568 7.71038 18.1568H13.4163C14.2311 18.1553 15.023 17.8867 15.6705 17.3921C16.3181 16.8975 16.7857 16.2043 17.0016 15.4186L18.1445 11.2286C18.2468 10.8587 18.2618 10.4701 18.1883 10.0934C18.1148 9.71672 17.9548 9.36226 17.721 9.05798ZM4.69332 15.9486C4.68689 16.2177 4.57545 16.4737 4.38283 16.6617C4.1902 16.8498 3.93165 16.9551 3.66243 16.9551C3.39321 16.9551 3.13467 16.8498 2.94204 16.6617C2.74942 16.4737 2.63798 16.2177 2.63155 15.9486V9.46974C2.62827 9.33229 2.65251 9.19558 2.70284 9.06763C2.75317 8.93969 2.82858 8.8231 2.92463 8.72472C3.02068 8.62635 3.13543 8.54818 3.26214 8.49481C3.38885 8.44144 3.52495 8.41394 3.66243 8.41394C3.79992 8.41394 3.93602 8.44144 4.06273 8.49481C4.18944 8.54818 4.30419 8.62635 4.40024 8.72472C4.49629 8.8231 4.5717 8.93969 4.62203 9.06763C4.67236 9.19558 4.6966 9.33229 4.69332 9.46974V15.9486ZM17.0104 10.918L15.868 15.108C15.7203 15.6449 15.4007 16.1187 14.9581 16.4566C14.5155 16.7946 13.9743 16.9781 13.4174 16.9792H7.88802L5.86979 15.6339V9.82974C7.0192 9.21092 10.7274 6.97033 10.7274 3.80386C10.7274 3.65033 10.748 3.38386 10.8874 3.33327C11.1324 3.32381 11.376 3.37351 11.5977 3.47815C11.8194 3.5828 12.0126 3.73931 12.161 3.93445C12.3517 4.16522 12.4882 4.43587 12.5604 4.72644C12.6326 5.017 12.6386 5.32007 12.578 5.61327L11.9898 8.5468C11.9723 8.63228 11.9741 8.72056 11.995 8.80526C12.0159 8.88997 12.0553 8.96896 12.1105 9.03653C12.1657 9.1041 12.2352 9.15855 12.314 9.19593C12.3929 9.23332 12.479 9.2527 12.5663 9.25269H15.7345C15.9375 9.25257 16.1379 9.29931 16.3199 9.38926C16.502 9.47921 16.6608 9.60995 16.7841 9.7713C16.9074 9.93266 16.9918 10.1203 17.0307 10.3196C17.0697 10.5189 17.0621 10.7244 17.0086 10.9203L17.0104 10.918Z" fill="#525252"/>
+                                                </svg>
+                                            </span>
+                                            <span class="ques-popup-txt">{{presentationQuestion.likes}}</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pt-2">
+                                    <p class="normal-font-text">{{presentationQuestion.question}}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- QR Modal -->
+<div class="modal fade" id="qrModal" data-bs-keyboard="false" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" #qrContent>
+        <div class="modal-content qr-content">
+            <div class="modal-header">
+                <h1 class="fs-5 mb-0" id="qrModalLabel">QR Code</h1>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close" (click)="closeQRCode()">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                        <path d="M1.48916 14.5833L0 13.125L5.95666 7.29167L0 1.45833L1.48916 0L7.44582 5.83333L13.4025 0L14.8916 1.45833L8.93499 7.29167L14.8916 13.125L13.4025 14.5833L7.44582 8.75L1.48916 14.5833Z" fill="#999999"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="w-100 h-100 d-flex justify-content-center align-items-center f-direction-colum">
+                    <div class="position-relative text-center">
+                        <img src="{{workSpaceService.presentationQRCode}}" class="img-fluid mx-auto">
+                    </div>
+                    <div class="instructions">
+                    </div>
+                    <div>
+                        <p>OR</p>
+                    </div>
+                    <div class="mb-2">
+                        <h1 class="mb-0 fs-md" *ngIf="isLinkVisible && loadPresentationPage">
+                            <span><b (click)="copyToClipboard()">{{workSpaceService.audienceURL}}</b> <span class="ms-2 cursor-pointer" (click)="copyToClipboard()">
+                                <svg *ngIf="!copied" width="25" height="25" viewBox="0 0 25 20" fill="#878787" xmlns="http://www.w3.org/2000/svg" name="copy"
+                                    class="icon-svg">
+                                    <path fill-rule="evenodd" clip-rule="evenodd"
+                                        d="M5 2a.333.333 0 00-.333.333v1H11c.92 0 1.666.746 1.666 1.667v6.333h1c.185 0 .334-.149.334-.333V2.333A.333.333 0 0013.666 2H5zm7.666 10.667h1c.921 0 1.667-.747 1.667-1.667V2.333c0-.92-.746-1.666-1.667-1.666H5c-.92 0-1.667.746-1.667 1.666v1h-1C1.413 3.333.667 4.08.667 5v8.667c0 .92.746 1.666 1.666 1.666H11c.92 0 1.666-.746 1.666-1.666v-1zm-10.333-8A.333.333 0 002 5v8.667c0 .184.15.333.333.333H11c.184 0 .333-.15.333-.333V5A.333.333 0 0011 4.667H2.333z">
+                                    </path>
+                                </svg>
+                                <svg *ngIf="copied" width="25" height="25" viewBox="0 0 25 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20Z" fill="#00BA00"/>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M6.87814 14.877L3.22082 10.9626C2.72011 10.4267 2.74885 9.57886 3.28476 9.07815C3.82066 8.57744 4.66854 8.60626 5.16924 9.14209L7.99035 12.1615L12.4558 7.98925C12.4959 7.95169 12.5379 7.91729 12.5813 7.88563L14.6812 5.92366C15.2171 5.42296 16.0651 5.45177 16.5657 5.98768C17.0664 6.52351 17.0376 7.37146 16.5018 7.87217L10.0881 13.8647L10.0812 13.8574L7.86263 15.9303L6.87814 14.877Z" fill="white"/>
+                                    </svg>                            
+                            </span> | {{workSpaceService.presentationCode}}</span>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="blackOverlay" class="black-overlay">
+    <div class="message-container">
+        Press B to hide the black screen
+    </div>
+</div>

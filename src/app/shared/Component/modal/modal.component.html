@@ -1,0 +1,25 @@
+<div class="modal custom-scrollbar fade in" tabindex="-1"
+ [style.display]="isShowModal ? 'block' : 'none'" 
+ [ngClass]="{
+  'show bg-color modal-animation': isShowModal,
+  'modal-animationout': !isShowModal,
+  'modal-publish': modalType === 'publish',
+  'modal-preview': modalType === 'preview',
+  'modal-edit' : modalType ==='edit'
+}">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+        <div class="modal-header">
+          <ng-content select="[modalTitle]"></ng-content>
+          <button type="button" class="btn-close" (click)="onDismissClick()"></button>
+      </div>
+        <div class="modal-body">
+          <ng-content></ng-content>
+        </div>
+        <div class="modal-footer">
+          <ng-content select="[modalFooter]"></ng-content>
+        </div>
+      </div>
+    </div>
+  </div>
+  

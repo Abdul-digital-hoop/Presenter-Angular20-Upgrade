@@ -1,0 +1,97 @@
+.emptyframe {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 15px;
+}
+.emptyframe1{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 35px;
+}
+.frameoutline {
+    text-align: center;
+    justify-content: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+    display: flex;
+    pointer-events: none;
+    overflow: hidden;
+    width: 468px;
+    height: 271.5px;
+    border-style: initial;
+    border: 4px solid #959494;
+    box-sizing: border-box;
+    transition: border-color 0.5s ease;
+    z-index: 999;
+}
+
+#myIframe {
+    background: rgb(151, 145, 145);
+    justify-content: center;
+    border-width: 2px;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    align-content: center;
+    transform: scale(1.04);
+    display: block;
+    box-sizing: border-box;
+    position: absolute;
+}
+
+.iframe-top-message {
+    display: inline-flex;
+    background-color: rgb(184, 250, 214);
+    color: black;
+    font-family: MentiText, Arial, sans-serif;
+    height: 13px;
+    right: -134px;
+    position: absolute;
+    border-radius: 1px;
+    overflow: hidden;
+    z-index: 1001;
+    width: 270px;
+    top: -141px;
+}
+
+.tick-icon {
+    margin-right: 4px;
+    margin-left: 4px;
+    position: relative;
+    bottom: 7px;
+}
+
+.paragraph {
+    font-size: 10px;
+    margin-right: 6px;
+}
+
+.pptscreenframe {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+    pointer-events: none;
+}
+
+.fullscreenframe {
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: fixed;
+    display: flex;
+    overflow: hidden;
+    width: 75%;
+    height: 76%;
+    transition: border-color 0.5s ease;
+    z-index: 9;
+}

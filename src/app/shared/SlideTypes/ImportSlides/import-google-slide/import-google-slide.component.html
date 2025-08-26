@@ -1,0 +1,18 @@
+<div class="gslides" *ngIf="(this.importPPTLink || null) && !isInvalidLink && !this.presentationMode">
+  <div class="frameborder"></div>
+  <div class="iframe-top-message">
+    <div class="tick-icon">
+    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="10" height="10" aria-label="Checkmark" viewBox="0 0 24 24"><g color="#000000"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></g></g></svg>
+  </div>
+  <div class="paragraph">
+    <p>This slide contains your whole Google Slides presentation</p>
+  </div>
+  </div>
+  <iframe [src]="sanitizedUrl" frameborder="0" width="100%" height="100%" class="iframe" allowfullscreen [style.scale]="!this.presentationMode ? 0.8 : 1"></iframe>  
+</div>
+<div class="fullscreenframe" *ngIf="(this.importPPTLink!= ''|| null) && !isInvalidLink && this.presentationMode">
+  <iframe  [src]="sanitizedUrl" width="95%" height="95%" frameborder="0" allowfullscreen></iframe>
+</div>
+<div *ngIf="!importPPTLink || isInvalidLink" class="gslidesmessage">
+  <span for="Input" class="d-block" [style.font-size]="workSpaceService.presentationMode ? '30px' : '16px'">Add a published Google Slides link to import it on this slide.</span>
+</div>

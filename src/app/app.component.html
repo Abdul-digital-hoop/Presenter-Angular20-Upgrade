@@ -1,0 +1,33 @@
+<router-outlet></router-outlet>
+<!-- Offline-Model -->
+<div class="modal fade" id="offlineModel" class="modal fade overflow-hidden offline-backdrop" tabindex="-1" aria-labelledby="offlineModelLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered custom-modal-width">
+        <div class="modal-content model-content-offline">
+            <div class="modal-header border-0">
+                <button type="button" class="close close-icon-absolute" data-dismiss="modal" (click)="closeOfflineModal()" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20px"
+                        height="20px" aria-label="Close" viewBox="0 0 24 24">
+                        <g color="#000">
+                            <g fill="none" stroke="#999999" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="col-12 px-0 d-flex justify-content-center">
+                    <img class="logo-img" src="/assets/images/offline.png" height="40" alt="">
+                </div>
+                <div class="offline-heading">
+                    <h2 >Oops!</h2>
+                    <p>Your internet isn't acting up. Refresh the page once you’re back online.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+
+            </div>
+        </div>
+    </div>
+</div>

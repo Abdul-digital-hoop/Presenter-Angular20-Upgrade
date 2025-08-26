@@ -1,0 +1,314 @@
+<div class="QA-tab">
+    <span class="QA-txt">Q & A</span>
+    <ng-container *ngIf="isAllQuestionsAnswered || (workspaceService.slideShowQuestions && workspaceService?.presentationQuestions?.length == 0)">
+        <div class="QA-icon">
+            <img src="/assets/new-icons/message.svg" class="control-btn-icon">
+        </div>
+    </ng-container>
+    <ng-container *ngIf="!isAllQuestionsAnswered && workspaceService?.presentationQuestions?.length != 0">
+        <div class="QA-icon">
+            <img src="/assets/new-icons/QandAIcon.svg" class="control-btn-icon">
+        </div>
+    </ng-container>
+</div>
+<div class="qa-border-line"></div>
+<div class="QA-filter">
+    <button class="btn btn-filter" (click)="topQuestion()"
+        [ngClass]="questionTab == questionTabString.TOP_QUESTION ? 'active':''">
+        <span class="btn-name"
+            [ngClass]="questionTab == questionTabString.TOP_QUESTION ? 'btn-filter-name':''">Top
+            Question</span>
+    </button>
+    <button class="btn btn-filter" (click)="answeredQuestions()"
+        [ngClass]="questionTab == questionTabString.ANSWERD_QUESTION ? 'active':''">
+        <span class="btn-name"
+            [ngClass]="questionTab == questionTabString.ANSWERD_QUESTION ? 'btn-filter-name':''">Answered</span>
+    </button>
+    <button class="btn btn-filter" (click)="pinnedQuestions()"
+        [ngClass]="questionTab == questionTabString.PINNED_QUESTION ? 'active':''">
+        <span class="btn-name"
+            [ngClass]="questionTab == questionTabString.PINNED_QUESTION ? 'btn-filter-name':''">Pin</span>
+    </button>
+    <!-- <button class="btn btn-filter">
+    <span class="btn-name">Un Answered</span>
+</button> -->
+</div>
+<div class="question-section">
+    <!-- * ================= No Question Answers Slides ========================= -->
+    <ng-container
+        *ngIf="!workspaceService.slideShowQuestions && workspaceService?.presentationQuestions?.length == 0 && !itHasQASlides">
+        <div class="empty-question">
+            <span class="no-qa-slide">No Q&A slide</span>
+            <span class="no-qa-slide-content">You don't have any Q&A slides in this presentation. Add a Q&A
+                slide via the editor or enable questions from audience on all slides using the toggle
+                below.</span>
+        </div>
+        <ng-container *ngIf="!workspaceService.slideShowQuestions && workspaceService.OnlyQA">
+            <div class="control-button" (click)="enableQAOnAllSlides()">
+                <button class="btn btn-control">
+                    <span class="btn-name">Enable QA on all slides</span>
+                </button>
+            </div>
+        </ng-container>
+    </ng-container>
+    <!-- * ================= No Question Answers Slides ========================= -->
+    <ng-container
+        *ngIf="!workspaceService.slideShowQuestions && workspaceService?.presentationQuestions?.length == 0 && itHasQASlides && this.workspaceService.activeSlideTypeName != masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE">
+        <div class="empty-question">
+            <span class="no-qa-slide">Currently not on a Q&A slide</span>
+            <span class="no-qa-slide-content">Your audience can only ask questions while you are on a Q&A
+                slide. You can enable questions from audience on all slides using the toggle below.</span>
+        </div>
+        <ng-container *ngIf="!workspaceService.slideShowQuestions && workspaceService.OnlyQA">
+            <div class="control-button" (click)="enableQAOnAllSlides()">
+                <button class="btn btn-control">
+                    <span class="btn-name">Enable QA on all slides</span>
+                </button>
+            </div>
+        </ng-container>
+    </ng-container>
+    <!-- * ================ No Questions from audience ==========================  -->
+    <ng-container *ngIf="workspaceService.slideShowQuestions && workspaceService?.presentationQuestions?.length == 0">
+        <ng-container *ngIf="(filterQuestions?.length == 0 && questionTab == questionTabString.TOP_QUESTION) || (workspaceService.slideShowQuestions && workspaceService?.presentationQuestions?.length == 0 && questionTab == questionTabString.TOP_QUESTION)">
+            <div class="empty-question">
+                <span class="no-qa-slide">No questions so far!</span>
+                <span class="no-qa-slide-content-empty">Maybe give your audience a nudge to ask away!</span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="(filterQuestions?.length == 0 && questionTab == questionTabString.ANSWERD_QUESTION) || (workspaceService.slideShowQuestions && workspaceService?.presentationQuestions?.length == 0 && questionTab == questionTabString.ANSWERD_QUESTION)">
+            <div class="empty-question">
+                <span class="no-qa-slide">It’s empty here!</span>
+                <span class="no-qa-slide-content-empty">Answered questions will show up as you respond to them.</span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="(filterQuestions?.length == 0 && questionTab == questionTabString.PINNED_QUESTION) || (workspaceService.slideShowQuestions && workspaceService?.presentationQuestions?.length == 0 && questionTab == questionTabString.PINNED_QUESTION)">
+            <div class="empty-question">
+                <span class="no-qa-slide">No pins here yet!</span>
+                <span class="no-qa-slide-content-empty">Pinned questions will be listed as you mark them.</span>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="!workspaceService.slideShowQuestions && workspaceService.OnlyQA">
+            <div class="control-button" (click)="enableQAOnAllSlides()" [ngClass]="!customerPlan?.qa ? 'cursor-notallowed':''">
+                <button class="btn btn-control" [disabled]="!customerPlan?.qa">
+                    <span class="btn-name">Enable QA on all slides</span>
+                </button>
+            </div>
+        </ng-container>
+        <ng-container *ngIf="workspaceService.activeSlideTypeName != masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE">
+            <div class="control-button" (click)="openQAModal()" [ngClass]="!customerPlan?.qa ? 'cursor-notallowed':''">
+                <button class="btn btn-control" [disabled]="!customerPlan?.qa" >
+                    <span class="btn-name">{{openQAText}} QA</span>
+                </button>
+            </div>
+        </ng-container>
+    </ng-container>
+    <ng-container *ngIf="workspaceService?.presentationQuestions?.length > 0">
+        <!-- Top Questions Section -->
+        <ng-container *ngIf="questionTab == questionTabString.TOP_QUESTION">
+            <ng-container *ngIf="filterQuestions?.length == 0">
+                <div class="empty-question">
+                    <span class="no-qa-slide">No questions so far!</span>
+                    <span class="no-qa-slide-content-empty">Maybe give your audience a nudge to ask away!</span>
+                </div>
+            </ng-container>
+            <ng-container *ngFor="let question of filterQuestions; index as idx">
+                <div class="question-info"
+                    [ngClass]="(idx == activeQuestionIndex && isOpenQAflag) ? 'active-Question':''">
+                    <div class="user-info">
+                        <div class="user-icon">
+                            A
+                        </div>
+                        <div class="user-name">
+                            <span class="name">Anonymous</span>
+                            <div class="question-createdAt">{{question?.createdOn | timeDifferencePipe}}</div>
+                        </div>
+                        <div class="likes">
+                            <button class="btn btn-action"
+                                (click)="markAsPin(question?.questionId,question?.isPinned)">
+                                <ng-container *ngIf="!question?.isPinned">
+                                    <img src="/assets/new-icons/keep.svg">  
+                                </ng-container>
+                                <ng-container *ngIf="question?.isPinned">
+                                    <img src="/assets/new-icons/UnPin.svg" class="unpin-icon">
+                                </ng-container>
+                                
+                            </button>
+                            <span class="link-count">{{question?.likes}}</span>
+                            <img src="/assets/new-icons/thumb_up.svg" class="like-icon">
+                        </div>
+                    </div>
+                    <div class="question">
+                        <span>{{question.question}}</span>
+                    </div>
+                    <div class="action-button">
+                        <button class="btn btn-action" data-bs-toggle="modal" data-bs-target="#deleteQuestionModal" (click)="deleteQuestionPopup(question?.questionId)">
+                            <img src="/assets/new-icons/trash-03.svg" class="trash-icon">
+                        </button>
+                        <ng-container *ngIf="(idx != activeQuestionIndex && !question?.isAnswered)">
+                            <button class="btn btn-action" (click)="showQAModalQuestionIndex(idx)">
+                                <img src="/assets/new-icons/visibility.svg" class="action-btn-icon">
+                                <span class="btn-action-name">Show Audience</span>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="(idx == activeQuestionIndex &&!question?.isAnswered)">
+                            <button class="btn btn-action"
+                                (click)="markAsAnswered(question?.questionId,question?.isAnswered)">
+                                <span class="btn-action-name">Mark as answered</span>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="question?.isAnswered">
+                            <button class="btn btn-action"
+                                (click)="markAsUnAnswered(question?.questionId,question?.isAnswered)">
+                                <img src="/assets/new-icons/Answered.svg" class="action-btn-icon">  
+                                <span class="btn-action-name">Answered</span>
+                            </button>
+                        </ng-container>
+
+                    </div>
+                </div>
+                <div class="border-line"></div>
+            </ng-container>
+        </ng-container>
+
+        <!-- Answered Questions Section -->
+        <ng-container *ngIf="questionTab == questionTabString.ANSWERD_QUESTION">
+            <ng-container *ngIf="filterQuestions?.length == 0">
+                <div class="empty-question">
+                    <span class="no-qa-slide">It’s empty here!</span>
+                    <span class="no-qa-slide-content-empty">Answered questions will show up as you respond to them.</span>
+                </div>
+            </ng-container>
+            <ng-container *ngFor="let question of filterQuestions; index as idx">
+                <div class="question-info"
+                    [ngClass]="(idx == activeQuestionIndex && isOpenQAflag) ? 'active-Question':''">
+                    <div class="user-info">
+                        <div class="user-icon">
+                            A
+                        </div>
+                        <div class="user-name">
+                            <span class="name">Anonymous</span>
+                            <div class="question-createdAt">{{question?.createdOn | timeDifferencePipe}}</div>
+                        </div>
+                        <div class="likes">
+                            <button class="btn btn-action"
+                                (click)="markAsPin(question?.questionId,question?.isPinned)">
+                                <ng-container *ngIf="!question?.isPinned">
+                                    <img src="/assets/new-icons/keep.svg">  
+                                </ng-container>
+                                <ng-container *ngIf="question?.isPinned">
+                                    <img src="/assets/new-icons/UnPin.svg" class="unpin-icon">
+                                </ng-container>
+                                
+                            </button>
+                            <span class="link-count">{{question?.likes}}</span>
+                            <img src="/assets/new-icons/thumb_up.svg" class="like-icon">
+                        </div>
+                    </div>
+                    <div class="question">
+                        <span>{{question.question}}</span>
+                    </div>
+                    <div class="action-button">
+                        <button class="btn btn-action" data-bs-toggle="modal" data-bs-target="#deleteQuestionModal" (click)="deleteQuestionPopup(question?.questionId)">
+                            <img src="/assets/new-icons/trash-03.svg" class="trash-icon">
+                        </button>
+                        <ng-container *ngIf="(idx != activeQuestionIndex && !question?.isAnswered)">
+                            <button class="btn btn-action" (click)="showQAModalQuestionIndex(idx)">
+                                <img src="/assets/new-icons/visibility.svg" class="action-btn-icon">
+                                <span class="btn-action-name">Show Audience</span>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="(idx == activeQuestionIndex &&!question?.isAnswered)">
+                            <button class="btn btn-action"
+                                (click)="markAsAnswered(question?.questionId,question?.isAnswered)">
+                                <span class="btn-action-name">Mark as answered</span>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="question?.isAnswered">
+                            <button class="btn btn-action"
+                                (click)="markAsUnAnswered(question?.questionId,question?.isAnswered)">
+                                <img src="/assets/new-icons/Answered.svg" class="action-btn-icon">  
+                                <span class="btn-action-name">Answered</span>
+                            </button>
+                        </ng-container>
+
+                    </div>
+                </div>
+                <div class="border-line"></div>
+            </ng-container>
+        </ng-container>
+
+        <!-- Pinned Questions Section -->
+        <ng-container *ngIf="questionTab == questionTabString.PINNED_QUESTION">
+            <ng-container *ngIf="filterQuestions?.length == 0">
+                <div class="empty-question">
+                    <span class="no-qa-slide">No pins here yet!</span>
+                    <span class="no-qa-slide-content-empty">Pinned questions will be listed as you mark them.</span>
+                </div>
+            </ng-container>
+            <ng-container *ngFor="let question of filterQuestions; index as idx">
+                <div class="question-info"
+                    [ngClass]="(idx == activeQuestionIndex && isOpenQAflag) ? 'active-Question':''">
+                    <div class="user-info">
+                        <div class="user-icon">
+                            A
+                        </div>
+                        <div class="user-name">
+                            <span class="name">Anonymous</span>
+                            <div class="question-createdAt">{{question?.createdOn | timeDifferencePipe}}</div>
+                        </div>
+                        <div class="likes">
+                            <button class="btn btn-action"
+                                (click)="markAsPin(question?.questionId,question?.isPinned)">
+                                <ng-container *ngIf="!question?.isPinned">
+                                    <img src="/assets/new-icons/keep.svg">  
+                                </ng-container>
+                                <ng-container *ngIf="question?.isPinned">
+                                    <img src="/assets/new-icons/UnPin.svg" class="unpin-icon">
+                                </ng-container>
+                                
+                            </button>
+                            <span class="link-count">{{question?.likes}}</span>
+                            <img src="/assets/new-icons/thumb_up.svg" class="like-icon">
+                        </div>
+                    </div>
+                    <div class="question">
+                        <span>{{question.question}}</span>
+                    </div>
+                    <div class="action-button">
+                        <button class="btn btn-action" data-bs-toggle="modal" data-bs-target="#deleteQuestionModal" (click)="deleteQuestionPopup(question?.questionId)">
+                            <img src="/assets/new-icons/trash-03.svg" class="trash-icon">
+                        </button>
+                        <ng-container *ngIf="(idx != activeQuestionIndex && !question?.isAnswered)">
+                            <button class="btn btn-action" (click)="showQAModalQuestionIndex(idx)">
+                                <img src="/assets/new-icons/visibility.svg" class="action-btn-icon">
+                                <span class="btn-action-name">Show Audience</span>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="(idx == activeQuestionIndex &&!question?.isAnswered)">
+                            <button class="btn btn-action"
+                                (click)="markAsAnswered(question?.questionId,question?.isAnswered)">
+                                <span class="btn-action-name">Mark as answered</span>
+                            </button>
+                        </ng-container>
+                        <ng-container *ngIf="question?.isAnswered">
+                            <button class="btn btn-action"
+                                (click)="markAsUnAnswered(question?.questionId,question?.isAnswered)">
+                                <img src="/assets/new-icons/Answered.svg" class="action-btn-icon">  
+                                <span class="btn-action-name">Answered</span>
+                            </button>
+                        </ng-container>
+
+                </div>
+            </div>
+            <div class="border-line"></div>
+            </ng-container>
+        </ng-container>
+    </ng-container>
+</div>
+<ng-container *ngIf="workspaceService?.presentationQuestions?.length > 0 && workspaceService.slideShowQuestions">
+    <div class="control-button" (click)="openQAModalQuestionIndex(0)" [ngClass]="!customerPlan?.qa ? 'cursor-notallowed':''">
+        <button class="btn btn-control openQAButton" [disabled]="!customerPlan?.qa">
+            <span class="btn-name">{{openQAText}} QA</span>
+        </button>
+    </div>
+</ng-container>

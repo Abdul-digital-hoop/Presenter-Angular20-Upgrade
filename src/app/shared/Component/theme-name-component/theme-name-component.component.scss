@@ -1,0 +1,101 @@
+@use '/src/assets/variablesScss/varaiabledecalaration.scss' as *;
+@use '/src/assets/variablesScss/common.scss' as *;
+
+
+.bg-color {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-animation {
+    animation: slideIn 0.5s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-animationout {
+    animation: slideOut 0.5s ease-in-out;
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+}
+.remaning-i {
+    position: absolute;
+    bottom: 36px;
+    right: 5px;
+    font-size: 13px;
+    color: #495057;
+}
+.modal-footer {
+    border: none !important;
+    border-radius: none !important;
+}
+.bg-color-input {
+    background: #F8F8FF;
+    border: 1px solid #4848FF !important;
+}
+
+.form-group {
+    position: relative; 
+  }
+  
+  .remaining-padding {
+    padding-right: 40px; 
+    position: relative;
+  }
+  
+  .count-remaining-text {
+    position: absolute;
+    bottom: 8px; 
+    right: 12px; 
+    font-size: 12px;
+    color: #bfbfbf;
+    background: #fff;
+    padding: 2px 5px;
+    border-radius: 4px;
+    z-index: 10;
+    pointer-events: none;
+  }
+  
+  .remaining-padding:focus {
+    padding-right: 40px;
+  }
+  .character-counter {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-size: 12px;
+    color: #666;
+}
+
+.invalid-feedback {
+    font-size: 12px;
+    color: red;
+    position: absolute;
+    bottom: -20px; 
+}
+.modal-dialog-scrollable .modal-body{
+    max-height: 30vh;
+    overflow-y: hidden;
+}
+
+
+  

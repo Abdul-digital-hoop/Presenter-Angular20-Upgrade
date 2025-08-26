@@ -1,0 +1,225 @@
+<div class="main-container">
+    <div class="breadcrumb-navigation cursor-pointer md-none" *ngIf="!IntegrationMediumZoom">
+        <ng-container *ngFor="let crumb of _mypresentationsService.breadcrumbs; let i = index">
+          <span class="breadcrumbs-Text"
+                [class.active]="i === _mypresentationsService.breadcrumbs.length - 1"
+                (click)="onBreadcrumbClick(crumb, i)">
+            {{ crumb.name }}
+          </span>
+          <span class="breadcrumb-separator" *ngIf="i < _mypresentationsService.breadcrumbs.length - 1">&gt;</span>
+        </ng-container>
+      </div>
+    <div class="mypresentation-header" *ngIf="!IntegrationMediumZoom">
+        <div class="button-container">
+            <div class="me-2">
+                <button class="btn create-presentation-btn text-white px-3 me-2 text-nowrap" (click)="createNewPresentation()">
+                    <span class="align-text-bottom me-2 icon-d">
+                        <svg width="17" height="16" viewBox="0 0 17 16" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            class="ms-4">
+                            <g clip-path="url(#clip0_3144_43989)">
+                                <path d="M8.5 0.617142V15.4743" stroke="white" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <path d="M1.07031 8H15.9275" stroke="white" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_3144_43989">
+                                    <rect width="16" height="16" fill="white" transform="translate(0.5)" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </span>
+                    <span class="d-md-inline-block d-none t-content me-4">New Presentation</span>
+                    <span class="d-md-none d-inline-block t-content me-4">New Presentation</span>
+                    <ng-container *ngIf="customerLimitationCount?.balancePresentationLimit <= 0">
+                        <div class="pricing-icon-container">
+                            <div class="pricing-icon-recently-view slide-list-hover right-side-bar-tooltip-right" data-tooltip="Need subscription">
+                                <img src="/assets/images/Crown.svg" />
+                            </div>
+                        </div>
+                    </ng-container>
+                </button>
+            </div>
+            <div class="ms-2">
+                <button class="btn create-folder-btn px-3 me-2 text-nowrap" data-bs-toggle="modal" data-bs-target="#Folder" [ngStyle]="{'cursor':customerPlan?.folder?'':'not-allowed'}">
+                    <span class="align-text-bottom me-2 icon-d">
+                        <svg class="ms-5" width="21" height="16" viewBox="0 0 21 16" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path class="folder-icon"
+                                d="M12.5 12H14.5V10H16.5V8H14.5V6H12.5V8H10.5V10H12.5V12ZM2.5 16C1.95 16 1.47917 15.8042 1.0875 15.4125C0.695833 15.0208 0.5 14.55 0.5 14V2C0.5 1.45 0.695833 0.979167 1.0875 0.5875C1.47917 0.195833 1.95 0 2.5 0H8.5L10.5 2H18.5C19.05 2 19.5208 2.19583 19.9125 2.5875C20.3042 2.97917 20.5 3.45 20.5 4V14C20.5 14.55 20.3042 15.0208 19.9125 15.4125C19.5208 15.8042 19.05 16 18.5 16H2.5ZM2.5 14H18.5V4H9.675L7.675 2H2.5V14Z"
+                                fill="currentColor" />
+                        </svg>
+                    </span>
+                    <span class="d-md-inline-block d-none t-content me-5">New Folder</span>
+                    <span class="d-md-none d-inline-block t-content me-5">New Folder</span>
+                </button>
+            </div>
+        </div>
+        <div class="ms-auto d-flex">
+            <button class="toggle-delete-btn delete-btn" *ngIf="selectedCount > 0 && _mypresentationsService.isListView" (click)="openDeleteModal()">Delete</button>
+            <div class="modal fade overflow-hidden" id="deleteAllModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered custom-popup">
+                    <div class="modal-content content-popup">
+                        <div class="modal-body d-flex">
+                            <div class="wi-90">
+                                <p>
+                                    <span class="fw-five delete-pop-font">Are you sure you want to delete "{{ selectedCount }} {{
+                                        selectedCount === 1 ? 'presentation' : 'presentations' }}"?</span><br>
+                                    <span class="fs-very-low-12">{{ selectedCount }} {{ selectedCount === 1 ? 'presentation' :
+                                        'presentations' }} can be restored from the trash for 30 days.</span>
+                                </p>
+                            </div>
+                            <div>
+                                <button type="button" class="close-folder" data-bs-dismiss="modal" aria-label="Close">
+                                    &times;
+                                </button>
+                            </div>
+                        </div>
+                        <div class="modal-footer bb-none">
+                            <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                                (click)="closeDeleteModal()">
+                                Cancel
+                            </button>
+                            <button type="submit" class="btn delete-button fs-very-low" (click)="confirmBulkDelete()">
+                                <span class="spinner-border spinner-border-sm fs-very-low" role="status" aria-hidden="true"
+                                    *ngIf="isLoading"></span>
+                                Yes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="toggle-container d-flex" *ngIf="!IntegrationMediumOffice">
+                <button class="toggle-active-btn" [class.active]="!_mypresentationsService.isListView"
+                    (click)="toggleListView(false)">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_3967_459781" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                            width="20" height="20">
+                            <rect width="20" height="20" fill="#525252" />
+                        </mask>
+                        <g mask="url(#mask0_3967_459781)">
+                            <path
+                                d="M2.5 9.16667V2.5H9.16667V9.16667H2.5ZM2.5 17.5V10.8333H9.16667V17.5H2.5ZM10.8333 9.16667V2.5H17.5V9.16667H10.8333ZM10.8333 17.5V10.8333H17.5V17.5H10.8333ZM4.16667 7.5H7.5V4.16667H4.16667V7.5ZM12.5 7.5H15.8333V4.16667H12.5V7.5ZM12.5 15.8333H15.8333V12.5H12.5V15.8333ZM4.16667 15.8333H7.5V12.5H4.16667V15.8333Z"
+                                fill="currentColor" />
+                        </g>
+                    </svg>
+                </button>
+                <button class="toggle-active-btn" [class.active]="_mypresentationsService.isListView"
+                    (click)="toggleListView(true)">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <mask id="mask0_3967_459756" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
+                            width="20" height="20">
+                            <rect width="20" height="20" fill="#525252" />
+                        </mask>
+                        <g mask="url(#mask0_3967_459756)">
+                            <path
+                                d="M5.83333 7.49992V5.83325H17.5V7.49992H5.83333ZM5.83333 10.8333V9.16659H17.5V10.8333H5.83333ZM5.83333 14.1666V12.4999H17.5V14.1666H5.83333ZM3.33333 7.49992C3.09722 7.49992 2.89931 7.42006 2.73958 7.26034C2.57986 7.10061 2.5 6.9027 2.5 6.66659C2.5 6.43047 2.57986 6.23256 2.73958 6.07284C2.89931 5.91311 3.09722 5.83325 3.33333 5.83325C3.56944 5.83325 3.76736 5.91311 3.92708 6.07284C4.08681 6.23256 4.16667 6.43047 4.16667 6.66659C4.16667 6.9027 4.08681 7.10061 3.92708 7.26034C3.76736 7.42006 3.56944 7.49992 3.33333 7.49992ZM3.33333 10.8333C3.09722 10.8333 2.89931 10.7534 2.73958 10.5937C2.57986 10.4339 2.5 10.236 2.5 9.99992C2.5 9.76381 2.57986 9.56589 2.73958 9.40617C2.89931 9.24645 3.09722 9.16659 3.33333 9.16659C3.56944 9.16659 3.76736 9.24645 3.92708 9.40617C4.08681 9.56589 4.16667 9.76381 4.16667 9.99992C4.16667 10.236 4.08681 10.4339 3.92708 10.5937C3.76736 10.7534 3.56944 10.8333 3.33333 10.8333ZM3.33333 14.1666C3.09722 14.1666 2.89931 14.0867 2.73958 13.927C2.57986 13.7673 2.5 13.5694 2.5 13.3333C2.5 13.0971 2.57986 12.8992 2.73958 12.7395C2.89931 12.5798 3.09722 12.4999 3.33333 12.4999C3.56944 12.4999 3.76736 12.5798 3.92708 12.7395C4.08681 12.8992 4.16667 13.0971 4.16667 13.3333C4.16667 13.5694 4.08681 13.7673 3.92708 13.927C3.76736 14.0867 3.56944 14.1666 3.33333 14.1666Z"
+                                fill="currentColor" />
+                        </g>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div  *ngIf="IntegrationMediumZoom">
+        <p class="fs-low fw-five zoom-recent">Recently Viewed</p>
+    </div>
+    <div class="search-box" *ngIf="IntegrationMediumZoom">
+        <div class="search-input-wrapper">
+            <input type="text" placeholder="Search presentations" class="form-control header-input"
+                [(ngModel)]="searchTerm" (keyup.enter)="onSearch()" (input)="onInputChange()">
+            <button class="search-icon" (click)="onSearch()">
+                <svg width="20" height="20" fill="none" stroke="black" stroke-width="2" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+            </button>
+        </div>
+    </div>
+</div>
+<!-- folder create modal -->
+<div class="modal fade" id="Folder" tabindex="-1" aria-labelledby="createNewFolderLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered rename-modal wih-100">
+        <div class="modal-content content-popup">
+            <div class="modal-header bb-none">
+                <h5 class="modal-title" id="createNewFolderLabel">Create Folder</h5>
+                <button type="button" class="close-presentaion" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="CancelFolder()">
+                    &times;
+                </button>
+            </div>
+            <form name="newFolder" [formGroup]="folderForm" (ngSubmit)="createFolder()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control w-100 border-0 rounded-0 fs-very-low" id="slideName"
+                            placeholder="Give a name to get started." formControlName="folderName" #FolderName
+                            maxlength="100"
+                            [ngClass]="{ 'is-invalid': submitted && folderForm.get('folderName').errors }" />
+                        <div *ngIf="submitted && folderForm.get('folderName').errors" class="invalid-feedback">
+                            <div *ngIf="folderForm.get('folderName').errors['required']">
+                                Type a name for your new folder
+                            </div>
+                            <div *ngIf="folderForm.get('folderName').errors['maxlength']">
+                                Maximum length exceeded (100 characters).
+                            </div>
+                        </div>
+                        <span
+                            [ngClass]="{'remaning': !submitted || !folderForm.get('folderName').errors, 'remaning-i': submitted && folderForm.get('folderName').errors}">{{100
+                            - FolderName.value.length}}</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                        (click)="CancelFolder()">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn rename-button fs-very-low"><span
+                            class="spinner-border spinner-border-sm" role="status" aria-hidden="true" *ngIf="isLoading"
+                            (click)="createFolder()"></span> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- create presentation modal -->
+<div class="modal fade" id="createNewPresentation" tabindex="-1" aria-labelledby="createNewPresentationLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered rename-modal wih-100">
+        <div class="modal-content content-popup">
+            <div class="modal-header bb-none">
+                <h5 class="modal-title" id="createNewPresentationLabel">What’s the title of your presentation?</h5>
+                <button type="button" class="close-presentaion" data-bs-dismiss="modal" aria-label="Close"
+                    (click)="cancelPresentation()">
+                    &times;
+                </button>
+            </div>
+            <form name="newPresentation" [formGroup]="presentationForm" (ngSubmit)="onSubmit()">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <input type="text" class="form-control w-100 border-0 rounded-0 fs-very-low bg-color"
+                            id="slideName" placeholder="Ex:Marketing strategy" formControlName="presentationName"
+                            #presentationname maxlength="100" autocomplete="off"
+                            [ngClass]="{ 'is-invalid': presentationForm.get('presentationName').invalid && presentationForm.get('presentationName').touched }">
+                        <span
+                            [ngClass]="{'remaning': !presentationForm.get('presentationName').touched || !presentationForm.get('presentationName').errors,
+                          'remaning-i': presentationForm.get('presentationName').touched && presentationForm.get('presentationName').errors}">
+                            {{ (100 - presentationname.value.length) > 0 ? 100 - presentationname.value.length : 0 }}
+                        </span>
+                        <span
+                            *ngIf="presentationForm.get('presentationName').invalid && presentationForm.get('presentationName').touched"
+                            class="invalid-feedback">
+                            Enter a name for presentation
+                        </span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn cancel-button fs-very-low" data-bs-dismiss="modal"
+                        (click)="cancelPresentation()">Cancel</button>
+                    <button type="submit" class="btn rename-button fs-very-low"><span
+                            class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                            *ngIf="isLoading"></span> Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

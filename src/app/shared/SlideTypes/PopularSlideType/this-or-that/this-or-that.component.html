@@ -1,0 +1,39 @@
+<div class="thisorthat-main-area" [style.scale]="!this.presentationMode ?0.9 : 1">
+  <div class="thisorthat-text-area">
+    <div class="description-text mb-3 w-50">
+      <span class="fs-medium responsive-text" [style.font-family]="slideTheme?.ThemeFontFamily">{{ options[0]?.OptionTitle }}</span>
+    </div>
+    <div class="description-text mb-3 w-50">
+      <span class="fs-medium responsive-text" [style.font-family]="slideTheme?.ThemeFontFamily">{{ options[1]?.OptionTitle }}</span>
+    </div>
+  </div>
+  <div class="thisorthat-value-area">
+    <div class="text-center px-0 w-50" *ngFor="let item of options | slice:0:2; let i = index">
+      <div [ngClass]="thisOrThatValue(i) ? 'selected' : 'unselected'" class="value-container">
+        <div class="container">
+          <div class="circle" 
+            [style.background-color]="slideDetails.settings.showInResults ? item.visualizationColor : ''"
+            [style.width]="slideDetails.settings.showInResults ? calculateCircleSize(item.value) : ''" 
+            [style.height]="slideDetails.settings.showInResults ? calculateCircleSize(item.value) : ''"></div>
+        </div>
+        <div class="item-value mt-3">
+          <span class="count" [style.color]="this.slideTheme?.ThemeTextColor">
+            <!-- Conditionally show content based on slideShowInResults and slideResponseAsPercentage -->
+            <ng-container *ngIf="slideDetails.settings.showInResults; else defaultZero">
+              <span *ngIf="!slideDetails?.design?.slideResponseAsPercentage">{{ item.value }}</span>
+              <span *ngIf="slideDetails?.design?.slideResponseAsPercentage">
+                <ng-container *ngIf="item?.value != 0">{{ calculatePercentage(item.value) | number: '1.0-0'
+                  }}%</ng-container>
+                <ng-container *ngIf="item?.value == 0">0 %</ng-container>
+              </span>
+            </ng-container>
+            <ng-template #defaultZero>
+              <span *ngIf="!slideDetails?.design?.slideResponseAsPercentage">0</span>
+              <span *ngIf="slideDetails?.design?.slideResponseAsPercentage">0 %</span>
+            </ng-template>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,219 @@
+<div class="theme-right-side-bar">
+    <div class="theme-right-side-bar-container">
+        <div class="mobile-fixed-done">
+            <div class="fixed-top-mobile">
+                <button class="btn-submit" (click)="backToWorkSpace()">
+                    <span class="close-text">Done</span>
+                </button>
+            </div>
+        </div>
+        <h5 class="modal-title mb-3">Themes Name</h5>
+        <div class="col-12 px-0">
+            <input type="text" class="form-control remaining-padding" maxlength="75" #themeNameCount
+                [(ngModel)]="themeName" (blur)="onThemeNameChange(themeName)">
+            <div class="count-remaining-text">
+                <span>{{75 - themeNameCount.value.length}}</span>
+            </div>
+        </div>
+        <p class="reached-maximum mt-2 pb-1" *ngIf="isFocused(themeNameCount) && themeNameCount.value.length === 75">
+            You’re over the 75-character limit. Try trimming it down.</p>
+        <div class="border-top pt-3 mt-2"></div>
+        <ng-container>
+            <h5 class="modal-title mb-3">Text</h5>
+        </ng-container>
+        <div class=" justify-content-between align-items-center mb-2">
+            <div class="w-100 me-2">
+                <select class="form-select rounded-0 font-family-select hover-border" [(ngModel)]="themesFonts"
+                    (change)="changeFontFamily(themesFonts)">
+                    <option value="Lexend Deca,-apple-system">Lexend Deca</option>
+                    <option value="'Ga Maamli', sans-serif">Ga Maamli</option>
+                    <option value="'Baskervville SC', serif">Baskervville</option>
+                    <option value="'Anton SC', sans-serif">Anton</option>
+                    <option value="'Playwrite DE Grund', cursive">Playwrite</option>
+                </select>
+            </div>
+            <div>
+                <div class="right-style-section mt-2">
+                    <div>
+                        <span class="style-heading">Style</span>
+                    </div>
+                    <div class="right-style-section-style-btn">
+                        <button class="custom-text-button hover-border" [ngClass]="textBold? 'active':''"
+                            (click)="onTextboldUpdate(textBold)"> <b>B</b></button>
+                        <button class="custom-text-button hover-border" [ngClass]="textItalic? 'active':''"
+                            (click)="onTextItalicUpdate(textItalic)"><b>/</b></button>
+                        <button class="custom-text-button hover-border" [ngClass]="textStrikeout? 'active':''"
+                            (click)="onTextStrickUpdate(textStrikeout)"><b><s>S</s></b></button>
+                        <button class="custom-text-button hover-border" [ngClass]="textUnderline? 'active':''"
+                            (click)="onTextUnderLingUpdate(textUnderline)"><b><u>U</u></b></button>
+                    </div>
+                </div>
+                <div class="right-style-section mt-2">
+                    <div>
+                        <span class="Font-heading">Font size</span>
+                    </div>
+                    <div class="d-flex">
+                        <button class="font-size-btn me-2 hover-border" [disabled]="fontSize == 16" (click)="onThemeTextFontSize(false)">-</button>
+                        <button class="font-size-btn hover-border" [disabled]="fontSize == 24" (click)="onThemeTextFontSize(true)">+</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-color">Text color</span>
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.themesFontColor == '#FFFFFF'?'active-box':'']">
+                    <input value="#FFFFFF" class="background-color-picker" (click)="onTextColorUpdate('#FFFFFF')">
+                    <div class="bg-text-picker-color background-color-white" (click)="onTextColorUpdate('#FFFFFF')">
+                    </div>
+                </div>
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.themesFontColor == '#252B36'?'active-box':'']">
+                    <input value="#252B36" class="background-color-picker" (click)="onTextColorUpdate('#252B36')">
+                    <div class="bg-text-picker-color background-color-black" (click)="onTextColorUpdate('#252B36')">
+                    </div>
+                </div>
+                <div class="vl"></div>
+                <span class="custom-bg-color">Custom</span>
+                <div class="position-relative me-2 border-0 hover-border" [ngClass]="[this.currentCustomerTheme?.themesFontColor != '#252B36' && this.currentCustomerTheme?.themesFontColor != '#FFFFFF' ?'active-box':'']">
+                    <input type="color" [value]="this.currentCustomerTheme?.themesFontColor"
+                        class="background-color-picker" (change)="onTextColorUpdate($any($event).target.value)">
+                    <div class="bg-picker-color-custome border-0">
+                        <img class="image-fit" src="/assets/new-icons/images/custom-font-color.png">
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center">
+                <span class="text-color">Line color</span>
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.lineClour == '#FFFFFF'?'active-box':'']">
+                    <input value="#FFFFFF" class="background-color-picker" (click)="onLineColorUpdate('#FFFFFF')">
+                    <div class="bg-text-picker-color background-color-white" (click)="onLineColorUpdate('#FFFFFF')">
+                    </div>
+                </div>
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.lineClour == '#252B36'?'active-box':'']">
+                    <input value="#252B36" class="background-color-picker" (click)="onLineColorUpdate('#252B36')">
+                    <div class="bg-text-picker-color background-color-black" (click)="onLineColorUpdate('#252B36')">
+                    </div>
+                </div>
+                <div class="vl"></div>
+                <span class="custom-bg-color">Custom</span>
+                <div class="position-relative me-2 border-0 hover-border" [ngClass]="[this.currentCustomerTheme?.lineClour != '#252B36' && this.currentCustomerTheme?.lineClour != '#FFFFFF' ?'active-box':'']">
+                    <input type="color" [value]="this.currentCustomerTheme?.lineClour" class="background-color-picker"
+                        (change)="onLineColorUpdate($any($event).target.value)">
+                    <div class="bg-picker-color-custome border-0">
+                        <img class="image-fit" src="/assets/new-icons/images/custom-font-color.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-top pt-3"></div>
+        <h5 class="modal-title mb-3">Background color</h5>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.themesBackgroundColor == '#FFD584'?'active-box':'']">
+                    <input value="#FFD584" class="background-color-picker" (click)="onBGColorUpdate('#FFD584')">
+                    <div class="bg-picker-color background-color-yellow" (click)="onBGColorUpdate('#FFD584')"></div>
+                </div>
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.themesBackgroundColor == '#82B4FE'?'active-box':'']">
+                    <input value="#82B4FE" class="background-color-picker" (click)="onBGColorUpdate('#82B4FE')">
+                    <div class="bg-picker-color background-color-blue" (click)="onBGColorUpdate('#82B4FE')"></div>
+                </div>
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.themesBackgroundColor == '#83D2FF'?'active-box':'']">
+                    <input value="#83D2FF" class="background-color-picker" (click)="onBGColorUpdate('#83D2FF')">
+                    <div class="bg-picker-color background-color-light-blue" (click)="onBGColorUpdate('#83D2FF')"></div>
+                </div>
+                <div class="position-relative me-2 hover-border-radius" [ngClass]="[this.currentCustomerTheme?.themesBackgroundColor == '#FF8383'?'active-box':'']">
+                    <input value="#FF8383" class="background-color-picker" (click)="onBGColorUpdate('#FF8383')">
+                    <div class="bg-picker-color background-color-light-orange" (click)="onBGColorUpdate('#FF8383')">
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between align-items-center ps-2">
+                <div class="vl"></div>
+                <span class="custom-bg-color">Custom</span>
+                <div class="position-relative me-2 border-0 hover-border" [ngClass]="[this.currentCustomerTheme?.themesBackgroundColor != '#FF8383' && this.currentCustomerTheme?.themesBackgroundColor != '#FFD584' && this.currentCustomerTheme?.themesBackgroundColor != '#83D2FF' && this.currentCustomerTheme?.themesBackgroundColor != '#82B4FE' ?'active-box':'']">
+                    <input type="color" [value]="this.currentCustomerTheme?.themesBackgroundColor"
+                        class="background-color-picker" (change)="onBGColorUpdate($any($event).target.value)">
+                    <div class="bg-picker-color-custome border-0">
+                        <img class="image-fit" src="/assets/new-icons/images/custom-color.png">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-top pt-3"></div>
+        <h5 class="modal-title mb-3">Visualization colors</h5>
+        <div class="visualization-chart-color mb-3">
+            <div class="d-flex justify-content-between align-items-center"
+                *ngFor="let visualizationColor of this.currentCustomerTheme?.themesChartColor,index as i">
+                <div class="position-relative hover-border-radius">
+                    <input type="color" #colorPicker [value]="visualizationColor.color" class="background-color-picker"
+                        (change)="onVisualizationColorUpdate($any($event).target.value,i)">
+                    <div class="bg-picker-color" [ngStyle]="{'background-color':visualizationColor.color}">
+                        <img src="/assets/new-icons/theme-color.png" (click)="colorPicker.click()" width="16" height="16" class="visualization-opacity-png">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="border-top pt-3"></div>
+        <h5 class="modal-title mb-3">Background Image</h5>
+        <ng-container *ngIf="themesBackgroundImage">
+            <app-reusable-image-modal
+                 [imageURL]="themesBackgroundImage.themeBackgroundImageCroppedUrl"
+                 [imageURLEntity]="themesBackgroundImage"
+                 [imageUploadedType]="imageUploadeModuleName.ThemeBackgroundImage"
+                 [instanceId]="imageUploadeModuleName.ThemeBackgroundImage"
+                 [ThemeId]="presentationThemeService.customeThemeId"
+                 (updatedImageToParent)="updatePresentationBackroundImages($event)"
+            ></app-reusable-image-modal>
+        </ng-container>
+        <ng-container *ngIf="presentationThemeService.customerThemeBackgroundImage">
+            <div class="appearance-section">
+                <p class="normal-content-text fs-14 mb-2">Transparency</p>
+                <div class="appearance-opacity mb-2">
+                    <input type="range" class="appearance-range" min="0" max="100" step="1"
+                        [value]="backgroundColorOpacity*100"
+                        (input)="changesBackgroundOpacity($any($event).target.value/ 100)"
+                        (change)="onBackgroundOpacityUpdate($any($event).target.value/ 100)">
+                    <div class="appearance-percentage">
+                        <img src="/assets/new-icons/theme-opacity.png" width="16" height="16" class="img-fluid">
+                        <span class="appearance-text">{{opacityAsPercentage}}%</span>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+        <div class="logo-container">
+        <h5 class="modal-title mb-3">Logo</h5>
+        <div class="pricing-icon slide-list-hover tooltip-top tooltip-left-12" [attr.data-tooltip]="customerRewards?.add_your_logotype==false ? 'Need Subscription' : null" *ngIf="customerRewards.add_your_logotype==false">
+            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z"></path></g></svg>
+        </div>
+        </div>
+        <ng-container *ngIf="themesLogo">
+            <div  [ngStyle]="{
+                'cursor': customerRewards?.add_your_logotype==true ? '' : 'not-allowed',
+                'opacity': customerRewards?.add_your_logotype==true ? '1' : '0.5',
+                'pointer-events': customerRewards?.add_your_logotype==true ? 'auto' : 'none'
+              }">
+                <app-reusable-image-modal
+                [imageURL]="themesLogo.logoCroppedUrl"
+                [imageURLEntity]="themesLogo"
+                [imageUploadedType]="imageUploadeModuleName.ThemeLogoImages"
+                [instanceId]="imageUploadeModuleName.ThemeLogoImages"
+                [ThemeId]="presentationThemeService.customeThemeId"
+                (updatedImageToParent)="updatePresentationLogoImages($event)"
+           ></app-reusable-image-modal>
+            </div>
+           
+        </ng-container>
+        <div class="border-top pt-3"></div>
+        <a href="javascript:void(0)" class="fs-14" [ngClass]="resetTheme?'':'disabled'"
+            (click)="resetThemeAPICall(id)">Reset to theme defaults</a>
+        <div class="border-top pt-3"></div>
+    </div>
+</div>
+<div class="fixed-top">
+    <button class="btn-close-theme" (click)="backToWorkSpace()">
+        <span class="close-text">Close</span>
+    </button>
+    <button class="btn-submit" (click)="backToWorkSpace()">
+        <span class="done-text">Done</span>
+    </button>
+</div>

@@ -1,0 +1,333 @@
+<section class="m-5 m-20">
+  <div class="d-flex align-items-center invite-header" >
+  <div class="col-8 pl-0 teamname">
+  <p class="fs-very-low-12">WORKSPACE / TEAM MEMBERS</p>
+  <h4 class="fs-medium">{{teamInfo.teamName}}</h4>
+  </div>
+  <div class="col-4 d-flex justify-content-end invite-d">
+      <button type="button" class="invite-btn" (click)=" openPopup()" *ngIf="currentUserRole === 'Owner' || currentUserRole === 'Admin' ">
+          <svg data-v-e901e84e="" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="svg-inline--fa fa-user fa-w-14 fa-sm"><path data-v-e901e84e="" fill="currentColor" d="M224 256c70.7 0 128-57.3 128-128S294.7 0 224 0 96 57.3 96 128s57.3 128 128 128zm89.6 32h-16.7c-22.2 10.2-46.9 16-72.9 16s-50.6-5.8-72.9-16h-16.7C60.2 288 0 348.2 0 422.4V464c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48v-41.6c0-74.2-60.2-134.4-134.4-134.4z" class=""></path></svg>
+          Invite Member</button>
+  </div>
+  </div>
+  <hr>
+  <div class="center-section">
+      <div class="member-headersection">
+          <p>({{ memberCount }}) Member</p>
+      </div>
+  <ul class="nav nav-tabs tabs-navbar" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active fs-very-low" id="simple-tab-0" data-bs-toggle="tab" href="#simple-tabpanel-0" role="tab" aria-controls="simple-tabpanel-0" aria-selected="true">Members ({{ memberCount }})</a>
+      </li>
+      <li class="nav-item" role="presentation" *ngIf="currentUserRole === 'Owner' || currentUserRole === 'Admin' ">
+        <a class="nav-link fs-very-low" id="simple-tab-1" data-bs-toggle="tab" href="#simple-tabpanel-1" role="tab" aria-controls="simple-tabpanel-1" aria-selected="false">Invitations ({{ invitationCount }})</a>
+      </li>
+    </ul>
+    <div class="tab-content tabs-value ox-scroll  pt-0" id="tab-content">
+      <div class="tab-pane active" id="simple-tabpanel-0" role="tabpanel" aria-labelledby="simple-tab-0"><table class="table">
+  
+        <thead class="thead-light">
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col" class="md-none">Last activity</th>
+                <th scope="col" class="md-none">Joined</th>
+                <th scope="col">Role</th>
+                <th scope="col"></th>
+              </tr>
+            </thead>
+            <tbody >
+                <tr *ngFor="let item of invitations;" class="highlight">
+                  <ng-container *ngIf="item.isJoin==true">
+                  <td class="member-text "><div class="membername-border invite-text">{{item.name}}  <span  *ngIf="item.email === currentUserEmail">(You)</span></div></td>
+                  <td class="member-text"><div class="invite-text">{{item.email}}</div></td>
+                  <td class="member-text  md-none"><div class="invite-text md-none">a day ago</div></td>
+                  <td class="member-text  md-none"><div class="invite-text md-none">{{ getTimeAgo(item.joinDate) }}</div></td>
+                  <td class="member-text"><div class="invite-text">{{item.role}}</div></td>
+                  <td class="member-text ">
+                    <div class="memberleave-border invite-text" *ngIf="currentUserRole === 'Owner'">
+                      <span class="leave-team cur-pointer" *ngIf="item.role === 'Owner'"  (click)="openleaveteam(item.inviteId)" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Leave team">
+                        <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#999"></path></svg>
+                      </span>
+                      <span class="cur-pointer" *ngIf="item.role === 'Admin'"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove from team" (click)="openremovemember(item.inviteId,item.name)"><svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="close" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="0 0 24 24" data-original-title="null" data-v-72fc3044=""><g clip-path="url(#clip0)"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.929 4.929a2 2 0 000 2.828L9.172 12l-4.243 4.243a2 2 0 002.828 2.828L12 14.828l4.243 4.243a2 2 0 002.828-2.828L14.828 12l4.243-4.243a2 2 0 10-2.828-2.828L12 9.172 7.757 4.929a2 2 0 00-2.828 0z" fill="#282E3E"></path></g><defs><clipPath id="clip0"><path fill="#fff" d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+                      </span>
+                      <span class="cur-pointer" *ngIf="item.role === 'Member'"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove from team" (click)="openremovemember(item.inviteId,item.name)"> <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="close" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="0 0 24 24" data-original-title="null" data-v-72fc3044=""><g clip-path="url(#clip0)"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.929 4.929a2 2 0 000 2.828L9.172 12l-4.243 4.243a2 2 0 002.828 2.828L12 14.828l4.243 4.243a2 2 0 002.828-2.828L14.828 12l4.243-4.243a2 2 0 10-2.828-2.828L12 9.172 7.757 4.929a2 2 0 00-2.828 0z" fill="#282E3E"></path></g><defs><clipPath id="clip0"><path fill="#fff" d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+                      </span>
+ 
+                      </div>
+                    <div class="memberleave-border invite-text"*ngIf="currentUserRole === 'Admin'">
+                      <span class="leave-team " *ngIf="item.role === 'Owner'"  >
+                        <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#f6f6f6"></path></svg>
+                      </span>
+                      <span *ngIf="item.role === 'Admin'" class="d-flex justify-content-end">
+                        <span class="cur-pointer" *ngIf="item.email === currentUserEmail" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Leave team" (click)="openleavemember(item.inviteId,item.name)"> 
+                          <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#999"></path></svg>
+                        </span> 
+                        <span > 
+                          <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#f6f6f6"></path></svg>
+                        </span> 
+                      </span>  
+
+                      <span *ngIf="item.role === 'Member'" class="d-flex justify-content-end">
+                        <span class="cur-pointer" *ngIf="item.role === 'Member'"  data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Remove from team" (click)="openremovemember(item.inviteId,item.name)"> <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="close" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="0 0 24 24" data-original-title="null" data-v-72fc3044=""><g clip-path="url(#clip0)"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.929 4.929a2 2 0 000 2.828L9.172 12l-4.243 4.243a2 2 0 002.828 2.828L12 14.828l4.243 4.243a2 2 0 002.828-2.828L14.828 12l4.243-4.243a2 2 0 10-2.828-2.828L12 9.172 7.757 4.929a2 2 0 00-2.828 0z" fill="#282E3E"></path></g><defs><clipPath id="clip0"><path fill="#fff" d="M0 0h24v24H0z"></path></clipPath></defs></svg>
+                        </span> 
+                        <span > 
+                          <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#f6f6f6"></path></svg>
+                        </span> 
+                      </span>  
+
+                    </div>
+                    <div class="memberleave-border invite-text" *ngIf="currentUserRole === 'Member'" >
+                      <span class="leave-team " *ngIf="item.role === 'Owner'"  >
+                        <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#f6f6f6"></path></svg>
+                      </span>
+                      <span class="leave-team " *ngIf="item.role === 'Admin'"  >
+                        <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#f6f6f6"></path></svg>
+                      </span>
+                      <span *ngIf="item.role === 'Member'" class="d-flex justify-content-end">
+                      <span class="cur-pointer" *ngIf="item.email === currentUserEmail" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Leave team" (click)="openleavemember(item.inviteId,item.name)"> 
+                        <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#999"></path></svg>
+                      </span> 
+                      <span > 
+                        <svg data-v-e901e84e="" width="14" height="14" fill="none" xmlns="http://www.w3.org/2000/svg" name="logout" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" viewBox="3 0 16 24" data-original-title="null" data-v-72fc3044=""><path d="M21.414 12.165l-6.562 6.562c-.586.586-1.602.176-1.602-.664v-3.75H7.937A.935.935 0 017 13.376v-3.75c0-.52.418-.938.938-.938h5.312v-3.75c0-.836 1.012-1.25 1.602-.664l6.562 6.563a.946.946 0 010 1.328zM9.5 18.532V16.97a.47.47 0 00-.469-.47H5.75c-.691 0-1.25-.558-1.25-1.25v-7.5c0-.69.559-1.25 1.25-1.25h3.281a.47.47 0 00.469-.468V4.47A.47.47 0 009.031 4H5.75C3.68 4 2 5.68 2 7.75v7.5C2 17.322 3.68 19 5.75 19h3.281a.47.47 0 00.469-.468z" fill="#f6f6f6"></path></svg>
+                      </span> 
+                    </span>  
+                    </div>
+                  </td>
+                </ng-container>
+                </tr>
+              </tbody>
+        </table></div>
+      <div class="tab-pane" id="simple-tabpanel-1" role="tabpanel" aria-labelledby="simple-tab-1"><table class="table">
+          <thead class="thead-light">
+              <tr>
+                <th scope="col">Email</th>
+                <th scope="col" style="padding-left: 0px;">Invitation link</th>
+                <th scope="col">Role</th>
+                <th scope="col">Status</th>
+                <th scope="col "></th>
+              </tr>
+            </thead>
+            <tbody>
+           
+                <tr *ngFor="let item of invitations; let i = index;"  class="highlights">
+                  <ng-container *ngIf="item.isJoin==false">
+                  <td class="invitation-text  "><div class="membername-border invite-text" style="padding-right: 15px;">{{item.email}}</div></td>
+                  <td class="invitation-text ">
+                    <div class="d-flex invite-text" style="padding: 14px 0px 14px 0px !important;">
+                    <div  id="GfGInput{{i}}">{{item.link}}</div>
+                    <div class="ms-2 copytext cur-pointer" (click)="copyText('GfGInput' + i)"><svg data-v-e901e84e="" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg" name="copy" class="inline-block mb-1 text-base-60 path-fill-current inline-block has-tooltip" data-original-title="null" data-v-72fc3044=""><path fill-rule="evenodd" clip-rule="evenodd" d="M5 2a.333.333 0 00-.333.333v1H11c.92 0 1.666.746 1.666 1.667v6.333h1c.185 0 .334-.149.334-.333V2.333A.333.333 0 0013.666 2H5zm7.666 10.667h1c.921 0 1.667-.747 1.667-1.667V2.333c0-.92-.746-1.666-1.667-1.666H5c-.92 0-1.667.746-1.667 1.666v1h-1C1.413 3.333.667 4.08.667 5v8.667c0 .92.746 1.666 1.666 1.666H11c.92 0 1.666-.746 1.666-1.666v-1zm-10.333-8A.333.333 0 002 5v8.667c0 .184.15.333.333.333H11c.184 0 .333-.15.333-.333V5A.333.333 0 0011 4.667H2.333z" fill="#4F9BF3"></path></svg></div>
+                  </div>
+                  
+                </td>
+                  <td class="invitation-text"><div class="invite-text">{{item.role}}</div></td>
+                  <td class="invitation-text"><div class="invite-text">Pending</div></td>
+                  <td class="invitation-text "><div class="invitename-border invite-text">
+                    <span (click)="openwithdraw(item.inviteId,item.email)" class="Withdraw-invite cur-pointer" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Withdraw invitation">
+                      <svg data-v-e901e84e="" width="15" height="14"  xmlns="http://www.w3.org/2000/svg" name="remove" class="cursor-pointer text-base-90 path-fill-current inline-block has-tooltip" data-original-title="'Withdraw invitation'" data-v-72fc3044=""><path fill-rule="evenodd" clip-rule="evenodd" d="M7.475.875c-3.357 0-6.1 2.744-6.1 6.1 0 3.357 2.743 6.1 6.1 6.1 3.357 0 6.1-2.743 6.1-6.1 0-3.357-2.743-6.1-6.1-6.1zm2.761 7.774A.769.769 0 019.15 9.737L7.475 8.062 5.8 9.737a.769.769 0 01-1.088-1.088l1.675-1.674-1.675-1.674a.769.769 0 011.088-1.087l1.674 1.674 1.674-1.674A.769.769 0 0110.236 5.3L8.562 6.975l1.674 1.674z" fill="#D3D7E1"></path></svg>
+                    </span></div></td>
+                </ng-container>
+                </tr>
+                <ng-container *ngIf="invitationCount == 0">
+                  <td class="invitation-text"></td>
+                  <td class="fs-very-low text-center min-none">Currently no pending</td>
+                  <td class="fs-very-low text-center mw-width">There are currently no pending, declined, or expired invitations in your team.</td>
+                  <td class="invitation-text "></td>
+                  <td class="invitation-text"></td>
+                  <td class="invitation-text"></td>
+                </ng-container>   
+            </tbody>
+        </table></div>
+  
+    </div>
+  </div>
+  </section>
+  
+  <div class="popup-container"  *ngIf="createteampopupvisible">
+      <div class="popup">
+          <div class="popup-header">
+              <p class="fs-low fw-five">Add Team members</p>
+              <button (click)="closePopup()">
+                  <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <mask id="mask0_4447_8974" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
+                          height="25">
+                          <rect width="25" height="25" fill="#D9D9D9" />
+                      </mask>
+                      <g mask="url(#mask0_4447_8974)">
+                          <path
+                              d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z"
+                              fill="#999999" />
+                      </g>
+                  </svg>
+              </button>
+          </div>
+          <div class="main-content">
+              <h5 class="team-heading">Invite members</h5>
+              <div class="d-flex justify-content-end  Member">
+                <div class="dropdown m-9">
+                    <button class="btn member-btn dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="fs-very-low" id="selectedRoles">Member</span>
+                      <svg data-v-5a777a42="" width="12" height="12" fill="none" xmlns="http://www.w3.org/2000/svg" name="arrow" class="down-arrow absolute top-3.5 right-2 path-fill-current inline-block text-primary-90" viewBox="0 0 24 24" data-v-06731762="">
+                        <path d="M13.12 16.523a1.554 1.554 0 01-2.24 0L4.437 9.828c-.95-.987-.25-2.632 1.12-2.632h12.886c1.37 0 2.07 1.645 1.12 2.632l-6.443 6.695z" fill="#282E3E"></path>
+                      </svg>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      <li><a class="dropdown-item fs-very-low fw-five" (click)="changeRole('Admin')">Admin
+                        <p>Invite, remove member,<br> manage member role</p>
+                      </a></li>
+                      <li><a class="dropdown-item fs-very-low fw-five" (click)="changeRole('Member')">Member</a></li>
+                    </ul>
+                  </div>
+                  
+                  
+            </div>
+              <div [formGroup]="forms" class="invite-emailbox">
+              <div class="editor-tag" (click)="focusTagInput()">
+              <span class="tag-item" *ngFor="let tag of tags">
+                  {{tag}}
+                  <span class="remove-tag" (click)="removeTag(tag)">×</span>
+                </span>
+                  <input formControlName="tag"  [placeholder]="tags.length === 0 ? 'Emails, comma separated' : ''"    (keydown)="onKeyDown($event)"
+                  #tagInput type="text" style="width:35%"
+                  class="input-tag text-fs-size input-d"
+                 >
+          </div>
+      </div>
+
+          <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
+          </div>
+          <div class="d-flex justify-content-end ">
+              <button class="btn btn-light cancel fs-very-low" (click)="closePopup()">Cancel</button>
+              <button class="btn btn-primary invite fs-very-low disableds" id="invite" (click)="inviteMember()">
+                <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                Invite</button>
+          </div>
+      </div>
+    </div>
+
+
+    <div class="popup-container"  *ngIf="withdraw">
+      <div class="withdraw-popup">
+          <div class="popup-header">
+              <p class="fs-low fw-five">Withdraw invitation</p>
+              <button (click)="closePopup()">
+                  <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <mask id="mask0_4447_8974" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
+                          height="25">
+                          <rect width="25" height="25" fill="#D9D9D9" />
+                      </mask>
+                      <g mask="url(#mask0_4447_8974)">
+                          <path
+                              d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z"
+                              fill="#999999" />
+                      </g>
+                  </svg>
+              </button>
+          </div>
+          <div class="main-content">
+            <p class="fs-very-low withdraw-text">The person you invited<br> <span class="email-highlight">({{email}}) </span>will no longer have<br> access to join the team.</p>
+          <div class="d-flex justify-content-end ">
+            <button class="btn btn-danger invite fs-very-low" id="invite" (click)="removeInvite(inviteId)">
+              <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+              Withdraw</button>
+              <button class="btn btn-light cancel-withdraw fs-very-low" (click)="closePopup()">Cancel</button>
+
+          </div>
+      </div>
+    </div>
+</div>
+    <div class="popup-container"  *ngIf="Leaveteam">
+      <div class="withdraw-popup">
+          <div class="popup-header">
+              <p class="fs-low fw-five">Are you sure you want to leave the team “{{teamInfo.teamName}}”?</p>
+              <button (click)="closePopup()" style="margin-top: -30px;">
+                  <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <mask id="mask0_4447_8974" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
+                          height="25">
+                          <rect width="25" height="25" fill="#D9D9D9" />
+                      </mask>
+                      <g mask="url(#mask0_4447_8974)">
+                          <path
+                              d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z"
+                              fill="#999999" />
+                      </g>
+                  </svg>
+              </button>
+          </div>
+          <div class="main-content">
+            <p class="fs-very-low withdraw-text">By leaving the team as an owner, the members will no<br> longer belong to this team.</p>
+          <div class="d-flex justify-content-end ">
+            <button class="btn btn-danger invite fs-very-low" id="invite" (click)="leaveTeam(inviteId)">
+              <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+               Leave and delete team
+        </button>
+              <button class="btn btn-light cancel-withdraw fs-very-low" (click)="closePopup()">Cancel</button>
+
+          </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="popup-container"  *ngIf="removeteammember">
+      <div class="withdraw-popup">
+          <div class="popup-header">
+              <p class="fs-low fw-five">Are you sure you want to remove {{username}} from your team?</p>
+              <button (click)="closePopup()" style="margin-top: -30px;">
+                  <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <mask id="mask0_4447_8974" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
+                          height="25">
+                          <rect width="25" height="25" fill="#D9D9D9" />
+                      </mask>
+                      <g mask="url(#mask0_4447_8974)">
+                          <path
+                              d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z"
+                              fill="#999999" />
+                      </g>
+                  </svg>
+              </button>
+          </div>
+          <div class="main-content">
+            <p class="fs-very-low withdraw-text">Removing this member will revoke their access to team presentations.</p>
+          <div class="d-flex justify-content-end ">
+            <button class="btn btn-danger invite fs-very-low" id="invite" (click)="removeMember(inviteId)">
+              <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+              Remove
+        </button>
+              <button class="btn btn-light cancel-withdraw fs-very-low" (click)="closePopup()">Cancel</button>
+
+          </div>
+      </div>
+    </div>
+    </div>
+
+    <div class="popup-container"  *ngIf="Leaveteammember">
+      <div class="withdraw-popup">
+          <div class="popup-header">
+              <p class="fs-low fw-five">Are you sure you want to leave the team “{{teamInfo.teamName}}”?</p>
+              <button (click)="closePopup()" style="margin-top: -30px;">
+                  <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <mask id="mask0_4447_8974" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="25"
+                          height="25">
+                          <rect width="25" height="25" fill="#D9D9D9" />
+                      </mask>
+                      <g mask="url(#mask0_4447_8974)">
+                          <path
+                              d="M6.48916 19.5833L5 18.125L10.9567 12.2917L5 6.45833L6.48916 5L12.4458 10.8333L18.4025 5L19.8916 6.45833L13.935 12.2917L19.8916 18.125L18.4025 19.5833L12.4458 13.75L6.48916 19.5833Z"
+                              fill="#999999" />
+                      </g>
+                  </svg>
+              </button>
+          </div>
+          <div class="main-content">
+            <p class="fs-very-low withdraw-text">Leaving the team means losing access to its presentations.</p>
+          <div class="d-flex justify-content-end ">
+            <button class="btn btn-danger invite fs-very-low" id="invite" (click)="leaveMember(inviteId)">
+              <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+               Leave 
+        </button>
+              <button class="btn btn-light cancel-withdraw fs-very-low" (click)="closePopup()">Cancel</button>
+
+          </div>
+      </div>
+    </div>
+    </div>

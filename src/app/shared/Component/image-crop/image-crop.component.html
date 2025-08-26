@@ -1,0 +1,77 @@
+<div class="modal-dialog modal-lg modal-dialog-centered" id="bg-preview" *ngIf="!isShowCropModalFromModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="modal-title" id="imageAddModalLabel">Crop image</h2>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                (click)="closebgImagePreview(false)">
+                <span aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                        width="2.25rem" height="2.25rem" aria-labelledby="descriptive-:r8h:" viewBox="0 0 24 24">
+                        <title id="descriptive-:r8h:">Close</title>
+                        <g color="#101834">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div class="modal-body d-done">
+            <div class="image-upload-computer">
+                <img *ngIf="imageformat=='svg' || imageformat=='gif'" class="svgimage"
+                 id="svgimage" [src]="imageSource" accept=".png,.svg,.jpeg,.jpg,.gif,.webp">
+                 <div *ngIf="imageformat==='svg'" class="crop-button">
+                    <span>SVG images can't be cropped. The whole image will be used instead.</span>
+                </div>
+                <div *ngIf="imageformat==='gif'" class="crop-button">
+                    <span>GIF images can't be cropped. The whole image will be used instead.</span>
+                </div>
+                <image-cropper class="img-cropper" 
+                [ngStyle]="{ 'visibility': showCropper ? 'visible' : 'hidden' }"
+                *ngIf="imageformat!='svg' && imageformat!='gif'" 
+                    [imageBase64]="URL"
+                    [imageChangedEvent]="imageChangedEvent"
+                    format="jpeg"
+                    [aspectRatio]="widthRatio / heightRatio"
+                    [maintainAspectRatio]="cropperRatio"
+                    [cropper]="cropper"
+                    [hideResizeSquares]="hideResizeSquares"
+                    (imageCropped)="imageCropped($event)"
+                    (imageLoaded)="imageLoaded()"
+                    style="visibility: visible;"
+                ></image-cropper> 
+               
+            </div>
+        </div>
+        <div class="crop-button" *ngIf="imageformat!='svg' && imageformat !='gif'">
+            <button type="button" class="btn btn-crop mx-2" [ngClass]="ratioType==settingVariable?.RatioPerfect?'active':''" 
+                (click)="perfect()">Perfect</button>
+            <button type="button" class="btn btn-crop mx-2" [ngClass]="ratioType==settingVariable?.RatioFree?'active':''"
+                (click)="freeSize()">Free-form</button>
+            <button type="button" class="btn btn-crop mx-2" [ngClass]="ratioType==settingVariable?.RatioSquare?'active':''"
+                (click)="square()">Square</button>
+        </div>
+        <br>
+        <div class="modal-footer" style="justify-content: space-between">
+            <button type="button" class="btn btn-backtoupload text-white v ed ak i ai z aw ee ao ef bc dx eg df dg eh ei di dj ej cb ek bv w el an em en eo ep eq er es et au eu"
+                (click)="backToUpload()">
+                <span aria-hidden="true" class="ao ez fe i ai z hy">
+                    <svg xmIns="http://www.w3.org/2000/svg" role="img" preservespectRatio="xMidYMid meet" width="1rem" height="1rem" aria-label="Arrow left" viewBox="0 0 24 24">
+                        <g color="inherit">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="19" y1="12" x2="5" y2="12"></line>
+                                <polyline points="12 19 5 12 12 5"></polyline>
+                            </g>
+                        </g>
+                    </svg>
+                </span>
+                <span aria-hidden="false" class="ao ez fd fe i ai z" style="margin-top: -5px; padding-left: 1px;">Back to upload</span>
+            </button>
+            <button type="button" class="btn btn-save text-white"
+                (click)="closebgImagePreview(true)">Save</button>
+        </div>
+    </div>
+</div>

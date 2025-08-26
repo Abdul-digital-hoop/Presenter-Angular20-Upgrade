@@ -1,0 +1,102 @@
+<!-- * Label Display -->
+<h5 class="modal-title my-3" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName. TRUTH_OR_LIE_SLIDE_TYPE">{{label}}</h5>
+<h5 class="modal-title mt-3" *ngIf="workSpaceService.activeSlideTypeName === masterSlideTypeName. TRUTH_OR_LIE_SLIDE_TYPE">Correct answer</h5>
+<div class="d-flex mb-2" *ngIf="workSpaceService.activeSlideTypeName === masterSlideTypeName. TRUTH_OR_LIE_SLIDE_TYPE">
+    <img src="/assets/home/popular-slide-types/truthorlie/truthorlie.png" alt="">
+</div>
+<!-- * Options Looping -->
+<ng-container *ngFor="let option of optionDatas;index as idx">
+    <div class="position-relative mb-3">
+        <div class="row mx-0 align-items-center">
+            <ng-container *ngIf="isTrueorFalseStatement">
+                <div class="col-1 round-lie px-0" id="round-lie">
+                    <input type="checkbox" id="{{idx}}-wrong" [(ngModel)]="!option.isCorrect"
+                        [ngModelOptions]="{standalone: true}"
+                    (change)="truthorLieCorrectOptions(option.OptionId,false,option)" class="right-side-bar-tooltip-top"  
+                    data-tooltip="Wrong"/>
+                    <label for="{{idx}}-wrong" class="mb-0 hover-border"></label>
+                </div>
+                <div class="col-1 round px-0" id="round">
+                    <input type="checkbox" id="{{idx}}-correct" [(ngModel)]="option.isCorrect"
+                        [ngModelOptions]="{standalone: true}"
+                        (change)="truthorLieCorrectOptions(option.OptionId,true,option)" class="right-side-bar-tooltip-top"  data-tooltip="Correct"/>
+                    <label for="{{idx}}-correct" class="mb-0 hover-border"></label>
+                </div>
+            </ng-container>
+            <!-- * Make Correct Options -->
+            <ng-container *ngIf="isCorrectAnswer">
+                <div class="col-1 round px-0">
+                    <input type="checkbox" id="{{idx}}" [(ngModel)]="option.isCorrect"
+                        [ngModelOptions]="{standalone: true}"
+                        (change)="makeCorrectOptions(option.OptionId,option.isCorrect)" class="right-side-bar-tooltip-top options-tooltip"
+                        data-tooltip="Mark as Correct">
+                    <label for="{{idx}}" class="mb-0 hover-border"
+                       ></label>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="workSpaceService.activeSlideTypeName == masterSlideTypeName.LINEUP_SLIDE_TYPE">
+                <div class="col-1 round px-0">
+                    <span>{{idx + 1}}</span>
+                </div>
+            </ng-container>
+            <!-- * Options Input box -->
+            <div class="px-0 position-relative d-flex"
+            [ngClass]="{
+                'col-9': workSpaceService.activeSlideTypeName == masterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE ,
+                'col-12': workSpaceService.activeSlideTypeName == masterSlideTypeName.THIS_OR_THAT_SLIDE_TYPE  ,
+                'col-10': workSpaceService.activeSlideTypeName != masterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE && workSpaceService.activeSlideTypeName != masterSlideTypeName.THIS_OR_THAT_SLIDE_TYPE && workSpaceService.activeSlideTypeName != masterSlideTypeName.RANKING_SLIDE_TYPE  && workSpaceService.activeSlideTypeName != masterSlideTypeName.SCALES_SLIDE_TYPE &&  (workSpaceService.activeSlideTypeName == masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE && isCorrectAnswer) || workSpaceService.activeSlideTypeName == masterSlideTypeName.SELECT_ANSWER_SLIDE_TYPE || workSpaceService.activeSlideTypeName == masterSlideTypeName.LINEUP_SLIDE_TYPE,
+                'col-11': workSpaceService.activeSlideTypeName == masterSlideTypeName.RANKING_SLIDE_TYPE || workSpaceService.activeSlideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE || workSpaceService.activeSlideTypeName == masterSlideTypeName.TYPE_ANSWER_SLIDE_TYPE  || (workSpaceService.activeSlideTypeName == masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE && !isCorrectAnswer)
+
+              }" >      
+                <input type="text" class="form-control remaining-padding me-2"
+                    [placeholder]="placeholder+(idx+1)"
+                    [(ngModel)]="option.OptionTitle"
+                    [ngModelOptions]="{ standalone: true }"
+                    (click)="optionInput.control.markAsTouched()"
+                    (focus)="checkDefaultInputValue(option,idx)"
+                    (blur)="assignInputValue(option,idx,optionInput.control)"
+                    [maxlength]="inputTextLength"
+                    #optionInput="ngModel">
+                <div class="position-absolute-remaing end-0" [ngClass]="{'length-span': workSpaceService.activeSlideTypeName != masterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE && workSpaceService.slideContentType != masterSlideTypeName.QUIZ}">
+                    <span
+                        [ngStyle]="{ color: option?.OptionTitle?.length > inputTextLengthColors?.Text_Length_Danger_Min_Length && option?.OptionTitle?.length < inputTextLength ? inputTextLengthColors?.Text_Length_Danger_Color_Code : inputTextLengthColors?.Text_Length_Normal_Color_Code}">
+                        {{ inputTextLength - option?.OptionTitle?.length }}
+                    </span>
+                </div>
+                <div class="bg-picker-color-custome hover-border" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName. TRUTH_OR_LIE_SLIDE_TYPE && workSpaceService.slideContentType != masterSlideTypeName.QUIZ" [style.background-color]="option.visualizationColor">
+                    <input type="color" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName. TRUTH_OR_LIE_SLIDE_TYPE" [value]="option.visualizationColor " class="background-color-picker" [ngModel]="option.visualizationColor"(change)="designSlideChangevisualizationColor(option,$any($event).target.value)">
+                </div>
+            </div>
+            <!-- <div class="col-1 ps-2 pe-0">
+                <a href="javascript:void(0)">
+                    <img src="/assets/new-icons/option-img.svg" width="18" height="18">
+                </a>
+            </div> -->
+            <ng-container *ngIf="isRemoveOption">
+                <div class="col-1 ps-2 pe-0 remove-option" 
+                (click)="!hasOptionsWithValueGreaterThanZero() && removeOptions(option.OptionId,option.visualizationColor)"
+                [ngClass]="isFirstOptionRemove ? idx == 0 ? 'd-none':'d-block' :''">
+                    <a href="javascript:void(0)" class="right-side-options-tooltip-top" [class.disabled]="hasOptionsWithValueGreaterThanZero()"
+                        [ngStyle]="{'cursor': ((hasOptionsWithValueGreaterThanZero() || options.length <= 2 ) && (workSpaceService.activeSlideTypeName == masterSlideTypeName.LINEUP_SLIDE_TYPE || workSpaceService.activeSlideTypeName == masterSlideTypeName.SELECT_ANSWER_SLIDE_TYPE || workSpaceService.slideContentType != workSpaceService.masterSlideTypeName.QUIZ)) ? 'not-allowed' : null}" 
+                       
+                        [attr.data-tooltip]="workSpaceService.activeSlideTypeName == masterSlideTypeName.LINEUP_SLIDE_TYPE && options.length <= 2 || workSpaceService.activeSlideTypeName == masterSlideTypeName.SELECT_ANSWER_SLIDE_TYPE && options.length <= 2  || workSpaceService.slideContentType !== workSpaceService.masterSlideTypeName.QUIZ && options.length <= 2 ? 'Unable to remove this! You must need at least two options to proceed.' :  hasOptionsWithValueGreaterThanZero() ? 'Once responses are in, options can’t be removed.' : null">
+                        <img class="hover-border"  src="/assets/new-icons/close.svg" width="14" height="14">
+                    </a>
+                </div>
+            </ng-container>
+            <div *ngIf="(optionInput.touched) && (option?.OptionTitle?.length === inputTextLength)" [ngClass]="{'ms-3': isCorrectAnswer || workSpaceService.activeSlideTypeName === masterSlideTypeName.LINEUP_SLIDE_TYPE,'ps-5': workSpaceService.activeSlideTypeName === masterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE}">
+                <p class="reached-maximum">You’re over the {{inputTextLength}}-character limit.<br>Try trimming it down.</p>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="isAddOption">
+    <button class="btn btn-cstm-secondar d-flex justify-content-center align-items-center w-100 py-2 hover-border"
+        [ngStyle]="{'cursor':workSpaceService.isAllowMakeAPIRightPanel?'not-allowed':''}"
+        [class.disabled]="(hasOptionsWithValueGreaterThanZero() && isAddOptionDisable)||(workSpaceService.isAllowMakeAPIRightPanel)"
+        [disabled]="(workSpaceService.options?.length >= 5)||(workSpaceService.isAllowMakeAPIRightPanel) ? true:false" (click)="addNewOptions()">
+        <img src="/assets/new-icons/option-add.svg" class="me-2">
+        <span>Add {{addButtonContent}}</span>
+    </button>
+</ng-container>

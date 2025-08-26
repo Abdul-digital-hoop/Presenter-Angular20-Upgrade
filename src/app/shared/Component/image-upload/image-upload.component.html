@@ -1,0 +1,288 @@
+<!-- <div class="modal-dialog modal-xl modal-dialog-centered" id="bg-upload">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title fs-very-high" id="imageAddModalLabel">Upload image</h5>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" (click)="CloseModal()">
+                <span aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                        width="2.25rem" height="2.25rem" aria-labelledby="descriptive-:r8h:" viewBox="0 0 24 24">
+                        <title id="descriptive-:r8h:">Close</title>
+                        <g color="#101834">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </g>
+                        </g>
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <ul class="nav nav-tabs w-100 d-flex justify-content-between border-0" id="myTab" role="tablist">
+                <li class="nav-item col px-0" role="presentation">
+                    <button class="nav-link active w-100" id="home-tab" data-bs-toggle="tab" data-bs-target="#home"
+                        type="button" role="tab" aria-controls="home" aria-selected="true">
+                        <h5 class="ff-sub fw-four fs-medium mb-0">Upload from computer</h5>
+                    </button>
+                </li>
+                <li class="nav-item col px-0" role="presentation">
+                    <button class="nav-link w-100" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile"
+                        type="button" role="tab" aria-controls="profile" aria-selected="false">
+                        <h5 class="ff-sub fw-four fs-medium mb-0">Image library</h5>
+                    </button>
+                </li>
+                <li class="nav-item col px-0" role="presentation">
+                    <button class="nav-link w-100" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact"
+                        type="button" role="tab" aria-controls="contact" aria-selected="false">
+                        <h5 class="ff-sub fw-four fs-medium mb-0">Gifs</h5>
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                    <div class="image-upload-computer">
+                        <input type="file" class="upload-zindex-click" accept=".png,.jpeg,.jpg,.gif,.webp"
+                            data-testid="media-file-input"  (change)="BackgroundImageUpload($event)" (click)="myInputFile.value = null" #myInputFile>
+                        <button class="border-dashboard-upload">
+                            <svg width="25%" height="25%" viewBox="0 0 230 198" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" id="image-upload-illustration">
+                                <path
+                                    d="M41.1329 190.927C60.2561 190.927 75.7586 175.424 75.7586 156.301C75.7586 137.178 60.2561 121.675 41.1329 121.675C22.0097 121.675 6.50732 137.178 6.50732 156.301C6.50732 175.424 22.0097 190.927 41.1329 190.927Z"
+                                    fill="#FFDB80" fill-opacity="0.2"></path>
+                                <path d="M143.225 9.00391L167.554 115.682H221.504L197.174 9.00391H143.225Z"
+                                    fill="#FFAECA" fill-opacity="0.2"></path>
+                                <path
+                                    d="M188.16 99.2994C189.099 97.9476 189.647 96.3141 189.647 94.5417C189.647 92.7693 189.099 91.1359 188.16 89.784C190.485 87.8352 191.964 84.9062 191.964 81.628C191.964 77.9593 190.106 74.7224 187.278 72.8036V17.0819H133.133C131.842 12.6621 127.764 9.43652 122.923 9.43652C119.645 9.43652 116.72 10.916 114.767 13.2404C113.416 12.3017 111.775 11.7534 110.01 11.7534C108.245 11.7534 106.604 12.3017 105.252 13.2479C103.303 10.916 100.367 9.43652 97.0885 9.43652C92.2481 9.43652 88.1701 12.6621 86.8784 17.0819H31.7988V72.4731C28.6746 74.3281 26.583 77.7377 26.583 81.6318C26.583 84.9099 28.0625 87.8351 30.3944 89.7878C29.4556 91.1396 28.9074 92.7731 28.9074 94.5455C28.9074 96.3179 29.4556 97.9513 30.3944 99.3032C28.0625 101.252 26.583 104.181 26.583 107.459C26.583 111.353 28.6746 114.763 31.7988 116.618V172.561H87.0661C88.5306 176.695 92.4622 179.654 97.096 179.654C100.374 179.654 103.307 178.175 105.26 175.843C106.611 176.789 108.252 177.338 110.017 177.338C111.782 177.338 113.423 176.789 114.775 175.851C116.724 178.175 119.653 179.654 122.931 179.654C127.561 179.654 131.496 176.692 132.961 172.561H187.286V116.28C190.113 114.365 191.972 111.124 191.972 107.455C191.972 104.177 190.492 101.252 188.168 99.2994H188.16Z"
+                                    fill="white"></path>
+                                <path
+                                    d="M188.16 99.2994C189.099 97.9476 189.647 96.3141 189.647 94.5417C189.647 92.7693 189.099 91.1359 188.16 89.784C190.485 87.8352 191.964 84.9062 191.964 81.628C191.964 77.9593 190.106 74.7224 187.278 72.8036V17.0819H133.133C131.842 12.6621 127.764 9.43652 122.923 9.43652C119.645 9.43652 116.72 10.916 114.767 13.2404C113.416 12.3017 111.775 11.7534 110.01 11.7534C108.245 11.7534 106.604 12.3017 105.252 13.2479C103.303 10.916 100.367 9.43652 97.0885 9.43652C92.2481 9.43652 88.1701 12.6621 86.8784 17.0819H31.7988V72.4731C28.6746 74.3281 26.583 77.7377 26.583 81.6318C26.583 84.9099 28.0625 87.8351 30.3944 89.7878C29.4556 91.1396 28.9074 92.7731 28.9074 94.5455C28.9074 96.3179 29.4556 97.9513 30.3944 99.3032C28.0625 101.252 26.583 104.181 26.583 107.459C26.583 111.353 28.6746 114.763 31.7988 116.618V172.561H87.0661C88.5306 176.695 92.4622 179.654 97.096 179.654C100.374 179.654 103.307 178.175 105.26 175.843C106.611 176.789 108.252 177.338 110.017 177.338C111.782 177.338 113.423 176.789 114.775 175.851C116.724 178.175 119.653 179.654 122.931 179.654C127.561 179.654 131.496 176.692 132.961 172.561H187.286V116.28C190.113 114.365 191.972 111.124 191.972 107.455C191.972 104.177 190.492 101.252 188.168 99.2994H188.16Z"
+                                    fill="#603813" fill-opacity="0.3"></path>
+                                <path d="M179.561 24.7949H39.5117V164.844H179.561V24.7949Z" fill="white"></path>
+                                <path
+                                    d="M42.0011 26.9801L176.805 27.5321V162.144H42.0011V26.9801ZM39.181 24.1338V164.968H179.625V24.7083L39.1772 24.1338H39.181Z"
+                                    fill="white"></path>
+                                <path
+                                    d="M42.0011 26.9801L176.805 27.5321V162.144H42.0011V26.9801ZM39.181 24.1338V164.968H179.625V24.7083L39.1772 24.1338H39.181Z"
+                                    fill="#42210B" fill-opacity="0.3"></path>
+                                <path
+                                    d="M176.677 161.991H86.6979C86.6979 161.991 84.4523 90.8619 83.7651 91.549L99.6041 74.009C110.708 61.2643 132.45 65.1771 139.9 78.9582L149.975 95.2778C151.533 97.8013 155.555 103.133 163.009 103.133C170.462 103.133 175.115 96.7611 176.779 92.7432L176.681 161.991H176.677Z"
+                                    fill="white"></path>
+                                <path
+                                    d="M176.677 161.991H86.6979C86.6979 161.991 84.4523 90.8619 83.7651 91.549L99.6041 74.009C110.708 61.2643 132.45 65.1771 139.9 78.9582L149.975 95.2778C151.533 97.8013 155.555 103.133 163.009 103.133C170.462 103.133 175.115 96.7611 176.779 92.7432L176.681 161.991H176.677Z"
+                                    fill="#BCC0F9" fill-opacity="0.4"></path>
+                                <path
+                                    d="M41.9976 101.278V101.256C53.5407 82.5778 81.0204 82.0033 92.7775 100.546L100.468 112.675C112.21 104.508 128.274 106.869 137.166 118.075L147.207 130.726C149.096 133.106 152.461 133.711 155.063 132.137L176.752 119.002L176.805 162.343H42.0013V101.282L41.9976 101.278Z"
+                                    fill="white"></path>
+                                <path
+                                    d="M41.9976 101.278V101.256C53.5407 82.5778 81.0204 82.0033 92.7775 100.546L100.468 112.675C112.21 104.508 128.274 106.869 137.166 118.075L147.207 130.726C149.096 133.106 152.461 133.711 155.063 132.137L176.752 119.002L176.805 162.343H42.0013V101.282L41.9976 101.278Z"
+                                    fill="#A392D5" fill-opacity="0.6"></path>
+                                <path
+                                    d="M67.6562 71.4554C77.2499 71.4554 85.0272 63.6781 85.0272 54.0844C85.0272 44.4906 77.2499 36.7134 67.6562 36.7134C58.0624 36.7134 50.2852 44.4906 50.2852 54.0844C50.2852 63.6781 58.0624 71.4554 67.6562 71.4554Z"
+                                    fill="#D1D4FF" fill-opacity="0.4"></path>
+                            </svg>
+                            <h5 class="ff-sub fw-four fs-medium text-gray mb-2"> Drag and drop or <span
+                                    class="text-primary">click here</span> to upload image</h5>
+                            <p class="fs-very-low text-black mb-2">Maximum file size is 15MB.</p>
+                            <p class="fs-very-low text-gray mb-3">.png, .jpg, .gif, .svg</p>
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="form-group position-relative">
+                        <input autocomplete="off" type="text" class="form-control pe-5" id="inputSearch"
+                            placeholder="Search photos from Unsplash">
+                        <div class="position-search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                                width="1rem" height="1rem" aria-label="Search" viewBox="0 0 24 24">
+                                <g color="#101834">
+                                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="row ps-2 py-2 mx-0 modal-scroll-y">
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 text-center mb-2 ps-0 pe-2"
+                            *ngFor="let item of staticImages">
+                            <a class="text-decoration-none">
+                                <img class="img-fluid" alt="" src="{{item?.URL}}" alt="{{item?.Name}}">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                    <div class="form-group position-relative">
+                        <input autocomplete="off" type="text" class="form-control pe-5" id="inputSearch"
+                            placeholder="Search GIFS from Giphy">
+                        <div class="position-search-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet"
+                                width="1rem" height="1rem" aria-label="Search" viewBox="0 0 24 24">
+                                <g color="#101834">
+                                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                        stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="8"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </g>
+                                </g>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="row ps-2 py-2 mx-0 modal-scroll-y">
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 text-center mb-2 ps-0 pe-2">
+                            <a class="text-decoration-none" href="javascript:void(0);">
+                                <img class="img-fluid w-100" alt="" src="assets/images/perfect.gif" alt="#">
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 text-center mb-2 ps-0 pe-2">
+                            <a class="text-decoration-none" href="javascript:void(0);">
+                                <img class="img-fluid w-100" alt="" src="assets/images/good.gif" alt="#">
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 text-center mb-2 ps-0 pe-2">
+                            <a class="text-decoration-none" href="javascript:void(0);">
+                                <img class="img-fluid w-100" alt="" src="assets/images/excellent.gif" alt="#">
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 text-center mb-2 ps-0 pe-2">
+                            <a class="text-decoration-none" href="javascript:void(0);">
+                                <img class="img-fluid w-100" alt="" src="assets/images/happy-birthday.gif" alt="#">
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 text-center mb-2 ps-0 pe-2">
+                            <a class="text-decoration-none" href="javascript:void(0);">
+                                <img class="img-fluid w-100" alt="" src="assets/images/excellent.gif" alt="#">
+                            </a>
+                        </div>
+                        <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6 text-center mb-2 ps-0 pe-2">
+                            <a class="text-decoration-none" href="javascript:void(0);">
+                                <img class="img-fluid w-100" alt="" src="assets/images/happy-birthday.gif" alt="#">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content modal-height">
+            <div class="modal-header d-flex justify-content-between align-items-center">
+                <h1 class="modal-title fs-5 mb-0" id="imageUploadContentModalLabel">Upload Image</h1>
+                <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close" (click)="CloseModal()"></button>
+            </div>
+            <div class="row mx-0">
+                <div class="design-tab col-4 px-0" [ngClass]="uploadTabNumber == 1? 'active':' '">
+                    <h5 class="modal-title mb-0" (click)="selectTabForUpload(1)">Upload</h5>
+                </div>
+                <div class="design-tab col-4 px-0" [ngClass]="uploadTabNumber == 2? 'active':' '">
+                    <h5 class="modal-title mb-0" (click)="selectTabForUpload(2)">Image Library</h5>
+                </div>
+                <div class="design-tab col-4 px-0" [ngClass]="uploadTabNumber == 3? 'active':' '">
+                    <h5 class="modal-title mb-0" (click)="selectTabForUpload(3)">GIF's</h5>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div *ngIf="uploadTabNumber == 1">
+                    <div class="upload-image-div" appDrag (files)="filesDropped($event)" >
+                        <input  class="absolute-image-upload" type="file" class="upload-zindex-click" accept=".png,.jpeg,.jpg,.gif,.webp"
+                        data-testid="media-file-input"  (change)="BackgroundImageUpload($event)" (click)="myInputFile.value = null" #myInputFile>
+                        <div class="my-4">
+                            <img src="/assets/new-icons/image-collection.png" class="img-fluid">
+                            <h5 class="modal-title mt-4">Drag and drop or
+                                <span class="text-primary"> pick an image</span> from your device to upload.
+                                <button type="button" class="btn btn-transparent w-100">
+                                </button>
+                            </h5>
+                            <p class="normal-content-text mb-0">Maximum file size: 2MB.</p>
+                            <p class="normal-content-text fs-14 mb-0">.png, .gif, .jpg, and .svg</p>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="uploadTabNumber == 2">
+                    <div class="position-relative">
+                      <input type="text" class="form-control remaining-padding" placeholder="Search photos from Unsplash" [(ngModel)]="searchQuery"
+                        (input)="searchUnsplashImages()" />
+                      <div class="position-absolute-search">
+                        <img src="/assets/new-icons/search.svg" class="img-fluid" />
+                      </div>
+                    </div>
+                    <div *ngIf="showErrorMessage" class="alert alert-info mt-3 text-center">
+                      {{ errorMessage }}
+                    </div>
+                    <div #imageContainer class="image-list-container fixed-scroll mt-3" *ngIf="!showErrorMessage">
+                      <div class="row me-0 gif-height">
+                        <ng-container *ngIf="isUnsplashLoading">
+                          <div class="col-3 pe-0 position-relative mb-3 skeleton-item" *ngFor="let skeleton of skeletons"></div>
+                        </ng-container>
+                        <ng-container *ngIf="!isUnsplashLoading">
+                          <div class="col-3 pe-0 position-relative mb-3" *ngFor="let image of images">
+                            <div class="image-container" 
+                                 (mouseenter)="image.isHovered = true" 
+                                 (mouseleave)="image.isHovered = false">
+                              <a class="absolute-image-upload" href="javascript:void(0)" (click)="selectUnsplashImage(image)"></a>
+                              <img [src]="image.urls.small" class="image-fixed-size" width="400" height="300"/>
+                              <span class="image-attribution" [class.show-attribution]="image.isHovered" >
+                                Photo by <a [href]="'https://unsplash.com/@' + image.user.username + '?' + unsplashReferral" 
+                                   target="_blank" rel="noopener noreferrer">{{image.user.name}}</a> 
+                                on <a [href]="'https://unsplash.com/?' + unsplashReferral" 
+                                   target="_blank" rel="noopener noreferrer">Unsplash</a>
+                              </span>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </div>
+                    </div>
+                  </div>
+                <div *ngIf="uploadTabNumber == 3">
+                    <div class="position-relative mb-3">
+                      <input type="text" class="form-control remaining-padding" placeholder="Search GIFs" [(ngModel)]="searchTerm" (input)="searchGif()">
+                      <div class="position-absolute-search">
+                        <img src="/assets/new-icons/search.svg" class="img-fluid">
+                      </div>
+                    </div>
+                    <div *ngIf="showErrorMessage" class="alert alert-info mt-3 text-center">
+                        {{ errorMessage }}
+                      </div>
+                    <!-- <div class="d-flex justify-content-center">
+                        <span class="spinner-border spinner-border-sm gif-loading" role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                      </div> -->
+                      <div class="image-list-container fixed-scroll" *ngIf="!showErrorMessage">
+                        <div class="row me-0 gif-height">
+                          <!-- Skeleton Loading Effect -->
+                          <ng-container *ngIf="isLoading">
+                            <div class="col-3 pe-0 position-relative mb-3 skeleton-item" *ngFor="let skeleton of skeletons"></div>
+                          </ng-container>
+                      
+                          <!-- GIFs -->
+                          <ng-container *ngIf="!isLoading">
+                            <div class="col-3 pe-0 position-relative mb-3" *ngFor="let gif of gifs">
+                              <a class="absolute-image-upload" href="javascript:void(0)" (click)="selectGif(gif)"></a>
+                              <img 
+                                [src]="gif.media[0].gif.url" 
+                                class="img-fluid image-fixed-size" 
+                                alt="GIF" 
+                                (load)="onGifLoad(gif)" 
+                                *ngIf="!gif.loaded" 
+                                width="400" height="300"
+                              />
+                              <img 
+                                [src]="gif.media[0].gif.url" 
+                                class="img-fluid image-fixed-size" 
+                                alt="GIF" 
+                                *ngIf="gif.loaded" 
+                                width="400" height="300"
+                              />
+                            </div>
+                          </ng-container>
+                        </div>
+                      </div>
+                                         
+                  </div>  
+                                
+            </div>
+        </div>
+    </div>

@@ -1,0 +1,55 @@
+export class CustomerPlan {
+    customer_rewards_id: number;
+    customer_id: number;
+    plan_id: number;
+    plan_name: string;
+    participants_per_presentation: number;
+    participant_one_time_exceded: number;
+    slide_types_per_presentation: number;
+    presentation_per_month: number;
+    qa: boolean;
+    remote: boolean;
+    team_play_mode: boolean;
+    audience_response_control: boolean;
+    import_presentations: number;
+    join_link_custom: boolean;
+    folder: boolean;
+    integration: boolean;
+    make_presentations_private: boolean;
+    quick_layouts: boolean;
+    custom_colours: boolean;
+    custom_themes: boolean;
+    company_branding: boolean;
+    add_your_logotype: boolean;
+    collaborative_workspace: boolean;
+    workspace_roles: boolean;
+    maximum_number_of_member_lite: number;
+    edit_presentation: boolean;
+    invite_nonmembers: boolean;
+    create_presentation_templates: number;
+    create_group: boolean;
+    workspace_insights: boolean;
+    image_export: boolean;
+    excel_export: boolean;
+    moderate_qa: boolean;
+    quick_forms: boolean;
+    several_answers: boolean;
+    sso: boolean;
+    scim: boolean;
+    join_settings: boolean;
+    access_levels: boolean;
+    pay_via_bank_transfer: boolean;
+    online_support: boolean;
+    priority_support: boolean;
+    custom_onboarding: boolean;
+    quiz_per_presentation: number;
+    view_result: boolean;
+    reset_result: boolean;
+    comments: boolean;
+    date_added: string;
+    date_modified: string;
+  }
+  export class CustomerLimitationsCount {
+    templateCount: number;
+    balancePresentationLimit: number=-1;
+  }

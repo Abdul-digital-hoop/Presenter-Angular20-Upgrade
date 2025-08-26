@@ -1,0 +1,211 @@
+<!-- ======== Settings Button ============ -->
+<button class="btn p-0 me-0 me-sm-3 ms-2 ms-sm-0" data-bs-toggle="modal" data-bs-target="#settingModal" (click)="checkTemplate()">
+    <img src="/assets/new-icons/settings.svg" />
+</button>
+<!-- ======== Settings Modal ============ -->
+<div class="modal fade" id="settingModal" tabindex="-1" aria-labelledby="settingModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header d-flex justify-content-between align-items-center border-bottom-0">
+        <h1 class="modal-title mb-0" id="settingModalLabel">Settings</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body border-bottom-0">
+        <div class="accordion" id="settingAccordion">
+          <!-- Other Settings -->
+          <div class="accordion-item cstm-accordion-item">
+            <h2 class="accordion-header" id="otherSettings">
+              <button class="accordion-button cstm-accordion-btn" type="button" data-bs-toggle="collapse"
+                data-bs-target="#otherSetting" aria-expanded="true" aria-controls="otherSetting">
+                Other settings
+              </button>
+            </h2>
+            <div id="otherSetting" class="accordion-collapse collapse show" aria-labelledby="otherSettings"
+              data-bs-parent="#settingAccordion">
+              <div class="accordion-body">
+                <div class="form-check ps-0  align-items-center">
+                  <input class="form-check-input checkbox-primary" type="checkbox" id="flexCheckDefault1"
+                    [(ngModel)]="workSpaceService.presentationSettingJoiningInstructions"
+                    [ngModelOptions]="{standalone: true}" 
+                    (change)="presentationSettingHideJoiningInstructionBar(workSpaceService.presentationSettingJoiningInstructions)"/>
+                  <label class="form-check-label ms-2" for="flexCheckDefault1">Display join instructions for participants</label>
+                </div>
+                <div class="form-check ps-0 align-items-center">
+                  <input class="form-check-input checkbox-primary" type="checkbox" id="flexCheckDefault3"
+                    [(ngModel)]="workSpaceService.PresentationShowcomments"
+                    [ngModelOptions]="{standalone: true}" 
+                    (change)="presenterEnableComment()"/>
+                  <label class="form-check-label ms-2" for="flexCheckDefault3">Allow audience to leave comments</label>
+                </div>
+                <div class="form-check ps-0  align-items-center">
+                  <input class="form-check-input checkbox-primary" type="checkbox" id="flexCheckDefault4" 
+                    [checked]="!workSpaceService.OnlyQA"
+                    (change)="presenterEnableQuestion($event)"/>
+                  <label class="form-check-label ms-2" for="flexCheckDefault4">Let audience ask questions</label>
+                </div>
+                <div class="form-check ps-0 align-items-center">
+                  <input type="checkbox" class="form-check-input checkbox-primary" id="flexCheckDefault5"
+                    [(ngModel)]="workSpaceService.slideShowInResults"
+                    [ngModelOptions]="{standalone: true}"
+                    (change)="presenterShowResponse()"
+                    [disabled]="workSpaceService?.isTemplate">
+                  <label class="form-check-label ms-2" for="flexCheckDefault5">Show response in the results</label>
+                </div>
+                <div class="form-check ps-0 align-items-center">
+                  <input class="form-check-input checkbox-primary" type="checkbox" id="flexCheckDefault6" 
+                    [(ngModel)]="workSpaceService.presentationSettingAllowMultipleResponse"
+                    [ngModelOptions]="{standalone: true}" 
+                    (change)="presentationSettingAllowMultipleResponse(workSpaceService.presentationSettingAllowMultipleResponse)"
+                    [ngStyle]="{'cursor': customerPlan?.several_answers ? '' : 'not-allowed'}" 
+                    (click)="customerPlan?.several_answers || $event.preventDefault()"/>
+                  <label class="form-check-label ms-2" for="flexCheckDefault6">Allow audience to submit multiple responses</label>
+                </div>
+                <div class="reactions-section">
+                  <h5 class="modal-title mb-3">Reactions</h5>
+                  <div class="reactions-container">
+                    <ng-container *ngFor="let reaction of workSpaceService.presentationSettingReactions">
+                      <div class="reaction-item">
+                        <label [for]="'reactionCheckbox' + reaction.reactionId">
+                          <img [src]="workSpaceService.newIconURL+reaction.reactionURL" class="img-fluid" />
+                        </label>
+                        <div class="text-center">
+                          <input class="form-check-input checkbox-primary cursor-pointer" 
+                            type="checkbox" [id]="'reactionCheckbox' + reaction.reactionId"
+                            [(ngModel)]="reaction.isShowReaction"
+                            [ngModelOptions]="{standalone: true}" 
+                            (change)="presentationSettingReactions(reaction.reactionId)"
+                          />
+                        </div>
+                      </div>
+                    </ng-container>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Language Preferences -->
+          <div class="accordion-item cstm-accordion-item">
+            <h2 class="accordion-header" id="languagePrefernces">
+              <button class="accordion-button cstm-accordion-btn collapsed" type="button" data-bs-toggle="collapse"
+                data-bs-target="#languagePrefernce" aria-expanded="false" aria-controls="languagePrefernce">
+                Language preferences
+              </button>
+            </h2>
+            <div id="languagePrefernce" class="accordion-collapse collapse" aria-labelledby="languagePrefernces"
+              data-bs-parent="#settingAccordion">
+              <div class="accordion-body">
+                <div class="d-flex justify-content-between align-items-start flex-wrap language-row mb-3">
+                  <div class="language-label">
+                    <p class="normal-content-text fs-14 mb-0 ">
+                      Presentation language
+                    </p>
+                  </div>
+                  <div class="language-select-container">
+                    <select class="form-select rounded-0" 
+                      [(ngModel)]="workSpaceService.presentationSettingLanguage"
+                      [ngModelOptions]="{standalone: true}" 
+                      (change)="presentationSettingLanguage(workSpaceService.presentationSettingLanguage)">
+                      <option selected value="English">English</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="w-100">
+                  <div id="languageAccorion">
+                    <div id="languageOne" data-bs-toggle="collapse" data-bs-target="#languageCollapse"
+                      aria-expanded="true" aria-controls="languageCollapse"
+                      class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                      <label class="fs-14 mb-0 ">Profanity filter</label>
+                      <button class="btn fw-400 fs-14 mb-0">
+                        {{this.workSpaceService.selectedProfantyLanguage.length == 0?'No language filters are selected':this.workSpaceService.selectedProfantyLanguage.length == 1?'1 language filters is selected':this.workSpaceService.selectedProfantyLanguage.length+' language filters are selected'}}
+                        <svg data-bs-toggle="collapse" data-bs-target="#languageCollapse" aria-expanded="true"
+                          aria-controls="languageCollapse" xmlns="http://www.w3.org/2000/svg" role="img"
+                          preserveAspectRatio="xMidYMid meet" width="1.25rem" height="1.25rem" aria-label="Collapse"
+                          viewBox="0 0 24 24" aria-hidden="true">
+                          <g color="#101834">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                              stroke-linejoin="round">
+                              <polyline points="18 15 12 9 6 15"></polyline>
+                            </g>
+                          </g>
+                        </svg>
+                      </button>
+                    </div>
+                    <div id="languageCollapse" aria-labelledby="languageOne" data-parent="#languageAccorion"
+                      class="accordion-collapse collapse">
+                      <div class="form-check  align-items-center">
+                        <input type="checkbox" id="exampleCheck101" class="form-check-input me-2" [checked]="this.workSpaceService.isAllSelectedProfantyLanguage" (click)="selectAllLanguage()"/>
+                        <label for="exampleCheck101" class="form-check-label">Select all</label>
+                      </div>
+                      <div class="form-check  align-items-center" *ngFor="let item of workSpaceService.presentationSettingProfanity">
+                        <input type="checkbox" id="exampleCheck123" class="form-check-input me-2" [checked]="item.isApply" (click)="selectProfanityLanguage(item)"/>
+                        <label class="form-check-label" (click)="selectProfanityLanguage(item)">{{item.language}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="d-flex justify-content-between align-items-center py-3 filter-toggle-row">
+                    <div class="filter-label">
+                      <p class="normal-content-text fs-14 mb-0">
+                        Always use the selected filters
+                      </p>
+                    </div>
+                    <label class="switch mb-0">
+                      <input type="checkbox" class="ctsm-toggle-btn"
+                        [(ngModel)]="workSpaceService.presentationSettingProfanitySelectedFilter"
+                        [ngModelOptions]="{standalone: true}" 
+                        (change)="presentationSettingAlwaysUseSameProfanityFilter(workSpaceService.presentationSettingProfanitySelectedFilter)"/>
+                      <span class="slider round"></span>
+                    </label>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <!-- Create Template Button (if needed) -->
+          <div class="create-template-tooltip-top"
+            [ngClass]="isTemplateButtonDisabled ? 'tooltip-disabled' : 
+              (customerLimitationCount?.templateCount >= customerPlan?.create_presentation_templates ? 'tooltip-limited' : (workSpaceService.slideListArray?.length == 0 
+              ? 'tooltip-no-slide-template' : ''))"
+            [attr.data-tooltip]="isTemplateButtonDisabled ? 
+              'You can\'t create a template while audience results are active. Reset the results to proceed.' 
+              : (customerLimitationCount?.templateCount >= customerPlan?.create_presentation_templates 
+              ? 'Limit reached! Upgrade now to access more templates.' 
+              : (workSpaceService.slideListArray?.length == 0 
+              ? 'Hold on! You need to add a slide to create a template' : null))" *ngIf="!workSpaceService.isTemplate && !IntegrationMediumOffice">
+            <button class="btn btn-primary d-flex" (click)="createTemplate()"  [disabled]="isTemplateButtonDisabled === true || (customerLimitationCount?.templateCount >= customerPlan?.create_presentation_templates) || (workSpaceService.slideListArray?.length == 0)">Create Template
+              <ng-container *ngIf="(customerLimitationCount?.templateCount >= customerPlan?.create_presentation_templates)">
+                <div class="layout-label">
+                  <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top" data-tooltip="Need subscription">
+                    <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z"></path></g></svg>
+                  </div>
+                </div>
+              </ng-container>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="createTemplate" tabindex="-1" aria-labelledby="TemplateLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="TemplateLabel">Create Template</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"> &times; </button>
+      </div>
+        <app-convert-template
+          [presentationId]="workSpaceService.presentationId"
+          [selectedslideList]="selectedslideList"
+          [isEditorScreen]="true"
+          [customerPlan]="customerPlan"
+          [customerLimitationCount]="customerLimitationCount"
+          [isTemplateButtonDisabled]="isTemplateButtonDisabled"
+          [categoryList]="categoryList"
+          [popularFeatures]="popularFeatures"
+          (templateCreated)="storeTemplate($event)"
+          (categoryToggleDropdown)="CategoryToggleDropdown($event)">
+        </app-convert-template>
+    </div>
+  </div>
+</div>

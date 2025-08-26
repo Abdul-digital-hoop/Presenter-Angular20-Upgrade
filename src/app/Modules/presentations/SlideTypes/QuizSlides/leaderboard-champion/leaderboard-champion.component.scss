@@ -1,0 +1,433 @@
+.leaderboard-result-section{
+    margin: 30px 0;
+}
+.leaderboard-result-section{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+}
+.leaderboard-champion-section{
+    margin: 30px 0;
+}
+.leaderboard-champion-section{
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+}
+.leaderboard-result-winner-section{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    margin-top: 20px;
+}
+.leaderboard-champion-winner-section{
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: center;
+    background-color: #4848FF;
+    height: 320px;
+}
+.winner-content-area{
+    border: 1px solid #C8C8FF;
+    padding: 20px;
+    margin: 5px;
+    width: 33.333%;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    border-radius: 3px;
+}
+.leaderboard-result-winner-inner-section{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+.top-three-winner-area{
+    width: 100%;
+    //display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: end;
+    position: relative;
+}
+.winner-image-section{
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    align-items: center;
+    justify-content: center;
+}
+.first-winner{
+    margin-bottom: -2px;
+    z-index: 1;
+}
+.winner-image-section:last-child{
+    margin-bottom: 6px;
+    width: 20%;
+}
+.winner-image-section:first-child{
+    /* margin-left: -4px; */
+    margin-bottom: 3px;
+    width: 20%;
+}
+.second-winner-section, .thried-winner-section{
+    height: 70%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.first-winner-section{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+.other-player-section{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+.leaderboard-result-other-winner-section{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.leaderboard-result-other-inner-section{
+    overflow: auto;
+    width: 100%;
+    margin-bottom: 15%;
+    height: 400px;
+    scrollbar-width: thin;
+    position: relative;
+}
+.leaderboard-result-other-inner-section::-webkit-scrollbar {
+    display: none;
+}
+.player-name-img-section{
+    width: 70%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: 400;
+    margin-left: 10px;
+}
+.leaderboard-result-participation-section{
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #F8F9FA;
+}
+.leaderboard-result-participation-section:hover{
+    background-color: #F8F9FA;
+}
+.player-rank-section{
+    width: 8%;
+    display: flex;
+    align-items: center;
+    height: 60%;
+    border-radius: 35px;
+    font-weight: 500;
+    background-color: #f8f9fa;
+    justify-content: center;
+}
+.player-points-section{
+    width: 25%;
+    display: flex;
+    align-items: flex-end;
+    font-weight: 500;
+    justify-content: end;
+}
+p{
+    margin: 0;
+}
+.winner-name-text{
+    font-size: 16px;
+    color: #4848FF;
+}
+.other-winner-name-text{
+    font-size: 12px;
+    font-weight: 500;
+    color: #4b4343;
+}
+.other-winner-points-text{
+    color: #4848FF;
+    font-size: 12px;
+}
+.your-winner-points-text{
+    font-size: 12px;
+    // color: #40324de0;
+}
+.other-player-rank-value{
+    width: 40px;
+    height: 40px;
+    background: #4848FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    color:#FFFFFF;
+}
+// .player-name-img-text{
+//     padding-left: 26px;
+// }
+.other-player-point-value{
+    width: 62px;
+    height: 40px;
+    background: #4848FF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 20px;
+    color: #FFFFFF;
+}
+.emoji-user{
+    font-size: 1.7rem;
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+    position: absolute;
+    margin: -2px 2px;
+}
+.rank-area{
+    color: #525252;
+}
+.your-rank{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #DADAFF;
+    margin-bottom: 10px;
+    width: 100%;
+    height: 58px;
+    padding: 10px 16px 10px 16px;
+    color: #525252;
+}
+.other-rank-section{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 55px;
+    padding: 0px 12px;
+    color: #525252;
+}
+.your-rank-name{
+    color: #2929ba !important;
+    font-weight: 500;
+}
+.top-three-player{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-bottom: 10px;
+}
+.emoji-user-top{
+    font-size: 2rem;
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+    position: absolute;
+    margin: 3px 10px;
+}
+.emoji-user-champion{
+    font-size: 3.7rem;
+    display: flex;
+    justify-content: center;
+    z-index: 999;
+    position: absolute;
+    margin: -17px 6px;
+}
+.text-size{
+    font-size: 15px;
+    font-weight: 500;
+}
+.winner-sections-no-ans{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: white;
+}
+@media only screen and (max-width: 1024px) {
+    .leaderboard-result-winner-inner-section{
+        width: 100%;
+    }
+    .leaderboard-result-other-inner-section{
+        width: 100%;
+    }
+}
+@media only screen and (max-width: 768px) {
+    .leaderboard-result-winner-inner-section{
+        width: 100%;
+    }
+    .leaderboard-result-other-inner-section{
+        width: 100%;
+        margin-bottom: 20%;
+    }
+    .other-winner-points-text{
+        font-size: 6px;
+        border-radius: 10px;
+        padding: 0px 10px;
+        background-color: #0D0D0D;
+        color: #FFFFFF;
+    }
+    .other-winner-name-text{
+        font-size: 12px;
+    }
+    .your-winner-points-text{
+        font-size: 12px;
+    }
+    .winner-name-text{
+        font-size: 12px;
+    }
+    .leaderboard-result-participation-section{
+        padding: 0px;
+    }
+    .leaderboard-champion-participation-section{
+        padding: 0px;
+    }
+    .other-player-point-value{
+        font-size: 12px;
+    }
+    .player-name-img-text{
+        font-size: 12px;
+    }
+    .other-rank-section{
+        padding: 0;
+    }
+    .player-name-img-section{
+        margin: 0px;
+    }
+    .leaderboard-result-section{
+        display: flex;
+        align-items: start;
+    }
+    .leaderboard-champion-section{
+        display: flex;
+        align-items: start;
+    }
+    .player-points-section{
+        width: 35%;
+    }
+}
+@media screen and (max-width: 500px){
+    .winner-image-section{
+        width: 50%;
+    }
+}
+@media only screen and (max-width: 410px){
+    .first-winner-img{
+        width: 120px;
+        height: 125px;
+    }
+    .other-winner-img{
+        width: 100px;
+        height: 85px;
+    }
+    .winner-image-section{
+        width: 24%;
+    }
+    .winner-image-section:last-child{
+        width: 30%;
+    }
+    .winner-image-section:first-child{
+        width: 30%;
+    }
+}
+.champion-text-name {
+    color: #F8F9FA;
+    font-family: Lexend Deca;
+    font-size: 24px;
+    font-weight: 600;
+    line-height: 40px;
+
+}
+.champion-text-point{
+    color: #4848FF;
+    background: white;
+    width: 110px;
+    border-radius: 30px;
+    text-align: center;
+    padding: 5px;
+    margin-bottom: 35px;
+}
+.champion-img{
+    width: 88px;
+    height: 84px;
+    margin-top: -10px;
+    margin-right: 2px;
+}
+.champion-king{
+    display: flex;
+    margin: auto;
+}
+.champion-text {
+    font-size: 34px;
+    font-weight: 600;
+    color: white;
+    margin-top: 15px;
+}
+.width-0{
+    width:auto !important;
+    margin-bottom: 10px !important;
+}
+.leaderboard-chambion-other-winner-section{
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: white;
+    border-radius: 20px;
+    margin-top: -15px;
+
+    margin: -30px auto 0px auto;
+    box-shadow: 0px -4px 4px 0px rgba(72, 72, 255, 0.2509803922);
+    padding-top: 15px;
+    z-index: 999;
+
+}
+.leaderboard-champion-participation-section{
+    margin: 10px 30px 0px 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--Color-Gray-Background-Color, #F8F9FA);
+    border-radius: 5px;
+}
+.leaderboard-champion-participation-section:hover{
+    background-color: #F8F9FA;
+}
+@media only screen and (min-width: 768px) {
+    .leaderboard-chambion-other-winner-section {
+        width: 800px !important;
+    }
+    .leaderboard-champion-participation-section{
+        margin: 10px 150px 0px 150px !important;
+    }
+}
+
+  .confettiCanvas {
+    position: absolute; /* Position the canvas absolutely */
+    top: 0;            /* Align to the top */
+}
+.noplayers {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+}

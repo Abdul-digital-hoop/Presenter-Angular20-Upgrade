@@ -1,0 +1,128 @@
+<div *ngIf="!this._accountservice.cookieLoading">
+<div class="bg-color" *ngIf="!ZoomContextValue || ZoomContextValue !== 'inMainClient' || ZoomContextValue">
+    <div class="d-flex justify-content-between align-items-center header-section">
+        <div class="text-start">
+            <a href="https://slidea.com/">
+                <img  src="assets/images/product-logo.svg" width="120" height="38" alt="logo">
+            </a>
+        </div>
+        <div class="text-end">
+            <button class="header-signin mw-width">Sign In</button>
+            <button class="header-signup mw-width"><a href="javascript:void(0)" routerLink="/auth/signup">Sign Up</a></button>
+        </div>    
+    </div>
+    <div class="container-fluid box-c d-flex">
+        <div class="col-lg-8 center-d m-d-flex col-sm-10 col-12">
+            <div class="col-md-6 signin-left">
+                <div class="Signin-content">
+                <h1 class="min-none">Sign In</h1>
+                <h1 class="mw-width">Welcome Back to Slidea!</h1>
+                <p class="f-size mw-width">It’s great to see you. Sign in now to continue where you left off<br> and engage your audience with fresh ideas, polls, and Q&As.<br> Let’s make your next presentation — all from one platform.</p>
+            </div>
+        </div>
+        <div class="col-md-6 pa-0 signin-right">
+            <div class="text-start">
+                <form name="logIn" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                    <div class="form-group mb-3">
+                        <label for="emailInput" class="fs-very-low fw-five">Email*</label>
+                        <input type="email" class="form-control bg-n w-100 border-0 rounded-0 f-size " id="emailInput" placeholder="Enter your email" formControlName="Email" [ngClass]="{ 'is-invalid': submitted && (f['Email'].invalid && (f['Email'].touched || f['Email'].dirty)) }">
+                        <div *ngIf="submitted && f['Email'].errors" class="invalid-feedback validation-color">
+                            <div *ngIf="f['Email'].errors['required']" class="f-size">Please fill in this field!</div>
+                            <div *ngIf="f['Email'].errors['email']" class="f-size">Please enter valid email!</div>
+                        </div>
+                        <div *ngIf="f['Email'].errors" class="invalid-feedback validation-color" >
+                            <div *ngIf="!(submitted && f['Email'].errors)">
+                                <div *ngIf="f['Email'].errors['email']" class="f-size">Please enter valid email!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3 position-relative">
+                        <label for="passwordInput" class="fs-very-low fw-five ">Password*</label>
+                        <input [type]="passwordType" class="form-control bg-n w-100 border-0 rounded-0 f-size " placeholder="Enter your password" id="passwordInput" formControlName="Password" [ngClass]="{ 'is-invalid': submitted && (f['Password'].invalid && (f['Password'].touched || f['Password'].dirty)) }">
+                        <div *ngIf="submitted && f['Password'].errors" class="invalid-feedback validation-color">
+                            <div class="d-flex f-size" >
+                                <div class ="col-8 m-width p-l0 " *ngIf="f['Password'].errors['required']" >Please fill in this field!</div>
+                                <div class ="col-8 p-l0 " *ngIf="f['Password'].errors['minlength']">
+                                    Must be 8 characters or more*
+                                </div>
+                                <div class="col-4 ms-none m-width p-r0 d-flex justify-content-end">
+                                    <a class="fw-four link-text-color ms-none f-size" href="javascript:void(0)" routerLink="/auth/forgetpassword">Forgot Password?</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf=" f['Password'].errors" class="invalid-feedback d-flex validation-color" >
+                            <div class ="col-8 p-l0 f-size mx-width"  *ngIf="!(submitted && f['Password'].errors)">
+                                <div *ngIf="f['Password'].errors['minlength']"> Must be 8 characters or more*</div>
+                            </div>
+                            <div class="col-4 ms-none  p-r0 d-flex justify-content-end" *ngIf="!(submitted && f['Password'].errors) ">
+                                <a class="fw-four f-size link-text-color" href="javascript:void(0)" routerLink="/auth/forgetpassword">Forgot Password?</a>
+                            </div>
+                        </div>
+                        <button class="password-eye-icon" type="button" *ngIf="!isText"  [ngClass]="{ 'iconPadding': submitted && f['Password'].errors }">
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20" height="20" aria-labelledby="descriptive-:r15:" viewBox="0 0 24 24" (click)="hideshowpass()">
+                                <title id="descriptive-:r15:"></title>
+                                <g color="#101834">
+                                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                        <circle cx="12" cy="12" r="3"></circle>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                        <button class="password-eye-icon" type="button" *ngIf="isText"  [ngClass]="{ 'iconPadding': submitted && f['Password'].errors }">
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="20" height="20" aria-labelledby="descriptive-:r16:" viewBox="0 0 24 24" (click)="hideshowpass()">
+                                <title id="descriptive-:r16:"></title>
+                                <g color="#101834">
+                                    <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                        <div class="text-end" *ngIf="!(submitted && f['Password'].errors  || f['Password'].errors  )">
+                            <div class="d-flex">
+                                <div class="col-md  text-md-right text-ends resent-data resent-value">
+                                    <a class="fw-four f-size link-text-color" href="javascript:void(0)" routerLink="/auth/resendemailverification"  *ngIf="isVerify">Resend Verification Email?</a>
+                                </div>
+                                <div class="col-md  text-md-right resent-data resent-content  text-end text-ends">
+                                    <a class="fw-four f-size link-text-color" href="javascript:void(0)" routerLink="/auth/forgetpassword">Forgot Password?</a>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        <!-- <div class="dis-n m--1 pb-8 m-width p-r0 text-center">
+                            <a class="fw-four f-size" href="javascript:void(0)" routerLink="/auth/forgetpassword">Forgot Password?</a>
+                        </div> -->
+                        <!-- <div>
+                            <a class="fw-four f-size" href="javascript:void(0)" routerLink="/auth/resendemailverification"  *ngIf="isVerify">Resend Email?</a>
+                        </div> -->
+                        <button type="submit" class="btn w-100 border-0 text-white btn-bg mb-3 py-2 fs-very-low">
+                            <span class="spinner-border spinner-border-sm " role="status" aria-hidden="true" *ngIf="isLoading"></span>
+                            Sign In
+                        </button>
+                    </form>
+                </div>
+                <div class="text-center mb-3">
+                    <div class="line fs-very-low"></div>
+                    <div class="d-flex justify-content-center">
+                        <div class="text-center f-size">
+                            <div id="googleSigninBtn"  [ngStyle]="{ 'font-weight': '700','height':'50px' }"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="text-center mt-3">
+                    <h5 class=" f-size mb-2 fw-four ">First time here?
+                        <span class="fw-five ">
+                            <a href="javascript:void(0)" class="text-decoration-none link-text-color" routerLink="/auth/signup">Sign Up</a>
+                        </span>
+                        to join Slidea.
+                    </h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="loading" *ngIf="this._accountservice.cookieLoading">Loading&#8230;</div>

@@ -1,0 +1,27 @@
+<div
+  *ngIf="type === 'category-buttons'"
+  class="skeleton-loader category-skeleton"
+>
+  <div class="skeleton-button"></div>
+  <div class="skeleton-button"></div>
+  <div class="skeleton-button"></div>
+  <div class="skeleton-button"></div>
+  <div class="skeleton-button"></div>
+  <div class="skeleton-button"></div>
+  <div class="skeleton-button"></div>
+</div>
+
+<div *ngIf="type === 'line'" class="skeleton-line"></div>
+<div *ngIf="type === 'h1-header-txt'" class="skeleton-headertxt"></div>
+<div *ngIf="type === 'h2-header-txt'" class="skeleton-h2-headertxt"></div>
+<div *ngIf="type === 'search-bar'" class="skeleton-searchbar"></div>
+<div *ngIf="type === 'toogle-bar'" class="skeleton-tooglebar"></div>
+
+<div *ngIf="type === 'card'" class="skeleton-card">
+  <div class="skeleton-image"></div>
+  <div class="skeleton-text"></div>
+  <div class="skeleton-shorttext"></div>
+  <div class="skeleton-official-text"></div>
+  <div class="skeleton-button"></div>
+  <div class="skeleton-button"></div>
+</div>

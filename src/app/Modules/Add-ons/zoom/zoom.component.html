@@ -1,0 +1,68 @@
+<div class="container" id="container" style="display: none;">
+  <div class="col">
+      <img src="assets/images/audience-presentation-rule.png" alt="Original Image" class="original-image">
+  </div>
+  <div class="content-col">
+    <div class="button">
+      <p>Hello there! 👋Deliver interactive presentations right inside Zoom with Slidea. There is no need for screen sharing, as each participant will have instant access to your slides.</p>
+      <button class="btn btn-secondary meeting-btn" (click)="launchZoomApp()">Open Slidea in Zoom</button>
+  </div>
+  </div>
+</div>
+<div class="meetingContent" id="meetingContent" style="display: none;">
+  <div class="col meeting-home-header">
+    <div class="w-100">
+    <div> <img src="/assets/images/product-logo.svg" alt="header-logo" class="header-logo" width="140" height="38">
+      <p class="fs-18 fw-four text-center">Login to present</p>
+    </div>
+    <div class="sign-btn">
+      <button type="submit" class="header-signin" (click)="signIn()">
+        Sign In
+      </button>
+      <button type="submit" class="header-signup" (click)="signUp()">
+        Sign Up
+      </button>
+    </div>
+  </div>
+  </div>
+
+  <div class="content-col justify-content-end">
+    <p>Joining as a participant?</p>
+    <div class="search-box">
+      <div class="search-input-wrapper">
+        <input #codeInput type="text" placeholder="Enter code" class="form-control header-input" />
+
+        <button class="search-icon" (click)="JoinAsParticipant(codeInput.value)">
+          Join
+        </button>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="dynamicContent" class="dynamicContent">
+  <div class="container">
+    <div class=" zoom-screen">
+      <div class="zoom-fullscreen" id="presIframe">
+     
+        <div  class="presenter-section">
+          <iframe id="mainIframe" class="mainIframe" src="" frameborder="1" width="620px" height="350px"></iframe>
+        </div>
+      </div>
+      <div class="zoom-fullscreen" id="audiIframe">
+        <span class="textSide">
+          Voting Panel
+        </span>
+        <div  class="audience-section">
+          <iframe id="sideIframe" src="" frameborder="1" width="400px" height="480px" allow="clipboard-read; clipboard-write; web-share"></iframe>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="audiContent">
+    <iframe id="audiMeetIframe" src="" title="Custom Iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+  </div>
+</div>
+    

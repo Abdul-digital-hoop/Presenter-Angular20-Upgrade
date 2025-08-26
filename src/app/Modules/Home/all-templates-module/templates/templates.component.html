@@ -1,0 +1,40 @@
+<div class="main">
+  <ng-container *ngIf="_templateService.categoryList">
+    <app-templates-header
+      [searchTerm]="_templateService.searchTerm"
+      [searchLoading]="searchloading"
+      [isPublished]="_templateService.isPublished"
+      [categoryList]="_templateService.categoryList"
+      [selectedCategory]="_templateService.selectedCategory"
+      (customerSearchTerm)="customerSearch($event)"
+      (switchTemplateToggle)="switchTemplateToggle($event)"
+      (categorySelected)="categoryChanged($event)">
+    </app-templates-header>
+
+    <div class="templates-content-container">
+      <div class="templates-list-section">
+        <!-- Show skeleton loader only for card section -->
+        <div *ngIf="cardSectionLoading" class="container loaded-list">
+          <div class="row">
+            <div [class]="'col-12 col-sm-6 col-md-4 col-lg-' + (12/cardsPerRow) + ' mb-5'" *ngFor="let i of [].constructor(numberOfRecords)">
+              <app-skeleton-loader [type]="'card'"></app-skeleton-loader>
+            </div>
+          </div>
+        </div>
+
+        <!-- Show actual content when not loading -->
+        <app-templates-list
+          *ngIf="!cardSectionLoading"
+          [categoryList]="_templateService.categoryList"
+          [templateList]="_templateService.templatesList"
+          [customerLimitation]="customerLimitationCount"
+          (loadMoreTemplates)="loadMoreTemplates()"
+          [templateSection]="templateSection"
+          [hasMoreTemplates]="hasMoreTemplates"
+          [cardsPerRow]="cardsPerRow"
+          (templateListChange)="updateTemplateList($event)">
+        </app-templates-list>
+      </div>
+    </div>
+  </ng-container>
+</div>

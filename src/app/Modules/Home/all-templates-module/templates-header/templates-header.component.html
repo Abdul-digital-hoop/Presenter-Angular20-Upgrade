@@ -1,0 +1,44 @@
+<section class="templates-main-container">
+    <div class="templates-header-title">
+        <span>{{ _templateService.isPublished ? "Templates" :  "My Templates"}}</span>
+    </div>
+    <div class="templates-header-section">
+        <div class="templates-left-section">
+            <app-templates-filter
+                [categoryList]="categoryList"
+                [selectedCategory]="selectedCategory"
+                (categorySelected)="onCategorySelect($event)"
+            ></app-templates-filter>
+        </div>
+        <div class="templates-center-section">
+            <div class="templates-search-section">
+                <div class="search-term">
+                    <input [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}"
+                        class="templates-search-inputbox" name="search" placeholder="Search templates" type="text"
+                        autocomplete="off" (ngModelChange)="onSearchChange()">
+                    <button class="btn btn-primary btn-sm searchBtn" [ngClass]="{'searchBtn-disabled': searchLoading}"
+                        (click)="onSearchInput()">
+                        <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M8.75661 15.3465C4.9331 15.3465 1.83353 12.2468 1.83353 8.42324C1.83353 4.59964 4.9331 1.5 8.75661 1.5C12.5801 1.5 15.6797 4.59964 15.6797 8.42324C15.6797 12.2468 12.5801 15.3465 8.75661 15.3465Z"
+                                stroke="#282828" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M18.8359 19.5L13.8359 14.5" stroke="#282828" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="templates-right-section">
+            <div class="category-toggle-section">
+                <button class="toggle-switch" (click)="switchToggle()">
+                    <div class="text-container">
+                        <span [ngClass]="{ 'active-text': isPublished}">Default</span>
+                        <span class="text-nowrap" [ngClass]="{ 'active-text': !isPublished}">My Templates</span>
+                    </div>
+                    <div class="slider-indicator" [ngClass]="{ 'right-indication': !isPublished }"></div>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

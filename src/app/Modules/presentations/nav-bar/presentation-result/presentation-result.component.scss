@@ -1,0 +1,17 @@
+@import '/src/assets/variablesScss/varaiabledecalaration.scss';
+@import '/src/assets/variablesScss/common.scss';
+.result-btn {
+    color: black;
+    font-weight: 500;
+    background: #F8F9FA;
+    border: 1px solid #DEDEDE;
+    padding: 8px 20px;
+    border-radius: 25px;
+    transition: 1s;
+}
+.result-btn:hover{
+    background-color: #ebebeb;
+}
+.pointer-event{
+    pointer-events: all;
+  }

@@ -1,0 +1,9 @@
+<div class="position-relative">
+    <input type="text" class="form-control title-input position-relative" [(ngModel)]="workSpaceService.presentationName" [ngModelOptions]="{standalone: true}" (focusout)="updatePresentationName(workSpaceService.presentationName)" maxlength="100"
+    #presentationInput/>
+    <div class="position-absolute-remaing position-absolute end-0 title-cnt">
+        <span [ngStyle]="{ color: workSpaceService.presentationName.length > 50 && workSpaceService.presentationName.length < 100 ? '#FF1717' : '#bfbfbf' }">
+            {{ 100 - workSpaceService.presentationName.length }}
+        </span>
+    </div>
+</div>

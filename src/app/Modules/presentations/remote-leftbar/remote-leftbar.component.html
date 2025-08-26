@@ -1,0 +1,291 @@
+<section class="left-controls h-100" [ngClass]="{'sidebar-hidden': isSidebarHidden}">
+    <div class="more-tab">
+        <span class="more-txt">Settings</span>
+        <div class="more-icon">
+            <img src="/assets/new-icons/settings.svg">
+        </div>
+    </div>
+    <div class="setting-border-line"></div>
+    <div class="controls">
+        <!-- * ============ Response settings Template ============== -->
+        <div class="settings">
+            <span class="label" *ngIf="workspaceService.activeSlideTypeName != masterSlideTypeName.GoogleSlides && workspaceService.activeSlideTypeName != masterSlideTypeName.POWER_POINT && workspaceService.slideContentType != masterSlideTypeName.QUIZ && workspaceService.activeSlideTypeName != masterSlideTypeName.ImportDocument  && workspaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA && workspaceService.activeSlideTypeName != masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">Response settings</span>
+            <ng-container *ngIf="workspaceService.activeSlideTypeName != masterSlideTypeName.GoogleSlides && workspaceService.activeSlideTypeName != masterSlideTypeName.POWER_POINT && workspaceService.slideContentType != masterSlideTypeName.QUIZ && workspaceService.activeSlideTypeName != masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE && workspaceService.activeSlideTypeName != masterSlideTypeName.ImportDocument && workspaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA  && workspaceService.activeSlideTypeName != masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                <div class="control-name">
+                    <span class="control-txt"> Show responses </span>
+                    <div class="control-icon">
+                        <label class="switch mb-0">
+                            <input type="checkbox" class="ctsm-toggle-btn" [(ngModel)]="workspaceService.slideShowInResults"
+                                [ngModelOptions]="{standalone: true}" (change)="updateSlideShowResults()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="workspaceService.activeSlideTypeName != masterSlideTypeName.GoogleSlides && workspaceService.activeSlideTypeName != masterSlideTypeName.POWER_POINT && workspaceService.slideContentType != masterSlideTypeName.QUIZ && workspaceService.activeSlideTypeName != masterSlideTypeName.ImportDocument && workspaceService.activeSlideTypeName != masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE && workspaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA && workspaceService.activeSlideTypeName != masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                <div class="control-name">
+                    <ng-container *ngIf="(!customerPlan?.audience_response_control);else noAccessResponding">
+                        <div class="layout-label">
+                            <span class="control-txt"> Turn off responding </span>
+                            <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top" data-tooltip="Need subscription">
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z"></path></g></svg>
+                            </div>
+                        </div>
+                    </ng-container>
+                    <ng-template #noAccessResponding>
+                        <span class="control-txt"> Turn off responding </span>
+                    </ng-template>
+                    <div class="control-icon">
+                        <label class="switch mb-0">
+                            <input type="checkbox" class="ctsm-toggle-btn" 
+                                [(ngModel)]="!workspaceService.slideEnableVoting"
+                                [ngModelOptions]="{standalone: true}" (change)="updateSlideShowResponse()"
+                                [disabled]="!customerPlan?.audience_response_control">
+                            <span class="slider round" [ngClass]="!customerPlan?.audience_response_control ? 'cursor-notallowed':''"></span>
+                        </label>
+                    </div>
+                </div>
+            </ng-container>
+            
+            <ng-container *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE || workspaceService.activeSlideTypeName == masterSlideTypeName.TRAFFIC_LIGHTS_SLIDE_TYPE || workspaceService.activeSlideTypeName == masterSlideTypeName.THIS_OR_THAT_SLIDE_TYPE">
+                <div class="control-name">
+                    <span class="control-txt">Show responses as percentage </span>
+                    <div class="control-icon">
+                        <label class="switch mb-0">
+                            <input type="checkbox" class="ctsm-toggle-btn"
+                                [(ngModel)]="workspaceService.slideResponseAsPercentage" [ngModelOptions]="{standalone: true}"
+                                (change)="updateSlidePercentage()">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container
+                *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE">
+                <div class="visualization">
+                    <span class="control-txt">Visualization type</span>
+                    <div class="visualization-type">
+                        <ng-container *ngFor="let masterVisualization of workspaceService.masterSlidesVisualizationType; let i = index">
+                            <div class="pe-0 mb-3">
+                                <a href="javascript:void(0)" class="slide-list-hover"
+                                [class.active]="masterVisualization?.id == workspaceService.slideVisualizationId" [class.disabled]="i === 3" [attr.aria-disabled]="i === 3 ? 'true' : null"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    [attr.data-bs-title]="i === 3 ? 'Chart undermaintanance':masterVisualization?.Name"
+                                    (click)="i !== 3 ? designSlideSelectVisualization(masterVisualization?.id):null">
+                                    <div class="slide-type-card text-center">
+                                        <img [src]="masterVisualization?.defaultImgURL" class="normal-svg mb-2">
+                                        <img [src]="masterVisualization?.activeImgURL" class="active-svg mb-2">
+                                        <p class="slide-type-text mb-0">{{masterVisualization?.Name}}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container
+                *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE">
+                <div class="visualization">
+                    <span class="control-txt">Visualization type</span>
+                    <div class="visualization-type">
+                        <ng-container *ngFor="let masterVisualization of workspaceService.masterSlidesVisualizationType; let i = index">
+                            <div class="pe-0 mb-3">
+                                <a href="javascript:void(0)" class="slide-list-hover"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    [class.active]="masterVisualization?.id == workspaceService.slideVisualizationId" 
+                                    [attr.data-bs-title]="masterVisualization?.Name"
+                                    (click)="designSlideSelectVisualization(masterVisualization?.id)">
+                                    <div class="slide-type-card text-center">
+                                        <img [src]="masterVisualization?.defaultImgURL" class="normal-svg mb-2">
+                                        <img [src]="masterVisualization?.activeImgURL" class="active-svg mb-2">
+                                        <p class="slide-type-text mb-0">{{masterVisualization?.Name}}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container
+                *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.SCALES_SLIDE_TYPE">
+                <div class="visualization">
+                    <span class="control-txt">Visualization type</span>
+                    <div class="visualization-type">
+                        <ng-container *ngFor="let masterVisualization of workspaceService.masterSlidesVisualizationType; let i = index">
+                            <div class="pe-0 mb-3">
+                                <a href="javascript:void(0)" class="slide-list-hover"
+                                    data-bs-toggle="tooltip" data-bs-placement="top"
+                                    [class.active]="masterVisualization?.id == workspaceService.slideVisualizationId" 
+                                    [class.disabled]="i === 0" [attr.aria-disabled]="i === 0 ? 'true' : null"
+                                    [attr.data-bs-title]="i === 0 ? 'Chart undermaintanance':masterVisualization?.Name"
+                                    (click)="i !== 0 ? designSlideSelectVisualization(masterVisualization?.id):null">
+                                    <div class="slide-type-card text-center">
+                                        <img [src]="masterVisualization?.defaultImgURL" class="normal-svg mb-2">
+                                        <img [src]="masterVisualization?.activeImgURL" class="active-svg mb-2">
+                                        <p class="slide-type-text mb-0">{{masterVisualization?.Name}}</p>
+                                    </div>
+                                </a>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="workspaceService.slideContentType != masterSlideTypeName.QUIZ && workspaceService.activeSlideTypeName != masterSlideTypeName.ImportDocument && workspaceService.activeSlideTypeName != masterSlideTypeName.GoogleSlides && workspaceService.activeSlideTypeName != masterSlideTypeName.POWER_POINT && workspaceService.activeSlideTypeName != masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE && workspaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA && workspaceService.activeSlideTypeName != masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                <div class="control-button" 
+                [attr.data-bs-toggle]="customerPlan?.audience_response_control ? 'modal' : null"
+                [attr.data-bs-target]="customerPlan?.audience_response_control ? '#startTimerModal' : null"
+                [ngClass]="!customerPlan?.audience_response_control ? 'cursor-notallowed' : ''">
+                    <button class="btn btn-control"
+                    [disabled]="!customerPlan?.audience_response_control">
+                        <span class="btn-name">Start Timer</span>
+                        <img src="/assets/new-icons/timer1.svg" class="control-btn-icon">
+                    </button>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="workspaceService.activeSlideTypeName != masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE && workspaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA">
+                <div class="control-button slide-list-hover" 
+                [attr.data-bs-toggle]="customerPlan?.reset_result ? 'modal' : null"
+                [attr.data-bs-target]="customerPlan?.reset_result ? '#resetResultModal' : null"
+                [ngClass]="!customerPlan?.reset_result ? 'cursor-notallowed' : ''">
+                    <button class="btn btn-control" [disabled]="!customerPlan?.reset_result">
+                        <span class="btn-name">Reset results</span>
+                        <img src="/assets/new-icons/reset_result.svg" class="control-btn-icon">
+                    </button>
+                </div>
+            </ng-container>
+            <ng-container
+                *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.WORD_CLOUD_SLIDE_TYPE || workspaceService.activeSlideTypeName == masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE">
+                <div class="control-button">
+                    <button class="btn btn-control" data-bs-toggle="modal" data-bs-target="#moderationModal">
+                        <span class="btn-name">Moderate answers</span>
+                        <img src="/assets/new-icons/Moderate_Answers.svg" class="control-btn-icon">
+                    </button>
+                </div>
+            </ng-container>
+            <ng-container
+                *ngIf="workspaceService.activeSlideTypeName == masterSlideTypeName.TYPE_ANSWER_SLIDE_TYPE">
+                <div class="control-button">
+                    <button class="btn btn-control" data-bs-toggle="modal" data-bs-target="#markCorrectAnswersModal">
+                        <span class="btn-name">Mark correct</span>
+                        <img src="/assets/new-icons/Answered.svg" class="control-btn-icon">
+                    </button>
+                </div>
+            </ng-container>
+        </div>
+        <!-- * ============ Joining instructions Template ============== -->
+        <div class="settings">
+            <span class="label">Joining instructions</span>
+            <div class="control-name">
+                <span class="control-txt"> Show access code </span>
+                <div class="control-icon">
+                    <label class="switch mb-0">
+                        <input type="checkbox" class="ctsm-toggle-btn"
+                            [(ngModel)]="workspaceService.presentationSettingJoiningInstructions"
+                            [ngModelOptions]="{standalone: true}" (change)="updateAccessCode()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-name">
+                <span class="control-txt">Show joining instructions and QR </span>
+                <div class="control-icon">
+                    <label class="switch mb-0">
+                        <input type="checkbox" class="ctsm-toggle-btn" [(ngModel)]="workspaceService.isShowQRCode"
+                            [ngModelOptions]="{standalone: true}" (change)="isShowQRCode()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-name">
+                <span class="control-txt">Show blank screen </span>
+                <div class="control-icon">
+                    <label class="switch mb-0">
+                        <input type="checkbox" class="ctsm-toggle-btn" [(ngModel)]="workspaceService.isBlackOverlayVisible"
+                        [ngModelOptions]="{standalone: true}"(change)="blankScreenUpdate()">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-button">
+                <button #copyButton class="btn btn-control" (click)="copyPresentationLink()">
+                    <span class="btn-name">Presentation link</span>
+                    <ng-container *ngIf="!isCopied">
+                        <img src="/assets/new-icons/content_copy.svg" class="control-btn-icon">
+                    </ng-container>
+                    <ng-container *ngIf="isCopied">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"
+                            class="control-btn-icon">
+                            <path
+                                d="M10 20C15.5228 20 20 15.5228 20 10C20 4.47715 15.5228 0 10 0C4.47715 0 0 4.47715 0 10C0 15.5228 4.47715 20 10 20Z"
+                                fill="#00BA00" />
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M6.87814 14.877L3.22082 10.9626C2.72011 10.4267 2.74885 9.57886 3.28476 9.07815C3.82066 8.57744 4.66854 8.60626 5.16924 9.14209L7.99035 12.1615L12.4558 7.98925C12.4959 7.95169 12.5379 7.91729 12.5813 7.88563L14.6812 5.92366C15.2171 5.42296 16.0651 5.45177 16.5657 5.98768C17.0664 6.52351 17.0376 7.37146 16.5018 7.87217L10.0881 13.8647L10.0812 13.8574L7.86263 15.9303L6.87814 14.877Z"
+                                fill="white" />
+                        </svg>
+                    </ng-container>
+                </button>
+            </div>
+        </div>
+        <!-- * ============ Presentation Template ============== -->
+        <div class="settings">
+            <span class="label">Presentation</span>
+            <div class="control-name">
+                <ng-container *ngIf="(!customerPlan?.comments);else noAccessComment">
+                    <div class="layout-label">
+                        <span class="control-txt"> Enable comments </span>
+                        <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top" data-tooltip="Need subscription">
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z"></path></g></svg>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-template #noAccessComment>
+                    <span class="control-txt"> Enable comments </span>
+                </ng-template>
+                
+                <div class="control-icon">
+                    <label class="switch mb-0">
+                        <input type="checkbox" class="ctsm-toggle-btn" [(ngModel)]="workspaceService.slideShowComments"
+                            [ngModelOptions]="{standalone: true}" (change)="enableDisableComment()"
+                            [disabled]="!customerPlan?.comments"
+                            [ngClass]="!customerPlan?.comments ? 'cursor-notallowed':''">
+                        <span class="slider round"[ngClass]="!customerPlan?.comments ? 'cursor-notallowed':''"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-name">
+                <ng-container *ngIf="(!customerPlan?.qa);else noAccessQA">
+                    <div class="layout-label">
+                        <span class="control-txt">Enable Q&A</span>
+                        <div class="pricing-icon slide-list-hover right-side-bar-tooltip-top" data-tooltip="Need subscription">
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="0.625rem" height="0.625rem" aria-label="Star" viewBox="0 0 16 16"><g fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"><path d="M7.99993 1.5L10.0572 5.66844L14.6573 6.33688L11.3286 9.58156L12.1144 14.1631L7.99993 12L3.88543 14.1631L4.67123 9.58156L1.34253 6.33688L5.94268 5.66844L7.99993 1.5Z"></path></g></svg>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-template #noAccessQA>
+                    <span class="control-txt">Enable Q&A</span>
+                </ng-template>
+                <div class="control-icon">
+                    <label class="switch mb-0">
+                        <input type="checkbox" class="ctsm-toggle-btn" [(ngModel)]="workspaceService.slideShowQuestions"
+                            [ngModelOptions]="{standalone: true}" (change)="enableDisableQuestion()"
+                            [disabled]="!customerPlan?.qa"
+                            [ngClass]="!customerPlan?.qa ? 'cursor-notallowed':''">
+                        <span class="slider round" [ngClass]="!customerPlan?.qa ? 'cursor-notallowed':''"></span>
+                    </label>
+                </div>
+            </div>
+            <div class="control-button">
+                <button class="btn btn-control" data-bs-toggle="modal" data-bs-target="#resetModal">
+                    <span class="btn-name">Reset timer</span>
+                    <img src="/assets/new-icons/device_reset.svg" class="control-btn-icon">
+                </button>
+            </div>
+            <div class="control-button">
+                <button class="btn btn-control" (click)="myPresentations()">
+                    <span class="btn-name">My Presentations</span>
+                    <img src="/assets/new-icons/MarkAsAnswered.svg" class="mypresentaion-btn-icon">
+                </button>
+            </div>
+        </div>
+    </div>
+</section>

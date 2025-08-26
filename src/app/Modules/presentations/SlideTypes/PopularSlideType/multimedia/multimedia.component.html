@@ -1,0 +1,256 @@
+  <canvas #canvas></canvas>
+
+  <div *ngIf="showContextMenu" 
+    [style.left.px]="contextMenuX !== 0 ? contextMenuX : null"
+    [style.top.px]="contextMenuY !== 0 ? contextMenuY : null"
+    [style.bottom.px]="contextMenu_Y !== 0 ? contextMenu_Y : null" class="context-menu">
+    <button><img src="/assets/multimedia-icons/multimedia-copy.svg" alt="Copy"> Copy to</button>
+    <button><img src="/assets/multimedia-icons/multimedia-paste.svg" alt="Paste"> Paste</button>
+    <button><img src="/assets/multimedia-icons/multimedia-duplicate.svg" alt="Duplicate"> Duplicate</button>
+    <button (click)="bringToFront()"><img src="/assets/multimedia-icons/multimedia-bring-to-front.svg" alt="Bring to Front"> Bring to Front</button>
+    <button (click)="sendToBack()"><img src="/assets/multimedia-icons/multimedia-send-to-back.svg" alt="Send to Back"> Send to Back</button>
+    <button (click)="bringForward()"><img src="/assets/multimedia-icons/multimedia-bring-forward.svg" alt="Bring Forward"> Bring Forward</button>
+    <button (click)="sendBackward()"><img src="/assets/multimedia-icons/multimedia-send-backward.svg" alt="Send Backward"> Send Backward</button>
+    <button (click)="deleteSelected()" style="color: red;"><img src="/assets/multimedia-icons/multimedia-delete.svg" alt="Delete"> Delete</button>
+  </div>
+
+<div #textToolbar class="text-toolbar" *ngIf="showTextToolbar" [style.visibility]="showTextToolbar ? 'visible' : 'hidden'">
+  <select [(ngModel)]="currentFontFamily" (change)="onFontFamilyChange($event)">
+    <option *ngFor="let font of fonts" [value]="font" [selected]="currentFontFamily === font">
+      {{font}}
+    </option>
+  </select>
+
+  <!-- Font Size -->
+  <select [(ngModel)]="currentFontSize" (change)="onFontSizeChange($event)">
+    <option *ngFor="let size of fontSizes" [value]="size" [selected]="currentFontSize === size">
+      {{size}}
+    </option>
+  </select>
+
+  <!-- Color Picker -->
+  <input style="padding: 0px;width: 32px;" type="color" #colorPicker (change)="setTextColor(colorPicker.value)" [value]="currentColor">
+
+  <!-- Style Buttons with images -->
+  <button (click)="toggleBold()" [class.active]="currentBold">
+    <img src="/assets/multimedia-icons/multimedia-bold.svg" alt="Bold">
+  </button>
+
+  <button (click)="toggleItalic()" [class.active]="currentItalic">
+    <img src="/assets/multimedia-icons/multimedia-italic.svg" alt="Italic">
+  </button>
+
+  <button (click)="toggleUnderline()" [class.active]="currentUnderline">
+    <img src="/assets/multimedia-icons/multimedia-underline.svg" alt="Underline">
+  </button>
+
+  <button (click)="toggleStrikethrough()" [class.active]="currentStrike">
+    <img src="/assets/multimedia-icons/multimedia-strikethrough.svg" alt="Strikethrough">
+  </button>
+
+  <!-- Alignment Dropdown -->
+  <div class="custom-select">
+    <button class="select-button" (click)="toggleAlignmentDropdown($event)">
+      <img [src]="currentAlignmentIcon" alt="Text Alignment">
+      <img src="/assets/multimedia-icons/multimedia-down-arrow.svg" alt="Text Alignment">
+    </button>
+    <div class="select-dropdown" [class.show]="showAlignmentDropdown">
+      <div class="select-option" (click)="setTextAlign('left')">
+        <img src="/assets/multimedia-icons/multimedia-text-align-left.svg" alt="Left"> Left
+      </div>
+      <div class="select-option" (click)="setTextAlign('center')">
+        <img src="/assets/multimedia-icons/multimedia-text-align-center.svg" alt="Center"> Center
+      </div>
+      <div class="select-option" (click)="setTextAlign('right')">
+        <img src="/assets/multimedia-icons/multimedia-text-align-right.svg" alt="Right"> Right
+      </div>
+      <div class="select-option" (click)="setTextAlign('justify')">
+        <img src="/assets/multimedia-icons/multimedia-text-align-justify.svg" alt="Justify"> Justify
+      </div>
+    </div>
+  </div>
+  
+  <!-- Bullet List Dropdown -->
+   <!--
+  <select #bulletSelect (change)="createBulletList(bulletSelect.value)">
+    <option value=""></option>
+    <option value="bullet"><img src="/assets/multimedia-icons/multimedia-bullet-list.svg" alt="Bullet Points"></option>
+    <option value="number"><img src="/assets/multimedia-icons/multimedia-numbered-list.svg" alt="Numbered List"></option>
+    <option value="letter"><img src="/assets/multimedia-icons/multimedia-letter-list.svg" alt="Letter List"></option>
+    <option value="roman"><img src="/assets/multimedia-icons/multimedia-roman-numerals.svg" alt="Roman Numerals"></option>
+    <option value="arrow"><img src="/assets/multimedia-icons/multimedia-arrow-list.svg" alt="Arrow List"></option>
+    <option value="check"><img src="/assets/multimedia-icons/multimedia-check-list.svg" alt="Check List"></option>
+  </select>
+  -->
+  <!-- Emoji Dropdown -->
+  <!--
+  <select #emojiSelect (change)="addEmoji(emojiSelect.value); emojiSelect.value=''">
+    <option value=""><img src="/assets/multimedia-icons/multimedia-emoji.svg" alt="Emoji"></option>
+    <optgroup label="Smileys">
+      <option value="😀">😀 Grinning Face</option>
+      <option value="😊">😊 Smiling Face</option>
+      <option value="🙂">🙂 Slightly Smiling Face</option>
+      <option value="😄">😄 Grinning Face with Smiling Eyes</option>
+    </optgroup>
+    <optgroup label="Gestures">
+      <option value="👍">👍 Thumbs Up</option>
+      <option value="👎">👎 Thumbs Down</option>
+      <option value="👌">👌 OK Hand</option>
+      <option value="👋">👋 Waving Hand</option>
+    </optgroup>
+    <optgroup label="Hearts">
+      <option value="❤️">❤️ Red Heart</option>
+      <option value="💙">💙 Blue Heart</option>
+      <option value="💚">💚 Green Heart</option>
+      <option value="💛">💛 Yellow Heart</option>
+    </optgroup>
+  </select>
+  -->
+</div>
+
+<!-- Shape Toolbar -->
+<div class="shape-toolbar" *ngIf="showShapeToolbar">
+  <!-- Main Toolbar -->
+  <div class="toolbar-buttons">
+    <!-- Shape Selector -->
+    <button class="toolbar-btn" (click)="toggleDropdown('shapeSelector', $event)" [class.active]="dropdowns.shapeSelector.isOpen">
+      <img src="/assets/multimedia-icons/multimedia-shape-change.svg" alt="Change Shape">
+    </button>
+
+    <!-- Fill Color -->
+    <button class="toolbar-btn color-preview-btn" 
+            (click)="toggleDropdown('fillColor', $event)"
+            [class.active]="dropdowns.fillColor.isOpen">
+      <div class="color-preview" [style.background]="selectedShape?.fill || 'transparent'"></div>
+    </button>
+
+    <!-- Border Style -->
+    <button class="toolbar-btn" 
+            (click)="toggleDropdown('borderStyle', $event)"
+            [class.active]="dropdowns.borderStyle.isOpen">
+      <img src="/assets/multimedia-icons/multimedia-border-style.svg" alt="Border Style">
+    </button>
+
+    <!-- Border Color - Only show when border is active -->
+    <button class="toolbar-btn border-preview-btn" 
+            *ngIf="selectedShape?.stroke"
+            (click)="toggleDropdown('borderColor', $event)"
+            [class.active]="dropdowns.borderColor.isOpen">
+      <div class="border-preview" 
+           [style.border-color]="selectedShape?.stroke"
+           [style.border-style]="getBorderStyle()"
+           [style.border-width.px]="selectedShape?.strokeWidth || 1">
+      </div>
+    </button>
+
+    <!-- Corner Radius Button -->
+    <button class="toolbar-btn" 
+            *ngIf="shouldShowRadiusButton()"
+            (click)="toggleDropdown('borderRadius', $event)"
+            [class.active]="dropdowns.borderRadius.isOpen">
+      <img src="/assets/multimedia-icons/multimedia-corner-radius.svg" alt="Corner Radius">
+    </button>
+  </div>
+
+  <!-- Dropdowns -->
+  <!-- Border Style Dropdown -->
+  <div class="shape-options-dropdown-menu border-style" 
+       *ngIf="dropdowns.borderStyle.isOpen"
+       [style.left.px]="dropdowns.borderStyle.position.x"
+       [style.top.px]="dropdowns.borderStyle.position.y">
+    <div class="border-options">
+      <div class="border-option" (click)="updateBorderStyleAndWidth('none', 0)">
+        <img src="/assets/multimedia-icons/multimedia-border-none.svg" alt="No Border">
+      </div>
+      <div class="border-option" (click)="updateBorderStyleAndWidth('solid', selectedShape?.strokeWidth || 1)">
+        <img src="/assets/multimedia-icons/multimedia-border-solid.svg" alt="Solid">
+      </div>
+      <div class="border-option" (click)="updateBorderStyleAndWidth('dashed', selectedShape?.strokeWidth || 1)">
+        <img src="/assets/multimedia-icons/multimedia-border-dashed.svg" alt="Dashed">
+      </div>
+      <div class="border-option" (click)="updateBorderStyleAndWidth('dotted', selectedShape?.strokeWidth || 1)">
+        <img src="/assets/multimedia-icons/multimedia-border-dotted.svg" alt="Dotted">
+      </div>
+    </div>
+
+    <h4>Border Weight</h4>
+    <div class="border-weight-slider">
+      <input type="range" 
+             min="0" 
+             max="20" 
+             [value]="selectedShape?.strokeWidth || 0"
+             (input)="updateBorderWidth($event)">
+      <span class="weight-value">{{selectedShape?.strokeWidth || 0}}</span>
+    </div>
+  </div>
+
+  <!-- Fill Color Dropdown -->
+  <div class="shape-options-dropdown-menu fill-color"
+       *ngIf="dropdowns.fillColor.isOpen"
+       [style.left.px]="dropdowns.fillColor.position.x"
+       [style.top.px]="dropdowns.fillColor.position.y">
+    <input type="color" 
+           [value]="selectedShape?.fill || '#ffffff'"
+           (input)="updateFillColor($any($event.target).value)">
+    <div class="opacity-control">
+      <label>Opacity</label>
+      <div class="custom-slider-container">
+        <div class="custom-slider"
+             (mousedown)="handleSliderMouseDown($event)">
+          <div class="slider-track"></div>
+          <div class="slider-fill" 
+               [style.width.%]="(selectedShape?.opacity || 1) * 100"></div>
+          <div class="slider-thumb" 
+               [style.left.%]="(selectedShape?.opacity || 1) * 100">
+            <div class="slider-value">
+              {{Math.round((selectedShape?.opacity || 1) * 100)}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Border Color Dropdown -->
+  <div class="shape-options-dropdown-menu fill-color"
+       *ngIf="dropdowns.borderColor.isOpen"
+       [style.left.px]="dropdowns.borderColor.position.x"
+       [style.top.px]="dropdowns.borderColor.position.y">
+    <input type="color" 
+           [value]="getCurrentBorderColor()"
+           (input)="updateBorderColor($any($event.target).value)">
+    <div class="opacity-control">
+      <label>Opacity</label>
+      <div class="custom-slider-container">
+        <div class="custom-slider"
+             (mousedown)="handleSliderMouseDown($event)">
+          <div class="slider-track"></div>
+          <div class="slider-fill" 
+               [style.width.%]="(selectedShape?.strokeOpacity || 1) * 100"></div>
+          <div class="slider-thumb" 
+               [style.left.%]="(selectedShape?.strokeOpacity || 1) * 100">
+            <div class="slider-value">
+              {{Math.round((selectedShape?.strokeOpacity || 1) * 100)}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Corner Radius Dropdown -->
+  <div class="shape-options-dropdown-menu border-radius"
+       *ngIf="dropdowns.borderRadius.isOpen && shouldShowRadiusButton()"
+       [style.left.px]="dropdowns.borderRadius.position.x"
+       [style.top.px]="dropdowns.borderRadius.position.y">
+    <h4>Corner Radius</h4>
+    <div class="radius-slider">
+      <input type="range" 
+             min="0" 
+             max="50" 
+             [value]="getCurrentRadius()"
+             (input)="updateCornerRadius($event)">
+      <span class="radius-value">{{getCurrentRadius()}}</span>
+    </div>
+  </div>
+</div>

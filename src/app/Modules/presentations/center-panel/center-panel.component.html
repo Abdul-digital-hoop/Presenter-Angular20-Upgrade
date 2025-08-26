@@ -1,0 +1,315 @@
+<section id="main-stage" class="middle-content-section">
+    <div class="inside-middle-content">
+        <div class="inside-middle-content" #CenterPanel>
+            <div class="chart-main-content" #OuterScreen>
+                <div [appThemes]="workSpaceService.slideDesign | slideThemes:null" class="center-panel-chart1 position-relative" #InnerScreen  [ngStyle]="{ 'width' : panelWidth}">
+                    <ng-container *ngIf="workSpaceService.slideContentType != workSpaceService.masterSlideTypeName.QUIZ && workSpaceService.activeSlideTypeName !== masterSlideTypeName.ImportDocument && workSpaceService.activeSlideTypeName !== masterSlideTypeName.POWER_POINT && workSpaceService.activeSlideTypeName !== masterSlideTypeName.GoogleSlides && workSpaceService.activeSlideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                        <div class="theme-background-image"
+                            [ngStyle]="{'background-image': 'url(' + workSpaceService.presentationTheme.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':workSpaceService.presentationTheme.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl ? workSpaceService.presentationTheme.backgroundColorOpacity:1,'background-size':workSpaceService.presentationTheme.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl ? '100% 100%' : 'cover'}">
+                        </div>
+                    </ng-container>
+                    <div class="content-center-panel" [ngStyle]='{ height : panelHeight }'>
+                        <ng-container *ngIf="workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl">
+                            <div class="brand-logo" [style.width]="logoPositionType =='Landscape'? '15%':'5%'">
+                                <div class="logo-icon">
+                                    <img [src]="workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl" [alt]="workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl" class="logo-image">
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container *ngIf="centerPanelLoading">
+                            <app-center-panel-skeleton></app-center-panel-skeleton>
+                        </ng-container>
+                        <ng-container *ngIf="!centerPanelLoading">
+                            <div [ngClass]="this.imageType == 'Image left' || this.imageType == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+                                <div *ngIf="this.imageType == 'Image right' || this.imageType == 'Image left'" class="background-left-right-image" [ngStyle]="loadBGLayout()"></div>
+                                <div *ngIf="this.imageType == 'Side by side right' || this.imageType == 'Side by side left'" class="background-slide-by-slide-left-right-image" [ngStyle]="loadBGLayout()"></div>
+                                <div [ngClass]="{'background-image-panel-top': imageType == 'Image top', 'background-image-panel-bottom': imageType == 'Image bottom', 'background-image-panel': imageType != 'Image top' && imageType != 'Image bottom', 'img-opacity': imageType === 'Full Image' && !activePptImage && !workSpaceService.isPdf && workSpaceService.activeSlideTypeName !=masterSlideTypeName.POWER_POINT && workSpaceService.activeSlideTypeName !=masterSlideTypeName.GoogleSlides && workSpaceService.activeSlideTypeName !=masterSlideTypeName.INSTRUCTION_SLIDE_TYPE}">
+                                    <div *ngIf="(imageType === 'Full Image') && !showPdf" [ngStyle]="{'background-image': 'url(' + (workSpaceService.slideLayoutImage || '/assets/images/static_bg_image.svg') + ')','width': '100%','position': 'absolute', 'height': '100%','opacity': workSpaceService.slideLayoutImageOpacity,'background-position': 'center center','background-repeat': 'no-repeat','background-size': workSpaceService.slideLayoutImage ? '100% 100%' : 'cover'}"></div>
+                                    <!-- <div class="opacity-point-seven" *ngIf="this.imageType == 'Full Image' && workSpaceService?.slideContentImage && workSpaceService.activeSlideTypeName != 'Import Document'" [ngStyle]="{'background-position': 'center center', 'background-repeat': 'no-repeat', 'background-size': 'cover'}"></div> -->
+                                    <div class="inner-top-bottom-image" *ngIf="imageType == 'Image top' || imageType == 'Image bottom'" [ngStyle]="loadBGLayout()"></div>
+                                    <img 
+                                    #slideImage 
+                                    [src]="slidePdfImage" 
+                                    (load)="checkImageOrientation($event)" 
+                                    *ngIf="showPdf" 
+                                    [ngClass]="imageOrientationClass"
+                                    draggable="false">
+                                    <div class="center-chart-content">
+                                        <div class="inside-chart-content">
+                                            <div class="main-chart-area">
+                                                <ng-container [ngClass]="workSpaceService?.slideListArray?.length > 0 ? '':'d-none'">
+                                                    <div class="inside-chart-area" [ngStyle]="{'height': activeslideTypeName === masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE ? '100%' : '100%'}">
+                                                    
+                                                            <div class="content-text-area" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA">
+                                                                
+                                                                <!-- [style.width]="(workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl) &&(this.imageType == 'Image left' || this.imageType == 'Side by side left'|| this.imageType == 'Full Image' || this.imageType == 'Default' ) ? '70%' : '100%'" -->
+                                                                <ng-container *ngIf="!centerPanelLoading">
+                                                                    <div class="inside-text-area" [style.width]="
+                                                                    (workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl == null || workSpaceService.presentationTheme?.ThemeLogo?.logoCroppedUrl == '') ? '100%':
+                                                                    (logoPositionType == 'Landscape' && (imageType == 'Image left' || imageType == 'Full Image' || imageType == 'Default')) ? '75%':
+                                                                    (logoPositionType == 'Portrait'  && (imageType == 'Image left' || imageType == 'Full Image' || imageType == 'Default')) ? '90%':
+                                                                    (logoPositionType == 'Landscape' && imageType == 'Side by side left')? '75%':
+                                                                    (logoPositionType == 'Portrait' && imageType == 'Side by side left')? '90%':'100%'">
+                                                                        <div class="text-area-div">
+                                                                                <span id="font-style" class="font-styling-empty-class"
+                                                                                    [ngClass]="(activeslideTypeName == masterSlideTypeName.POWER_POINT || activeslideTypeName == masterSlideTypeName.GoogleSlides) ? 'd-none' : ''">{{workSpaceService.questions}}</span>
+                                                                            
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-container>
+                                                            </div>
+                                                                <div class="chart-content-area"> 
+                                                                    <ng-container *ngIf="!centerPanelLoading">
+                                                                        <app-dynamic-slide-type
+                                                                        #dynamicSlideComponent
+                                                                        [activeSlideTypeId]="workSpaceService.currentMasterSlideTypeId"
+                                                                        [activeslideVisualizationId]="workSpaceService.currentActiveSlide?.design?.slideVisualizationId"
+                                                                        [slideDetails]="workSpaceService.currentActiveSlide"
+                                                                        [template]="workSpaceService.currentPresentation"
+                                                                        [presentationTheme]="workSpaceService.currentPresentation?.presentationThemes"
+                                                                        [viewfrom]="'editPresentation'"
+                                                                        [screenOptions]="'newPresentation'"
+                                                                        [isPresenterEditorScreen]="true"
+                                                                        [isPreview]="false"
+                                                                        ></app-dynamic-slide-type>  
+                                                                    </ng-container>
+                                                                </div>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngIf="workSpaceService?.slideListArray?.length != 0">
+                                                    <!-- Multiple Choices Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/multipleBarSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Word Cloud Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/wordCloudSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Loop Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/loopSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Brether Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/bretherSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Timer Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/timerSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Spin The Wheel Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/spinthewheelSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Quote Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/quoteSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- QR Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/qrSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Q&A Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/qaSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Select Answer Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/selectanswerSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Scale Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/scaleSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Arrow Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/arrowSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- pin on image Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/pinonimageSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- 2X2 Grid Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/2x2gridSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Type Answer Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/typeanswerSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Ranking Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/rankingSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Timeline Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/timelineSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Open Ended Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/openendedSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- This or That Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/thisorthatSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- image Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/imageSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- paragraph Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/paraghrapSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- heading Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/headingSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- video Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/videoSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Big Text Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/bigtextSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Bullet Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/bulletSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Who Will Win Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/whowillwinSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Drum Roll Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/drumrollSvg.svg" class="img-fluid">
+                                                    </div>
+                                                    <!-- Traffic Hover Svg -->
+                                                    <div class="inside-chart-area d-none">
+                                                        <img src="/assets/new-icons/hoverSvg/trafficSvg.svg" class="img-fluid">
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <div class="right-side-icon-section" *ngIf="workSpaceService?.slideListArray?.length != 0">
+                            <div class="position-menu-bottom-lasts">
+                                <!-- *========= Reaction Display ========= -->
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <app-reactions class="d-flex justify-content-between align-items-center" [presentationReactions]="workSpaceService.presentationSettingActiveReactions"></app-reactions>
+                                    <!-- *========= Voter Count Display ========= -->
+                                     <div class="position-menu-bottom-info-toolbar position-menu-bottom-info-toolbar-icon"  *ngIf="activeslideTypeName != masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE && activeslideTypeName != masterSlideTypeName.ImportDocument && activeslideTypeName != masterSlideTypeName.POWER_POINT && activeslideTypeName != masterSlideTypeName.GoogleSlides && activeslideTypeName != masterSlideTypeName.MULTIMEDIA">
+                                        <button class="btn btn-list-menu center-panel-icon-section d-flex justify-content-between align-items-center tooltip-top" data-tooltip="Voter">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                                <mask id="mask0_9340_118077" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                                    <rect width="24" height="24" [attr.fill]="'black'"/>
+                                                </mask>
+                                                <g mask="url(#mask0_9340_118077)">
+                                                    <path d="M12.7992 23C11.4326 23 10.1492 22.6875 8.94922 22.0625C7.74922 21.4375 6.76589 20.5667 5.99922 19.45L1.19922 12.4L1.67422 11.925C2.00755 11.575 2.42005 11.375 2.91172 11.325C3.40339 11.275 3.84922 11.3917 4.24922 11.675L6.99922 13.575V4C6.99922 3.71667 7.09505 3.47917 7.28672 3.2875C7.47839 3.09583 7.71589 3 7.99922 3C8.28255 3 8.52005 3.09583 8.71172 3.2875C8.90339 3.47917 8.99922 3.71667 8.99922 4V17.425L5.29922 14.85L7.67422 18.3C8.25755 19.15 8.99922 19.8125 9.89922 20.2875C10.7992 20.7625 11.7659 21 12.7992 21C14.5159 21 15.9784 20.3958 17.1867 19.1875C18.3951 17.9792 18.9992 16.5167 18.9992 14.8V5C18.9992 4.71667 19.0951 4.47917 19.2867 4.2875C19.4784 4.09583 19.7159 4 19.9992 4C20.2826 4 20.5201 4.09583 20.7117 4.2875C20.9034 4.47917 20.9992 4.71667 20.9992 5V14.8C20.9992 17.0833 20.2034 19.0208 18.6117 20.6125C17.0201 22.2042 15.0826 23 12.7992 23ZM10.9992 12V2C10.9992 1.71667 11.0951 1.47917 11.2867 1.2875C11.4784 1.09583 11.7159 1 11.9992 1C12.2826 1 12.5201 1.09583 12.7117 1.2875C12.9034 1.47917 12.9992 1.71667 12.9992 2V12H10.9992ZM14.9992 12V3C14.9992 2.71667 15.0951 2.47917 15.2867 2.2875C15.4784 2.09583 15.7159 2 15.9992 2C16.2826 2 16.5201 2.09583 16.7117 2.2875C16.9034 2.47917 16.9992 2.71667 16.9992 3V12H14.9992Z" [attr.fill]="'black'"/>
+                                                </g>
+                                            </svg>
+                                            <span class="position-text user-count-number-section">{{workSpaceService.slideVotersCount}}</span>
+                                        </button>
+                                     </div>
+                                   
+                                    <!-- *========= Question Count Display ========= -->
+                                    <div class="position-menu-bottom-info-toolbar position-menu-bottom-info-toolbar-icon" [ngClass]="workSpaceService.slideShowQuestions == true ? '':'d-none'" *ngIf="workSpaceService.OnlyQA != true || workSpaceService.activeSlideTypeName == masterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE">
+                                        <button class="btn btn-list-menu d-flex center-panel-icon-section justify-content-between align-items-center tooltip-top" data-bs-toggle="modal" data-bs-target="#qaModal"  data-tooltip="Question and Answer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" >
+                                                <mask id="mask0_9340_35058" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                                    <rect width="24" height="24" [attr.fill]="'black'"/>
+                                                </mask>
+                                                <g mask="url(#mask0_9340_35058)">
+                                                    <path d="M7 18C6.71667 18 6.47917 17.9042 6.2875 17.7125C6.09583 17.5208 6 17.2833 6 17V15H19V6H21C21.2833 6 21.5208 6.09583 21.7125 6.2875C21.9042 6.47917 22 6.71667 22 7V22L18 18H7ZM2 17V3C2 2.71667 2.09583 2.47917 2.2875 2.2875C2.47917 2.09583 2.71667 2 3 2H16C16.2833 2 16.5208 2.09583 16.7125 2.2875C16.9042 2.47917 17 2.71667 17 3V12C17 12.2833 16.9042 12.5208 16.7125 12.7125C16.5208 12.9042 16.2833 13 16 13H6L2 17ZM15 11V4H4V11H15Z" [attr.fill]="'black'"/>
+                                                </g>
+                                            </svg>
+                                            <span class="position-text user-count-number-section">{{workSpaceService.presentationQuestionsLegnth}}</span>
+                                        </button>
+                                    </div>                                    
+                                    <!-- *========= Comment Count Display ========= -->
+                                    <div class="position-menu-bottom-info-toolbar position-menu-bottom-info-toolbar-icon" [ngClass]="workSpaceService.slideShowComments == true ? ' ' : 'd-none'">
+                                        <button class="btn btn-list-menu d-flex center-panel-icon-section justify-content-between align-items-center tooltip-top" [ngClass]="workSpaceService.slideShowComments == true ? '':'d-none'"  data-tooltip="Comments">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none">
+                                                <mask id="mask0_9340_35062" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
+                                                    <rect width="24" height="24" [attr.fill]="'black'"/>
+                                                </mask>
+                                                <g mask="url(#mask0_9340_35062)">
+                                                    <path d="M2 22V4C2 3.45 2.19583 2.97917 2.5875 2.5875C2.97917 2.19583 3.45 2 4 2H20C20.55 2 21.0208 2.19583 21.4125 2.5875C21.8042 2.97917 22 3.45 22 4V16C22 16.55 21.8042 17.0208 21.4125 17.4125C21.0208 17.8042 20.55 18 20 18H6L2 22ZM5.15 16H20V4H4V17.125L5.15 16Z" [attr.fill]="'black'"/>
+                                                </g>
+                                            </svg>
+                                            <span class="new-comment-recived">*</span>
+                                        </button>
+                                    </div>
+                                    <!-- *========= Participant Count Display ========= -->
+                                    <div class="position-menu-bottom-info-toolbar position-menu-bottom-info-toolbar-icon">
+                                        <button class="btn btn-list-menu d-flex center-panel-icon-section justify-content-between align-items-center participant-tooltip-top tooltip-left-sub-10" data-tooltip="Participant">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 20 20" fill="none">
+                                                <path d="M3.85 15.1C4.7 14.45 5.65 13.9375 6.7 13.5625C7.75 13.1875 8.85 13 10 13C11.15 13 12.25 13.1875 13.3 13.5625C14.35 13.9375 15.3 14.45 16.15 15.1C16.7333 14.4167 17.1875 13.6417 17.5125 12.775C17.8375 11.9083 18 10.9833 18 10C18 7.78333 17.2208 5.89583 15.6625 4.3375C14.1042 2.77917 12.2167 2 10 2C7.78333 2 5.89583 2.77917 4.3375 4.3375C2.77917 5.89583 2 7.78333 2 10C2 10.9833 2.1625 11.9083 2.4875 12.775C2.8125 13.6417 3.26667 14.4167 3.85 15.1ZM10 11C9.01667 11 8.1875 10.6625 7.5125 9.9875C6.8375 9.3125 6.5 8.48333 6.5 7.5C6.5 6.51667 6.8375 5.6875 7.5125 5.0125C8.1875 4.3375 9.01667 4 10 4C10.9833 4 11.8125 4.3375 12.4875 5.0125C13.1625 5.6875 13.5 6.51667 13.5 7.5C13.5 8.48333 13.1625 9.3125 12.4875 9.9875C11.8125 10.6625 10.9833 11 10 11ZM10 20C8.61667 20 7.31667 19.7375 6.1 19.2125C4.88333 18.6875 3.825 17.975 2.925 17.075C2.025 16.175 1.3125 15.1167 0.7875 13.9C0.2625 12.6833 0 11.3833 0 10C0 8.61667 0.2625 7.31667 0.7875 6.1C1.3125 4.88333 2.025 3.825 2.925 2.925C3.825 2.025 4.88333 1.3125 6.1 0.7875C7.31667 0.2625 8.61667 0 10 0C11.3833 0 12.6833 0.2625 13.9 0.7875C15.1167 1.3125 16.175 2.025 17.075 2.925C17.975 3.825 18.6875 4.88333 19.2125 6.1C19.7375 7.31667 20 8.61667 20 10C20 11.3833 19.7375 12.6833 19.2125 13.9C18.6875 15.1167 17.975 16.175 17.075 17.075C16.175 17.975 15.1167 18.6875 13.9 19.2125C12.6833 19.7375 11.3833 20 10 20ZM10 18C10.8833 18 11.7167 17.8708 12.5 17.6125C13.2833 17.3542 14 16.9833 14.65 16.5C14 16.0167 13.2833 15.6458 12.5 15.3875C11.7167 15.1292 10.8833 15 10 15C9.11667 15 8.28333 15.1292 7.5 15.3875C6.71667 15.6458 6 16.0167 5.35 16.5C6 16.9833 6.71667 17.3542 7.5 17.6125C8.28333 17.8708 9.11667 18 10 18ZM10 9C10.4333 9 10.7917 8.85833 11.075 8.575C11.3583 8.29167 11.5 7.93333 11.5 7.5C11.5 7.06667 11.3583 6.70833 11.075 6.425C10.7917 6.14167 10.4333 6 10 6C9.56667 6 9.20833 6.14167 8.925 6.425C8.64167 6.70833 8.5 7.06667 8.5 7.5C8.5 7.93333 8.64167 8.29167 8.925 8.575C9.20833 8.85833 9.56667 9 10 9Z" [attr.fill]="'black'"/>
+                                            </svg>
+                                            <span class="position-text user-count-number-section">{{workSpaceService.slideParticipantCount}}</span>
+                                        </button>
+                                    </div>
+                                    <!-- * ========= Show alert when hide the response =========-->
+                                    <div class="position-menu-bottom-info" [style.color]="workSpaceService.presentationTheme?.ThemeTextColor"
+                                        [class.active]="!workSpaceService.slideEnableVoting"
+                                        [style.bottom]="(workSpaceService.slideEnableVoting) ? '40px' : '70px'"
+                                        *ngIf="!workSpaceService.slideEnableVoting && workSpaceService?.slideListArray?.length != 0">
+                                        <div class="d-flex justify-content-center align-items-center p-1 w-100">
+                                            <div class="d-block text-center">
+                                                <p class="fs-10 mb-0">Response is off</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- * ========= Show alert when hide the results =========-->
+                                    <div class="position-menu-bottom-info" [style.color]="workSpaceService.presentationTheme?.ThemeTextColor"
+                                        [class.active]="!workSpaceService.slideShowInResults"
+                                        [style.bottom]="(workSpaceService.slideShowInResults) ? '70px' : '40px'"
+                                        *ngIf="(!workSpaceService.slideShowInResults && workSpaceService?.slideListArray?.length != 0) && (workSpaceService.slideContentType != workSpaceService.masterSlideTypeName.QUIZ && workSpaceService.activeSlideTypeName !== masterSlideTypeName.ImportDocument && workSpaceService.activeSlideTypeName !== masterSlideTypeName.POWER_POINT && workSpaceService.activeSlideTypeName !== masterSlideTypeName.GoogleSlides && workSpaceService.activeSlideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE && workSpaceService.activeSlideTypeName !== masterSlideTypeName.MULTIMEDIA)">
+                                        <div class="d-flex justify-content-center align-items-center p-1 w-100">
+                                            <div class="d-block text-center">
+                                                <p class="fs-10 mb-0">Responses are hidden</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="speaker-notes" *ngIf="isSpeakerNoteShow || workSpaceService.slideCount > 0">
+            <div *ngIf="isSpeakerNoteShow">
+                <img src="/assets/new-icons/pill-shade.svg" class="img-fluid mx-auto mb-2">
+                <button class="btn p-0 position-absolute-close" (click)="toggleTextarea()">
+                    <img src="/assets/new-icons/close.svg" width="16" height="16" class="img-fluid">
+                </button>
+            </div>
+            <div class="position-relative" (click)="toggleTextarea()">
+                <span class="position-relative-span cursor-pointer">
+                    On-Slide Notes
+                    <!-- add condition in bottom of sapn like if user enter the speaker notes on any show this sapn -->
+                    <ng-container *ngIf="workSpaceService.presentationSpeakerNotes?.length > 0">
+                        <span class="position-absolute-notification">
+                            <img src="/assets/new-icons/notifiy.svg" class="img-fluid">
+                        </span>
+                    </ng-container>
+                </span>
+            </div>
+            <textarea *ngIf="isSpeakerNoteShow"
+             class="textarea-content-div"
+             placeholder="Store reminders, talking points, or key notes for this slide here."
+             [(ngModel)]="workSpaceService.presentationSpeakerNotes"
+             [ngModelOptions]="{standalone: true}"
+             (focusout)="presentationSpeakerNoteUpdate()"
+             ></textarea>
+        </div>
+    </div>
+</section>

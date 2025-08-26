@@ -1,0 +1,11 @@
+@import '/src/assets/variablesScss/varaiabledecalaration.scss';
+@import '/src/assets/variablesScss/common.scss';
+.chart-content-area {
+    margin-top: 16px;
+    flex: 1 1 0%;
+    scrollbar-width: none;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    position: relative;
+}

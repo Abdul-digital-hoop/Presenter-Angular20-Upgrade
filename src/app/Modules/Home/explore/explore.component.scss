@@ -1,0 +1,159 @@
+.presentation{
+    display: flex;
+    // column-gap: 20px;
+}
+.btn-p{
+    width: 100%;
+    height: 170px;
+    border: none;
+    border-radius: 5px;
+}
+.ppt-d{
+    margin-bottom: 15px;
+}
+.ppt{
+    width: 30%;
+}
+.gs{
+    width: 30%;
+}
+.emp{
+    width: 30%;
+}
+.conferencing{
+    display: flex;
+    column-gap: 20px;
+}
+.zoom-d{
+    margin-bottom: 15px;
+}
+.zoom{
+    width: 30%;
+}
+h5{
+    font-weight: 400;
+}
+.top-d{
+    margin-top: 20px;
+}
+.bottom-d{
+    margin-top: 50px;
+}
+.request{
+    display: flex;
+    justify-content: end;
+    margin-top: 40px;
+    margin-right: 31px;
+}
+.mr-left{
+    margin-left: 10px;
+} 
+.box-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.box {
+    margin: 10px;
+    border: 0.5px solid #E8E8EB;
+    border-radius: 5px;
+    background-color: #F9F9F9;
+    cursor: pointer;
+}
+
+.popup-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensure the popup is on top */
+  }
+  
+  .popup {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    width: 765px;
+    height: 515px;
+    max-width: 90%;
+  }
+  
+  .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .popup-header h2 {
+    margin: 0;
+    font-size: 1.2rem;
+  }
+  
+  .popup-header button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #555;
+  }
+  
+  .popup-content {
+    margin-top: 20px;
+    color: #333;
+    overflow-y: auto;
+  }
+.boxes{
+    background-color: #D9D9D9;
+    height: 300px;
+    width: 730px;
+    border-radius: 1px;
+}
+.getit{
+    border-radius: 50px;
+    background: #4848FF;
+    padding: 5px 15px 5px 15px;
+    margin: 15px 0px 0px 0px;
+}
+.paragraph{
+    padding-top: 15px;
+}
+@media only screen and (max-width: 600px) {
+    .box-container {
+        flex-direction: column;
+        align-items: stretch;
+        padding-right: 20px;
+    }
+
+    .box {
+        width: 100%;
+    }
+
+    .popup {
+        width: 90%;
+        height: auto;
+        overflow-y: auto;
+    }
+
+    .popup-container {
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+    }
+
+    .boxes {
+        width: calc(100% - 0px); 
+        margin: 20px 0;
+        overflow-x: auto; 
+        white-space: nowrap; 
+    }
+
+    .popup-content {
+        flex-direction: column;
+    }
+}

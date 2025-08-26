@@ -1,0 +1,34 @@
+.user-count-number-section{
+    padding: 0 3px;
+    font-weight: 400 !important;
+    font-family: 'Lexend Deca', '-apple-system' !important;
+}
+.position-menu-bottom-info-toolbar {
+    bottom: 0;
+    min-height: 60px;
+    right: 24px;
+    pointer-events: auto;
+    background: #F8F9FA59;
+    background-color: #F8F9FA8C !important;
+    box-shadow: inset #00000008 !important;
+    color: #000000 !important;
+    border: 1px solid #000000 !important;
+    backdrop-filter: blur(24px);
+    transition: all 0.3s ease 0s;
+    border-radius: 9999px;
+    align-items: flex-start;
+    flex-direction: column;
+    flex: none;
+    min-width: 0;
+    width: auto;
+    min-height: 0;
+    display: flex;
+    z-index: 5;
+    padding: 0px 10px 0px 10px;
+    margin: 0px 2px 4px 0px;
+}
+.center-panel-icon-section {
+    padding: 0 5px;
+    margin-bottom: 2px;
+    font-family: 'Lexend Deca', '-apple-system' !important;
+}

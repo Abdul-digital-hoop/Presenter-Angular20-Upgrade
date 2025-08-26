@@ -1,0 +1,8 @@
+<div class="create-theme-container" *ngIf="!isBindingTheThemeDataLoader">
+    <div class="create-theme-center-panel">
+        <app-theme-center-panel [currentCustomerTheme]="themeData"></app-theme-center-panel>
+    </div>
+    <div class="create-theme-right-side-bar">
+        <app-theme-right-side-bar [currentCustomerTheme]="themeData" [customerRewards]="customerRewards" (resetData)="resetThemeDetails($event)"></app-theme-right-side-bar>
+    </div>
+</div>

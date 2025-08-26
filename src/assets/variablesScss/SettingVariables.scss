@@ -1,0 +1,123 @@
+$gray-100: #D3D3D3 !default;
+$gray-200: #C2C2C2 !default;
+$gray-300: #9F9F9F !default;
+$gray-400: #8E8E8E !default;
+$gray-500: #7D7D7D !default;
+$gray-600: #5A5A5A !default;
+$gray-700: #494949 !default;
+$gray-800: #383838 !default;
+$gray-900: #262626 !default;
+$grays: () !default;
+$grays: map-merge(
+  (
+    "100": $gray-100,
+    "200": $gray-200,
+    "300": $gray-300,
+    "400": $gray-400,
+    "500": $gray-500,
+    "600": $gray-600,
+    "700": $gray-700,
+    "800": $gray-800,
+    "900": $gray-900
+  ),
+  $grays
+);
+$blue: #4848ff !default;
+$indigo:#6610f2 !default;
+$purple:#6f42c1 !default;
+$pink: #e83e8c !default;
+$red: #f71f20 !default;
+$orange: #fd7e14 !default;
+$yellow: #ffc107 !default;
+$green: #00d86b !default;
+$teal: #76d21a !default;
+$cyan: #00c4c3 !default;
+$white: #ffffff !default;
+$black: #000000 !default;
+$colors: () !default;
+$colors: map-merge(
+  (
+    "blue": $blue,
+    "indigo": $indigo,
+    "purple": $purple,
+    "pink": $pink,
+    "red": $red,
+    "orange": $orange,
+    "yellow": $yellow,
+    "green": $green,
+    "teal": $teal,
+    "cyan": $cyan,
+    "white": $white,
+    "gray": $gray-100,
+    "gray-dark": $gray-500
+  ),
+  $colors
+);
+$primary: $blue !default;
+$secondary: $gray-100 !default;
+$success: $green !default;
+$info: $cyan !default;
+$warning: $yellow !default;
+$danger: $red !default;
+$light: $gray-100 !default;
+$dark: $gray-800 !default;
+$theme-colors:() !default;
+$theme-colors:map-merge(
+  (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "light": $light,
+    "dark": $dark
+  ),
+  $theme-colors
+);
+$product-primary: $blue !default;
+$product-secondary: $gray-100 !default;
+$product-success: $green !default;
+$product-info: $cyan !default;
+$product-warning: $yellow !default;
+$product-danger: $red !default;
+$product-light: $gray-100 !default;
+$product-dark: $gray-800 !default;
+$product-theme-colors: () !default;
+$product-theme-colors: map-merge(
+  (
+    "primary": $primary,
+    "secondary": $secondary,
+    "success": $success,
+    "info": $info,
+    "warning": $warning,
+    "danger": $danger,
+    "light": $light,
+    "dark": $dark
+  ),
+  $theme-colors
+);
+// fonts family
+$product-main-fontFamily: 'Times New Roman', sans-serif;
+$product-sub-fontFamily: Arial, sans-serif;
+//font size
+$font-xxs: 12px;
+//font weight
+$fontWeight-300: 300;
+//border
+$marginTop-10: 10px;
+$marginTop-20: 10px;
+$marginTop-30: 10px;
+$box-shadow: #00000026;
+//menu text color 
+$menu-text-color:#5A5AFF;
+//menu background color
+$menu-bg-color:#F8F8FF;
+//button color
+$button-color:#4848FF;
+$button-bg-color:#F9F9F9;
+//button hover color
+$button-hover-bluecolor:#3232B2;
+$button-hover-whitecolor:#ffffff;
+$delete-text-color:#FF1717;
+$text-secondary-color:#999999;

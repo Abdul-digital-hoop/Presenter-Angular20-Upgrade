@@ -1,0 +1,102 @@
+<section class="leaderboard-champion-section">
+    <ng-container *ngIf="(leaderboardPlayers?.length || topThreePlayers.length) > 0; else NoUserFound">
+        <div class="leaderboard-champion-winner-section">
+            <div class="leaderboard-result-winner-inner-section">
+                <ng-container *ngIf="topThreePlayers.length>0;else wrongAnswer">
+                    <div class="top-three-winner-area" id="canvasContainer">
+                        <div class="first-winner width-0" [ngClass]="topThreePlayers.length != 2 ? 'winner-image-section' : ''" *ngIf="topThreePlayers.length >= 1 ">
+                          <p class="champion-text">CHAMPION!</p>
+                          <div class="top-three-player">
+                            <div>
+                              <img class="champion-king" src="/assets/new-icons/leaderboard/winner.png">
+                              <span class="emoji-user-champion">{{topThreePlayers[0].playerImageURL}}</span>
+                              <img class="champion-img" src="/assets/new-icons/leaderboard/leaderboard_emoji_bg.png">
+                            </div>
+                            <h5 class="champion-text-name">{{topThreePlayers[0].playerName}}</h5>
+                            <p class="champion-text-point">{{topThreePlayers[0].score}} Points</p>
+                          </div>
+                        </div>
+                        <canvas class="confettiCanvas" id="confettiCanvas"></canvas>
+                      </div>                      
+                </ng-container>
+                <ng-template #wrongAnswer>
+                    <div class="winner-sections-no-ans">
+                        <h3>No one got it right this time!</h3>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+        <!-- <ng-container *ngIf="currentPlayer && !isTopTen">
+            <div class="rank-area">
+                <label class="text-left text-size">{{IsMorePoints?'Your Rank':'Your Score'}}</label>
+            </div>
+            <div class="your-rank">
+                <ng-container *ngIf="IsMorePoints">
+                    <div class="player-rank-section">
+                        <p class="">{{currentPlayerIndex}}</p>
+                    </div>
+                </ng-container>
+                <div class="player-name-img-section">
+                    <div class="player-name-img-inner">
+                        <span class="emoji-user-top">{{currentPlayer?.playerImageURL}}</span>
+                        <img src="/assets/leaderboard-icons/leaderboard_emoji_bg.png">
+                    </div>
+                    <div class="player-name-img-text">
+                        <p>{{currentPlayer?.playerName}}<span class="your-rank-name">(You)</span></p>
+                    </div>
+                </div>
+                <div class="player-points-section">
+                    <p>{{currentPlayer?.score}}</p>
+                </div>
+            </div>
+        </ng-container> -->
+        <!-- <ng-container *ngIf="leaderboardPlayers.length > 0">
+            <div class="rank-area">
+                <label class="text-left text-size">{{IsMorePoints?'Other Players':'All players'}}</label>
+            </div>
+        </ng-container> -->
+
+
+        <div class="leaderboard-chambion-other-winner-section">
+            <div class="leaderboard-result-other-inner-section">
+                <div *ngFor="let player of leaderboardPlayers;let i=index">
+                    <div class="leaderboard-champion-participation-section">
+                        <div class="other-rank-section">
+                            <ng-container *ngIf="topThreePlayers.length>0">
+                                <div class="player-rank-section">
+                                    <span>{{player.score>0?topThreePlayers.length+i+1:'#'}}</span>
+                                </div>
+                            </ng-container>
+                            <div class="player-name-img-section">
+                                <div class="player-name-img-inner">
+                                    <span class="emoji-user">{{player.playerImageURL}}</span>
+                                    <img class="img-other-rank" src="/assets/new-icons/leaderboard/leaderboard_emoji_bg.png" width="40" height="40">
+                                </div>
+                                <div class="player-name-img-text ms-1">
+                                    <p>{{player.playerName}}</p>
+                                </div>
+                            </div>
+                            <div class="player-points-section">
+                                <p class="">{{player.score}}p</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container>
+    <ng-template #NoUserFound>
+        <div class="noplayers">
+            <div>
+                <h2>No user voted on this quiz</h2>
+            </div>
+        </div>
+    </ng-template>
+</section>
+
+
+
+
+
+
+

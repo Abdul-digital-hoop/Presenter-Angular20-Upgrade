@@ -1,0 +1,30 @@
+<ng-container *ngIf="!isLoadComponents">
+    <div class="loading">
+        <div class="loadingWrapper">
+            <div id="loading"> </div>
+        </div>
+    </div>
+</ng-container>
+<section class="main-content-div" *ngIf="isLoadComponents">
+    <app-nav-bar class="main-header-div" (slideTypeName)="dynamicComponentSession.switchComponent($event)" (contentChanged)="contenttype.selectTab($event)" (clearDynamicComponent)="dynamicComponentSession.removeComponent()" (reactionUpdates)="dynamicComponentSession.updateReactionsToChild($event)"></app-nav-bar>
+    <main class="custom-vh-full" >
+        <app-left-side-bar [ngClass]="closeModal ? 'main-left-class' : 'main-left-bar'" [showCreatedWithAiModal]="showCreatedWithAiModal"
+        (slideTypeName)="dynamicComponentSession.updateDynamicComponent($event)" (contentChanged)="contenttype.selectTab($event)"></app-left-side-bar>
+        <section class="center-right-parent">
+            <div class="inside-center-right">
+                <app-center-panel class="center-panel-main" #dynamicComponentSession></app-center-panel>
+                <app-right-side-bar height="auto,100%," #contenttype
+                (slideTypeName)="dynamicComponentSession.updateDynamicComponent($event)" 
+                (optionEmiter)="dynamicComponentSession.optionsDataPassToDynamicComponent($event)"
+                (RankingEmiter)="dynamicComponentSession.rankingoptionsDataPassToDynamicComponent($event)"
+                (TrafficlightEmiter)="dynamicComponentSession.trafficlightDynamicComponent($event)"
+                (guesstheNumberEmitter)="dynamicComponentSession.guesstheNumberDataPasstoDynamic($event)" 
+                (powerPointEmitter)="dynamicComponentSession.EmbeddedPPTDataPasstoDynamic($event)" 
+                (truthorLieEmitter)="dynamicComponentSession.truthorLieDataPasstoDynamic($event)" 
+                (slideThemesEmitter)="dynamicComponentSession.updateTheme($event)" 
+                (slidePresentationThemeEmitter)="dynamicComponentSession.updatePresentationTheme($event)" 
+                [ngClass]="this.selectedTab == ' ' ? 'left-side-no-padding' : 'left-side-panel'"></app-right-side-bar>
+            </div>
+        </section>
+    </main>
+</section>

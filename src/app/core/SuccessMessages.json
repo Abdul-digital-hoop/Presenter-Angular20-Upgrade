@@ -1,0 +1,49 @@
+{
+    "UserSection-1000":{
+        "1001": "You’re in! Welcome back!",
+        "1002":"Check your inbox for the verification email to continue.",
+        "1003": "Signed up successfully. Please verify your mail id",
+        "1004":"",
+        "1005":"Password reset successfully",
+        "1006":"Welcome aboard! Your account is ready"
+    },
+    "PresentationSection-2000":{
+        "2001":"Presentation renamed successfully.",
+        "2002":"Presentation duplicated successfully",
+        "2003":"Presentation deleted! You can find it in your trash folder.",
+        "2004":"Presentation moved successfully"
+    },
+    "TrashSection-3000":{
+        "3001":"Presentation restored successfully",
+        "3002":"Folder restored successfully",
+        "3003":"Gone forever! The presentation has been erased permanently.",
+        "3004":"Folder deleted permanently"
+    },
+    "TemplatesSection-6000":{
+        "6001":"Template created successfully. You can view it in home",
+        "6002":""
+    },
+    "TeamSection-8000":{
+        "8001":"Invite sent successfully",
+        "8002":"Invite withdrawn successfully",
+        "8003":"You have left the team successfully",
+        "8004":"The user has been removed successfully",
+        "8005":"Team has been deleted successfully",
+        "8006":"Link copied successfully"
+    },
+    "FolderSection-9000":{
+        "9001":"Folder created! You can start organizing now.",
+        "9002":"Folder renamed successfully",
+        "9003":"Folder moved successfully",
+        "9004":"Folder deleted successfully"
+
+    },
+    "UserProfile-10000":{
+        "10001":"Profile image updated successfully",
+        "10002":"Your profile picture has been removed.",
+        "10003":"Profile details updated successfully",
+        "10004":"Email changed successfully",
+        "10005":"Password changed successfully",
+        "10006":"Account deactivated successfully"
+    }
+}

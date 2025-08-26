@@ -1,0 +1,118 @@
+<div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content modal-height">
+        <div class="modal-header d-flex justify-content-between align-items-center">
+            <h1 class="modal-title fs-5 mb-0" id="imageUploadContentModalLabel">Upload Image</h1>
+            <button type="button" class="btn-close m-0" (click)="closeUploadImageModal()"></button>
+        </div>
+        <div class="row mx-0" *ngIf="workspaceService.activeSlideTypeName != 'Multimedia'">
+            <div class="design-tab col-4 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.Device? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.Device)">Upload</h5>
+            </div>
+            <div class="design-tab col-4 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyImage? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyImage)">
+                    Image Library</h5>
+            </div>
+            <div class="design-tab col-4 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyGif? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyGif)" *ngIf="workspaceService.activeSlideTypeName != 'Multimedia'">GIF's</h5>
+            </div>
+        </div>
+        <div class="row mx-0"  *ngIf="workspaceService.activeSlideTypeName == 'Multimedia'">
+            <div class="design-tab col-6 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.Device? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.Device)">Upload</h5>
+            </div>
+            <div class="design-tab col-6 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyImage? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyImage)">
+                    Image Library</h5>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div *ngIf="currentUploadingOptionTabName == imageUploadTabNameConstant.Device">
+                <div class="upload-image-div" appDrag (files)="imageUploadViaDragAndDrop($event)">
+                    <input class="absolute-image-upload" type="file" class="upload-zindex-click"
+                        [accept]="workspaceService.activeSlideTypeName == 'Multimedia' ? '.png,.jpeg,.jpg,.webp' : '.png,.jpeg,.jpg,.gif,.webp'" data-testid="media-file-input" (change)="imageUploadViaInput($event)" (click)="myInputFile.value = null" #myInputFile>
+                    <div class="my-4">
+                        <img src="/assets/new-icons/image-collection.png" class="img-fluid">
+                        <h5 class="modal-title mt-4">Drag and drop (or)
+                            <span class="text-primary">Click here</span> to upload image
+                            <button type="button" class="btn btn-transparent w-100">
+                            </button>
+                        </h5>
+                        <p class="normal-content-text mb-0">Maximum file size is 2 MB.</p>
+                        <p class="normal-content-text fs-14 mb-0" *ngIf="workspaceService.activeSlideTypeName != 'Multimedia'">.png .jpg .gif .svg</p>
+                        <p class="normal-content-text fs-14 mb-0" *ngIf="workspaceService.activeSlideTypeName == 'Multimedia'">.png .jpg .svg</p>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyImage">
+                <div class="position-relative">
+                    <input type="text" class="form-control remaining-padding" placeholder="Search photos from Unsplash" [(ngModel)]="imageSearchKey" (input)="searchThirdPartyImage()"/>
+                    <div class="position-absolute-search">
+                        <img src="/assets/new-icons/search.svg" class="img-fluid" />
+                    </div>
+                </div>
+                <div *ngIf="isThirdPartyAPIError" class="alert alert-info mt-3 text-center">
+                    {{ thirdPartyAPIErrorMessages }}
+                </div>
+                <div #imageContainer class="image-list-container fixed-scroll mt-3" *ngIf="!isThirdPartyAPIError">
+                    <div class="row me-0 gif-height">
+                        <ng-container *ngIf="isGetImageAngGifFromThirdPartyAPI">
+                            <div class="col-3 pe-0 position-relative mb-3 skeleton-item"
+                                *ngFor="let skeleton of emptySkeletons"></div>
+                        </ng-container>
+                        <ng-container *ngIf="!isGetImageAngGifFromThirdPartyAPI">
+                            <div class="col-3 pe-0 position-relative mb-3" *ngFor="let image of thirdPartyImageList">
+                                <div class="image-container" (mouseenter)="image.isHovered = true"
+                                    (mouseleave)="image.isHovered = false">
+                                    <a class="absolute-image-upload" href="javascript:void(0)"  (click)="selectThirdPartyImage(image)"></a>
+                                    <img [src]="image.urls.small" class="image-fixed-size" width="400" height="300"/>
+                                    <span class="image-attribution" [class.show-attribution]="image.isHovered">
+                                        Photo by <a
+                                            [href]="'https://unsplash.com/@' + image.user.username + '?' + unsplashReferral"
+                                            target="_blank" rel="noopener noreferrer">{{image.user.name}}</a>
+                                        on <a [href]="'https://unsplash.com/?' + unsplashReferral" target="_blank"
+                                            rel="noopener noreferrer">Unsplash</a>
+                                    </span>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyGif">
+                <div class="position-relative mb-3">
+                    <input type="text" class="form-control remaining-padding" placeholder="Search GIFs"
+                        [(ngModel)]="gifSearchKey" (input)="searchThirdPartyGif()">
+                    <div class="position-absolute-search">
+                        <img src="/assets/new-icons/search.svg" class="img-fluid">
+                    </div>
+                </div>
+                <div *ngIf="isThirdPartyAPIError" class="alert alert-info mt-3 text-center">
+                    {{ thirdPartyAPIErrorMessages }}
+                </div>
+                <div class="image-list-container fixed-scroll" *ngIf="!isThirdPartyAPIError">
+                    <div class="row me-0 gif-height">
+                        <ng-container *ngIf="isGetImageAngGifFromThirdPartyAPI">
+                            <div class="col-3 pe-0 position-relative mb-3 skeleton-item"
+                                *ngFor="let skeleton of emptySkeletons"></div>
+                        </ng-container>
+                        <ng-container *ngIf="!isGetImageAngGifFromThirdPartyAPI">
+                            <div class="col-3 pe-0 position-relative mb-3" *ngFor="let gif of thirdPartyGifList">
+                                <a class="absolute-image-upload" href="javascript:void(0)" (click)="selectThirdPartyGif(gif)"></a>
+                                <img [src]="gif.media[0].gif.url" (load)="onGifLoad(gif)"  class="img-fluid image-fixed-size" alt="GIF"
+                                    *ngIf="!gif.loaded" width="400" height="300"/>
+                                <img [src]="gif.media[0].gif.url" (load)="onGifLoad(gif)" class="img-fluid image-fixed-size" alt="GIF"
+                                    *ngIf="gif.loaded" width="400" height="300"/>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

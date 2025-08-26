@@ -1,0 +1,598 @@
+<section class="right-panel  h-100">
+    <!-- two class -->
+    <div class="d-block d-lg-none left-panel-before" [ngClass]="closeModal ? '' : ''">
+        <button class="btn-class-panel" (click)="showHidePanel()" [ngClass]="{'d-none': isImportModalOpen}">
+            <span class="first-class me-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="14" viewBox="0 0 20 14" fill="none">
+                    <path d="M2.5026 13.6693C2.04427 13.6693 1.65191 13.5061 1.32552 13.1797C0.999132 12.8533 0.835938 12.4609 0.835938 12.0026V2.0026C0.835938 1.54427 0.999132 1.15191 1.32552 0.825521C1.65191 0.499132 2.04427 0.335938 2.5026 0.335938H4.16927C4.6276 0.335938 5.01997 0.499132 5.34635 0.825521C5.67274 1.15191 5.83594 1.54427 5.83594 2.0026V12.0026C5.83594 12.4609 5.67274 12.8533 5.34635 13.1797C5.01997 13.5061 4.6276 13.6693 4.16927 13.6693H2.5026ZM2.5026 12.0234H4.16927V1.98177H2.5026V12.0234ZM9.16927 13.6693C8.71094 13.6693 8.31858 13.5061 7.99219 13.1797C7.6658 12.8533 7.5026 12.4609 7.5026 12.0026V2.0026C7.5026 1.54427 7.6658 1.15191 7.99219 0.825521C8.31858 0.499132 8.71094 0.335938 9.16927 0.335938H17.5026C17.9609 0.335938 18.3533 0.499132 18.6797 0.825521C19.0061 1.15191 19.1693 1.54427 19.1693 2.0026V12.0026C19.1693 12.4609 19.0061 12.8533 18.6797 13.1797C18.3533 13.5061 17.9609 13.6693 17.5026 13.6693H9.16927ZM9.16927 12.0234H17.5026V1.98177H9.16927V12.0234Z" fill="#525252"/>
+                </svg>
+            </span>
+            <span class="first-class btn-class-span">{{workSpaceService.currentSlideIndex + 1}}/{{workSpaceService.slideCount}}</span>
+            <span class="first-class ms-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="12" viewBox="0 0 8 12" fill="none">
+                    <path d="M4.89687 6L0.296875 1.4L1.69687 0L7.69688 6L1.69687 12L0.296875 10.6L4.89687 6Z" fill="#525252"/>
+                </svg>
+            </span>
+            <span class="second-class">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M9.10313 10L13.7031 14.6L12.3031 16L6.30312 10L12.3031 4L13.7031 5.4L9.10313 10Z" fill="#525252"/>
+                </svg>
+            </span>
+        </button>
+    </div>
+    <div class="inside-right-panel">
+        <div class="button-first-part">
+            <div class="dropend">
+                <!-- ========  Create New Slide ============ -->
+                <button #importButton class="btn btn-primary d-flex justify-content-center align-items-center" [ngStyle]="{'cursor':workSpaceService.slideCountWithoutLeaderboard >= customerPlan?.slide_types_per_presentation?'not-allowed':'pointer','opacity':workSpaceService.slideCountWithoutLeaderboard >= customerPlan?.slide_types_per_presentation?'0.65':''}" data-bs-toggle="dropdown" aria-expanded="false" (click)="openToolTIp()"
+                [ngClass]="{'create-slide-disable': isLoadingCreateSlide}">
+                    <img class="common-icon-size me-1" src="/assets/new-icons/add-icon.svg" *ngIf="!isLoadingCreateSlide">
+                    <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                    *ngIf="isLoadingCreateSlide"></span>
+                    <span class="ms-1">New Slide</span>
+                </button>
+                <!-- ========  Slide Type Popup ============ -->
+                <div class="dropdown-menu position-tooltip" [ngClass]="{'d-none':workSpaceService.slideCountWithoutLeaderboard < customerPlan?.slide_types_per_presentation?false:true}">
+                <div class="dropdown-backdrop"></div>
+                    <ul class="w-445 h-overflow">
+                            <!-- ========  Instruction types ============ -->
+                            <div class="new-slide-create-popup-close">
+                            <div class="slide-type-card d-flex">
+                                <h2 class="slide-type-text mb-0 me-2">Instruction to join</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="1rem" height="1rem" aria-label="Description" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="top" title="Instructions for your audience to join quickly."><g fill="#525252" fill-rule="evenodd" clip-rule="evenodd"><path d="M8 2.25C4.82436 2.25 2.25 4.82436 2.25 8C2.25 11.1756 4.82436 13.75 8 13.75C11.1756 13.75 13.75 11.1756 13.75 8C13.75 4.82436 11.1756 2.25 8 2.25ZM1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8ZM8.09865 5.375C7.4083 5.375 6.84865 5.93464 6.84865 6.625V6.76923H5.59865V6.625C5.59865 5.24429 6.71794 4.125 8.09865 4.125H8.23965C9.54249 4.125 10.5987 5.18116 10.5987 6.484C10.5987 7.16677 10.3028 7.81605 9.78763 8.26408L9.17194 8.79949C8.82447 9.10165 8.62497 9.53953 8.62497 10H7.37497C7.37497 9.17775 7.73122 8.39582 8.35169 7.85626L8.96738 7.32084C9.20959 7.11022 9.34865 6.80498 9.34865 6.484C9.34865 5.87152 8.85214 5.375 8.23965 5.375H8.09865ZM7.375 12V11.125H8.625V12H7.375Z"></path></g></svg>
+                            </div>
+                            <button type="button" class="btn p-0">
+                                <img src="/assets/new-icons/modal-close.svg" class="img-fluid">
+                            </button>
+                        </div>
+                        <div class="row mt-3 mx-0">
+                            <ng-container>
+                                <div class="col-4 px-0 mb-3">
+                                    <a class="slide-list-hover" href="javascript:void(0)" (mouseenter)="hoveredInstructionSlide = true" 
+                                    (mouseleave)="hoveredInstructionSlide = false" (click)="newSlide('64c243a8e91f5da3b0ca8b41')">
+                                        <div class="slide-type-card text-center">
+                                            <img src="/assets/new-icons/left-instruction.svg" class="normal-svg">
+                                            <img src="/assets/new-icons/active-left-instruction.svg" class="active-svg">
+                                        </div>
+                                    </a>
+                                </div>
+                            </ng-container>
+                        </div>
+                           <!-- ========  Quiz Competition ============ -->
+                           <div class="slide-type-card d-flex">
+                            <h2 class="slide-type-text mb-0 me-2">Quiz Competition</h2>
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="1rem" height="1rem" aria-label="Description" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="top" title="Use these to host a quiz and see who comes out on top."><g fill="#525252" fill-rule="evenodd" clip-rule="evenodd"><path d="M8 2.25C4.82436 2.25 2.25 4.82436 2.25 8C2.25 11.1756 4.82436 13.75 8 13.75C11.1756 13.75 13.75 11.1756 13.75 8C13.75 4.82436 11.1756 2.25 8 2.25ZM1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8ZM8.09865 5.375C7.4083 5.375 6.84865 5.93464 6.84865 6.625V6.76923H5.59865V6.625C5.59865 5.24429 6.71794 4.125 8.09865 4.125H8.23965C9.54249 4.125 10.5987 5.18116 10.5987 6.484C10.5987 7.16677 10.3028 7.81605 9.78763 8.26408L9.17194 8.79949C8.82447 9.10165 8.62497 9.53953 8.62497 10H7.37497C7.37497 9.17775 7.73122 8.39582 8.35169 7.85626L8.96738 7.32084C9.20959 7.11022 9.34865 6.80498 9.34865 6.484C9.34865 5.87152 8.85214 5.375 8.23965 5.375H8.09865ZM7.375 12V11.125H8.625V12H7.375Z"></path></g></svg>
+                        </div>
+                        <div class="row mt-3 mx-0">
+                            <ng-container *ngFor="let masterSlide of workSpaceService?.masterQuizzSlideType;index as idx">
+                                <ng-container *ngIf="masterSlide?.Name != masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE">
+                                    <div class="col-4 px-0 mb-3">
+                                        <a class="slide-list-hover" href="javascript:void(0)"
+                                            (mouseenter)="hoveredQuizSlideType = masterSlide" 
+                                            (mouseleave)="hoveredQuizSlideType = null" [ngClass]="{'disabled':customerPlan?.quiz_per_presentation <= workSpaceService.quizSlidesCount}" (click)="newQuizSlide(masterSlide?.id)">
+                                            <div class="slide-type-card text-center">
+                                                <img [src]="masterSlide?.leftDefaultImgURL" class="normal-svg">
+                                                <img [src]="masterSlide?.leftActiveImgURL" class="active-svg">
+                                            </div>
+                                        </a>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                        </div>
+                        <!-- ========  Popular question types ============ -->
+                        <div class="new-slide-create-popup-close">
+                            <div class="slide-type-card d-flex">
+                                <h2 class="slide-type-text mb-0 me-2">Popular question types</h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="1rem" height="1rem" aria-label="Description" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="top" title="Use these live question types to gather real-time input."><g fill="#525252" fill-rule="evenodd" clip-rule="evenodd"><path d="M8 2.25C4.82436 2.25 2.25 4.82436 2.25 8C2.25 11.1756 4.82436 13.75 8 13.75C11.1756 13.75 13.75 11.1756 13.75 8C13.75 4.82436 11.1756 2.25 8 2.25ZM1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8ZM8.09865 5.375C7.4083 5.375 6.84865 5.93464 6.84865 6.625V6.76923H5.59865V6.625C5.59865 5.24429 6.71794 4.125 8.09865 4.125H8.23965C9.54249 4.125 10.5987 5.18116 10.5987 6.484C10.5987 7.16677 10.3028 7.81605 9.78763 8.26408L9.17194 8.79949C8.82447 9.10165 8.62497 9.53953 8.62497 10H7.37497C7.37497 9.17775 7.73122 8.39582 8.35169 7.85626L8.96738 7.32084C9.20959 7.11022 9.34865 6.80498 9.34865 6.484C9.34865 5.87152 8.85214 5.375 8.23965 5.375H8.09865ZM7.375 12V11.125H8.625V12H7.375Z"></path></g></svg>
+                            </div>
+                        </div>
+                        <div class="row mt-3 mx-0">
+                            <ng-container *ngFor="let masterSlide of workSpaceService?.masterPopularSlideType;index as idx" >
+                                <div class="col-4 px-0 mb-3">
+                                    <a class="slide-list-hover" href="javascript:void(0)" 
+                                        (mouseenter)="hoveredPopularSlideType = masterSlide" 
+                                        (mouseleave)="hoveredPopularSlideType = null" 
+                                   (click)="newSlide(masterSlide?.id)">
+                                    <div class="slide-type-card text-center">
+                                        <img [src]="masterSlide?.leftDefaultImgURL" class="normal-svg">
+                                        <img [src]="masterSlide?.leftActiveImgURL" class="active-svg">
+                                            <!-- <p class="slide-type-text mb-0">{{masterSlide?.Name}}</p> -->
+                                    </div>
+                                </a>
+                                </div>
+                            </ng-container>
+                        </div>
+                        <!-- ========  Import Slides ============ -->
+                        <div class="slide-type-card d-flex">
+                            <h2 class="slide-type-text mb-0 me-2">Import Options</h2>
+                            <svg xmlns="http://www.w3.org/2000/svg" role="img" preserveAspectRatio="xMidYMid meet" width="1rem" height="1rem" aria-label="Description" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="top" title="Link files from other sources and present it here directly."><g fill="#525252" fill-rule="evenodd" clip-rule="evenodd"><path d="M8 2.25C4.82436 2.25 2.25 4.82436 2.25 8C2.25 11.1756 4.82436 13.75 8 13.75C11.1756 13.75 13.75 11.1756 13.75 8C13.75 4.82436 11.1756 2.25 8 2.25ZM1 8C1 4.13401 4.13401 1 8 1C11.866 1 15 4.13401 15 8C15 11.866 11.866 15 8 15C4.13401 15 1 11.866 1 8ZM8.09865 5.375C7.4083 5.375 6.84865 5.93464 6.84865 6.625V6.76923H5.59865V6.625C5.59865 5.24429 6.71794 4.125 8.09865 4.125H8.23965C9.54249 4.125 10.5987 5.18116 10.5987 6.484C10.5987 7.16677 10.3028 7.81605 9.78763 8.26408L9.17194 8.79949C8.82447 9.10165 8.62497 9.53953 8.62497 10H7.37497C7.37497 9.17775 7.73122 8.39582 8.35169 7.85626L8.96738 7.32084C9.20959 7.11022 9.34865 6.80498 9.34865 6.484C9.34865 5.87152 8.85214 5.375 8.23965 5.375H8.09865ZM7.375 12V11.125H8.625V12H7.375Z"></path></g></svg>
+                        </div>
+                        <div class="row mt-3 mx-0">
+                            <ng-container *ngFor="let masterSlide of workSpaceService?.masterImportSlideType;index as idx" >
+                                <!-- <ng-container *ngIf="masterSlide?.id == '65437e057cecf685641ce55b'"> -->
+                                    <div class="col-4 px-0 mb-3">
+                                        <a class="slide-list-hover" href="javascript:void(0)" [ngClass]="{'disabled':customerPlan?.import_presentations <= workSpaceService.slideCountForImport}" (click)="newSlide(masterSlide?.id)">
+                                            <div class="slide-type-card text-center">
+                                                <img [src]="masterSlide?.leftDefaultImgURL" class="normal-svg">
+                                                <img [src]="masterSlide?.leftActiveImgURL" class="active-svg">
+                                            </div>
+                                        </a>
+                                    </div>
+                                <!-- </ng-container> -->
+                            </ng-container>
+                        </div>
+                        
+                    </ul>
+                    <!-- GIF Display for Quiz Slide Types -->
+                    <div class="slidegif-container" *ngIf="hoveredQuizSlideType">
+                        <img [src]="hoveredQuizSlideType.slideHoverGifURL" class="gif-size" alt="Quiz Slide Type GIF">
+                    </div>
+                    <!-- GIF Display for Popular Slide Types -->
+                    <div class="slidegif-container"
+                        *ngIf="hoveredPopularSlideType">
+                        <img [src]="hoveredPopularSlideType.slideHoverGifURL" class="gif-size" alt="Popular Slide Type GIF">
+                    </div>
+                    <div class="instruction-slidegif-container" *ngIf="hoveredInstructionSlide">
+                        <img src="/assets/slide-gif/instruction.gif" class="instruction-gif-size" alt="Popular Slide Type GIF">
+                    </div>
+                </div>
+            </div>
+            <!-- ========  Import ============ -->
+            <button class="btn btn-secondary d-flex justify-content-center align-items-center mt-2 w-100" (click)="openImportModal()" [ngStyle]="{'cursor':this.workSpaceService.slideCountForImport >= this.customerPlan.import_presentations || this.workSpaceService.slideCountWithoutLeaderboard >= this.customerPlan.slide_types_per_presentation ?'not-allowed':''}">
+                <img class="common-icon-size me-1" src="/assets/new-icons/import.svg">
+                <span class="ms-1">Import</span>
+            </button>
+            <div class="modal fade" id="upgradeModal" tabindex="-1" aria-labelledby="upgradeModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="upgradeModalLabel">Upgrade Required</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Upgrade to import more!</p>
+                      <p>You can import,</p>
+                      <ul>
+                        <li>PDFs, PPTs, or PPTX files into your presentation with a limit of 1 import per presentation.</li>
+                      </ul>
+                      <p>Upgrade to unlock unlimited imports.</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" (click)="goToMyPlan()">Upgrade Now</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+        </div>
+        <ol class="right-panel-thumbnail" (scroll)="onScroll()">
+            <div class="inside-thumbnail">
+                <!-- ======== Initial Slide ============ -->
+                <ng-container *ngIf="workSpaceService.slideListArray?.length == 0">
+                    <li class="thumbnail-oderlist-item">
+                        <div class="slide-thumbnail-item">
+                            <div class="list-number-count">
+                                <div class="span-count-text">
+                                    <span class="span-sount-number">
+                                        <span class="">Slide </span> 1
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="thumbnail-main-box">
+                                <div class="position-absolute-icon">
+                                    <button class="btn p-0" >
+                                        <img src="/assets/new-icons/three-dot-horz.svg" (click)="showPopover($event,'','','',0,'')">
+                                    </button>
+                                </div>
+                                <div class="inside-thumbnail-box active">
+                                    <div class="scale-thumbnail-box">
+                                        <div class="inside-scale-thumbnail ">
+                                            <div class="background-image-div">
+                                                <div class="background-image">
+                                                    <div class="inner-background-image"></div>
+                                                    <div class="inner-content-area">
+                                                        <div class="content-area-svg">
+                                                            <div class="inside-content-svg">
+                                                                <div class="svg-content-div">
+                                                                    <div class="mian-svg-area">
+                                                                        <img src="/assets/images/static_bg_image.png" class="img-fluid mx-auto">
+                                                                        <!-- <svg xmlns="http://www.w3.org/2000/svg" width="400" height="400" viewBox="0 0 26 32" fill="none">
+                                                                            <mask id="mask0_4336_2565" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="21" height="20">
+                                                                                <path d="M20.5 0H0.5V20H20.5V0Z" fill="white"/>
+                                                                            </mask>
+                                                                            <g mask="url(#mask0_4336_2565)">
+                                                                                <mask id="mask1_4336_2565" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="21" height="20">
+                                                                                    <path d="M20.5 0H0.5V20H20.5V0Z" fill="white"/>
+                                                                                </mask>
+                                                                                <g mask="url(#mask1_4336_2565)">
+                                                                                    <path d="M4.89921 19.2004V12.4389C4.89921 12.045 4.54075 11.7266 4.09922 11.7266H2.49921C2.05767 11.7266 1.69922 12.045 1.69922 12.4389V19.2019H4.89921V19.2004Z" fill="#8C8C8C"/>
+                                                                                </g>
+                                                                                <mask id="mask2_4336_2565" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="21" height="20">
+                                                                                    <path d="M20.5 0H0.5V20H20.5V0Z" fill="white"/>
+                                                                                </mask>
+                                                                                <g mask="url(#mask2_4336_2565)">
+                                                                                    <path d="M9.70001 19.1998V3.44598C9.70001 2.65521 9.34153 2.01367 8.9 2.01367H7.29999C6.85845 2.01367 6.5 2.65521 6.5 3.44598V19.1998H9.70001Z" fill="#8C8C8C"/>
+                                                                                </g>
+                                                                                <mask id="mask3_4336_2565" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="21" height="20">
+                                                                                    <path d="M20.5 0H0.5V20H20.5V0Z" fill="white"/>
+                                                                                </mask>
+                                                                                <g mask="url(#mask3_4336_2565)">
+                                                                                    <path d="M14.5008 19.2002V6.51249C14.5008 5.97403 14.1423 5.53711 13.7008 5.53711H12.1008C11.6593 5.53711 11.3008 5.97403 11.3008 6.51249V19.2002H14.5008Z" fill="#8C8C8C"/>
+                                                                                </g>
+                                                                                <mask id="mask4_4336_2565" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="21" height="20">
+                                                                                    <path d="M20.5 0H0.5V20H20.5V0Z" fill="white"/>
+                                                                                </mask>
+                                                                                <g mask="url(#mask4_4336_2565)">
+                                                                                    <path d="M19.3016 19.1998V10.369C19.3016 10.0537 18.9431 9.7998 18.5016 9.7998H16.9016C16.46 9.7998 16.1016 10.0552 16.1016 10.369V19.1998H19.3016Z" fill="#8C8C8C"/>
+                                                                                </g>
+                                                                                <mask id="mask5_4336_2565" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="21" height="20">
+                                                                                    <path d="M20.5 0H0.5V20H20.5V0Z" fill="white"/>
+                                                                                </mask>
+                                                                                <g mask="url(#mask5_4336_2565)">
+                                                                                    <path d="M0.899996 18.4004H20.1C20.3215 18.4004 20.5 18.5789 20.5 18.8004V19.6004C20.5 19.8219 20.3215 20.0004 20.1 20.0004H0.899996C0.678458 20.0004 0.5 19.8219 0.5 19.6004V18.8004C0.5 18.5804 0.678458 18.4004 0.899996 18.4004Z" fill="#8C8C8C"/>
+                                                                                </g>
+                                                                            </g>
+                                                                        </svg> -->
+                                                                    </div>
+                                                                    <div class="under-svg-text">
+                                                                        <span class="svg-under-text">
+                                                                            <span></span>
+                                                                        </span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                </ng-container>
+                <!-- ======== Slide List Show ============ -->
+                <div #dragBoundary cdkDropList (cdkDropListDropped)="drop($event)">
+                    <div *ngFor="let slide of workSpaceService.slideListArray;index as idx;last as len" cdkDragLockAxis="y"
+                        [cdkDragBoundary]="dragBoundary" cdkDrag 
+                        (cdkDragStarted)="onDragStart($event,slide,idx)"
+                        (cdkDragEnded)="onDragEnd($event,slide,idx)"
+                        (cdkDragMoved)="onDragMove($event)">
+                        <li class="thumbnail-oderlist-item" (click)="activeSlide(slide?.slideId,slide?.slideTypeId,idx)">
+                            
+                            <div class="slide-thumbnail-item" (mouseenter)="onHover(slide,true)" (mouseleave)="onHover(slide,false)">
+                                <div class="list-number-count">
+                                    <div class="span-count-text">
+                                        <span class="span-sount-number"> {{idx+1}} </span>
+                                    </div>
+                                    <div class="swap-icon"
+                                        *ngIf="workSpaceService.activeSlideId == slide?.slideId ?'active':'' || slide.isHovered">
+                                        <img src="/assets/new-icons/swap-icon light.svg" class="swap-icon-img">
+                                        <!-- <img src="/assets/new-icons/swap-icon dark.svg" > -->
+                                    </div>
+                
+                                </div>
+                                <div class="thumbnail-main-box">
+                                    <div class="position-absolute-icon">
+                                        <button class="btn theme-btn-circle"
+                                            (click)="showPopover($event,slide?.slideId,workSpaceService.slideListArray[idx+1]?.slideId,workSpaceService.slideListArray[idx-1]?.slideId,idx,slide)">
+                                            <img src="/assets/new-icons/three-dot-horz.svg">
+                                        </button>
+                                    </div>
+                                    <div class="d-flex user-icon-header-section">
+                                        <ul class="list-unstyled m-0 d-flex align-items-center avatar-group">
+                                            <li class="avatar">
+                                                <div class="user-profile-left-silde" *ngIf="!profileImageURL">
+                                                    <span class="fw-normal left-side-profile-icon">{{userName}}</span>
+                                                </div>
+                                                <div *ngIf="profileImageURL">
+                                                    <img class="user-profile-left-silde" src="{{profileImageURL}}" />
+                                                </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="inside-thumbnail-box"
+                                        [ngClass]="{'active': workSpaceService.activeSlideId == slide?.slideId,'highlighted': slide.isHighlighted}"
+                                        [appThemes]="slide.design | slideThemes:null">
+                                        <ng-container *ngIf="slide?.contentType != workSpaceService.masterSlideTypeName.QUIZ && slide?.slideTypeName !== masterSlideTypeName.ImportDocument && slide?.slideTypeName !== masterSlideTypeName.POWER_POINT && slide?.slideTypeName !== masterSlideTypeName.GoogleSlides && slide?.slideTypeName !== masterSlideTypeName.INSTRUCTION_SLIDE_TYPE">
+                                            <div class="theme-background-image"  [ngStyle]="{'background-image': 'url(' + workSpaceService?.presentationTheme?.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl + ')','opacity':workSpaceService?.presentationTheme?.ThemeBackgroundImage?.themeBackgroundImageCroppedUrl ? workSpaceService?.presentationTheme?.backgroundColorOpacity:1}"></div>
+                                        </ng-container>
+                                        <div class="scale-thumbnail-box" [ngStyle]="getSlideStylesImportDocument(slide)">
+                                            <div  *ngIf="getMasterLayoutData(slide?.design?.slideLayoutId) === 'Full Image' && slide?.slideTypeName !== masterSlideTypeName.ImportDocument" [ngStyle]="getSlideStyles(slide)"></div>
+                                            <div [ngClass]="getMasterLayoutData(slide?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(slide?.design?.slideLayoutId) == 'Side by side left' ? 'inside-content-panel-left' : 'inside-content-panel-right'">
+                                            <div *ngIf="getMasterLayoutData(slide?.design?.slideLayoutId) == 'Image right' || getMasterLayoutData(slide?.design?.slideLayoutId) == 'Image left'" class="background-left-right-image"
+                                                [ngStyle]="loadBGLayoutForslideImages(slide?.contentImage?.croppedUrl)"></div>
+                                            <div *ngIf="getMasterLayoutData(slide?.design?.slideLayoutId) == 'Side by side right' || getMasterLayoutData(slide?.design?.slideLayoutId) == 'Side by side left'"
+                                                class="background-slide-by-slide-left-right-image" [ngStyle]="loadBGLayoutForslideImages(slide?.contentImage?.croppedUrl)">
+                                            </div>
+                                            <div class="inner-top-bottom-image" *ngIf="getMasterLayoutData(slide?.design?.slideLayoutId) == 'Image top' || getMasterLayoutData(slide?.design?.slideLayoutId) == 'Image bottom'"
+                                                [ngStyle]="loadBGLayoutForslideImages(slide?.contentImage?.croppedUrl)"></div>
+                                               
+                                            <div class="inside-scale-thumbnail" [style.width]="getMasterLayoutData(slide?.design?.slideLayoutId) == 'Image left' || getMasterLayoutData(slide?.design?.slideLayoutId) == 'Image right' || getMasterLayoutData(slide?.design?.slideLayoutId) == 'Side by side right' || getMasterLayoutData(slide?.design?.slideLayoutId) == 'Side by side left' ? '67%' : '100%'">
+                                                <div class="background-image-div">
+                                                    <div class="background-image">
+                                                        <div class="inner-background-image"></div>
+                                                        <div class="inner-content-area">
+                                                            <div class="content-area-svg">
+                                                                <div class="inside-content-svg">
+                                                                    <div class="svg-content-div">
+                                                                        <div
+                                                                            *ngIf="getAboutSlide(workSpaceService.slideListArray[idx]) === null ">
+                                                                            <div class="mian-svg-area"
+                                                                                [innerHTML]="sanitizeSvg(workSpaceService.slideListArray[idx]?.slideTypeImage)">
+                                                                            </div>
+                                                                        </div>
+                
+                                                                        <div class="under-svg-text">
+                                                                            <span class="svg-under-text">
+                                                                                <span>{{workSpaceService?.activeSlideId ==
+                                                                                    slide?.slideId ? workSpaceService.questions :
+                                                                                    slide?.contentData?.questions}}</span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        <div *ngIf="getAboutSlide(slide) !== ''">
+                                            <div class="about-slide" [attr.data-bs-title]="getAboutSlide(slide)">
+                                                <span class="svg-under-text"> {{ truncateText(getAboutSlide(slide), 16) }}</span>
+                                            </div>
+                
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- </div> -->
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </div>
+        </ol>
+    </div>
+</section>
+<div class="modal fade" id="importSlideModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="importSlideModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content modal-head">
+            <div class="modal-header border-0 d-flex justify-content-between align-items-center">
+                <h1 class="import-head mb-0 cursor-default" id="importSlideModalLabel">Import presentation</h1>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close" (click)="closeimportModel()">
+                    <img src="/assets/new-icons/modal-close.svg" class="img-fluid">
+                </button>
+            </div>
+            <div class="modal-body"  [ngClass]="isLoadingshow ? 'hide-load-indicator' : 'show-load-indicator'">
+                <div class="modal-file-upload" (drop)="onDrop($event)">
+                    <input
+                          class="position-100-invisible cursor-pointer"
+                          data-testid="media-file-input"
+                          type="file"
+                          accept=".pptx,.ppt,.pdf"
+                          (change)="onFileSelected($event)"
+                        />
+                    <div class="text-center py-3">
+                        <img src="/assets/new-icons/upload.svg" class="img-fluid mb-3">
+                        <p class="mb-2">Drag and drop here</p>
+                        <h5 class="mb-2">Or</h5>
+                        <button class="btn-primary w-auto px-4 mb-2">Browse Files</button>
+                        <p class="mb-2 accept-format">.pptx .ppt .pdf</p>
+                    </div>
+                </div>
+                <h5 class="fs-12 ms-2 cursor-default" [ngClass]="isLoadingshow ? 'hide-load-indicator' : 'show-load-indicator'">
+                    Files must be under <b>10MB</b> . You’ve got space for <b>{{ (customerPlan?.import_presentations - workSpaceService.slideCountForImport) }} more slide{{ (customerPlan?.slide_types_per_presentation - workSpaceService.slideCountWithoutLeaderboard) !== 1 ? 's!' : '' }}</b>
+                  </h5>
+                  
+                <!-- <p class="fs-12 ms-2">Each file can be up to 80MB and have up to 100 slides</p> -->
+            </div>
+            <div class="import-error-container" *ngIf="errorMessage">
+                <h5>{{ErrorTitle}}</h5>
+                <div class="error-message"> {{errorMessage}} </div>
+            </div>
+            <span class="hide-load-indicator" [ngClass]="isLoadingshow ? 'show-load-indicator': 'hide-load-indicator' ">
+                <p class="import-convert">It might take a bit longer to upload large files. The imported slides will appear at the end.</p>
+                <p class="import-convert-center padding-import-note">Large presentations may take several minutes to upload. Imported slides are added to the end of your presentation.</p>
+                <div class="import-close-model-btn">
+                    <div class="load-4 load-indicator-import align-middle me-2">
+                        <div class="import-ring-1 d-inline-block">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" fill="none">
+                                <circle cx="24" cy="8" r="8" fill="#FF1717"/>
+                                <circle cx="24" cy="40" r="8" fill="#FF1717"/>
+                                <circle cx="40" cy="24" r="5" fill="#4848FF"/>
+                                <circle cx="8" cy="24" r="8" fill="#4848FF"/>
+                                </svg>
+                        </div>
+                        </div>
+                    </div>
+                    <button class="btn btn-confirm-main btn-import text-white px-3 d-inline mb-2" data-bs-dismiss="modal" aria-label="Close">                            
+                        <span class="d-md-inline-block d-none" >Close this window</span>
+                    </button>
+
+                <p class="import-convert-fooder">The import will keep processing in the background.</p>
+            </span>
+        </div>
+    </div>
+        </div>
+        <div class="modal fade" id="importSuccessModel" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content modal-head">
+                    <button _ngcontent-trb-c87="" type="button" data-bs-dismiss="modal" aria-label="Close" class="btn p-0 ppt-success-close"><img _ngcontent-trb-c87="" src="/assets/new-icons/modal-close.svg" class="img-fluid"></button>
+                    <div class="modal-body">
+                        <div class="import-white">
+                            <h3 class="import-success-msg-title">Hooray!</h3>
+                            <p class="import-success-msg">Your slides have been imported and are ready to go.</p>
+                            <div class="import-image-section">
+                                <img src="assets/images/import-successfully.svg"  alt="import image" class="import-image">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+<div class="modal fade" id="afterUploadModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="afterUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 d-flex justify-content-between align-items-center">
+                <h1 class="modal-title mb-0" id="afterUploadModalLabel">Import presentation</h1>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="/assets/new-icons/modal-close.svg" class="img-fluid">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <h5 class="text-primary fs-14">Uploading....</h5>
+                </div>
+                <p class="fs-14">Large presentations may take several minutes to upload. Imported slides are added to the end of your presentation.</p>
+                <div class="text-center">
+                    <img src="/assets/new-icons/loader.svg" class="img-fluid mx-auto my-3 d-block">
+                    <button class="btn-primary w-auto px-4 mb-3">Close the Window</button>
+                    <p class="fs-14 mb-0">The import will continue in the background</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="successUploadModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="successUploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0 d-flex justify-content-between align-items-center">
+                <h1 class="modal-title mb-0" id="successUploadModalLabel"></h1>
+                <button type="button" class="btn p-0" data-bs-dismiss="modal" aria-label="Close">
+                    <img src="/assets/new-icons/modal-close.svg" class="img-fluid">
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <h5 class="fs-18">Hooray!</h5>
+                    <p class="fs-16">Your Slides Were Successfully Imported</p>
+                    <img src="/assets/new-icons/success-upload.svg" class="img-fluid mx-auto my-3 d-block">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ========   Slide Action Popup ============ -->
+<div *ngIf="isShowSlideAction" [style.top.px]="slideActionPopupTop" [style.left.px]="slideActionPopupLeft" class="cstm-popover-delete">
+    <div class="dropdown-content position-tooltip-dropdown" id="popup" [ngStyle]="{'margin-top': marginTop}">
+        <div class="thumbnail-list-dropdown"  >
+            <ul class="nav flex-column">
+                <!-- <li>
+                    <a class="dropdown-item dropdown-text-style" href="javascript:void(0)">
+                        <span class="me-2">
+                            <img src="/assets/new-icons/add.svg" class="img-fluid">
+                        </span>
+                        <span>New Slide</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item dropdown-text-style" href="javascript:void(0)">
+                        <span class="me-2">
+                            <img src="/assets/new-icons/copy.svg" class="img-fluid">
+                        </span>
+                        <span>Copy to</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="dropdown-item dropdown-text-style" href="javascript:void(0)">
+                        <span class="me-2">
+                            <img src="/assets/new-icons/copy.svg" class="img-fluid">
+                        </span>
+                        <span>Duplicate</span>
+                    </a>
+                </li>-->
+                <li [ngClass]="{'disabled': !customerPlan?.reset_result || workSpaceService.activeSlideTypeName == masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE || workSpaceService.activeSlideTypeName == masterSlideTypeName.MULTIMEDIA}" >
+                    <a [ngStyle]="{'cursor':customerPlan?.reset_result || workSpaceService.activeSlideTypeName != masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE || workSpaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA ? '' : 'not-allowed'}" class="dropdown-item dropdown-text-style" href="javascript:void(0)" *ngIf="!isResetPopupVisisble" 
+                    (click)="resetToggleDiv($event)" [ngClass]="(workSpaceService.slideVotersCount >= 1 || 
+                    (workSpaceService.slideReactionsLegnth >= 1 ))&& workSpaceService.activeSlideTypeName != masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE && workSpaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA ? '':'disabled'">
+                        <span class="me-2">
+                            <img src="/assets/new-icons/restart_alt.svg" class="img-fluid">
+                        </span>
+                        <span>Reset results</span>
+                    </a>
+                    <div class="dropdown-item dropdown-popup-text-style" href="javascript:void(0)" 
+                    *ngIf="isConfirmResetPopupVisible">
+                    
+                     <div class="dropdown-header">
+                         <h6>Are you sure you want to Reset Slide?</h6>
+                     </div>
+                     <!-- <div class="dropdown-body">
+                       
+                     </div>
+                     <br> -->
+                     <div class="dropdown-footer">
+                         <button type="button" class="btn delete-button" 
+                                 (click)="resetSlideResult(deleteIndex)" 
+                                 [disabled]="workSpaceService.slideReactionsLegnth == 0 && workSpaceService.slideVotersCount == 0 ">
+                            <span class="delete-button-text">Reset</span> 
+                         </button>
+                         <button type="button" class="btn cancel-button" 
+                         (click)="closeDeletePopup()">
+                             Cancel
+                         </button>
+                     </div>
+                 
+                 </div>
+                </li> 
+                <li>
+                    <a class="dropdown-item dropdown-text-style text-danger" href="javascript:void(0)" [ngClass]="(workSpaceService.slideListArray?.length > 1 && workSpaceService.slideContentType !== masterSlideTypeName.QUIZ) || (workSpaceService.slideContentType === masterSlideTypeName.QUIZ && !shouldDisableDeleteForQuiz()) ? '':'disabled'"
+                         (click)="toggleDiv($event)"  *ngIf="!isDeletePopupVisible">
+                        <span class="me-2">
+                            <img src="/assets/new-icons/delete.svg" class="img-fluid">
+                        </span>
+                        <span>Delete</span>
+                    </a>
+                    <div class="dropdown-item dropdown-popup-text-style" href="javascript:void(0)" 
+                       [ngClass]="(workSpaceService.slideListArray?.length > 1 && workSpaceService.slideContentType !== masterSlideTypeName.QUIZ) || (workSpaceService.slideContentType === masterSlideTypeName.QUIZ && !shouldDisableDeleteForQuiz()) ? '' : 'disabled'"
+                       *ngIf="isConfirmDeletePopupVisible">
+                       
+                        <div class="dropdown-header">
+                            <h6>Are you sure you want to remove this slide?</h6>
+                        </div>
+                        <!-- <div class="dropdown-body">
+                          
+                        </div>
+                        <br> -->
+                        <div class="dropdown-footer">
+                            <button type="button" class="btn delete-button" 
+                                    (click)="deleteSlide(deleteIndex)" 
+                                    [disabled]="workSpaceService.slideListArray?.length <= 1">
+                               <span class="delete-button-text">Delete</span> 
+                            </button>
+                            <button type="button" class="btn cancel-button" 
+                            (click)="closeDeletePopup()">
+                                Cancel
+                            </button>
+                        </div>
+                    
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Created with AI Modal -->
+<div class="modal fade" id="createdWithAiModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="createdWithAiModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="padding: 16px;">
+            <div class="modal-header border-0 d-flex justify-content-between align-items-center">
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <h1 class="fs-4 mb-3">Your Slides are ready to go 🎉</h1>
+                    <p class="mb-1 text-body-secondary">Add new slides or edit the existing content <br> however you like.</p>
+                    <p class="mb-0 text-body-secondary">🤖 AI helped draft this — double-check to make sure it fits your needs.</p>
+                </div>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" style="width: 180px; height: 45px;" (click)="closeCreatedWithAiModal()">Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
