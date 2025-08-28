@@ -267,7 +267,7 @@
                                         <span class="span-sount-number"> {{idx+1}} </span>
                                     </div>
                                     <div class="swap-icon"
-                                        *ngIf="workSpaceService.activeSlideId == slide?.slideId ?'active':'' || slide.isHovered">
+                                        *ngIf="workSpaceService.activeSlideId === slide?.slideId || slide?.isHovered">
                                         <img src="/assets/new-icons/swap-icon light.svg" class="swap-icon-img">
                                         <!-- <img src="/assets/new-icons/swap-icon dark.svg" > -->
                                     </div>

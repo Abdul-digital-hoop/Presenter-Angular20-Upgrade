@@ -40,10 +40,10 @@ export class SelectAnswersComponent implements OnInit, AfterViewInit, OnChanges,
   barChartData: any[] = [];
   changeBarChartData: any[];
   currentUrl: string;
-  startFlashScreenTimer: NodeJS.Timer;
+  startFlashScreenTimer!: ReturnType<typeof setInterval>;
   minutes: number = 0;
   seconds: number = 0;
-  quizSeconds: NodeJS.Timer;
+  quizSeconds!: ReturnType<typeof setInterval>;
   respondPlayerCount: number = 0;
   showChart: boolean = false;
   isNonofOptionCorrect: boolean = false;

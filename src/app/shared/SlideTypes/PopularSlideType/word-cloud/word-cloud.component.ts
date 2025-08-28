@@ -172,7 +172,7 @@ export class WordCloudComponent implements OnInit, OnDestroy, AfterViewInit {
                 .fontSize((d: any) => this.getFontSize({ value: d.value, totalWords }))
                 .padding(WORD_PADDING)
                 .spiral('archimedean')
-                .rotate((d, i) => this.getRotation(d.key, i))
+                .rotate((d:any, i) => this.getRotation(d.key, i))
                 .words(words)
                 .start();
 
@@ -578,7 +578,7 @@ defaultChart(){
     .rotate((d, i) => this.getRotation(d.text, i))
     .font('Lexend Deca')
     .fontSize(d => d.size)
-    .on('end', (words) => this.draw(words, width, height));
+    .on('end', (words) => this.draw( words as{ text: string; size: number; x: number; y: number; rotate: number; }[], width, height));
 
   layout.start();
 }

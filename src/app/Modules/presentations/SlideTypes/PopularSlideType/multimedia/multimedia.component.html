@@ -226,11 +226,11 @@
              (mousedown)="handleSliderMouseDown($event)">
           <div class="slider-track"></div>
           <div class="slider-fill" 
-               [style.width.%]="(selectedShape?.strokeOpacity || 1) * 100"></div>
+               [style.width.%]="selectedStrokeOpacity * 100"></div>
           <div class="slider-thumb" 
-               [style.left.%]="(selectedShape?.strokeOpacity || 1) * 100">
+               [style.left.%]="selectedStrokeOpacity * 100">
             <div class="slider-value">
-              {{Math.round((selectedShape?.strokeOpacity || 1) * 100)}}
+              {{Math.round(selectedStrokeOpacity * 100)}}
             </div>
           </div>
         </div>

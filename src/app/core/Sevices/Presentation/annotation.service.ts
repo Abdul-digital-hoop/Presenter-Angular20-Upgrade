@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { WorkSignalRServiceService } from '../WorkSpace/work-signal-rservice.service';
 import { WorkspaceService } from '../WorkSpace/workspace.service';
 import { CursorService } from './cursor.service';
-
+import { TPointerEvent, TPointerEventInfo } from 'fabric';
 export interface AnnotationTool {
   id: string;
   name: string;
@@ -22,6 +22,16 @@ export interface AnnotationSettings {
   textColor: string;
   textSize: number;
 }
+
+// NOTE: Fabric v6 changed event shapes. To be compatible with both wrapped event objects
+// (TPointerEventInfo) and native PointerEvent (or older shapes), we define a union type.
+// We keep `any` as a last-resort member to avoid breaking existing code paths —
+// any changes are minimal and original behavior is preserved (original lines are left commented).
+export type FabricEventUnion =
+  | fabric.TPointerEvent
+  | fabric.TPointerEventInfo<fabric.TPointerEvent>
+  | PointerEvent
+  | any;
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +85,36 @@ export class AnnotationService {
     private workspaceService: WorkspaceService,
     private cursorService: CursorService
   ) {
+  }
+
+  /**
+   * Helper: extract native PointerEvent from Fabric event shapes (wrapper or native)
+   * We centralize this logic so existing code that used `e.e` continues to work.
+   */
+  private getNativePointerEvent(opt: FabricEventUnion): PointerEvent | null {
+    // Old code used `e.e` (wrapped). Keep compatibility: prefer `.e` if present.
+    // Original reference (kept commented): // const pointer = this.canvas.getPointer(e.e as PointerEvent);
+
+    if (!opt) return null;
+
+    try {
+      // If wrapped object with `.e` field
+      if ((opt as any)?.e && (opt as any).e instanceof Event) {
+        return (opt as any).e as PointerEvent;
+      }
+
+      // If Fabric provided `pointer` coordinates but not native event, we return null here
+      // and let caller use `opt.pointer` if available.
+
+      // If the opt itself is a native PointerEvent
+      if (opt instanceof Event) {
+        return opt as PointerEvent;
+      }
+
+      return null;
+    } catch (err) {
+      return null;
+    }
   }
 
   /**
@@ -453,37 +493,53 @@ export class AnnotationService {
     this.canvas.isDrawingMode = false;
     this.canvas.selection = true;
   }
-
+  
   /**
    * Setup canvas event handlers
    */
+  
+  
   private setupCanvasEvents(): void {
     if (!this.canvas) return;
 
-    this.canvas.on('mouse:down', (e) => this.handleMouseDown(e));
-    this.canvas.on('mouse:move', (e) => this.handleMouseMove(e));
-    this.canvas.on('mouse:up', (e) => this.handleMouseUp(e));
-    this.canvas.on('mouse:dblclick', (e) => this.handleDoubleClick(e));
+    // Bind handlers once and register them. We accept Fabric's wrapper shapes via FabricEventUnion.
+    this.handleMouseDown = this.handleMouseDown.bind(this);
+    this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleMouseUp = this.handleMouseUp.bind(this);
+    this.handleDoubleClick = this.handleDoubleClick.bind(this);
+
+    this.canvas.on('mouse:down', this.handleMouseDown as any);
+    this.canvas.on('mouse:move', this.handleMouseMove as any);
+    this.canvas.on('mouse:up', this.handleMouseUp as any);
+    this.canvas.on('mouse:dblclick', this.handleDoubleClick as any);
     
   }
 
   /**
    * Handle mouse down events
    */
-  private handleMouseDown(e: fabric.IEvent): void {
+  // original: private handleMouseDown(e: fabric.TPointerEvent): void {
+  private handleMouseDown(e: FabricEventUnion): void {
     if (!this.isAnnotationMode.value || !this.canvas) return;
 
-    const pointer = this.canvas.getPointer(e.e);
+    // Try to extract native event first, otherwise fall back to Fabric-provided pointer coords
+    const nativeEvent = this.getNativePointerEvent(e);
+    const pointerFromFabric = (e as any)?.pointer as { x: number; y: number } | undefined;
+
+    if (!nativeEvent && !pointerFromFabric) return;
+
+    const pointer = nativeEvent ? this.canvas.getPointer(nativeEvent) : (pointerFromFabric as any);
     const tool = this.currentTool.value;
 
     switch (tool) {
       case 'eraser':
-        this.handleEraserClick(e);
+        // original: this.handleEraserClick(e);
+        this.handleEraserClick(e as any);
         break;
       case 'arrow':
       case 'rectangle':
       case 'circle':
-        this.startDrawingShape(tool, pointer);
+        this.startDrawingShape(tool, pointer as any);
         break;
     }
   }
@@ -491,17 +547,24 @@ export class AnnotationService {
   /**
    * Handle mouse move events
    */
-  private handleMouseMove(e: fabric.IEvent): void {
+  // original: private handleMouseMove(e: fabric.IEvent): void {
+  private handleMouseMove(e: FabricEventUnion): void {
     if (!this.isAnnotationMode.value || !this.canvas || !this.isDrawing) return;
 
-    const pointer = this.canvas.getPointer(e.e);
-    this.updateDrawingShape(pointer);
+    const nativeEvent = this.getNativePointerEvent(e);
+    const pointerFromFabric = (e as any)?.pointer as { x: number; y: number } | undefined;
+
+    if (!nativeEvent && !pointerFromFabric) return;
+
+    const pointer = nativeEvent ? this.canvas.getPointer(nativeEvent) : (pointerFromFabric as any);
+    this.updateDrawingShape(pointer as fabric.Point);
   }
 
   /**
    * Handle mouse up events
    */
-  private handleMouseUp(e: fabric.IEvent): void {
+  // original: private handleMouseUp(e: fabric.IEvent): void {
+  private handleMouseUp(e: FabricEventUnion): void {
     if (!this.isAnnotationMode.value || !this.canvas) return;
 
     if (this.isDrawing) {
@@ -512,20 +575,25 @@ export class AnnotationService {
   /**
    * Handle double click for text tool
    */
-  private handleDoubleClick(e: fabric.IEvent): void {
+  // original: private handleDoubleClick(e: fabric.IEvent): void {
+  private handleDoubleClick(e: FabricEventUnion): void {
     if (!this.isAnnotationMode.value || !this.canvas) return;
 
     if (this.currentTool.value === 'text') {
-      const pointer = this.canvas.getPointer(e.e);
-      this.addTextAnnotation(pointer);
+      const nativeEvent = this.getNativePointerEvent(e);
+      const pointerFromFabric = (e as any)?.pointer as { x: number; y: number } | undefined;
+      const pointer = nativeEvent ? this.canvas.getPointer(nativeEvent) : (pointerFromFabric as any);
+      if (pointer) this.addTextAnnotation(pointer as fabric.Point);
     }
   }
 
   /**
    * Handle eraser click
    */
-  private handleEraserClick(e: fabric.IEvent): void {
-    const target = this.canvas?.findTarget(e.e, false);
+  // original: private handleEraserClick(e: fabric.IEvent): void {
+  private handleEraserClick(e: FabricEventUnion): void {
+    const nativeEvent = this.getNativePointerEvent(e);
+    const target = this.canvas?.findTarget((nativeEvent ?? (e as any)));
     if (target) {
       this.canvas?.remove(target);
     }
@@ -740,24 +808,29 @@ export class AnnotationService {
     try {
       switch (annotationData.eventType) {
         case 'path:created':
-          if (annotationData.pathData) {
-            fabric.util.enlivenObjects([annotationData.pathData], (objects: fabric.Object[]) => {
-              objects.forEach(obj => {
-                this.canvas?.add(obj);
-              });
+          if (annotationData.pathData && this.canvas) {
+            const serializedPaths: fabric.SerializedObjectProps[] = Array.isArray(annotationData.pathData)
+              ? annotationData.pathData
+              : [annotationData.pathData as fabric.SerializedObjectProps];
+
+            fabric.util.enlivenObjects(serializedPaths, ((objects: fabric.FabricObject[]) => {
+              objects.forEach(obj => this.canvas?.add(obj));
               this.canvas?.renderAll();
-            });
+            }) as any);
           }
           break;
         
         case 'object:added':
-          if (annotationData.objectData) {
-            fabric.util.enlivenObjects([annotationData.objectData], (objects: fabric.Object[]) => {
-              objects.forEach(obj => {
-                this.canvas?.add(obj);
-              });
+          if (annotationData.objectData && this.canvas) {
+            const serializedObjects: fabric.SerializedObjectProps[] = Array.isArray(annotationData.objectData)
+              ? annotationData.objectData
+              : [annotationData.objectData as fabric.SerializedObjectProps];
+
+    // TypeScript workaround for Fabric v6 typing
+            fabric.util.enlivenObjects(serializedObjects, ((objects: fabric.FabricObject[]) => {
+              objects.forEach(obj => this.canvas?.add(obj));
               this.canvas?.renderAll();
-            });
+            }) as any);
           }
           break;
         

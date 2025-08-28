@@ -19,11 +19,11 @@ export class LineupComponent implements OnInit, OnDestroy {
   playersList: any[] = [];
   isFastAnswerGetMorePoints: boolean=false;
   currentUrl: string;
-  startFlashScreenTimer: NodeJS.Timer;
+  startFlashScreenTimer!: ReturnType<typeof setInterval>;
   flashScreentimer: number=5;
   minutes: number=0;
   seconds: number=0;
-  quizSeconds: NodeJS.Timer;
+  quizSeconds!: ReturnType<typeof setInterval>;
   respondPlayerCount: number=0;
   lineupData: any[];
   suffledData: any[];

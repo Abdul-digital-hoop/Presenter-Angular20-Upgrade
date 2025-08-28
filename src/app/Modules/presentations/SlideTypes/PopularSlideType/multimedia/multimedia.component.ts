@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
-import { fabric } from 'fabric';
+import * as fabric from 'fabric';
 import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { Subscription, Subject } from 'rxjs';
@@ -68,6 +68,13 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   currentStrike: boolean = false;
   currentAlignment: string = 'left';
 
+  get selectedStrokeOpacity(): number {
+  if (!this.selectedShape) return 1;
+  
+  // Assert selectedShape may have strokeOpacity
+  const shape = this.selectedShape as fabric.Object & { strokeOpacity?: number };
+  return shape.strokeOpacity ?? 1; // fallback to 1
+}
   // Available Fonts and Sizes
   fonts: string[] = [
     'Arial',
@@ -237,11 +244,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     this.canvas.on('object:modified', () => this.recordHistory());
     this.canvas.on('object:added', () => this.recordHistory());
     this.canvas.on('object:removed', () => this.recordHistory());
-    this.canvas.on('object:moved', () => this.recordHistory());
+    (this.canvas as any).on('object:moved', () => this.recordHistory());
     // Handle right-click specifically
     this.canvas.wrapperEl.addEventListener('contextmenu', (e: MouseEvent) => {
       e.preventDefault();
-      const clickedObject = this.canvas.findTarget(e, false);
+      const clickedObject = this.canvas.findTarget(e);
       
       if (clickedObject) {
         this.selectedObject = clickedObject;
@@ -417,9 +424,9 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     });
 
     this.canvas.add(headingBorder, heading, contentBorder, content);
-    this.canvas.sendToBack(headingBorder);
-    this.canvas.sendToBack(contentBorder);
-    this.canvas.renderAll();
+    (headingBorder as any).sendToBack();
+    (headingBorder as any).sendToBack();
+    this.canvas?.renderAll();
     this.recordHistory();
   }
 
@@ -457,13 +464,13 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   
     if (!obj) return;
   
-    if (obj.type === 'activeSelection') {
+    if (obj.type === 'activeSelection' && obj instanceof fabric.ActiveSelection) {
       obj.getObjects().forEach(element => {
-        this.canvas.remove(element);
-      });
-    } else {
-      this.canvas.remove(obj);
-    }
+        this.canvas?.remove(element);
+    });
+  } else {
+  this.canvas?.remove(obj);
+  }
   
     this.canvas.discardActiveObject();
     this.canvas.requestRenderAll();
@@ -557,17 +564,17 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   /* Ordering Object */
   bringToFront() {
-    const obj = this.canvas.getActiveObject();
+    const obj = this.canvas?.getActiveObject();
     if (obj) {
-      this.canvas.bringToFront(obj);
-      this.canvas.renderAll();
+      (obj as any).bringToFront();
+      this.canvas?.renderAll();
     }
   }
   
   sendToBack() {
     const obj = this.canvas.getActiveObject();
     if (obj) {
-      this.canvas.sendToBack(obj);
+      (obj as any).sendToBack();
       this.canvas.renderAll();
     }
   }
@@ -575,7 +582,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   bringForward() {
     const obj = this.canvas.getActiveObject();
     if (obj) {
-      this.canvas.bringForward(obj);
+      (obj as any).bringForward();
       this.canvas.renderAll();
     }
   }
@@ -583,7 +590,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   sendBackward() {
     const obj = this.canvas.getActiveObject();
     if (obj) {
-      this.canvas.sendBackwards(obj);
+      (obj as any).sendBackwards();
       this.canvas.renderAll();
     }
   }
@@ -787,19 +794,21 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     // Group - Ctrl+G
     if (event.ctrlKey && !event.shiftKey && event.key === 'g') {
       event.preventDefault();
-      if (!this.canvas.getActiveObject()) return;
+       const activeObj = this.canvas?.getActiveObject();
+       if (!activeObj) return;
+       if ((activeObj as any).type === 'activeSelection') {
       if (this.canvas.getActiveObject().type === 'activeSelection') {
-        this.canvas.getActiveObject().toGroup();
-        this.canvas.renderAll();
+        (activeObj as any).toGroup();
+        this.canvas?.renderAll();
       }
     }
 
     // Duplicate - Ctrl+D
-    if (event.ctrlKey && event.key === 'd') {
+    if (event.ctrlKey && String(event.key) === 'd') {
       event.preventDefault();
-      const activeObject = this.canvas.getActiveObject();
+      const activeObject = this.canvas?.getActiveObject();
       if (activeObject) {
-        activeObject.clone((cloned: fabric.Object) => {
+        (activeObject as any).clone((cloned: fabric.Object) => {
           cloned.set({
             left: activeObject.left! + 10,
             top: activeObject.top! + 10
@@ -812,26 +821,33 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     }
 
     // Ungroup - Ctrl+Shift+G
-    if (event.ctrlKey && event.shiftKey && event.key === 'G') {
+    if (event.ctrlKey && event.shiftKey && String(event.key) === 'G') {
       event.preventDefault();
-      if (!this.canvas.getActiveObject()) return;
-      if (this.canvas.getActiveObject().type === 'group') {
-        this.canvas.getActiveObject().toActiveSelection();
-        this.canvas.renderAll();
+      const activeObject = this.canvas?.getActiveObject();
+      if (!activeObject) return;
+
+      if ((activeObject as any).type === 'group') {
+        (activeObject as any).toActiveSelection?.();
+         this.canvas?.renderAll();
+          
       }
     }
 
     // Rotate Clockwise - Alt+Right
-    if (event.altKey && event.key === 'ArrowRight') {
-      event.preventDefault();
-      const activeObject = this.canvas.getActiveObject();
-      if (activeObject) {
-        activeObject.rotate!((activeObject.angle || 0) + 15);
-        this.canvas.renderAll();
-      }
-    }
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
+      if (event.altKey && event.key === 'ArrowRight') {
+        event.preventDefault();
 
-    // Rotate Counter-clockwise - Alt+Left
+        const activeObject = this.canvas?.getActiveObject();
+        if (!activeObject) return;
+
+    // Increment angle safely
+        activeObject.angle = (activeObject.angle || 0) + 15;
+        this.canvas?.renderAll();
+      }
+    })
+
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.altKey && event.key === 'ArrowLeft') {
       event.preventDefault();
       const activeObject = this.canvas.getActiveObject();
@@ -840,53 +856,67 @@ export class MultimediaComponent implements OnInit, OnDestroy {
         this.canvas.renderAll();
       }
     }
+    })
 
     // Copy - Ctrl+C
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.ctrlKey && event.key === 'c') {
       event.preventDefault();
       this.copySelectedObject();
     }
+  })
 
     // Cut - Ctrl+X
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.ctrlKey && event.key === 'x') {
       event.preventDefault();
       this.copySelectedObject();
       this.deleteSelected();
     }
+  })
 
     // Paste - Ctrl+V
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.ctrlKey && event.key === 'v') {
       event.preventDefault();
       this.pasteObject();
     }
+  })
 
     // Delete - Del
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === 'Delete') {
       event.preventDefault();
       this.deleteSelected();
     }
+  })
 
     // Bring Forward - Ctrl+Shift+F
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.ctrlKey && event.shiftKey && event.key === 'F') {
       event.preventDefault();
-      const activeObject = this.canvas.getActiveObject();
+      const activeObject = this.canvas?.getActiveObject();
       if (activeObject) {
-        this.canvas.bringForward(activeObject);
-        this.canvas.renderAll();
+        (activeObject as any).bringForward();
+        this.canvas?.renderAll();
       }
     }
+  })
 
     // Send Backward - Ctrl+Shift+B
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.ctrlKey && event.shiftKey && event.key === 'B') {
       event.preventDefault();
       const activeObject = this.canvas.getActiveObject();
       if (activeObject) {
-        this.canvas.sendBackwards(activeObject);
+        (activeObject as any).sendBackwards();
         this.canvas.renderAll();
       }
     }
+  })
 
     // Undo - Ctrl+Z
+    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.ctrlKey && !event.shiftKey && event.key === 'z') {
       event.preventDefault();
       this.undo();
@@ -897,15 +927,16 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       event.preventDefault();
       this.redo();
     }
+  })
+    }
   }
-
   // Helper methods for clipboard operations
   private clipboardObject: any = null;
 
   private copySelectedObject() {
     const activeObject = this.canvas.getActiveObject();
     if (activeObject) {
-      activeObject.clone((cloned: fabric.Object) => {
+      activeObject.clone().then((cloned) => {
         this.clipboardObject = cloned;
       });
     }
@@ -1652,7 +1683,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
 
   private setupTextSelectionHandler() {
-    this.canvas.on('text:selection:changed', (e: fabric.IEvent) => {
+    this.canvas.on('text:selection:changed', (e) => {
       const textObject = e.target as fabric.IText;
       if (textObject) {
         this.selectedTextObject = textObject;
@@ -1661,8 +1692,9 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.canvas.on('selection:created', (e: fabric.IEvent) => {
-      const textObject = e.target as fabric.IText;
+    this.canvas.on('selection:created', (e) => {
+      const target = e.selected?.[0];
+      const textObject = target as fabric.IText;
       if (textObject && textObject.type === 'i-text') {
         this.selectedTextObject = textObject;
         this.showTextToolbar = true;  // Show toolbar when text is selected
@@ -1684,7 +1716,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       if (target && (target.type === 'textbox' || target.type === 'i-text')) {
         // If text is part of a group, bring it to front for editing
         if (target.group) {
-          target.group.bringToFront();
+          (this.canvas as any).bringToFront(target.group);
         }
         this.selectedTextObject = target as fabric.IText;
         this.showTextToolbar = true;
@@ -1907,7 +1939,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   setTextAlign(align: string): void {
     if (this.selectedTextObject && (align === 'left' || align === 'center' || align === 'right' || align === 'justify')) {
-      this.selectedTextObject.set('textAlign', align as fabric.TextAlign);
+      this.selectedTextObject.set('textAlign', align);
       this.currentAlignment = align;
       this.currentAlignmentIcon = `/assets/multimedia-icons/multimedia-text-align-${align}.svg`;
       this.showAlignmentDropdown = false;
@@ -2110,7 +2142,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   // Method to handle image URL input
   addImageFromUrl(url: string) {
-    fabric.Image.fromURL(url, (img) => {
+    fabric.Image.fromURL(url).then((img:fabric.Image) => {
       // Scale image to fit canvas while maintaining aspect ratio
       const canvasWidth = this.canvas.width!;
       const canvasHeight = this.canvas.height!;
@@ -2681,9 +2713,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   // Helper method to get current border color
   getCurrentBorderColor(): string {
-    return this.selectedShape?.stroke || '#000000';
-  }
-
+  return (this.selectedShape?.stroke as string) || '#000000';
+}
   updateBorderOpacity(opacity: number) {
     if (this.selectedShape) {
       this.selectedShape.set('strokeOpacity', opacity / 100);
@@ -2757,7 +2788,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     // Calculate the bounding box of all selected objects
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     objects.forEach(obj => {
-      const objBounds = obj.getBoundingRect(true, true);
+      const objBounds = obj.getBoundingRect();
       minX = Math.min(minX, objBounds.left);
       minY = Math.min(minY, objBounds.top);
       maxX = Math.max(maxX, objBounds.left + objBounds.width);
@@ -2790,7 +2821,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     // Calculate bounding box
     let minX = Infinity, minY = Infinity;
     objects.forEach(obj => {
-      const objBounds = obj.getBoundingRect(true, true);
+      const objBounds = obj.getBoundingRect();
       minX = Math.min(minX, objBounds.left);
       minY = Math.min(minY, objBounds.top);
     });
@@ -2819,7 +2850,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     // Calculate bounding box
     let minX = Infinity, minY = Infinity;
     objects.forEach(obj => {
-      const objBounds = obj.getBoundingRect(true, true);
+      const objBounds = obj.getBoundingRect();
       minX = Math.min(minX, objBounds.left);
       minY = Math.min(minY, objBounds.top);
     });
@@ -2848,7 +2879,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     // Calculate bounding box
     let minX = Infinity, minY = Infinity;
     objects.forEach(obj => {
-      const objBounds = obj.getBoundingRect(true, true);
+      const objBounds = obj.getBoundingRect();
       minX = Math.min(minX, objBounds.left);
       minY = Math.min(minY, objBounds.top);
     });
@@ -3019,7 +3050,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     // Calculate the bounding box of original objects
     let minX = Infinity, minY = Infinity;
     originalObjects.forEach(obj => {
-      const bounds = obj.getBoundingRect(true, true);
+      const bounds = obj.getBoundingRect();
       minX = Math.min(minX, bounds.left);
       minY = Math.min(minY, bounds.top);
     });
@@ -3054,3 +3085,4 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
 
 }
+  

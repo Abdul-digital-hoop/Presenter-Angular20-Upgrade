@@ -5,15 +5,15 @@
 export const environment = {
   production: true,
   Name: "LOCAL",
-  MyApi: 'https://localhost:7216/api/v1/',
-  AudienceApi: 'https://localhost:7217/api/v1/',
-  SignalRDomain: 'https://localhost:7280/',
-  PresenterDomain: 'http://localhost:4200/',
-  AudienceDomain: 'http://localhost:4201/',
-  AudienceURL:'localhost:4201',
-  ImportAPI:'https://localhost:7051/api/v1/',
-  PaymentGateway: 'razorpay', //stripe
-  razorpayKey: 'rzp_test_tmjTFeXWgXsmjI',
+  MyApi: 'https://devpresapi.slidone.com/api/v1/',
+    AudienceApi: 'https://devaudiapi.slidone.com/api/v1/',
+    SignalRDomain: 'https://devsocket.slidone.com/',
+    PresenterDomain: 'https://devpres.slidone.com/',
+    AudienceDomain: 'https://devaudi.slidone.com/',
+    AudienceURL:'devaudi.slidone.com',
+    ImportAPI:'https://devimportapi.slidone.com/api/v1/',
+    PaymentGateway: 'stripe',
+    razorpayKey: 'rzp_test_tmjTFeXWgXsmjI',
 };
 
 /*

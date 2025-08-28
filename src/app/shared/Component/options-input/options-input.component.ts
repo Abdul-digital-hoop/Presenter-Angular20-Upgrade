@@ -33,7 +33,7 @@ export class OptionsInputComponent implements OnInit {
   // * Local Variables
   inputTextLengthColors = inputControlTextLengthColor;
   optionDatas: any[] = [];
-  apiCallInterval: NodeJS.Timer;
+  apiCallInterval!: ReturnType<typeof setInterval>;
   quizTheme = QuizTheme;
   slideTheme:any;
   constructor(public workSpaceService: WorkspaceService, private presentationService: PresentationService) {

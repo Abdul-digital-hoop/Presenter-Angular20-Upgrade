@@ -85,10 +85,12 @@ export class GuessTheNumberQuizComponent implements OnInit {
   scaleErrorForGuess: boolean = false;
   presentationMode: boolean;
   isPresenterEditorScreen: boolean;
-  startFlashScreenTimer: NodeJS.Timer;
+  
+  startFlashScreenTimer!: ReturnType<typeof setInterval>;
   minutes: number = 0;
   seconds: number = 0;
-  quizSeconds: NodeJS.Timer;
+  quizSeconds!: ReturnType<typeof setInterval>;
+
   respondPlayerCount: number = 0;
   showChart: boolean = false;
   isNonofOptionCorrect: boolean = false;

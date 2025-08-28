@@ -26,11 +26,11 @@ export class TypeAnswersComponent implements OnInit, OnDestroy {
   @Input() template:any;
   options: any[]=[];
   respondPlayerCount: number = 0;
-  startFlashScreenTimer: NodeJS.Timer;
+  startFlashScreenTimer!: ReturnType<typeof setInterval>;
   flashScreentimer: number=5;
   minutes: number=0;
   seconds: number=0;
-  quizSeconds: NodeJS.Timer;
+  quizSeconds!: ReturnType<typeof setInterval>;
   typeAnswersData:any[]=[];
   respondPlayers: any[]=[];
   currentUrl: string;
