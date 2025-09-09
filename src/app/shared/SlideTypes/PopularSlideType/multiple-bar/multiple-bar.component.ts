@@ -1,6 +1,9 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, HostListener, Input, OnInit } from '@angular/core';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { scaleBand, scaleLinear } from 'd3-scale';
+import { axisBottom } from 'd3-axis';
+import { max } from 'd3-array';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
@@ -170,10 +173,9 @@ export class MultipleBarComponent implements OnInit {
     this.drawBars(value);
   }
   private createSvg(): void {
-    d3.select('div#multiple-bar-chart-'+this.slideDetails?.slideId+'-'+this.viewfrom).select('svg').remove();
+    select('div#multiple-bar-chart-'+this.slideDetails?.slideId+'-'+this.viewfrom).select('svg').remove();
   
-    this.svg = d3
-      .select('div#multiple-bar-chart-'+this.slideDetails?.slideId+'-'+this.viewfrom)
+    this.svg = select('div#multiple-bar-chart-'+this.slideDetails?.slideId+'-'+this.viewfrom)
       .append('svg')
       .attr('width', '100%')
       .attr('height', '100%')
@@ -186,8 +188,7 @@ export class MultipleBarComponent implements OnInit {
   }
 
   private drawBars(data: any[]): void {
-    const x = d3
-      .scaleBand()
+    const x = scaleBand()
       .range([0, this.width])
       .domain(data.map((d) => d.name))
       .padding(0.2);
@@ -199,7 +200,7 @@ export class MultipleBarComponent implements OnInit {
         .attr('transform', `translate(0, ${this.height})`);
     }
 
-    xAxisGroup.call(d3.axisBottom(x)
+    xAxisGroup.call(axisBottom(x)
       .tickSize(0))
       .selectAll('text')
       .attr('font-size', '12px')
@@ -207,7 +208,7 @@ export class MultipleBarComponent implements OnInit {
       .attr("fill", this.slideTheme?.ThemeTextColor)
       .attr("font-family", this.slideTheme?.ThemeFontFamily)
       .each(function (d) {
-        const tickText = d3.select(this);
+        const tickText = select(this);
         const textContent = tickText.text();
         const lastLetter = textContent.slice(-3);
         const remainingLetters = textContent.slice(0, -3);
@@ -219,7 +220,7 @@ export class MultipleBarComponent implements OnInit {
         selection.each((d, i, nodes) => {
           // Get the bar width for this tick
           const barWidth = x.bandwidth();
-          this.wrap.call(this, d3.select(nodes[i]), barWidth);
+          this.wrap.call(this, select(nodes[i]), barWidth);
         });
       })
       .attr('opacity', d => 1);
@@ -231,9 +232,9 @@ export class MultipleBarComponent implements OnInit {
 
   private createBar(value: any) {
     const data = value;
-    const highestValue = Math.max(...data.map(d => d.value));
-    const x = d3.scaleBand().range([0, this.width]).domain(data.map(d => d.name)).padding(0.2);
-    const y = d3.scaleLinear().domain([0, highestValue + 0.8]).range([this.height, 0]);
+    const highestValue = max(data.map(d => d.value)) || 0;
+    const x = scaleBand().range([0, this.width]).domain(data.map(d => d.name)).padding(0.2);
+    const y = scaleLinear().domain([0, Number(highestValue) + 0.8]).range([this.height, 0]);
 
     const bars = this.svg.selectAll('.chartbar').data(data, d => d.name);
 
@@ -344,7 +345,7 @@ export class MultipleBarComponent implements OnInit {
     }
 
     text.each(function() {
-      const text = d3.select(this);
+      const text = select(this);
       const words = text.text().split(/\s+/).reverse();
       let word;
       let line = [];

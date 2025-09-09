@@ -1,5 +1,14 @@
 import { Component, Input, OnInit, OnChanges, AfterViewInit, ChangeDetectorRef } from '@angular/core';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { transition } from 'd3-transition';
+import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { arc, pie } from 'd3-shape';
+import { line, curveMonotoneX } from 'd3-shape';
+import { interpolate, interpolateObject } from 'd3-interpolate';
+import { easeCubicOut, easeElasticOut, easeLinear, easeCubicInOut, easeExpOut } from 'd3-ease';
+import { max } from "d3-array";
+
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
@@ -123,26 +132,26 @@ export class RankingComponent implements OnInit {
     }
   }
   generateRankingSVG() {
-    d3.select(`div#Ranking_charts-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
+    select(`div#Ranking_charts-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
 
-    const maxValue = d3.max(this.rankingData, d => d.opVal);
-    this.x = d3.scaleLinear()
+    const maxValue = max(this.rankingData, d => d.opVal);
+    this.x = scaleLinear()
       .domain([0, maxValue])
       .range([this.marginLeft, this.width - this.marginRight]);
 
-    this.y = d3.scaleBand()
+    this.y = scaleBand()
       .domain(this.rankingData.map((d, i) => i.toString()))
       .rangeRound([this.marginTop, this.height - this.marginBottom])
       .padding(0.2);
       const svgviewset = this.rankingData.every(d => d.opVal === 0);
       if(svgviewset){
-        this.svg = d3.select(`div#Ranking_charts-${this.slideDetails?.slideId}-${this.viewfrom}`)
+        this.svg = select(`div#Ranking_charts-${this.slideDetails?.slideId}-${this.viewfrom}`)
         .append('svg')
         .attr('height', '100%')
         .attr('width', '100%')
         .attr('viewBox', `0 0 340 300`);
       }else{
-        this.svg = d3.select(`div#Ranking_charts-${this.slideDetails?.slideId}-${this.viewfrom}`)
+        this.svg = select(`div#Ranking_charts-${this.slideDetails?.slideId}-${this.viewfrom}`)
         .append('svg')
         .attr('height', '100%')
         .attr('width', '100%')
@@ -170,7 +179,7 @@ export class RankingComponent implements OnInit {
       .data(this.rankingData, (d: any) => d.index);
     const updateTransition = bars.transition()
       .duration(2000)
-      .ease(d3.easeCubicInOut)
+      .ease(easeCubicInOut)
       .attr("width", (d) =>
         this.slideDetails.settings.showInResults
           ? Math.max((d.opVal / maxOpVal) * maxBarWidth, minBarWidth)
@@ -191,7 +200,7 @@ export class RankingComponent implements OnInit {
       .attr("opacity", 0);
     const enterTransition = enterSelection.transition()
       .duration(2000)
-      .ease(d3.easeExpOut)
+      .ease(easeExpOut)
       .attr("fill", (d) => d.color)
       .attr("width", (d) =>
         this.slideDetails.settings.showInResults
@@ -345,7 +354,7 @@ export class RankingComponent implements OnInit {
   // Function to wrap text
   private wrapText(d) {
     return function () {
-      const textElement = d3.select(this);
+      const textElement = select(this);
       const words = d.name.split(" ");
       const maxCharsPerLine = 50;
       let lines: string[] = [];

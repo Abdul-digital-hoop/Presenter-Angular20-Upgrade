@@ -1,5 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { scaleOrdinal } from 'd3-scale';
+import { pie, arc } from 'd3-shape';
+import { interpolate } from 'd3-interpolate';
+import { easeCubicOut, easeCubicIn } from 'd3-ease';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
@@ -128,8 +132,8 @@ export class MultiplePieComponent implements OnInit {
     }
   }
   private createDefaultSvg(): void {
-    d3.select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
-    this.svg = d3.select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
+    select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
+    this.svg = select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
       .append('svg')
       .attr('height', '100%')
       .attr('width', '100%')
@@ -162,8 +166,8 @@ export class MultiplePieComponent implements OnInit {
             ? "translate(480, 270),scale(1)" 
             : "translate(480, 270),scale(1.2)";
 
-    d3.select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
-    this.svg = d3.select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
+    select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
+    this.svg = select(`div#multiple-pie-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
       .append('svg')
       .attr('height', '100%')
       .attr('width', '100%')
@@ -174,17 +178,17 @@ export class MultiplePieComponent implements OnInit {
 
   private createColors(data): void {
     const colorsRange = data.map(d => d.color ? d.color : '#000000'); // Default color if not provided
-    this.colors = d3.scaleOrdinal()
+    this.colors = scaleOrdinal()
       .domain(data.map((d) => d.id))
       .range(colorsRange);
   }
   //#region With Value
   private drawChart(): void {
-    const pie = d3.pie().sort(null).value((d: any) => d.value);
-    const data_ready = pie(this.filterData);
+    const pieChart = pie().sort(null).value((d: any) => d.value);
+    const data_ready = pieChart(this.filterData);
 
-    const arc = d3.arc().innerRadius(0).outerRadius(this.radius * 0.8);
-    const outerArc = d3.arc().innerRadius(this.radius * 0.9).outerRadius(this.radius * 0.9);
+    const arcGenerator = arc().innerRadius(0).outerRadius(this.radius * 0.8);
+    const outerArcGenerator = arc().innerRadius(this.radius * 0.9).outerRadius(this.radius * 0.9);
 
     // Bind Data
     const paths = this.svg.selectAll('.path').data(data_ready, (d: any) => d.data.id);
@@ -192,12 +196,12 @@ export class MultiplePieComponent implements OnInit {
     // **Update existing paths smoothly**
     paths.transition()
         .duration(2000)
-        .ease(d3.easeCubicOut)
+        .ease(easeCubicOut)
         .attrTween("d", function (d) {
-            const interpolate = d3.interpolate(this._current || { startAngle: 0, endAngle: 0 }, d);
-            this._current = interpolate(1); // Save new state
+            const interpolateFn = interpolate(this._current || { startAngle: 0, endAngle: 0 }, d);
+            this._current = interpolateFn(1); // Save new state
             return function (t) {
-                return arc(interpolate(t));
+                return arcGenerator(interpolateFn(t));
             };
         })
         .attr('fill', (d) => this.colors(d.data.color))
@@ -211,16 +215,16 @@ export class MultiplePieComponent implements OnInit {
         .attr('stroke', 'white')
         .style('stroke-width', '3px')
         .style('opacity', 0)
-        .attr('d', d3.arc().innerRadius(0).outerRadius(0)) // Start at center
+        .attr('d', arc().innerRadius(0).outerRadius(0)) // Start at center
 
     newPaths.transition()
         .duration(2000)
-        .ease(d3.easeCubicOut)
+        .ease(easeCubicOut)
         .style('opacity', 1)
         .attrTween("d", function (d) {
-            const interpolate = d3.interpolate({ startAngle: 0, endAngle: 0 }, d);
+            const interpolateFn = interpolate({ startAngle: 0, endAngle: 0 }, d);
             return function (t) {
-                return arc(interpolate(t));
+                return arcGenerator(interpolateFn(t));
             };
         });
 
@@ -233,7 +237,7 @@ export class MultiplePieComponent implements OnInit {
 
     // **Update labels after animation**
     setTimeout(() => {
-        this.updatelabels(data_ready, arc, outerArc);
+        this.updatelabels(data_ready, arcGenerator, outerArcGenerator);
     }, 1000);
 }
 
@@ -287,7 +291,7 @@ this.svg.transition().duration(500)
         polylines.exit()
             .transition()
             .duration(500)
-            .ease(d3.easeCubicIn)
+            .ease(easeCubicIn)
             .style('opacity', 0)
             .remove();
     
@@ -309,7 +313,7 @@ this.svg.transition().duration(500)
             .transition()
             .style('stroke', (d) => this.colors(d.data.color))
             .duration(1000)
-        .ease(d3.easeCubicOut) // Smooth transition
+        .ease(easeCubicOut) // Smooth transition
             .attr('points', (d) => {
                 const posA = arc.centroid(d);
                 const posB = outerArc.centroid(d);
@@ -419,7 +423,7 @@ this.svg.transition().duration(500)
               ? "M35.4142 5.58579C36.1953 6.36683 36.1953 7.63317 35.4142 8.41421L13.4142 30.4142C12.6332 31.1953 11.3668 31.1953 10.5858 30.4142L0.585786 20.4142C-0.195262 19.6332 -0.195262 18.3668 0.585786 17.5858C1.36683 16.8047 2.63316 16.8047 3.41421 17.5858L12 26.1716L32.5858 5.58579C33.3668 4.80474 34.6332 4.80474 35.4142 5.58579Z"
               : "M31.4142 4.58579C32.1953 5.36684 32.1953 6.63317 31.4142 7.41421L7.41421 31.4142C6.63317 32.1953 5.36684 32.1953 4.58579 31.4142C3.80474 30.6332 3.80474 29.3668 4.58579 28.5858L28.5858 4.58579C29.3668 3.80474 30.6332 3.80474 31.4142 4.58579Z M4.58579 4.58579C5.36684 3.80474 6.63317 3.80474 7.41421 4.58579L31.4142 28.5858C32.1953 29.3668 32.1953 30.6332 31.4142 31.4142C30.6332 32.1953 29.3668 32.1953 28.5858 31.4142L4.58579 7.41421C3.80474 6.63317 3.80474 5.36684 4.58579 4.58579Z")
           .attr('transform', (d, i, nodes) => {
-              var textNode = d3.select(nodes[i].previousSibling); // Get the associated text element
+              var textNode = select(nodes[i].previousSibling); // Get the associated text element
               var textWidth = textNode.node()?.getBBox().width || 0; // Measure text width (fallback to 0)
   
               var pos = outerArc.centroid(d);
@@ -483,13 +487,13 @@ private animateValues(data_ready: any, arc: any): void {
     const labels = this.svg.selectAll(selector);
     const spacing = 2;
     labels.each(function() {
-        const label = d3.select(this);
+        const label = select(this);
         const bbox = label.node().getBBox();
         let y = parseFloat(label.attr('y'));
 
         labels.each(function() {
             if (this !== label.node()) {
-                const otherLabel = d3.select(this);
+                const otherLabel = select(this);
                 const otherBBox = otherLabel.node().getBBox();
                 if (bbox.x < otherBBox.x + otherBBox.width &&
                     bbox.x + bbox.width > otherBBox.x &&
@@ -547,13 +551,13 @@ private animateValues(data_ready: any, arc: any): void {
   
     // Add the correct/wrong answer icons
     textElements.each(function (d: { data: { isCorrect: boolean } }, i) {
-      const textElement = d3.select(this);
+      const textElement = select(this);
       const textNode = textElement.node() as SVGGraphicsElement | null;
       const textWidth = textNode ? textNode.getBBox().width : 0;
   
-      d3.select(this.parentNode).selectAll('path').remove(); // Remove old icons to prevent duplication
+      select(this.parentNode).selectAll('path').remove(); // Remove old icons to prevent duplication
   
-      d3.select(this.parentNode).append('path')
+      select(this.parentNode).append('path')
         .attr('class', (d: { data: { isCorrect: boolean } }) => !d.data.isCorrect ? 'wrong-answer-icon' : 'correct-answer-icon')
         .attr('d', (d: { data: { isCorrect: boolean } }) => !d.data.isCorrect
           ? 'M20 4.58579C20.78 5.36684 20.78 6.63317 20 7.41421L7.41421 20.4142C6.63317 21.1953 5.36684 21.1953 4.58579 20.4142C3.80474 19.6332 3.80474 18.3668 4.58579 17.5858L17.5858 4.58579C18.3668 3.80474 19.6332 3.80474 20 4.58579Z M4.58579 4.58579C5.36684 3.80474 6.63317 3.80474 7.41421 4.58579L20 17.5858C20.78 18.3668 20.78 19.6332 20 20.4142C19.219 21.1953 17.9527 21.1953 17.1716 20.4142L4.58579 7.41421C3.80474 6.63317 3.80474 5.36684 4.58579 4.58579Z'
@@ -568,16 +572,14 @@ private animateValues(data_ready: any, arc: any): void {
   //#region Without Value
   private defaultChart() {
     const radius = Math.min(this.width, this.height) / 2 ;
-    const pie = d3
-      .pie<any>()
+    const pieChart = pie<any>()
       .sort(null)
       .value((d: any) => {
         return d.value == 0 ? 1 : d.value;
       });
-    const data_ready = pie(this.filterData);
+    const data_ready = pieChart(this.filterData);
   
-    const arc = d3
-      .arc<any>()
+    const arcGenerator = arc<any>()
       .innerRadius(this.radius * 0)
       .outerRadius(this.radius * 0.8);
   
@@ -586,7 +588,7 @@ private animateValues(data_ready: any, arc: any): void {
       .data(data_ready)
       .enter()
       .append('path')
-      .attr('d', arc)
+      .attr('d', arcGenerator)
       .attr('fill', this._commanservice.getContrastColor(this.slideTheme?.ThemeBackgroundColor))
       .style('opacity', 0.05);
   
@@ -615,7 +617,7 @@ private animateValues(data_ready: any, arc: any): void {
       const self = this;
       // Add the correct or wrong answer icons to the legend
       textElements.each(function(d, i) {
-        const textElement = d3.select(this);
+        const textElement = select(this);
         const textWidth = textElement.node().getBBox().width;
     
         legend.filter((data, index) => index === i).append('path')
@@ -636,7 +638,7 @@ private animateValues(data_ready: any, arc: any): void {
   
   private wrap(text, width): void {
     text.each(function () {
-      const textElement = d3.select(this);
+      const textElement = select(this);
       const words = textElement.text().split(/\s+/);
       let line = [];
       let lineNumber = 0;

@@ -620,8 +620,18 @@ export class WorkspaceService {
       'black',
       'yellow'
     ]
-    slideDetails.forEach((options, i) => {
-      chartData.push({ id: options.OptionId, name: options.OptionTitle, value: options.value, color: options.visualizationColor, isCorrect: options?.isCorrect ,position:options.Position});
+    
+    slideDetails?.forEach((options, i) => {
+      if (options) {
+        chartData.push({ 
+          id: options.OptionId || null, 
+          name: options.OptionTitle || '', 
+          value: options.value || 0, 
+          color: options.visualizationColor || '', 
+          isCorrect: options?.isCorrect || false,
+          position: options.Position || 0
+        });
+      }
     });
     return chartData;
 

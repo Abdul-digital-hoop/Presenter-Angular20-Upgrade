@@ -1,6 +1,9 @@
 import { trigger } from '@angular/animations';
 import { Component, OnInit, ElementRef, ViewChild, Input } from '@angular/core';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { scaleLinear } from 'd3-scale';
+import { line, curveLinearClosed } from 'd3-shape';
+import { range } from 'd3-array';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
@@ -43,7 +46,7 @@ export class ScalesComponent implements OnInit {
   private gridInfo: any;
   private sizeInfo = { _gridX: 1, _gridO: 1, _newline: 2 };
   private textInfo: any = { namesDx: '0.5', namesDy: '0.5' };
-  line: d3.Line<[number, number]>;
+  line: any;
   resultArray: any[];
   tempCircleData: any;
   dataLength: any;
@@ -62,7 +65,7 @@ export class ScalesComponent implements OnInit {
   slidesTheme: { ThemeName: string; ThemeLogo: any; ThemeBackgroundColor: string; ThemeBackgroundImage: string; ThemeTextColor: string; ThemeFontFamily: string; ThemeLineColor: string; ThemeVisualizationColor: any[]; slideTextBold: boolean; slideTextItalic: boolean; slideTextUnderLine: boolean; slideTextStrikeThrough: boolean; slidetextSize: number,slideTextColor:any };
   formatedOptions: any[];
   formatedResult: any;
-  gridG: d3.Selection<SVGGElement, unknown, HTMLElement, any>;
+  gridG: any;
   dataset:any;
   chartUpdateInterval: any;
   previousIndex: number = -1;
@@ -150,14 +153,14 @@ export class ScalesComponent implements OnInit {
      }
    }
  
- 
+
    private gridMaker(data, valueScale): PathData[] {
      const tempN = data.length;
      this.dataLength = data.length;
      const tempAngleUnit = { pi: (2 * Math.PI) / tempN, degree: 360 / tempN };
      const tempNames = data.map((d) => d.name);
      const tempPathData: PathData[] = [];
- 
+
      for (let i = 0; i < tempN; i++) {
        tempPathData.push({
          name: '_gridX',
@@ -173,20 +176,20 @@ export class ScalesComponent implements OnInit {
          ],
        });
      }
- 
-     const tempValues = d3.range(
+
+     const tempValues = range(
        this.gridInfo?.value?.min,
        this.gridInfo?.value?.max + 0.1,
        this.gridInfo?.value?.interval
      );
- 
+
      tempValues.forEach((value, i) => {
        const tempLength = valueScale(value);
-       const tempData = d3.range(tempN).map((d) => ({
+       const tempData = range(tempN).map((d) => ({
          x: tempLength * Math.cos(d * tempAngleUnit.pi - Math.PI / 2),
          y: tempLength * Math.sin(d * tempAngleUnit.pi - Math.PI / 2),
        }));
- 
+
        tempPathData.push({
          name: '_gridO',
          type: '_grid',
@@ -194,7 +197,7 @@ export class ScalesComponent implements OnInit {
          data: tempData,
        });
      });
- 
+
      this.tempCircleData = data.map((d, i) => {
        const scoreObject = this.scalesResult.find(result => result.OptionId === d.id);
        let scoreValue = 0;
@@ -218,19 +221,17 @@ export class ScalesComponent implements OnInit {
          y: tempLength * Math.sin(i * tempAngleUnit.pi - Math.PI / 2),
        };
      });
- 
+
      tempPathData.push({
        name: '_newline',
        type: '_data',
        id: '_newline',
        data: this.tempCircleData,
      });
- 
+
      return tempPathData;
    }
- 
- 
- 
+
    private dataMaker() {
      this.resultArray = [];
      this.actualResultArray = [];
@@ -294,16 +295,15 @@ export class ScalesComponent implements OnInit {
        this.isShowLongerDescription = false;
      }
    }
- 
- 
+
    private createChart(data): void {
      this.gridDetail();
-     d3.select(`div#d3RadarChart-${this.slideDetails?.slideId}-${this.viewfrom}`).select('svg').remove();
- 
+     select(`div#d3RadarChart-${this.slideDetails?.slideId}-${this.viewfrom}`).select('svg').remove();
+
      // Determine viewBox and scale based on conditions
      let viewBoxValue = '0 -30 960 440';
      let scaleValue = 1.1;
- 
+
      if ([1, 2, 3].includes(this.formatedOptions?.length)) {
          if (this._workspaceservice.slideLayoutActive) {
              viewBoxValue = '0 -20 880 490';
@@ -321,9 +321,8 @@ export class ScalesComponent implements OnInit {
          scaleValue = 0.8;
      }
      }
- 
-     const svg = d3
-       .select(`div#d3RadarChart-${this.slideDetails?.slideId}-${this.viewfrom}`)
+
+     const svg = select(`div#d3RadarChart-${this.slideDetails?.slideId}-${this.viewfrom}`)
        .append('svg')
        .attr('width', '100%')
        .attr('height', '100%')
@@ -332,30 +331,30 @@ export class ScalesComponent implements OnInit {
        .attr('preserveAspectRatio', 'xMidYMid')
        .attr('font-family', this.slideTheme?.ThemeFontFamily)
        .style('overflow', 'visible');
- 
+
      this.gridG = svg
        .append('g')
        .attr('id', 'id-6bec31bc-f403-4d0a-88ad-cfcc4e9f54bf')
        .attr('class', 'focus')
        .attr('transform', 'translate(291,81)');
- 
-     this.line = d3.line()
+
+     this.line = line()
        .x((d: any) => d?.x)
        .y((d: any) => d?.y)
-       .curve(d3.curveLinearClosed);
- 
-     const valueScale = d3.scaleLinear()
+       .curve(curveLinearClosed);
+
+     const valueScale = scaleLinear()
        .domain([this.gridInfo?.value?.min, this.gridInfo?.value?.max])
        .range([0, this.radius]);
- 
+
      const tempPathData = this.gridMaker(data, valueScale);
      this.updatePaths(this.gridG, tempPathData);
      this.updateText(this.gridG, tempPathData);
  }
- 
+
    private drawchart(data): void{
      this.gridDetail();
-     const valueScale = d3.scaleLinear()
+     const valueScale = scaleLinear()
      .domain([this.gridInfo?.value?.min, this.gridInfo?.value?.max])
      .range([0, this.radius]);
      const tempPathData = this.gridMaker(data, valueScale);
@@ -369,7 +368,7 @@ export class ScalesComponent implements OnInit {
      .append('g')
      .attr('class', (d, i) => `axis axis-${i + 1}`)
      .each((d, i, nodes) => {
-       const g = d3.select(nodes[i]);
+       const g = select(nodes[i]);
        g.append('line')
          .attr('stroke', () => {
            return this.slideTheme.ThemeLineColor;
@@ -380,7 +379,7 @@ export class ScalesComponent implements OnInit {
          .attr('x2', d.data[1].x + this.radius)
          .attr('y2', d.data[1].y + this.radius);
      });
- 
+
      const levels = [0, 1, 2, 3, 4, 5];
      levels.forEach((level, i) => {
        let levelGroup = gridG.select(`.level-group-${i}`);
@@ -494,18 +493,18 @@ export class ScalesComponent implements OnInit {
            dy: tempDy,
          };
        });
- 
+
      const tempText = gridG
        .selectAll('text.name')
        .data(tempTextData, d => d.name); // Use key function for data binding
- 
+
      // EXIT: Remove old text with transition
      tempText.exit()
        .transition()
        .duration(500)
        .style('opacity', 0)
        .remove();
- 
+
      // ENTER: Create new text elements
      const textEnter = tempText.enter()
        .append('text')
@@ -531,7 +530,7 @@ export class ScalesComponent implements OnInit {
          }
          return `translate(-10, ${-textLength/1.5 })`;
        });
- 
+
      // UPDATE + ENTER: Merge and apply transition
      textEnter.merge(tempText)
        .transition()
@@ -541,10 +540,10 @@ export class ScalesComponent implements OnInit {
        .attr('y', d => d.y + this.radius)
        .attr('dx', d => d.dx + 'em')
        .attr('dy', d => d.dy + 'em');
- 
+
      // Multi-line wrapping logic
      textEnter.merge(tempText).each(function (d) {
-       const text = d3.select(this);
+       const text = select(this);
        const val = d.name.trimStart();
        let words = val.split(/\s+/).reverse();
        let word;
@@ -556,7 +555,7 @@ export class ScalesComponent implements OnInit {
        const dx = text.attr('dx');
        const dy = parseFloat(text.attr('dy'));
        let tspan = text.text(null).append('tspan').attr('x', x).attr('y', y).attr('dx', dx).attr('dy', dy + 'em');
- 
+
        while ((word = words.pop())) {
          line.push(word);
          tspan.text(line.join(' '));
@@ -574,7 +573,7 @@ export class ScalesComponent implements OnInit {
        }
      });
  }
- 
+
   updateChart(value: any, result: any,dimensions:any) {
     this.formatedOptions = value;
     this.scalesResult = this.slideDetails.settings.showInResults ? result : this.hideResults();

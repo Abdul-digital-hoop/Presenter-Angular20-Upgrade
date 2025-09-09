@@ -1,5 +1,10 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { scaleOrdinal } from 'd3-scale';
+import { pie, arc } from 'd3-shape';
+import { interpolateObject } from 'd3-interpolate';
+import { easeLinear, easeCubicOut, easeCubicIn } from 'd3-ease';
+import { forceSimulation, forceX, forceY, forceCollide } from 'd3-force';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
@@ -140,8 +145,8 @@ export class MultipleDonutComponent implements OnInit, OnChanges {
     this.optionValueInPercentage = optionTotalValue > 0 ? 100 / optionTotalValue : 0;
   }
   private createDefaultSvg(): void {
-    d3.select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
-    this.svg = d3.select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
+    select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
+    this.svg = select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
       .append('svg')
       .attr('height', '100%')
       .attr('width', '100%')
@@ -151,7 +156,7 @@ export class MultipleDonutComponent implements OnInit, OnChanges {
       this.defaultsvg = true;
   }
   private createSvg(): void {
-    d3.select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
+    select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
     if(this.slideLayout=='Default' || this.slideLayout=='Full Image'){
       this._workspaceservice.slideLayoutActive = false;
     }
@@ -173,8 +178,7 @@ export class MultipleDonutComponent implements OnInit, OnChanges {
             ? "translate(480, 270),scale(1)" 
             : "translate(480, 270),scale(1.2)";
 
-    this.svg = d3
-      .select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
+    this.svg = select(`div#multiple-donut-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
       .append("svg")
       .attr('height', '100%')
       .attr('width', '100%')
@@ -190,21 +194,21 @@ export class MultipleDonutComponent implements OnInit, OnChanges {
         colorsRange.push(element?.color);
       }
     });
-    this.colors = d3.scaleOrdinal().domain(data.map((d: any) => d?.id)).range(colorsRange);
+    this.colors = scaleOrdinal().domain(data.map((d: any) => d?.id)).range(colorsRange);
   }
 
   private drawChart(): void {
-    const donut = d3.pie().sort(null).value((d: any) => d.value);
+    const donut = pie().sort(null).value((d: any) => d.value);
     const data_ready = donut(this.filterData);
 
-    const arc = d3.arc().innerRadius(this.radius * 0.5).outerRadius(this.radius * 0.8);
+    const arcGenerator = arc().innerRadius(this.radius * 0.5).outerRadius(this.radius * 0.8);
 
-    this.animatePieSlices(data_ready, arc);
+    this.animatePieSlices(data_ready, arcGenerator);
   }
   private animatePieSlices(data_ready: any, arc: any): Promise<void> {
     return new Promise<void>((resolve) => {
-      const outerArc = d3.arc().innerRadius(this.radius * 0.9).outerRadius(this.radius * 0.9);
-      const arcGenerator = d3.arc().innerRadius(this.radius * 0.5).outerRadius(this.radius * 0.8);
+      const outerArc = arc().innerRadius(this.radius * 0.9).outerRadius(this.radius * 0.9);
+      const arcGenerator = arc().innerRadius(this.radius * 0.5).outerRadius(this.radius * 0.8);
       const labelData = this.prepareLabelData(data_ready, arcGenerator, outerArc);
 
       const slices = this.svg.selectAll(".slice").data(data_ready, (d: any) => d.data.id);
@@ -218,10 +222,10 @@ export class MultipleDonutComponent implements OnInit, OnChanges {
       slices.attr("fill", (d: { data: { color: string } }) => this.colors(d.data.color))
         .transition()
         .duration(2000)
-        .ease(d3.easeLinear) 
+        .ease(easeLinear) 
         .attrTween("d", function (d: { startAngle: number, endAngle: number }) {
           const previous = (this as any).__previous || d;
-          const interpolate = d3.interpolateObject(previous, d);
+          const interpolate = interpolateObject(previous, d);
           (this as any).__previous = interpolate(1);
 
           return function (t) {
@@ -245,10 +249,10 @@ export class MultipleDonutComponent implements OnInit, OnChanges {
         }))
         .transition()
         .duration(1000) 
-        .ease(d3.easeLinear) 
+        .ease(easeLinear) 
         .style("opacity", 1)
         .attrTween("d", function (d) {
-          const interpolate = d3.interpolateObject(
+          const interpolate = interpolateObject(
             {
               startAngle: d.startAngle,
               endAngle: d.startAngle,
@@ -326,10 +330,10 @@ this.svg.transition().duration(500)
   private applyForceSimulation(labelData: any[]): Promise<any[]> {
     const nodes = labelData.map(d => Object.create({ x: d.xPos, y: d.y }));
 
-    const simulation = d3.forceSimulation(nodes)
-        .force('x', d3.forceX((d: any) => d.x).strength(1))
-        .force('y', d3.forceY((d: any) => d.y).strength(1))
-        .force('collide', d3.forceCollide(30)) // Increased collide radius for better spacing
+    const simulation = forceSimulation(nodes)
+        .force('x', forceX((d: any) => d.x).strength(1))
+        .force('y', forceY((d: any) => d.y).strength(1))
+        .force('collide', forceCollide(30)) // Increased collide radius for better spacing
         .stop();
 
     for (let i = 0; i < 300; ++i) simulation.tick();
@@ -376,7 +380,7 @@ private animateLabels(data_ready: any, labelData: any[]): void {
   // Update existing labels smoothly
   texts.transition()
       .duration(3000)
-      .ease(d3.easeCubicOut) // Smooth easing function
+      .ease(easeCubicOut) // Smooth easing function
       .attr("transform", d => `translate(${d.x + (d.xPos > 0 ? 10 : -10)},${d.y})`)
       .style("text-anchor", d => d.xPos > 0 ? "start" : "end")
       .attr('fill', this.slideTheme?.ThemeTextColor)
@@ -397,7 +401,7 @@ private animateLabels(data_ready: any, labelData: any[]): void {
   newLabels.merge(texts)
       .transition()
       .duration(3000)
-      .ease(d3.easeCubicOut) // Smooth easing
+      .ease(easeCubicOut) // Smooth easing
       .style('opacity', 1)
       .attr("transform", d => `translate(${d.x + (d.xPos > 0 ? 10 : -10)},${d.y})`)
   ;
@@ -406,7 +410,7 @@ private animateLabels(data_ready: any, labelData: any[]): void {
   texts.exit()
       .transition()
       .duration(500)
-      .ease(d3.easeCubicIn)
+      .ease(easeCubicIn)
       .style('opacity', 0)
       .remove()
 
@@ -450,7 +454,7 @@ private animateLabels(data_ready: any, labelData: any[]): void {
     
       // Append the icons based on the isCorrect property
       iconContainer.each((d, i, nodes) => {
-          const iconGroup = d3.select(nodes[i]);
+          const iconGroup = select(nodes[i]);
           const dataItem = data_ready[i].data; // Corresponding data item
     
           if (!dataItem.isCorrect) {
@@ -474,9 +478,6 @@ private animateLabels(data_ready: any, labelData: any[]): void {
       tempText.remove();
     }
     
-
-
-
 
   private animateDots(labelData: any[]): void {
     this.svg.selectAll("circle").remove();
@@ -581,13 +582,13 @@ private animateLabels(data_ready: any, labelData: any[]): void {
   
     // Add the correct/wrong answer icons
     textElements.each(function (d: { data: { isCorrect: boolean } }, i) {
-      const textElement = d3.select(this);
+      const textElement = select(this);
       const textNode = textElement.node() as SVGGraphicsElement | null;
       const textWidth = textNode ? textNode.getBBox().width : 0;
   
-      d3.select(this.parentNode).selectAll('path').remove(); // Remove old icons to prevent duplication
+      select(this.parentNode).selectAll('path').remove(); // Remove old icons to prevent duplication
   
-      d3.select(this.parentNode).append('path')
+      select(this.parentNode).append('path')
         .attr('class', (d: { data: { isCorrect: boolean } }) => !d.data.isCorrect ? 'wrong-answer-icon' : 'correct-answer-icon')
         .attr('d', (d: { data: { isCorrect: boolean } }) => !d.data.isCorrect
           ? 'M20 4.58579C20.78 5.36684 20.78 6.63317 20 7.41421L7.41421 20.4142C6.63317 21.1953 5.36684 21.1953 4.58579 20.4142C3.80474 19.6332 3.80474 18.3668 4.58579 17.5858L17.5858 4.58579C18.3668 3.80474 19.6332 3.80474 20 4.58579Z M4.58579 4.58579C5.36684 3.80474 6.63317 3.80474 7.41421 4.58579L20 17.5858C20.78 18.3668 20.78 19.6332 20 20.4142C19.219 21.1953 17.9527 21.1953 17.1716 20.4142L4.58579 7.41421C3.80474 6.63317 3.80474 5.36684 4.58579 4.58579Z'
@@ -600,12 +601,12 @@ private animateLabels(data_ready: any, labelData: any[]): void {
   //#region Chart Without Value
   private defaultChart(): void {
     const radius = Math.min(this.width, this.height) / 2;
-    const donut = d3.pie()
+    const donut = pie()
       .sort(null)
       .value((d: any) => d.value === 0 ? 1 : d.value);
   
     const data_ready = donut(this.filterData);
-    const arc = d3.arc()
+    const arcGenerator = arc()
       .innerRadius(this.radius * 0.5)
       .outerRadius(this.radius * 0.9);
   
@@ -614,7 +615,7 @@ private animateLabels(data_ready: any, labelData: any[]): void {
       .data(data_ready)
       .enter()
       .append('path')
-      .attr('d', arc)
+      .attr('d', arcGenerator)
       .attr('fill', this._commanservice.getContrastColor(this.slideTheme?.ThemeBackgroundColor))
       .style('opacity', 0.05);
   
@@ -643,7 +644,7 @@ private animateLabels(data_ready: any, labelData: any[]): void {
       const self = this;
       // Add the correct or wrong answer icons to the legend
       textElements.each(function(d, i) {
-        const textElement = d3.select(this);
+        const textElement = select(this);
         const textWidth = textElement.node().getBBox().width;
     
         legend.filter((data, index) => index === i).append('path')
@@ -662,7 +663,7 @@ private animateLabels(data_ready: any, labelData: any[]): void {
 
   private wrap(text, width): void {
     text.each(function () {
-      const textElement = d3.select(this);
+      const textElement = select(this);
       const words = textElement.text().split(/\s+/);
       let line = [];
       let lineNumber = 0;

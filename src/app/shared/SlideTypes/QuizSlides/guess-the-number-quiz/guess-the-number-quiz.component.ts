@@ -7,7 +7,12 @@ import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.servi
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { QuizTheme, staticPresentationTheme } from 'src/app/utility/MasterConstants';
 import { settingVariables } from 'src/app/utility/SettingVariables';
-
+import { select, selectAll } from 'd3-selection';
+import { scaleLinear } from 'd3-scale';
+import { line, curveMonotoneX } from 'd3-shape';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { extent, max } from 'd3-array';
+import { easeElasticOut, easeLinear } from 'd3-ease';
 interface DataPoint {
   date: string;
   value: number;
@@ -247,8 +252,8 @@ export class GuessTheNumberQuizComponent implements OnInit, OnDestroy {
     d3.select(`div#guess-the-number-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
     this.width = 440 - this.margin.left - this.margin.right;
     this.height = 300 - this.margin.top - this.margin.bottom;
-    this.x = d3.scaleLinear().range([20, this.width]);
-    this.y = d3.scaleLinear().range([this.height, 0]);
+    this.x = scaleLinear().range([20, this.width]);
+    this.y = scaleLinear().range([this.height, 0]);
     this.svg = d3.select(`div#guess-the-number-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
 
       .append('svg')
@@ -269,8 +274,8 @@ export class GuessTheNumberQuizComponent implements OnInit, OnDestroy {
     // d3.select('div#chart').select("svg").remove();
     // this.width = 440 - this.margin.left - this.margin.right;
     // this.height = 300 - this.margin.top - this.margin.bottom;
-    // this.x = d3.scaleLinear().range([20, this.width]);
-    // this.y = d3.scaleLinear().range([this.height, 0]);
+    // this.x = scaleLinear().range([20, this.width]);
+    // this.y = scaleLinear().range([this.height, 0]);
     // this.svg = d3.select("div#chart")
     //this.updateChart();
   }
@@ -299,15 +304,15 @@ export class GuessTheNumberQuizComponent implements OnInit, OnDestroy {
 
     const data = value;
 
-    this.x = d3.scaleLinear().range([20, this.width]);
-    this.y = d3.scaleLinear().range([this.height, 0]);
-    this.x.domain(d3.extent(this.modifiedResults, (d: any) => d.x));
-    this.y.domain([0, d3.max(this.modifiedResults, (d: any) => d.y)]);
+    this.x = scaleLinear().range([20, this.width]);
+    this.y = scaleLinear().range([this.height, 0]);
+    this.x.domain(extent(this.modifiedResults, (d: any) => d.x));
+    this.y.domain([0, max(this.modifiedResults, (d: any) => d.y)]);
 
     this.svg?.append('g')
       .attr('class', 'x axis')
       .attr('transform', 'translate(0,' + this.height + ')')
-      .call(d3.axisBottom(this.x).tickFormat(() => '').tickSize(0))
+      .call(axisBottom(this.x).tickFormat(() => '').tickSize(0))
       .attr('stroke-width', '2')
 
     const labelStart = this.svg?.append('g')
@@ -331,13 +336,13 @@ export class GuessTheNumberQuizComponent implements OnInit, OnDestroy {
 
     this.svg?.append('g')
       .attr('class', 'y axis')
-      .call(d3.axisLeft(this.y).ticks(5))
+      .call(axisLeft(this.y).ticks(5))
       .attr('opacity', '0');
 
-    const valueline = d3.line()
+    const valueline = line()
       .x((d: any) => this.x(d.x))
       .y((d: any) => this.y(d.y))
-      .curve(d3.curveMonotoneX);
+      .curve(curveMonotoneX);
 
     this.svg?.append('path')
       .data([this.modifiedResults])

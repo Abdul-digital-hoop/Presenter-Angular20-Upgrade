@@ -1,6 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { scaleLinear } from 'd3-scale';
+import { line, curveMonotoneX } from 'd3-shape';
+import { axisBottom, axisLeft } from 'd3-axis';
+import { extent, max } from 'd3-array';
+import { easeElasticOut, easeLinear } from 'd3-ease';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { settingVariables } from 'src/app/utility/SettingVariables';
@@ -204,13 +209,13 @@ export class GuessTheNumberComponent implements OnInit {
    this.guessTheNumberChartValues(value);
  }
  private createSvg(): void {
-   d3.select(`div#guess-the-number-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
+   select(`div#guess-the-number-chart-${this.slideDetails?.slideId}-${this.viewfrom}`).select("svg").remove();
    this.width = 440 - this.margin.left - this.margin.right;
    this.height = 300 - this.margin.top - this.margin.bottom;
-   this.x = d3.scaleLinear().range([20, this.width]);
-   this.y = d3.scaleLinear().range([this.height, 0]);
-   this.svg = d3.select(`div#guess-the-number-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
-  
+   this.x = scaleLinear().range([20, this.width]);
+   this.y = scaleLinear().range([this.height, 0]);
+   this.svg = select(`div#guess-the-number-chart-${this.slideDetails?.slideId}-${this.viewfrom}`)
+ 
        .append('svg')
        .attr('width', '100%')
        .attr('height', '100%')
@@ -262,39 +267,39 @@ export class GuessTheNumberComponent implements OnInit {
  
 
  private setupScales(): void {
-   this.x = d3.scaleLinear().range([20, this.width]);
-   this.y = d3.scaleLinear().range([this.height, 0]);
-   this.x.domain(d3.extent(this.modifiedResults, (d: any) => d.x));
-   this.y.domain([0, d3.max(this.modifiedResults, (d: any) => d.y)]);
+   this.x = scaleLinear().range([20, this.width]);
+   this.y = scaleLinear().range([this.height, 0]);
+   this.x.domain(extent(this.modifiedResults, (d: any) => d.x));
+   this.y.domain([0, max(this.modifiedResults, (d: any) => d.y)]);
  }
  
  private renderAxesAndLabels(data: any): void {
    const xAxis = this.svg?.selectAll('.x.axis')
      .data([null]); 
- 
+
    xAxis.enter()
      .append('g')
      .attr('class', 'x axis')
      .attr('transform', `translate(0,${this.height})`)
-     .call(d3.axisBottom(this.x).tickFormat(() => '').tickSize(0))
+     .call(axisBottom(this.x).tickFormat(() => '').tickSize(0))
      .attr('stroke-width', '2')
      .attr('opacity', 0) 
      .transition().duration(500)
      .attr('opacity', 1); 
- 
+
    const labelGroup = this.svg?.selectAll('.axis-labels')
    .data([null]);
- 
+
  const newLabelGroup = labelGroup.enter()
    .append('g')
    .attr('class', 'axis-labels')
    .attr('opacity', 1); 
- 
+
  const mergedLabels = labelGroup.merge(newLabelGroup);
 
  const startLabel = mergedLabels.selectAll('.start-label')
    .data([data.Start]);
- 
+
  startLabel.enter()
    .append('text')
    .attr('class', 'start-label')
@@ -306,10 +311,10 @@ export class GuessTheNumberComponent implements OnInit {
    .text(d => Math.round(d)) 
    .transition().duration(500)
    .attr('opacity', 1); 
- 
+
  const endLabel = mergedLabels.selectAll('.end-label')
    .data([data.End]);
- 
+
  endLabel.enter()
    .append('text')
    .attr('class', 'end-label')
@@ -321,34 +326,34 @@ export class GuessTheNumberComponent implements OnInit {
    .text(d => Math.round(d)) 
    .transition().duration(500)
    .attr('opacity', 1);
- 
- 
+
+
    this.svg?.select('.x.axis .domain')
      .transition().duration(500)
      .attr('stroke', this.slideTheme?.ThemeLineColor);
- 
+
    const yAxis = this.svg?.selectAll('.y.axis')
      .data([null]);
- 
+
    yAxis.enter()
      .append('g')
      .attr('class', 'y axis')
      .attr('opacity', '0')
-     .call(d3.axisLeft(this.y).ticks(5))
+     .call(axisLeft(this.y).ticks(5))
      .transition().duration(500)
      .attr('opacity', '0'); 
  }
  
  private renderDataLine(): void {
-   const valueline = d3.line()
+   const valueline = line()
      .x((d: any) => this.x(d.x))
      .y((d: any) => this.y(d.y))
-     .curve(d3.curveMonotoneX);
+     .curve(curveMonotoneX);
 
-   const baseline = d3.line()
+   const baseline = line()
      .x((d: any) => this.x(d.x))
      .y(() => this.y.range()[0]) // Start from bottom
-     .curve(d3.curveMonotoneX);
+     .curve(curveMonotoneX);
 
    const path = this.svg?.selectAll('.area')
      .data([this.modifiedResults]);
@@ -377,14 +382,14 @@ export class GuessTheNumberComponent implements OnInit {
    if (!applyTransition) {
        path.transition()
            .duration(2000)
-           .ease(d3.easeElasticOut.amplitude(1).period(0.6))
+           .ease(easeElasticOut.amplitude(1).period(0.6))
            .attr('d', valueline)
            .each(function () {
            });
    } else {
      path.transition()
      .duration(600)
-     .ease(d3.easeLinear)
+     .ease(easeLinear)
      .attr('d', valueline) // Direct update, no animation
    }
 
@@ -397,23 +402,24 @@ export class GuessTheNumberComponent implements OnInit {
 }
 
  
+
  
- 
+
  private renderDataPoints(value: any): void {
    const validData = this.modifiedResults.filter((d: any) => d.y > 0);
- 
+
    const circleGroup = this.svg?.selectAll('.data-point-group')
      .data(validData, (d: any) => d.x); 
- 
+
    const newCircleGroup = circleGroup.enter()
      .append('g')
      .attr('class', 'data-point-group')
      .attr('opacity', 1 );
- 
+
    newCircleGroup.append('circle')
      .merge(circleGroup.select('circle'))
      .transition().duration(2000)
-     .ease(d3.easeElasticOut.amplitude(1).period(0.5)) // Bounce effect
+     .ease(easeElasticOut.amplitude(1).period(0.5)) // Bounce effect
      .attr('cx', (d: any) => this.x(d.x))
      .attr('cy', (d: any) => this.y(d.y))
      .attr('opacity', this.showCorrectAnswer ? 1 : 0)
@@ -432,24 +438,24 @@ export class GuessTheNumberComponent implements OnInit {
        }
        return  this.chartColor;
      });
- 
+
    newCircleGroup.append('text')
      .merge(circleGroup.select('text'))
      .transition().duration(2000)
-     .ease(d3.easeElasticOut.amplitude(1).period(0.5)) // Bounce effect
+     .ease(easeElasticOut.amplitude(1).period(0.5)) // Bounce effect
      .attr('x', (d: any) => this.x(d.x) - 2)
      .attr('y', (d: any) => this.y(d.y) + 3)
      .attr('opacity', this.showCorrectAnswer ? 1 : 0)
      .attr('font-size', '10')
      .attr('fill', '#ffffff')
      .text((d: any) => d.y);
- 
+
    circleGroup.exit().transition().duration(500).attr('opacity', 0).remove();
- 
+
    return newCircleGroup;
  }
  
- 
+
  private renderCorrectAnswerMarkers(data: any): void {
    const correctAnswers = this.svg?.selectAll('.crt-answer-group')
        .data(this.guessTheNumberDetails, (d: any) => d.id); 

@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewEncapsulation, OnDestroy, ChangeDetectorRef } from '@angular/core';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { scaleOrdinal } from 'd3-scale';
+import { pie, arc } from 'd3-shape';
+import { interpolateObject } from 'd3-interpolate';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 
@@ -149,8 +152,7 @@ export class TruthOrLieComponent implements OnInit, OnDestroy {
     });
   }
   private createSvg(index: any, Count: any): void {
-    this.svg = d3
-      .selectAll(`div#pie-${this.slideDetails?.slideId}-${this.viewfrom}`)
+    this.svg = selectAll(`div#pie-${this.slideDetails?.slideId}-${this.viewfrom}`)
       .select("svg")
       .attr("width", "100%")
       .attr(
@@ -175,25 +177,24 @@ export class TruthOrLieComponent implements OnInit, OnDestroy {
   
 
   private createColors(data): void {
-    this.colors = d3
-      .scaleOrdinal()
+    this.colors = scaleOrdinal()
       .domain(data.map(d => d.value.toString()))
       .range(data.map(d => d.color.toString()))
   }
   private drawChart(): void {
     this.showCorrectAnswer = !this.presentationMode || this.truthorliepresenterEnterClick;
 
-    const pie = d3.pie()
+    const pieChart = pie()
       .sort(null)
       .value((d: any) => d.value);
 
-    const data_ready = pie(this.data.map((d, i) => ({ ...d, index: i })));
+    const data_ready = pieChart(this.data.map((d, i) => ({ ...d, index: i })));
 
-    const arc = d3.arc()
+    const arcGenerator = arc()
       .innerRadius(this.radius * 0.5)
       .outerRadius(this.radius * 1.0);
 
-    const outerArc = d3.arc()
+    const outerArcGenerator = arc()
       .innerRadius(this.radius * 1.0)
       .outerRadius(this.radius * 0.4);
 
@@ -203,7 +204,7 @@ export class TruthOrLieComponent implements OnInit, OnDestroy {
           currentIndex = this.truthorLieData.findIndex(option => option.OptionId === firstDataId);
       }
 
-    this.updatePaths(data_ready, arc,currentIndex);
+    this.updatePaths(data_ready, arcGenerator,currentIndex);
     this.updateText(data_ready,currentIndex);
     this.updateCorrectAnswerIndicator(data_ready,currentIndex);
 
@@ -211,7 +212,7 @@ export class TruthOrLieComponent implements OnInit, OnDestroy {
 
   }
   private updatePaths(data_ready: any, arc: any, index: any): void {
-    const group = d3.select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`);
+    const group = select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`);
     const paths = group.selectAll("path")
         .data(data_ready, (d: any) => `${d.data.currentpath}-${d.data.id}-${this.viewfrom}-${this.randomId}`);
 
@@ -229,7 +230,7 @@ export class TruthOrLieComponent implements OnInit, OnDestroy {
       .attr("fill", (d: { data: { color: string } }) =>(d.data.color))
       .attrTween("d", function(d: { startAngle: number, endAngle: number }) {
         const previous = (this as any).__previous || d;
-        const interpolate = d3.interpolateObject(previous, d);
+        const interpolate = interpolateObject(previous, d);
         (this as any).__previous = interpolate(1); 
 
         return function(t) {
@@ -250,7 +251,7 @@ export class TruthOrLieComponent implements OnInit, OnDestroy {
       .duration(1000)
       .attrTween("d", function(d: { startAngle: number, endAngle: number }) {
         const previous = (this as any).__previous || d;
-        const interpolate = d3.interpolateObject(previous, d);
+        const interpolate = interpolateObject(previous, d);
         (this as any).__previous = interpolate(1); 
 
         return function(t) {
@@ -268,7 +269,7 @@ export class TruthOrLieComponent implements OnInit, OnDestroy {
 
 private updateLabels(data_ready: any, outerArc: any, index: any): void {
 
-  const group = d3.select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`);
+  const group = select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`);
   const labels = group.selectAll("text")
     .data(data_ready, (d: any) => {
       return d?.data ? `${d.data.currentpath}-${d.data.id}-${this.viewfrom}-${this.randomId}` : "invalid";
@@ -314,7 +315,7 @@ private updateLabels(data_ready: any, outerArc: any, index: any): void {
   
 private updateText(data_ready: any, index: any): void {
   const commonFontSize = this.getCommonFontSizeFromTruthorLieData();
-  const group = d3.select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`);
+  const group = select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`);
   const textPlace = group.selectAll("foreignObject")
       .data(data_ready);
       
@@ -371,7 +372,7 @@ private updateCorrectAnswerIndicator(data_ready: any, updatedIndex: number): voi
       }
   }
 
-  const group = d3.select(`.pie-group-${updatedIndex}-${this.viewfrom}-${this.randomId}`);
+  const group = select(`.pie-group-${updatedIndex}-${this.viewfrom}-${this.randomId}`);
 
   let circle = group.selectAll(".answer-indicator").data([text]);
 
@@ -433,18 +434,18 @@ private defaultChart(): void {
     this.showCorrectAnswer = false;
   }
   const commonFontSize = this.getCommonFontSizeFromTruthorLieData();
-  var pie = d3.pie()
+  var pieChart = pie()
     .sort(null) 
     .value((d: any) => {
       return d.value == 0 ? 1 : d.value;
     });
-  var data_ready = pie(this.data);
+  var data_ready = pieChart(this.data);
 
-  var arc = d3.arc()
+  var arcGenerator = arc()
     .innerRadius(this.radius * 0.5) 
     .outerRadius(this.radius * 1.0);
 
-  var outerArc = d3.arc()
+  var outerArcGenerator = arc()
     .innerRadius(this.radius * 1.0)
     .outerRadius(this.radius * 0.4);
   this.svg
@@ -452,7 +453,7 @@ private defaultChart(): void {
     .data(data_ready)
     .enter()
     .append("path")
-    .attr("d", arc)
+    .attr("d", arcGenerator)
     .attr('fill', this._commanservice.getContrastColor(this.slideTheme?.ThemeBackgroundColor))
     .style('opacity', 0.05)
  
@@ -568,7 +569,7 @@ private getCommonFontSizeFromTruthorLieData(): string {
 
   wrap(text, width) {
     text.each(function () {
-      var text = d3.select(this),
+      var text = select(this),
         words = text.text().split(/\s+/).reverse(),
         word,
         line = [],
@@ -682,7 +683,7 @@ private getCommonFontSizeFromTruthorLieData(): string {
       }
     });
     if(missingIndexes.length === 1){
-      d3.selectAll("g").remove();
+      selectAll("g").remove();
     }
     const colors = this.slideTheme.ThemeVisualizationColor.map(item => item.color);
   
@@ -701,7 +702,7 @@ private getCommonFontSizeFromTruthorLieData(): string {
           index: index 
         });
 
-        d3.select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`).remove();
+        select(`.pie-group-${index}-${this.viewfrom}-${this.randomId}`).remove();
         this.createSvg(index, this.truthorLieData.length - 1);
         
         this.createColors(this.data);
