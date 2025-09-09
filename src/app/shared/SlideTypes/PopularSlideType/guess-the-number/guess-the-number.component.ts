@@ -234,6 +234,7 @@ export class GuessTheNumberComponent implements OnInit {
    }
    this.setupScales();   
    this.renderAxesAndLabels(value);
+   this.renderGradient(); // Call gradient rendering before data line
    this.renderDataLine();
    const circleGroup = this.renderDataPoints(value);
    this.renderCorrectAnswerMarkers(value);
@@ -251,12 +252,39 @@ export class GuessTheNumberComponent implements OnInit {
 
  private updateGradientData(): void {
    if (this.showCorrectAnswer) {
-     const staticDataForGradient = this.gradientStaticData;
-     staticDataForGradient.splice(1, 0, ...this.gradientData);
-     this.gradientStaticData = [];
-     this.gradientStaticData = staticDataForGradient;
+     // Create gradient data for correct answer highlighting
+     if (!this.guesstheNumberData?.IsErrorMargin) {
+       this.percentageEnd = ((this.guesstheNumberData?.CorrectAnswer - this.guesstheNumberData?.Start) / (this.guesstheNumberData?.End - this.guesstheNumberData?.Start)) * 100;
+       this.percentageStart = this.percentageEnd - 4;
+       this.gradientData = [
+         { offset: (this.percentageStart) + "%", color: this.chartColor },
+         { offset: (this.percentageStart) + "%", color: this.correctAnsweColor },
+         { offset: (this.percentageEnd + 1) + "%", color: this.correctAnsweColor },
+         { offset: (this.percentageEnd + 1) + "%", color: this.chartColor }
+       ];
+     } else {
+       this.percentageStart = (((this.guesstheNumberData?.CorrectAnswer - this.guesstheNumberData?.ErrorMarginNumber) - this.guesstheNumberData?.Start) / (this.guesstheNumberData.End - this.guesstheNumberData?.Start)) * 100;
+       this.percentageEnd = (((this.guesstheNumberData?.CorrectAnswer + this.guesstheNumberData.ErrorMarginNumber) - this.guesstheNumberData?.Start) / (this.guesstheNumberData?.End - this.guesstheNumberData?.Start)) * 100;
+       this.gradientData = [
+         { offset: (this.percentageStart) + "%", color: this.chartColor },
+         { offset: (this.percentageStart) + "%", color: this.correctAnsweColor },
+         { offset: (this.percentageEnd + 1) + "%", color: this.correctAnsweColor },
+         { offset: (this.percentageEnd + 1) + "%", color: this.chartColor }
+       ];
+     }
+     
+     // Combine static and dynamic gradient data
+     this.gradientStaticData = [
+       { offset: '0%', color: this.chartColor },
+       ...this.gradientData,
+       { offset: '100%', color: this.chartColor }
+     ];
    } else {
-     this.gradientStaticData.splice(1, this.gradientStaticData?.length - 2);
+     // Use only static gradient when not showing correct answer
+     this.gradientStaticData = [
+       { offset: '0%', color: this.chartColor },
+       { offset: '100%', color: this.chartColor }
+     ];
    }
  }
  
@@ -457,114 +485,117 @@ export class GuessTheNumberComponent implements OnInit {
  
 
  private renderCorrectAnswerMarkers(data: any): void {
-   const correctAnswers = this.svg?.selectAll('.crt-answer-group')
-       .data(this.guessTheNumberDetails, (d: any) => d.id); 
+  const correctAnswers = this.svg?.selectAll('.crt-answer-group')
+      .data(this.guessTheNumberDetails, (d: any) => d.id); 
 
-   const crtAnswer = correctAnswers.enter()
-       .append('g')
-       .attr('class', 'crt-answer-group')
-       .attr('opacity', 0);
-   const mergedAnswers = crtAnswer.merge(correctAnswers);
+  const crtAnswer = correctAnswers.enter()
+      .append('g')
+      .attr('class', 'crt-answer-group')
+      .attr('opacity', 0);
 
-   const correctAnswerLength = data.CorrectAnswer.toString().length;
-   const fontSize = correctAnswerLength <= 2 ? '14' : correctAnswerLength <= 4 ? '12' : '10';
-   const rectWidth = correctAnswerLength <= 2 ? '45' : correctAnswerLength <= 4 ? '55' : '65';
-   const textYPosition = correctAnswerLength <= 2 ? '245' : '243';
-   mergedAnswers.selectAll('.crt-answer-rect')
-       .data(d => [d])
-       .join(
-           enter => enter.append('rect')
-               .attr('class', 'crt-answer-rect')
-               .attr('x', d => this.x(d.x) - 20)
-               .attr('y', 230)
-               .attr('height', '20')
-               .attr('width', rectWidth)
-               .attr('rx', 10)
-               .attr('fill', this.slideTheme?.ThemeLineColor)
-               .attr('opacity', 0)
-               .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
-           update => update.transition().duration(500)
-               .attr('x', d => this.x(d.x) - 20)
-               .attr('width', rectWidth)
-               .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
-       );
+  // Fix the merge issue by properly handling the selection
+  const mergedAnswers = correctAnswers.merge(crtAnswer);
 
-   mergedAnswers.selectAll('.crt-checkmark')
-       .data(d => [d])
-       .join(
-           enter => enter.append('text')
-               .attr('class', 'crt-checkmark')
-               .attr('x', d => this.x(d.x) - 12)
-               .attr('y', textYPosition)
-               .attr('fill', '#fff')
-               .attr('font-size', fontSize)
-               .attr('opacity', 0)
-               .text('✔')
-               .style('fill', this.contrastColor)
-               .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
-           update => update.transition().duration(500)
-               .attr('x', d => this.x(d.x) - 12)
-               .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
-       );
+  const correctAnswerLength = data.CorrectAnswer.toString().length;
+  const fontSize = correctAnswerLength <= 2 ? '14' : correctAnswerLength <= 4 ? '12' : '10';
+  const rectWidth = correctAnswerLength <= 2 ? '45' : correctAnswerLength <= 4 ? '55' : '65';
+  const textYPosition = correctAnswerLength <= 2 ? '245' : '243';
+  
+  mergedAnswers.selectAll('.crt-answer-rect')
+      .data(d => [d])
+      .join(
+          enter => enter.append('rect')
+              .attr('class', 'crt-answer-rect')
+              .attr('x', d => this.x(d.x) - 20)
+              .attr('y', 230)
+              .attr('height', '20')
+              .attr('width', rectWidth)
+              .attr('rx', 10)
+              .attr('fill', this.slideTheme?.ThemeLineColor)
+              .attr('opacity', 0)
+              .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
+          update => update.transition().duration(500)
+              .attr('x', d => this.x(d.x) - 20)
+              .attr('width', rectWidth)
+              .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
+      );
 
-   mergedAnswers.selectAll('.crt-answer-text')
-       .data(d => [d])
-       .join(
-           enter => enter.append('text')
-               .attr('class', 'crt-answer-text')
-               .attr('x', d => this.x(d.x) + (correctAnswerLength <= 2 ? 6 : correctAnswerLength <= 4 ? 4 : 2))
-               .attr('y', textYPosition)
-               .attr('font-size', fontSize)
-               .attr('opacity', 0)
-               .text(data.CorrectAnswer)
-               .style('fill', this.contrastColor)
-               .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
-           update => update.transition().duration(500)
-               .attr('x', d => this.x(d.x) + (correctAnswerLength <= 2 ? 6 : correctAnswerLength <= 4 ? 4 : 2)) // Ensure x is updated
-               .text(data.CorrectAnswer)
-               .attr('font-size', fontSize)
-               .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
-       );
+  mergedAnswers.selectAll('.crt-checkmark')
+      .data(d => [d])
+      .join(
+          enter => enter.append('text')
+              .attr('class', 'crt-checkmark')
+              .attr('x', d => this.x(d.x) - 12)
+              .attr('y', textYPosition)
+              .attr('fill', '#fff')
+              .attr('font-size', fontSize)
+              .attr('opacity', 0)
+              .text('✔')
+              .style('fill', this.contrastColor)
+              .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
+          update => update.transition().duration(500)
+              .attr('x', d => this.x(d.x) - 12)
+              .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
+      );
 
-   mergedAnswers.selectAll('.crt-accepted-label')
-       .data(d => [d])
-       .join(
-           enter => enter.append('text')
-               .attr('class', 'crt-accepted-label')
-               .attr('x', d => this.x(d.x))
-               .attr('y', 265)
-               .attr('fill', this.slideTheme?.ThemeTextColor)
-               .attr('text-anchor', 'middle')
-               .attr('opacity', 0)
-               .text(data?.IsErrorMargin ? 'Accepted answers:' : '')
-               .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
-           update => update.transition().duration(500)
-               .attr('x', d => this.x(d.x))
-               .text(data?.IsErrorMargin ? 'Accepted answers:' : '')
-               .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
-       );
+  mergedAnswers.selectAll('.crt-answer-text')
+      .data(d => [d])
+      .join(
+          enter => enter.append('text')
+              .attr('class', 'crt-answer-text')
+              .attr('x', d => this.x(d.x) + (correctAnswerLength <= 2 ? 6 : correctAnswerLength <= 4 ? 4 : 2))
+              .attr('y', textYPosition)
+              .attr('font-size', fontSize)
+              .attr('opacity', 0)
+              .text(data.CorrectAnswer)
+              .style('fill', this.contrastColor)
+              .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
+          update => update.transition().duration(500)
+              .attr('x', d => this.x(d.x) + (correctAnswerLength <= 2 ? 6 : correctAnswerLength <= 4 ? 4 : 2))
+              .text(data.CorrectAnswer)
+              .attr('font-size', fontSize)
+              .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
+      );
 
-   mergedAnswers.selectAll('.crt-accepted-range')
-       .data(d => [d])
-       .join(
-           enter => enter.append('text')
-               .attr('class', 'crt-accepted-range')
-               .attr('x', d => this.x(d.x))
-               .attr('y', 280)
-               .attr('fill', this.slideTheme?.ThemeTextColor)
-               .attr('text-anchor', 'middle')
-               .attr('font-size', '14')
-               .attr('opacity', 0)
-               .text(data?.IsErrorMargin ? this.getErrorMarginValues(data) : '')
-               .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
-           update => update.transition().duration(500)
-               .attr('x', d => this.x(d.x)) 
-               .text(data?.IsErrorMargin ? this.getErrorMarginValues(data) : '')
-               .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
-       );
+  mergedAnswers.selectAll('.crt-accepted-label')
+      .data(d => [d])
+      .join(
+          enter => enter.append('text')
+              .attr('class', 'crt-accepted-label')
+              .attr('x', d => this.x(d.x))
+              .attr('y', 265)
+              .attr('fill', this.slideTheme?.ThemeTextColor)
+              .attr('text-anchor', 'middle')
+              .attr('opacity', 0)
+              .text(data?.IsErrorMargin ? 'Accepted answers:' : '')
+              .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
+          update => update.transition().duration(500)
+              .attr('x', d => this.x(d.x))
+              .text(data?.IsErrorMargin ? 'Accepted answers:' : '')
+              .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
+      );
 
-   mergedAnswers.transition().duration(1000)
-       .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0);
+  mergedAnswers.selectAll('.crt-accepted-range')
+      .data(d => [d])
+      .join(
+          enter => enter.append('text')
+              .attr('class', 'crt-accepted-range')
+              .attr('x', d => this.x(d.x))
+              .attr('y', 280)
+              .attr('fill', this.slideTheme?.ThemeTextColor)
+              .attr('text-anchor', 'middle')
+              .attr('font-size', '14')
+              .attr('opacity', 0)
+              .text(data?.IsErrorMargin ? this.getErrorMarginValues(data) : '')
+              .call(enter => enter.transition().duration(1000).attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)),
+          update => update.transition().duration(500)
+              .attr('x', d => this.x(d.x)) 
+              .text(data?.IsErrorMargin ? this.getErrorMarginValues(data) : '')
+              .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0)
+      );
+
+  mergedAnswers.transition().duration(1000)
+      .attr('opacity', this.shouldShowCorrectAnswer() ? 1 : 0);
 }
 
 
@@ -608,33 +639,29 @@ export class GuessTheNumberComponent implements OnInit {
 
 
  private renderGradient(): void {
-   const gradient = this.svg?.select('defs #graph-gradient');
- 
-   if (!gradient.empty()) {
-       gradient.selectAll('stop')
-           .data(this.gradientStaticData)
-           .join(
-               enter => enter.append('stop')
-                   .attr('offset', (d: any) => d.offset)
-                   .attr('stop-color', (d: any) => d.color),
-               update => update
-                   .transition().duration(500)
-                   .attr('offset', (d: any) => d.offset)
-                   .attr('stop-color', (d: any) => d.color),
-               exit => exit.remove()
-           );
-   } else {
-       const newGradient = this.svg?.append('defs')
-           .append('linearGradient')
-           .attr('id', 'graph-gradient');
+   // Remove existing gradient first
+   this.svg?.select('defs').remove();
+   
+   // Create new defs and gradient
+   const defs = this.svg?.append('defs');
+   const gradient = defs?.append('linearGradient')
+     .attr('id', 'graph-gradient')
+     .attr('x1', '0%')
+     .attr('y1', '0%')
+     .attr('x2', '100%')
+     .attr('y2', '0%');
 
-       newGradient?.selectAll('stop')
-           .data(this.gradientStaticData)
-           .enter()
-           .append('stop')
-           .attr('offset', (d: any) => d.offset)
-           .attr('stop-color', (d: any) => d.color);
-   }
+   // Add gradient stops
+   gradient?.selectAll('stop')
+     .data(this.gradientStaticData)
+     .enter()
+     .append('stop')
+     .attr('offset', (d: any) => d.offset)
+     .attr('stop-color', (d: any) => d.color);
+
+   // Apply gradient to the path
+   this.svg?.selectAll('.area')
+     .attr('fill', 'url(#graph-gradient)');
 }
 
  

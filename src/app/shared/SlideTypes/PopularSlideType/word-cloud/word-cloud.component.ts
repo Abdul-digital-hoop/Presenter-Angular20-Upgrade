@@ -1,5 +1,7 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, HostListener, Renderer2, ElementRef, Input } from '@angular/core';
-import * as d3 from 'd3';
+import { select, selectAll } from 'd3-selection';
+import { scaleOrdinal } from 'd3-scale';
+import { easeCubic } from 'd3-ease';
 import * as cloud from 'd3-cloud';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
@@ -45,7 +47,7 @@ export class WordCloudComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() slideTheme: any;
   hideResponse: boolean = true;
   WordCloudData: any[] = [];
-  WordCloudchart: d3.Selection<SVGSVGElement, unknown, HTMLElement, any>;
+  WordCloudchart: any;
   scaleValue: number = 1;
   width: number;
   height: number;
@@ -128,7 +130,7 @@ export class WordCloudComponent implements OnInit, OnDestroy, AfterViewInit {
     return themeProperties;
   }
   private resizeSvg() {
-    d3.select(`#WordCloud-${this.slideDetails?.slideId}-${this.viewfrom} svg`)
+    select(`#WordCloud-${this.slideDetails?.slideId}-${this.viewfrom} svg`)
       .attr('width', '100%')
       .attr('height', '100%')
       .attr('viewBox', `0 0 ${LAYOUT.width},${LAYOUT.height}`);
@@ -143,9 +145,9 @@ export class WordCloudComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private createWordCloud(selector: string) {
     const customColors = ['#1F77B4', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD', '#8C564B', '#E377C2', '#7F7F7F', '#BCBD22', '#17BECF'];
-    const fill = d3.scaleOrdinal(customColors);
+    const fill = scaleOrdinal(customColors);
 
-    const svg = d3.select(selector).append('svg')
+    const svg = select(selector).append('svg')
         .attr('width', '100%')
         .attr('height', '100%');
         var translateY = LAYOUT.height / 2;
@@ -276,7 +278,7 @@ applyScale() {
 
     this.scaleGroup.transition()
       .duration(1000)
-      .ease(d3.easeCubic)
+      .ease(easeCubic)
       .attr('transform', `scale(${scale})`);
 
     const boundsCenter = this.scaleGroup.node()?.getBBox() as DOMRect;
@@ -285,7 +287,7 @@ applyScale() {
 if(this._workspaceservice.presentationMode){
     this.mainGroup.transition()
       .duration(1000)
-      .ease(d3.easeCubic)
+      .ease(easeCubic)
       .attr('transform', `translate(${translateX}, ${translateY})`);
 }
   });
@@ -413,10 +415,9 @@ if(this._workspaceservice.presentationMode){
   };
   
   
-  
 
   private calculateWordBounds(words: any[]): void {
-    const tempSvg = d3.select('body').append('svg').style('visibility', 'hidden');
+    const tempSvg = select('body').append('svg').style('visibility', 'hidden');
    
     const tempText = tempSvg.append('text')
       .attr('font-family', 'Lexend Deca')
@@ -585,14 +586,14 @@ defaultChart(){
 draw(words: { text: string; size: number; x: number; y: number; rotate: number }[], width: number, height: number) {
   const customColors = ['#1F77B4', '#FF7F0E', '#2CA02C', '#D62728', '#9467BD', '#8C564B', '#E377C2', '#7F7F7F', '#BCBD22', '#17BECF'];
   const opacityValue = this._workspaceservice.presentationTheme?.ThemeName === 'Slid Light' ? 0.2 : 0.4;
-  d3.select('#WordCloud-'+this.slideDetails?.slideId+'-'+this.viewfrom).select('svg').remove();
+  select('#WordCloud-'+this.slideDetails?.slideId+'-'+this.viewfrom).select('svg').remove();
   const questions = this._workspaceservice.questions;
   const questionsLength = questions?.length ?? 0;
   const isUndefinedOrZero = !questions || questionsLength === 0;
   const isNinetyOrAbove = questionsLength >= 90;
   const translateY =240;
   const scale = (isUndefinedOrZero || isNinetyOrAbove) ? 1 : 1.2;
-  const svg = d3.select('#WordCloud-'+this.slideDetails?.slideId+'-'+this.viewfrom)
+  const svg = select('#WordCloud-'+this.slideDetails?.slideId+'-'+this.viewfrom)
   .append('svg')
   .attr('width', width)
   .attr('height', height)
@@ -627,7 +628,7 @@ private dynamicChartResponseLoad() {
     this.slideTheme = data;
     if( this.WordCloudData.length === 0 && !this.presentationMode){
       const opacityValue = this._workspaceservice.presentationTheme?.ThemeName === 'Slid Light' ? 0.2 : 0.4;
-      d3.select(`#WordCloud-${this.slideDetails?.slideId}-${this.viewfrom} svg`)
+      select(`#WordCloud-${this.slideDetails?.slideId}-${this.viewfrom} svg`)
       .selectAll('text')
       .transition()
       .duration(500)
