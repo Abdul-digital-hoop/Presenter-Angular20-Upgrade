@@ -132,7 +132,7 @@
                 </div>
             </div>
             <div class="d-flex justify-content-end ">
-                <button class="btn btn-primary getit fs-very-low" (click)="closePopup()">Get It</button>
+                <button class="btn btn-primary getit fs-very-low" (click)="activity('ppt')">Get It</button>
             </div>
         </div>
     </div>
@@ -186,7 +186,7 @@
                 
             </div>
             <div class="d-flex justify-content-end mt-3">
-                <a href="https://zoom.us/oauth/authorize?client_id=b7FV_pBQ7m6xSfFes5b4g&response_type=code&redirect_uri=https://devpresapi.slidone.com%2Fapi%2Fv1%2Fzoomoauth" target="_blank" class="btn btn-primary">Open in Zoom</a>
+                <a href="https://zoom.us/oauth/authorize?client_id=b7FV_pBQ7m6xSfFes5b4g&response_type=code&redirect_uri=https://devpresapi.slidone.com%2Fapi%2Fv1%2Fzoomoauth" target="_blank" class="btn btn-primary" (click)="activity('zoom')">Open in Zoom</a>
             </div>
         </div>
     </div>

@@ -76,7 +76,7 @@ export class ImageCropComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.altTextForImage = this.slideDetails?.sourceImage?.placeHolder;
     this.imageChangedEvent = this.imageEvent;
-    if(this.svg_imagesource!=''){
+    if(this.svg_imagesource && this.svg_imagesource !== ''){
       const fileExtension: string = this.svg_imagesource.split('.').pop().toLowerCase();
       if (fileExtension == 'svg' ) {
         this.imageformat=fileExtension;

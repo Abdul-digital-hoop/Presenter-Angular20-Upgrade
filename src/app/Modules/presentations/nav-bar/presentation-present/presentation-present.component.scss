@@ -133,3 +133,239 @@
   height: 15px;
   width: 15px;
 }
+
+.dropdown {
+  position: relative;
+  
+  // Split button group styling
+  &.d-flex {
+    .present-main-btn {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      border-right: none;
+      margin-right: 0 !important;
+      
+      &:focus {
+        z-index: 3;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+    }
+    
+    .dropdown-toggle-split {
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+      
+      &::after {
+        margin-left: 0;
+      }
+      
+      &:focus {
+        z-index: 3;
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+    }
+  }
+  
+  .dropdown-toggle {
+    &::after {
+      margin-left: 0.5rem;
+    }
+    
+    // Ensure the button maintains its original styling
+    &.btn-primary {
+      background-color: 4848ff;
+      border-color: 4848ff;
+      
+      &:hover {
+        background-color: var(--bs-primary-hover, #4848ff);
+        border-color: var(--bs-primary-hover, #4848ff);
+      }
+      
+      &:focus {
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+      }
+    }
+    
+    // Show class for active state
+    &.show {
+      background-color: var(--bs-primary-hover, #4848ff) !important;
+      border-color: var(--bs-primary-hover, #4848ff) !important;
+    }
+  }
+  
+  .dropdown-menu {
+    min-width: 200px;
+    padding: 0.5rem 0;
+    margin: 0;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.375rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    z-index: 1050;
+    display: none; // Hide by default
+    
+    // Show when show class is applied
+    &.show {
+      display: block !important;
+    }
+    
+    .dropdown-item {
+      padding: 0.75rem 1rem;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: background-color 0.5s ease-in-out;
+      cursor: pointer;
+      
+      &:hover {
+        border-radius: 10px;
+        border: 1px solid #f8f9fa;
+        color: white;
+        background-color: #4848ff;
+      }
+      
+      &:active {
+        border: 1px solid #f8f9fa;
+        border-radius: 10px;
+        color: white;
+        background-color: #4848ff;
+      }
+      
+      &:focus {
+        border: 1px solid #f8f9fa;
+        border-radius: 10px;
+        color: white;
+        outline: none;
+        background-color: #4848ff;
+      }
+      
+      img {
+        opacity: 0.8;
+        flex-shrink: 0;
+      }
+      
+      span {
+        font-weight: 500;
+        margin-left: 0.5rem;
+      }
+    }
+  }
+}
+
+// Modal styles
+#remoteUrlModal {
+  .modal-content {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+  
+  .modal-header {
+    border-bottom: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem 0.5rem 0 0;
+    
+    .modal-title {
+      color: #495057;
+      font-weight: 600;
+    }
+  }
+  
+  .modal-body {
+    padding: 1.5rem;
+    
+    .input-group {
+      .form-control {
+        border-right: 0;
+        font-family: 'Courier New', monospace;
+        font-size: 0.875rem;
+      }
+      
+      .btn-outline-secondary {
+        border-left: 0;
+        border-color: #ced4da;
+        
+        &:hover {
+          background-color: #6c757d;
+          border-color: #6c757d;
+          color: white;
+        }
+      }
+    }
+    
+    .alert-info {
+      background-color: #e7f3ff;
+      border-color: #b3d9ff;
+      color: #0c5460;
+      
+      h6 {
+        color: #0c5460;
+        font-weight: 600;
+      }
+      
+      ol {
+        padding-left: 1.25rem;
+        
+        li {
+          margin-bottom: 0.25rem;
+          
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+    }
+  }
+  
+  .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1rem 1.5rem;
+    
+    .btn {
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      
+      &.btn-success {
+        background-color: #198754;
+        border-color: #198754;
+        
+        &:hover {
+          background-color: #157347;
+          border-color: #146c43;
+        }
+      }
+    }
+  }
+  
+  // Manual modal display styles
+  &.show {
+    display: block !important;
+    background-color: rgba(0, 0, 0, 0.5);
+    
+    .modal-dialog {
+      transform: none !important;
+    }
+  }
+}
+
+// Modal backdrop
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+// Body modal open state
+body.modal-open {
+  overflow: hidden;
+}
+.presentet-dropdown-menu{
+  background-color: #4848ff !important;
+  top:0px;
+}

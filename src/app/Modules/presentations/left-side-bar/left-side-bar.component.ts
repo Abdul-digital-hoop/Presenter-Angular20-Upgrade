@@ -390,16 +390,44 @@ export class LeftSideBarComponent implements OnInit {
         } else if (index === slideListArray.length - 1) {
           newActiveSlideId = slideListArray[index - 1]?.slideId ?? null;
         } else if (index === 0) {
-          if(this.masterSlideTypeName.QUIZ === this.workSpaceService.slideContentType && this.workSpaceService.activeSlideTypeName != this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE){
-            newActiveSlideId = slideListArray[index + 2]?.slideId ?? null;
-          }else{
-            newActiveSlideId = slideListArray[index + 1]?.slideId ?? null;
+          let nextIndex = index + 1;
+          while (nextIndex < slideListArray.length &&
+            slideListArray[nextIndex].slideTypeName === this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE) {
+            nextIndex++;
           }
+          newActiveSlideId = slideListArray[nextIndex]?.slideId ?? slideListArray[index + 1]?.slideId ?? null;
         } else {
-          newActiveSlideId = slideListArray[index - 1]?.slideId ?? null;
+          let prevIndex = index - 1;
+          while (prevIndex >= 0 &&
+            slideListArray[prevIndex].slideTypeName === this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE) {
+            prevIndex--;
+          }
+          newActiveSlideId = slideListArray[prevIndex]?.slideId ?? slideListArray[index - 1]?.slideId ?? null;
         }
       } else {
         newActiveSlideId = this.activeSlideId;
+      }
+      if (slideListArray[index].contentType == this.workSpaceService.masterSlideTypeName.QUIZ) {
+        if (slideListArray[index].slideTypeName != this.workSpaceService.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE) {
+          const leaderboardSlide = slideListArray.find(slide =>
+            slide.parentId == deletedSlideId &&
+            slide.slideTypeName === this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE
+          );
+
+          if (leaderboardSlide && leaderboardSlide.slideId === newActiveSlideId) {
+            const availableSlides = slideListArray.filter(slide =>
+              slide.slideId !== deletedSlideId &&
+              slide.slideId !== leaderboardSlide.slideId &&
+              slide.slideTypeName !== this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE
+            );
+
+            if (availableSlides.length > 0) {
+              newActiveSlideId = availableSlides[0].slideId;
+            } else {
+              newActiveSlideId = leaderboardSlide.slideId;
+            }
+          }
+        }
       }
       const nextActiveSlide = this.workSpaceService.slideListArray.find(x=>x.slideId == newActiveSlideId);
        if(slideListArray[index].contentType == this.workSpaceService.masterSlideTypeName.QUIZ){
@@ -1361,12 +1389,15 @@ resetToggleDiv(event: MouseEvent): void {
     }
     
     const slideArray = this.workSpaceService.slideListArray;
-    if (!slideArray || slideArray.length !== 2) {
+    if (!slideArray || slideArray.length < 2) {
       return false;
     }
     
-    // Check if one of the slides is a Leader Board slide
-    return slideArray.some(slide => slide.slideTypeName === this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE);
+    const quizSlides = slideArray.filter(slide => 
+      slide.slideTypeName !== this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE
+    );
+    
+    return quizSlides.length <= 1 && slideArray.length <= 2;
   }
 
   onDragMove(event: CdkDragMove) {

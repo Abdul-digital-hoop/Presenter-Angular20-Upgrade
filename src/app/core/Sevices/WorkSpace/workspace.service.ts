@@ -288,6 +288,7 @@ export class WorkspaceService {
   isTemplate:boolean = false;
   private centerPanelLoadingSubject = new BehaviorSubject<boolean>(false);
   centerPanelLoadingSubject$ = this.centerPanelLoadingSubject.asObservable();
+  public remoteUrlQRCode: any;
 
   setCenterPanelLoading(isLoading: boolean) {
     this.centerPanelLoadingSubject.next(isLoading);
@@ -310,6 +311,35 @@ export class WorkspaceService {
         isRemote:isRemote
       }
       this._http.post(environment.MyApi + 'activeworkspaceslides', obj).subscribe(
+        (response: any) => {
+          let presentationData = response['data'];
+          this.currentPresentation = presentationData?.activePresentationData;
+          this.currentMasterSlideTypeId = presentationData?.masterSlideTypeId;
+          localStorage.setItem('masterSlideTypeId', presentationData?.masterSlideTypeId);
+          this.assignNewValueOnStore(this.currentPresentation);
+          this._customerPlanService.setCustomerPlan(presentationData?.customerPlan);
+          this._customerPlanService.setCustomerLimitationsCounts(presentationData?.customerLimitationsItemsTables);
+          resolve(response);
+        },
+        (error: any) => {
+          console.log(error?.error);
+          resolve(error);
+          this.isTemplate = false;
+        }
+      );
+    })
+  }
+  storeActiveSlideDetailsRemote(isRemote:boolean=false): Promise<any> {
+    return new Promise((resolve, reject) => {
+      let obj = {
+        presentationId: this.presentationId,
+        activeSlideId: this.activeSlideId == null ? "" : this.activeSlideId,
+        slideTypeId: localStorage.getItem('slideTypeId') == null ? "" : localStorage.getItem('slideTypeId'),
+        isTemplate : this.isTemplate,
+        isRemote:isRemote,
+        remoteUserId: localStorage.getItem(`remote_user_id_${this.presentationId}`)
+      }
+      this._http.post(environment.MyApi + 'remote-access/active-work-space-slides', obj).subscribe(
         (response: any) => {
           let presentationData = response['data'];
           this.currentPresentation = presentationData?.activePresentationData;
@@ -620,18 +650,8 @@ export class WorkspaceService {
       'black',
       'yellow'
     ]
-    
-    slideDetails?.forEach((options, i) => {
-      if (options) {
-        chartData.push({ 
-          id: options.OptionId || null, 
-          name: options.OptionTitle || '', 
-          value: options.value || 0, 
-          color: options.visualizationColor || '', 
-          isCorrect: options?.isCorrect || false,
-          position: options.Position || 0
-        });
-      }
+    slideDetails.forEach((options, i) => {
+      chartData.push({ id: options.OptionId, name: options.OptionTitle, value: options.value, color: options.visualizationColor, isCorrect: options?.isCorrect ,position:options.Position});
     });
     return chartData;
 
@@ -738,6 +758,9 @@ export class WorkspaceService {
    this.quizResultLeaderboard = this.slidesQuizPlayerList?.find(x=>x.slideId == this.activeSlideDetails?.parentId);
    this.quizPlayersCount = this.currentquizDetails?.quizPlayersCount;
    this.leaderBoardState = presentationData?.leaderBoard?.leaderBoardState;
+   if (this.activeSlideTypeName !== this.masterSlideTypeName.LEADER_BOARD_SLIDE_TYPE) {
+    this.leaderBoardState = QuizPresenterScreenManageConstant.QUIZ_SCORE;
+  }
    this.responseCountForQuiz = 0;
    // * Presentation Themes Info
    this.setPresentationThemes(presentationData?.presentationThemes);
@@ -1811,23 +1834,22 @@ export class WorkspaceService {
     if(isProfanity > 0){
       this.presentationQuestions.filter((item:any)=>{
         var isProfanityContains = false;
-        if(item.isProfanity){
           for(var i = 0; i < this.selectedProfantyLanguage.length; i++) {
             var language = this.selectedProfantyLanguage[i].language;
             var profanityWords = this.profanityLanguageWords[language];
             for(var j = 0; j < profanityWords.length; j++) {
-              if(item.question.toLowerCase().includes(profanityWords[j])) {
+              if(item.question.toLowerCase().includes(profanityWords[j].toLowerCase())) {
                 isProfanityContains = true;
                 break;
               }
             }
             if(isProfanityContains) {
               break;
-            }
           }
         }
         if(!isProfanityContains){
           presentationsQuestions.push(item);
+        } else {
         }
       });
     }else{

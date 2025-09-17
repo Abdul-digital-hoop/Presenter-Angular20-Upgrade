@@ -217,7 +217,7 @@ export class CenterPanelComponent implements OnInit {
         const CenterScreenElement = this.CenterPanel.nativeElement;
         const width = CenterScreenElement.offsetWidth;
         const height = CenterScreenElement.offsetHeight;
-        if(width > 992){
+        if(width > 767){
           this.panelWidth =  height * 1.555 + 'px';
           this.panelHeight =  (height * 1.777) / 1.777 + 'px';
         }else{

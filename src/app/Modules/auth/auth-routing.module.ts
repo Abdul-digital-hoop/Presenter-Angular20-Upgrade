@@ -7,6 +7,7 @@ import { SinginComponent } from './Pages/singin/singin.component';
 import { ChangePasswordComponent } from './Pages/change-password/change-password.component';
 import { ResendEmailVerificationComponent } from './Pages/resend-email-verification/resend-email-verification.component';
 import { CommonPreviewComponent } from './Pages/common-preview/common-preview.component';
+import { RemoteAccessComponent } from './Pages/remote-access/remote-access.component';
 
 const routes: Routes = [
   {
@@ -44,6 +45,10 @@ const routes: Routes = [
       {
         path: 'template-preview',
         component: CommonPreviewComponent
+      },
+      {
+        path: 'remote-access',
+        component: RemoteAccessComponent
       },
     ]
   }

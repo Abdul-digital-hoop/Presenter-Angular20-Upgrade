@@ -16,6 +16,14 @@ interface UnsplashImage {
   };
   isHovered?: boolean;
 }
+
+interface MyImage {
+  id: string;
+  name: string;
+  url: string;
+  uploadedAt: Date;
+  isHovered?: boolean;
+}
 @Component({
     selector: 'app-image-upload',
     templateUrl: './image-upload.component.html',
@@ -55,8 +63,13 @@ export class ImageUploadComponent implements OnInit{
   skeletons: number[] = Array(50).fill(0);
   isUnsplashLoading: boolean = true;
   showErrorMessage: boolean = false;
-errorMessage: string = '';
+  errorMessage: string = '';
   readonly unsplashReferral = 'utm_source=Slidone&utm_medium=referral';
+  myImages: MyImage[] = [];
+  myImagesErrorMessage: string = '';
+  isMyImagesLoading: boolean = false;
+  isMasonryLayoutApplied: boolean = false;
+  private resizeListener: (() => void) | null = null;
   constructor(private _commanservice: CommanService, private defaultmediaService:defaultmediaService) {
     this.staticImages = _commanservice.GetStaticImageLibraty();
   }
@@ -68,6 +81,17 @@ errorMessage: string = '';
     }
   
     ngOnInit(): void {
+      if (this.uploadTabNumber === 4) {
+        this.loadMyImages();
+      }
+      this.resizeListener = () => {
+        if (this.uploadTabNumber === 4 && this.myImages.length > 0) {
+          setTimeout(() => {
+            this.applyMasonryLayout();
+          }, 100);
+        }
+      };
+      window.addEventListener('resize', this.resizeListener);
     }
   
     ngDoCheck() {
@@ -82,17 +106,25 @@ errorMessage: string = '';
       // console.log("AppComponent:AfterContentChecked");
     }
   
-    ngAfterViewInit() {
-      // console.log("AppComponent:AfterViewInit");
-    }
+  ngAfterViewInit() {
+    window.addEventListener('resize', () => {
+      if (this.uploadTabNumber === 4 && this.myImages.length > 0) {
+        setTimeout(() => {
+          this.applyMasonryLayout();
+        }, 100);
+      }
+    });
+  }
   
     ngAfterViewChecked() {
       // console.log("AppComponent:AfterViewChecked");
     }
   
-    ngOnDestroy() {
-      //  console.log("AppComponent:OnDestroy");
+  ngOnDestroy() {
+    if (this.resizeListener) {
+      window.removeEventListener('resize', this.resizeListener);
     }
+  }
     //
     filesDropped(files: FileHandle[]): void {
       if (this.myInputFile && this.myInputFile.nativeElement) {
@@ -127,6 +159,10 @@ errorMessage: string = '';
     this.uploadTabNumber = Tab;
     if (this.uploadTabNumber === 2) {
       this.loadDefaultImages();
+    }
+    else if(this.uploadTabNumber === 4) {
+      this.loadMyImages();
+      this.applyMasonryLayout();
     }
     else if(this.uploadTabNumber === 3) {
       this.loadDefaultGif();
@@ -292,4 +328,221 @@ loadDefaultGif(){
 onGifLoad(gif: any) {
   gif.loaded = true;  // Set loaded to true when the GIF is ready
 }
+
+loadMyImages(): void {
+  this.isMyImagesLoading = true;
+  this.isMasonryLayoutApplied = false;
+  this.myImagesErrorMessage = '';
+  
+  this.defaultmediaService.getUserRecentImages().subscribe(
+    (response: any) => {
+      this.isMyImagesLoading = false;
+      if (Array.isArray(response)) {
+        this.myImages = response.map((img: any) => ({
+          id: img.id.toString(),
+          name: this.getImageNameFromUrl(img.imageUrl),
+          url: img.imageUrl,
+          uploadedAt: new Date(img.dateAndTime),
+          isHovered: false
+        }));
+        
+        if (this.myImages.length === 0) {
+          this.myImagesErrorMessage = 'No images uploaded yet. Upload some images to see them here.';
+        } else {
+          setTimeout(() => {
+            this.applyMasonryLayout();
+          }, 100);
+        }
+      } else {
+        this.myImages = [];
+        this.myImagesErrorMessage = 'No images uploaded yet. Upload some images to see them here.';
+      }
+    },
+    (error) => {
+      this.isMyImagesLoading = false;
+      this.myImagesErrorMessage = 'Error loading images. Please try again.';
+    }
+  );
+}
+
+applyMasonryLayout() {
+  const container = document.querySelector('.my-images-grid') as HTMLElement;
+  if (!container) {
+    return;
+  }
+
+  const images = container.querySelectorAll('.image-container');
+  if (images.length === 0) return;
+
+  const containerWidth = container.offsetWidth;
+  const minColumnWidth = 150; 
+  const maxColumnWidth = 200; 
+  const gap = 8; 
+  
+  let columnWidth = minColumnWidth;
+  if (containerWidth > 600) {
+    columnWidth = Math.min(maxColumnWidth, Math.floor((containerWidth - gap * 3) / 4));
+  } else if (containerWidth > 400) {
+    columnWidth = Math.min(maxColumnWidth, Math.floor((containerWidth - gap * 2) / 3));
+  } else {
+    columnWidth = Math.min(maxColumnWidth, Math.floor((containerWidth - gap) / 2));
+  }
+  
+  const numColumns = Math.floor((containerWidth + gap) / (columnWidth + gap));
+  
+  if (numColumns === 0) return;
+
+  const columnHeights = new Array(numColumns).fill(0);
+  const positions: { left: number; top: number; width: number; height: number }[] = [];
+
+  images.forEach((img, index) => {
+    const imageElement = img as HTMLElement;
+    const image = imageElement.querySelector('img') as HTMLImageElement;
+    
+    if (image) {
+      if (image.naturalWidth === 0 || image.naturalHeight === 0) {
+        const defaultAspectRatio = 1; 
+        const width = columnWidth;
+        const height = width / defaultAspectRatio;
+        
+        const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+        const left = shortestColumnIndex * (columnWidth + gap);
+        const top = columnHeights[shortestColumnIndex];
+        
+        columnHeights[shortestColumnIndex] += height + gap;
+        
+        imageElement.style.position = 'absolute';
+        imageElement.style.left = `${left}px`;
+        imageElement.style.top = `${top}px`;
+        imageElement.style.width = `${width}px`;
+        imageElement.style.height = `${height}px`;
+        
+        image.onload = () => {
+          this.applyMasonryLayout();
+        };
+        return;
+      }
+      
+      const aspectRatio = image.naturalWidth / image.naturalHeight;
+      const width = columnWidth;
+      const height = width / aspectRatio;
+      
+      const shortestColumnIndex = columnHeights.indexOf(Math.min(...columnHeights));
+      
+      const left = shortestColumnIndex * (columnWidth + gap);
+      const top = columnHeights[shortestColumnIndex];
+      
+      columnHeights[shortestColumnIndex] += height + gap;
+      
+      positions[index] = { left, top, width, height };
+      
+      imageElement.style.position = 'absolute';
+      imageElement.style.left = `${left}px`;
+      imageElement.style.top = `${top}px`;
+      imageElement.style.width = `${width}px`;
+      imageElement.style.height = `${height}px`;
+    }
+  });
+
+  const maxHeight = Math.max(...columnHeights);
+  container.style.height = `${maxHeight}px`;
+  this.isMasonryLayoutApplied = true;
+}
+
+
+selectMyImage(image: MyImage): void {
+  if (image.url.startsWith('data:')) {
+    try {
+      const [header, base64Data] = image.url.split(',');
+      const mimeType = header.match(/data:([^;]+)/)?.[1] || 'image/png';
+      
+      let fileExtension = 'jpg'; 
+      if (mimeType.includes('png')) {
+        fileExtension = 'png';
+      } else if (mimeType.includes('gif')) {
+        fileExtension = 'gif';
+      } else if (mimeType.includes('svg')) {
+        fileExtension = 'svg';
+      } else if (mimeType.includes('jpeg')) {
+        fileExtension = 'jpg';
+      }
+      
+      const baseFileName = (image.name || 'my-image').split('.')[0];
+      const finalFileName = `${baseFileName}.${fileExtension}`;
+      
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      const file = new File([bytes], finalFileName, { type: mimeType });
+      const event = {
+        target: {
+          files: [file]
+        },
+        isFromMyImages: true
+      };
+      
+      this.uploadEvent.emit(event);
+    } catch (error) {
+      console.error('Error converting base64 to file:', error);
+      const imageType = this.getImageTypeFromUrl(image.url);
+      const event = {
+        url: image.url,
+        type: imageType,
+        isFromMyImages: true
+      };
+      this.uploadEvent.emit(event);
+    }
+  } else {
+    const imageType = this.getImageTypeFromUrl(image.url);
+    const event = {
+      url: image.url,
+      type: imageType,
+      isFromMyImages: true
+    };
+    this.uploadEvent.emit(event);
+  }
+}
+
+
+private getImageTypeFromUrl(url: string): string {
+  if (url.startsWith('data:')) {
+    const mimeType = url.split(',')[0].split(':')[1].split(';')[0];
+    return mimeType;
+  }
+  
+  const extension = url.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+    case 'svg':
+      return 'image/svg+xml';
+    default:
+      if (url.includes('gif') || url.includes('GIF')) {
+        return 'image/gif';
+      }
+      return 'image/jpeg';
+  }
+}
+
+private getImageNameFromUrl(url: string): string {
+  try {
+    const urlParts = url.split('/');
+    const fileName = urlParts[urlParts.length - 1];
+    return fileName || 'Image';
+  } catch {
+    return 'Image';
+  }
+}
+navigateToUploadTab(): void {
+    this.uploadTabNumber = 1;
+  }
 }

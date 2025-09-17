@@ -61,6 +61,9 @@ import { MultimediaComponent } from './SlideTypes/PopularSlideType/multimedia/mu
 import { EmptySlideComponent } from './SlideTypes/empty-slide/empty-slide.component';
 import { MultipleChoiceComponent } from './SlideTypes/PopularSlideType/multiple-choice/multiple-choice.component';
 import { RemoteComponent } from './remote/remote.component';
+import { RemoteAccessRequestComponent } from './remote-access-request/remote-access-request.component';
+import { RemoteAccessManagementComponent } from './remote-access-management/remote-access-management.component';
+import { RemoteUrlPopupComponent } from './remote-url-popup/remote-url-popup.component';
 import { CenterPanelSkeletonComponent } from './center-panel-skeleton/center-panel-skeleton.component';
 
 
@@ -82,6 +85,9 @@ import { CenterPanelSkeletonComponent } from './center-panel-skeleton/center-pan
         PresentationThemesComponent,
         PresenterToolbarComponent,
         RemoteComponent,
+        RemoteAccessRequestComponent,
+        RemoteAccessManagementComponent,
+        RemoteUrlPopupComponent,
         PresentationPreviewComponent,
         DynamicChartComponent,
         AccessCodeComponent,

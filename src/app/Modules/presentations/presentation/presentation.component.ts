@@ -94,6 +94,9 @@ export class PresentationComponent implements OnInit {
   showAnnotationToolbar: boolean = false;
   annotationToolbarPosition: { x: number; y: number } = { x: 50, y: 50 };
   isAnnotationMode: boolean = false;
+  showRemoteAccessPopup: boolean = false;
+  showRemoteUrlPopup: boolean = false;
+  showRemoteAccessNotification: boolean = false;
   constructor(
     private _componentFactoryResolver: ComponentFactoryResolver,
     private _CommanService: CommanService,
@@ -304,16 +307,16 @@ export class PresentationComponent implements OnInit {
    * Toggle annotation toolbar visibility
    */
   toggleAnnotationToolbar(): void {
-    this.showAnnotationToolbar = !this.showAnnotationToolbar;
-    
-    if (this.showAnnotationToolbar) {
-      // Enable annotation mode and initialize canvas
+    if (!this.showAnnotationToolbar) {
+      this.annotationService.forceResetTool();
+      this.showAnnotationToolbar = true;
       this.isAnnotationMode = true;
       this.annotationService.toggleAnnotationMode();
       setTimeout(() => this.initializeAnnotationCanvas(), 100);
     } else {
-      // Disable annotation mode when toolbar is hidden
+      this.showAnnotationToolbar = false;
       this.isAnnotationMode = false;
+      this.annotationService.clearAnnotations();
       this.annotationService.toggleAnnotationMode();
     }
   }
@@ -332,6 +335,7 @@ export class PresentationComponent implements OnInit {
    */
   openAnnotationToolbar(): void {
     if (!this.showAnnotationToolbar) {
+      this.annotationService.forceResetTool();
       this.showAnnotationToolbar = true;
       this.isAnnotationMode = true;
       this.annotationService.toggleAnnotationMode();
@@ -393,13 +397,14 @@ export class PresentationComponent implements OnInit {
    * Handle slide change - save/load annotations
    */
   onSlideChange(newSlideId: string, oldSlideId?: string): void {
-    if (oldSlideId && oldSlideId !== newSlideId && this.isAnnotationToolbarOpen()) {
-      this.annotationService.saveAnnotationsForSlide(oldSlideId);
+    if (oldSlideId && oldSlideId !== newSlideId) {
+      if (this.isAnnotationToolbarOpen()) {
+        this.annotationService.saveAnnotationsForSlide(oldSlideId);
+      }
     }
     
-    if (newSlideId && this.isAnnotationToolbarOpen()) {
+    if (newSlideId) {
       this.annotationService.setCurrentSlide(newSlideId);
-      
     }
   }
 
@@ -424,7 +429,9 @@ export class PresentationComponent implements OnInit {
     if (event.target && (event.target as HTMLElement).tagName === 'INPUT') {
       return;
     }
-
+    if (this.workSpaceService.isPreviewMode) {
+      return;
+    }
     switch (event.key.toLowerCase()) {
       case 'a':
         if (event.ctrlKey || event.metaKey) {
@@ -456,65 +463,7 @@ export class PresentationComponent implements OnInit {
       // Allow annotation service to handle right-click
       return;
     }
-    
-    // Show annotation option in context menu
-    event.preventDefault();
-    
-    // Create simple context menu for annotation
-    const contextMenu = document.createElement('div');
-    contextMenu.className = 'annotation-context-menu';
-    contextMenu.style.cssText = `
-      position: fixed;
-      top: ${event.clientY}px;
-      left: ${event.clientX}px;
-      background: rgba(0, 0, 0, 0.9);
-      border-radius: 8px;
-      padding: 8px;
-      z-index: 10001;
-      color: white;
-      font-size: 14px;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-    `;
-    
-    const annotateOption = document.createElement('div');
-    annotateOption.textContent = '📝 Start Annotating';
-    annotateOption.style.cssText = `
-      padding: 8px 12px;
-      cursor: pointer;
-      border-radius: 4px;
-      transition: background 0.2s ease;
-    `;
-    
-    annotateOption.addEventListener('mouseenter', () => {
-      annotateOption.style.background = 'rgba(255, 255, 255, 0.1)';
-    });
-    
-    annotateOption.addEventListener('mouseleave', () => {
-      annotateOption.style.background = 'transparent';
-    });
-    
-    annotateOption.addEventListener('click', () => {
-      this.openAnnotationToolbar();
-      document.body.removeChild(contextMenu);
-    });
-    
-    // Add keyboard shortcut hint
-    annotateOption.innerHTML = '📝 Start Annotating <span style="opacity: 0.7; font-size: 12px;">(Ctrl+A)</span>';
-    
-    contextMenu.appendChild(annotateOption);
-    document.body.appendChild(contextMenu);
-    
-    // Remove context menu when clicking elsewhere
-    const removeMenu = (e: MouseEvent) => {
-      if (!contextMenu.contains(e.target as Node)) {
-        document.body.removeChild(contextMenu);
-        document.removeEventListener('click', removeMenu);
-      }
-    };
-    
-    setTimeout(() => {
-      document.addEventListener('click', removeMenu);
-    }, 100);
+
   }
 
   //#endregion
@@ -944,6 +893,11 @@ createQuizSignalR(){
   }
 
   backToWorkSpace() {
+    if (this.isAnnotationToolbarOpen()) {
+      this.annotationService.clearAnnotations();
+      this.closeAnnotationToolbar();
+    }
+    
     this.setNullonBehaviourSubject();
     this.workSpaceService.EmbeddedPPTpresenterEnterClick = false;
     if (this.workSpaceService.isLastSlide) {
@@ -1077,7 +1031,9 @@ createQuizSignalR(){
       return;
     }
     if (localStorage.getItem('role') != 'attendee') {
-      this.handleFunctionalityKeys(key);
+      if(!this.isAnnotationToolbarOpen()){
+        this.handleFunctionalityKeys(key);
+      }
     }
   }
 
@@ -1390,23 +1346,17 @@ createQuizSignalR(){
     if (this.isSingleSlideMode && this.IntegrationMediumOffice) {
       return;
     }
-    var perivousSlideId = "";
+    
+    var previousSlideId = "";
     if (this.workSpaceService.isLastSlide) {
       this.workSpaceService.isLastSlide = false;
-      perivousSlideId = this.workSpaceService.slideListArray[this.workSpaceService.currentSlideIndex]?.slideId;
+      previousSlideId = this.workSpaceService.slideListArray[this.workSpaceService.currentSlideIndex]?.slideId;
     }
     else {
-      perivousSlideId = this.workSpaceService.slideListArray[this.workSpaceService.currentSlideIndex - 1]?.slideId;
+      previousSlideId = this.workSpaceService.slideListArray[this.workSpaceService.currentSlideIndex - 1]?.slideId;
     }
-    
-    // Handle annotation slide change
-    const currentSlideId = this.workSpaceService.activeSlideId;
-    let previousSlideId = this.workSpaceService.slideListArray[this.workSpaceService.currentSlideIndex - 1]?.slideId;
-    
     if (previousSlideId != null || previousSlideId != undefined) {
-      // Handle annotation slide change
-      this.onSlideChange(previousSlideId, currentSlideId);
-      
+      this.onSlideChange(previousSlideId, this.workSpaceService.activeSlideId);
       this.workSpaceService.activeSlideId = previousSlideId;
       this.presenterToolbarService.previousSlides().then((response: any) => {
         let presentationData = response['data'];
@@ -2077,19 +2027,51 @@ createQuizSignalR(){
   }
   openSlideOneRemote() {
     if(this.customerPlan?.remote){
-      if(!this.workSpaceService.isTemplate){
-      const url = `/WorkSpace/remote?id=${this.workSpaceService.presentationId}`;
-      window.open(url, '_blank')
-      }else{
-        const url = `/WorkSpace/remote?id=${this.workSpaceService.presentationId}&isTemplate=true`;
-        window.open(url, '_blank')
-      }
-      
+      // Show remote access management popup
+      this.showRemoteAccessPopup = true;
     }else{
       // this._toastr.warning("You don't have access remote" , '', {
       //   timeOut: 5000
       // });
     }
+  }
+
+  openRemoteUrlPopup() {
+    if(this.customerPlan?.remote){
+      // Show remote URL popup
+      this.showRemoteUrlPopup = true;
+    }else{
+      // this._toastr.warning("You don't have access remote" , '', {
+      //   timeOut: 5000
+      // });
+    }
+  }
+
+  openRemoteUrlWindow() {
+    if(this.customerPlan?.remote){
+      // Show remote URL window
+      this.showRemoteUrlWindow();
+    }else{
+      // this._toastr.warning("You don't have access remote" , '', {
+      //   timeOut: 5000
+      // });
+    }
+  }
+
+  onRemoteAccessPopupClosed(): void {
+    this.showRemoteAccessPopup = false;
+  }
+
+  onRemoteUrlPopupClosed(): void {
+    this.showRemoteUrlPopup = false;
+  }
+
+  onOpenUrlPopup(): void {
+    this.showRemoteUrlPopup = true;
+  }
+
+  showRemoteUrlWindow() {
+    const remoteUrl = `${window.location.origin}/auth/remote-access?id=${this.workSpaceService.presentationId}`;
   }
   playQuizMusic(){
     if (this.workSpaceService.slideContentType == MasterSlideTypeName.QUIZ) {
@@ -2145,6 +2127,21 @@ getVisibilityClass(): any {
 removeClass(element: ElementRef | HTMLElement, className: string): void {
   const nativeElement = element instanceof ElementRef ? element.nativeElement : element;
   this.renderer.removeClass(nativeElement, className);
+}
+
+// Remote Access Notification Methods
+onRemoteAccessNotificationVisibilityChange(isVisible: boolean): void {
+  this.showRemoteAccessNotification = isVisible;
+}
+
+onRemoteAccessRequestApproved(request: any): void {
+  console.log('Remote access request approved:', request);
+  this._toastr.success(`${request.remoteUserName} has been granted remote access`, 'Access Approved');
+}
+
+onRemoteAccessRequestRejected(request: any): void {
+  console.log('Remote access request rejected:', request);
+  this._toastr.info(`${request.remoteUserName} has been denied remote access`, 'Access Denied');
 }
 
 }

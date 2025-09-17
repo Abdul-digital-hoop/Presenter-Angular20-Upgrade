@@ -21,6 +21,9 @@ export class PresentationPresentComponent implements OnInit {
   isLinkVisible: boolean = true;
   loadPresentationPage: boolean = true;
   copied: boolean = false;
+  isDropdownOpen: boolean = false; // Add dropdown state control
+  showRemoteUrlPopup: boolean = false; // Control remote URL popup visibility
+  showRemoteAccessManagement: boolean = false; // Control remote access management popup visibility
 
   constructor(
     private _router:Router,
@@ -36,7 +39,24 @@ export class PresentationPresentComponent implements OnInit {
     this.route.queryParamMap.subscribe(params => {
       this.workSpaceService.isTemplate = params.get('isTemplate') === 'true';
     });
-  // console.log("AppComponent: OnInit");
+  }
+  
+  // Dropdown control methods
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+  
+  closeDropdown() {
+    this.isDropdownOpen = false;
+  }
+  
+  onDropdownItemClick(action: string) {
+    this.closeDropdown();
+    if (action === 'present') {
+      this.presentThePresentation();
+    } else if (action === 'remote') {
+      this.showRemoteAccessManagementPopup();
+    }
   }
 
   ngDoCheck() {
@@ -96,6 +116,15 @@ export class PresentationPresentComponent implements OnInit {
       }
       if(key == 'p' && !this.workSpaceService.isTemplate && !this.workSpaceService.isPreviewMode){
         this.presentThePresentation();
+      }
+    }
+    
+    @HostListener('document:click', ['$event'])
+    onDocumentClick(event: Event): void {
+      const target = event.target as HTMLElement;
+      // Check if click is outside the dropdown
+      if (!target.closest('.dropdown')) {
+        this.closeDropdown();
       }
     }
   presentThePresentation(mode?: string) {
@@ -251,6 +280,32 @@ copyToClipboard(){
     });
   }
 }
+
+  showRemotePopup() {
+    this.showRemoteUrlPopup = true;
+  }
+
+  closeRemoteUrlPopup() {
+    this.showRemoteUrlPopup = false;
+  }
+
+  showRemoteAccessManagementPopup() {
+    this.showRemoteAccessManagement = true;
+  }
+
+  closeRemoteAccessManagement() {
+    this.showRemoteAccessManagement = false;
+  }
+
+  openRemoteUrlPopup() {
+    this.showRemoteAccessManagement = false;
+    this.showRemoteUrlPopup = true;
+  }
+
+  openRemoteAccessManagementFromUrlPopup() {
+    this.showRemoteUrlPopup = false;
+    this.showRemoteAccessManagement = true;
+  }
 //#endregion Common Metods
 
   //#region Preview section

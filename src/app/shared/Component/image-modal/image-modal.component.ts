@@ -9,6 +9,7 @@ import { ImageCropComponent } from '../image-crop/image-crop.component';
 import { HttpClient } from '@angular/common/http';
 import { ImageType, ImageUploadeModuleName, MasterSlideTypeName } from 'src/app/utility/constants';
 declare var $: any;
+import { defaultmediaService } from 'src/app/core/Sevices/defaultmedia.service';
 @Component({
     selector: 'app-image-modal',
     templateUrl: './image-modal.component.html',
@@ -28,6 +29,7 @@ export class ImageModalComponent implements OnInit{
   SourceSlideImage: any='';
   SourceImageDatabase:any='';
   isShowCropModal: boolean=false;
+  isFromMyImages: boolean = false;
   allowedSizeType: number = 2048;
   allowedFileTypes: string[] = [
     'jpg',
@@ -51,7 +53,8 @@ export class ImageModalComponent implements OnInit{
   isUpdateImageDivDisabled :boolean = false;
   isRemoveImageDisabled :boolean = false;
   backToUploadTriggered: boolean = false;
-  constructor(private _presentationService:PresentationService,public workSpaceService:WorkspaceService,private _http:HttpClient) {
+  isImageLoading: boolean = false;
+  constructor(private _presentationService:PresentationService,public workSpaceService:WorkspaceService,private _http:HttpClient, private defaultmediaService:defaultmediaService) {
     this.workSpaceService.isLoading$.subscribe(
       loading => this.isLoading = loading
     );
@@ -77,14 +80,27 @@ export class ImageModalComponent implements OnInit{
         modalBackdrop.remove();
     }
   }
-  getModalUpdate(){debugger
+  getModalUpdate(){
     if(this.isUpdateImageDivDisabled){
       return;
     }
-    const fileExtension: string = this.workSpaceService?.slideContentImage?.originalUrl.split('.').pop().toLowerCase();
+    let fileExtension: string;
+    const originalUrl = this.workSpaceService?.slideContentImage?.originalUrl;
+    if (originalUrl && originalUrl.startsWith('data:')) {
+      const mimeType = originalUrl.split(',')[0].split(':')[1].split(';')[0];
+      if (mimeType === 'image/svg+xml') {
+        fileExtension = 'svg';
+      } else if (mimeType === 'image/gif') {
+        fileExtension = 'gif';
+      } else {
+        fileExtension = mimeType.split('/')[1];
+      }
+    } else {
+      fileExtension = originalUrl?.split('.').pop()?.toLowerCase() || '';
+    }
     if (fileExtension == 'svg' || fileExtension == 'gif') {
       this.imageformat = fileExtension;
-      this.SourceSlideImage = this.workSpaceService?.slideContentImage?.originalUrl;
+      this.SourceSlideImage = this.workSpaceService?.slideContentImage?.croppedUrl || this.workSpaceService?.slideContentImage?.originalUrl;
       if(!this.SourceSlideImage){
         $('#imageAddModal').modal('show');
         const modalBackdrop = document.getElementsByClassName('modal-backdrop')[0];
@@ -94,8 +110,8 @@ export class ImageModalComponent implements OnInit{
         this.isShowCropModal=false;
       }else{
         this.isUpdateImageDivDisabled = true;
-          this.SourceSlideImage = this.workSpaceService?.slideContentImage?.originalUrl;
-          this.SourceImageDatabase = this.workSpaceService?.slideContentImage?.originalUrl
+          this.SourceSlideImage = this.workSpaceService?.slideContentImage?.croppedUrl || this.workSpaceService?.slideContentImage?.originalUrl;
+          this.SourceImageDatabase = this.workSpaceService?.slideContentImage?.croppedUrl || this.workSpaceService?.slideContentImage?.originalUrl;
           this.getSlideImageasBase64forImage(this.workSpaceService?.presentationId,this.workSpaceService?.activeSlideId);
         } 
     }else{
@@ -159,7 +175,19 @@ export class ImageModalComponent implements OnInit{
   uploadImage(event:any){
     let fileExtension;
     if (event?.url) {
-      fileExtension = event.type.toLowerCase();
+      const mimeType = event.type.toLowerCase();
+      
+      if (mimeType.includes('jpeg')) {
+        fileExtension = 'jpg';
+      } else if (mimeType.includes('png')) {
+        fileExtension = 'png';
+      } else if (mimeType.includes('gif')) {
+        fileExtension = 'gif';
+      } else if (mimeType.includes('svg')) {
+        fileExtension = 'svg';
+      } else {
+        fileExtension = 'jpg';
+      }
     } else {
       const file = event?.target?.files[0] || event[0]?.file;
       fileExtension = file?.name.split('.').pop().toLowerCase();
@@ -183,24 +211,50 @@ export class ImageModalComponent implements OnInit{
       return;
     }
     this.imageEvent = event;
+    this.isFromMyImages = event.isFromMyImages || false;
     if (fileExtension === 'svg' || fileExtension === 'gif') {
       this.imageformat = fileExtension;
     }
     if (event?.url) {
-      //this.SourceSlideImage = event.url;
-      fetch(event?.url)
-      .then(response => response.blob())
-      .then(blob => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const base64Url = reader.result as string;
-          this.SourceSlideImage = base64Url;
-        };
-        reader.readAsDataURL(blob);
-      })
-      .catch(error => {
-        console.error('Error converting URL to base64:', error);
-      });
+      this.isImageLoading = true;
+      this.SourceSlideImage = '';
+      
+      // Check if it's already a base64 data URL
+      if (event.url.startsWith('data:')) {
+        // Convert base64 data URL to blob URL for cropper compatibility
+        this.convertBase64ToBlobUrl(event.url);
+      } else {
+        // Convert blob URL to base64
+        fetch(event?.url)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+          return response.blob();
+        })
+        .then(blob => {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            const base64Url = reader.result as string;
+            console.log('Base64 conversion complete, length:', base64Url.length);
+            if (base64Url && base64Url.startsWith('data:')) {
+              this.SourceSlideImage = base64Url;
+              this.isImageLoading = false;
+            } else {
+              this.isImageLoading = false;
+            }
+          };
+          reader.onerror = (error) => {
+            this.isImageLoading = false;
+          };
+          reader.readAsDataURL(blob);
+        })
+        .catch(error => {
+          console.error('Error converting URL to base64:', error);
+          this.SourceSlideImage = event.url;
+          this.isImageLoading = false;
+        });
+      }
     } else {
     const file = event.target?.files?.[0] || event[0]?.file;
     
@@ -213,6 +267,15 @@ export class ImageModalComponent implements OnInit{
       this.isShowCropModal=false;
   }
   saveSlideImageObj(event:any){
+    // Save to user recent images API only when user clicks save
+    // Check for the correct properties from the image-crop component
+    if (event?.croppedUrl || event?.originalUrl || event?.url || event?.imageUrl) {
+      const imageUrl = event.croppedUrl || event.originalUrl || event.url || event.imageUrl;
+      if (!this.isFromMyImages) {
+        this.saveImageToRecentImages(imageUrl);
+      }
+    }
+    
     this.SlideImageObject.emit(event);
     this.imageEvent='';
     this.imageLoaded = false;
@@ -222,6 +285,46 @@ export class ImageModalComponent implements OnInit{
     this.svgimage = null;
     this.SourceSlideImage = null;
     this.isShowCropModal = false;
+    this.isFromMyImages = false;
+  }
+  private saveImageToRecentImages(imageUrl: string): void {
+    this.defaultmediaService.addUserRecentImage(imageUrl).subscribe(
+      (response: any) => {
+      },
+      (error) => {
+      }
+    );
+  }
+
+  private convertBase64ToBlobUrl(base64DataUrl: string): void {
+    try {
+      // Extract the base64 data and MIME type
+      const [header, base64Data] = base64DataUrl.split(',');
+      const mimeType = header.match(/data:([^;]+)/)?.[1] || 'image/png';
+      
+      // Convert base64 to binary
+      const binaryString = atob(base64Data);
+      const bytes = new Uint8Array(binaryString.length);
+      
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i);
+      }
+      
+      // Create blob and blob URL
+      const blob = new Blob([bytes], { type: mimeType });
+      const blobUrl = URL.createObjectURL(blob);
+      
+      // Set both SourceSlideImage and OriginalImage for cropper compatibility
+      this.SourceSlideImage = blobUrl;
+      this.OriginalImage = blobUrl; // This is what the cropper uses for [imageBase64]
+      this.isImageLoading = false;
+    } catch (error) {
+      console.error('Error converting base64 to blob URL:', error);
+      // Fallback to original base64 URL
+      this.SourceSlideImage = base64DataUrl;
+      this.OriginalImage = base64DataUrl;
+      this.isImageLoading = false;
+    }
   }
   emptyImageEvent(event:any){
     if(event){
@@ -307,6 +410,7 @@ export class ImageModalComponent implements OnInit{
           isTemplate: this.workSpaceService.isTemplate
         };
         this.SlideImageObject.emit(SaveObj);
+        this.saveImageToRecentImages(base64data);
         this._presentationService.contentImageUpdate(SaveObj).subscribe(
           (response: any) => {
             //this.workSpaceService.storeActiveSlideDetails();

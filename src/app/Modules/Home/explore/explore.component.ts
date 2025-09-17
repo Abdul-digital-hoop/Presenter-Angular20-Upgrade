@@ -1,4 +1,6 @@
 import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
+import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
+import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 
 @Component({
     selector: 'app-explore',
@@ -9,8 +11,8 @@ import { Component, ElementRef, HostListener, OnInit } from '@angular/core';
 export class ExploreComponent implements OnInit {
   isPowerPoinPopupVisible: boolean = false;
   isZoomPopupVisible: boolean = false;
-  isGsPopupVisible: boolean= false;
-  constructor(private elementRef: ElementRef) { }
+  isGsPopupVisible: boolean = false;
+  constructor(private elementRef: ElementRef, private _presentationservice: PresentationService, private workspaceService: WorkspaceService) { }
 
   ngOnInit(): void {
   }
@@ -29,5 +31,21 @@ export class ExploreComponent implements OnInit {
     this.isPowerPoinPopupVisible = false;
     this.isZoomPopupVisible = false;
     this.isGsPopupVisible = false;
+  }
+  activity(integration: string){
+    if(integration == 'zoom'){
+      var payload = {
+        description: `The user open the zoom application`
+      };
+    }
+    else if(integration == 'ppt'){
+      this.isPowerPoinPopupVisible = false;
+      var payload = {
+        description: `The user open the powerpoint application`
+      };
+    };
+    this._presentationservice.customerActive(payload).subscribe(
+      (response: any) => {})
+  
   }
 }

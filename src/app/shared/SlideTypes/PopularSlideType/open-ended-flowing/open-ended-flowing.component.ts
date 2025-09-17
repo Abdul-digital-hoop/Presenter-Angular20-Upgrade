@@ -1,5 +1,6 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, EventEmitter, HostListener, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { settingVariables } from 'src/app/utility/SettingVariables';
@@ -75,9 +76,16 @@ export class OpenEndedFlowingComponent implements OnInit {
   isAnimation: boolean = false;
   animationData: any[] = [];
   usedIndexes: Set<number> = new Set();
-  constructor(private el: ElementRef, private renderer: Renderer2, private _commanservice:CommanService,  public _workspaceservice: WorkspaceService,) {    
+  
+  constructor(private el: ElementRef, private renderer: Renderer2, private _commanservice:CommanService,  public _workspaceservice: WorkspaceService, private router: Router) {    
     this.screenOptions = "presentationScreen";
   }
+
+  get isRemoteMode(): boolean {
+    return this.router.url.includes('/WorkSpace/remote');
+  }
+
+
 
   ngOnInit(): void {
     this.screenOptions = "presentationScreen";
@@ -158,20 +166,72 @@ export class OpenEndedFlowingComponent implements OnInit {
   }
   scrollToBottom() {
     const container = $('.overflow');
-    const documentHeight = container[0]?.scrollHeight || 0;
-  
-    if (documentHeight > 0) {     
-        
-        this.incrementalScroll(2000);
+    if (!container || !container[0]) {
+      
+      return;
     }
+    
+    setTimeout(() => {
+      const scrollHeight = container[0]?.scrollHeight || 0;
+      const clientHeight = container[0]?.clientHeight || 0;
+      const maxScroll = scrollHeight - clientHeight;
+
+      if (scrollHeight > 0) {
+        if (maxScroll > 0) {
+          
+          this.incrementalScroll(2000);
+        } else {
+          container.scrollTop(scrollHeight);
+        }
+      }
+    }, 100);
   }
   
-  incrementalScroll( pause: number) {
+    incrementalScroll( pause: number) {
     var step = 0;
     const container = $('.overflow');
-    const maxScroll = container[0]?.scrollHeight - container[0]?.clientHeight || 0;
+    
+    if (!container || !container[0]) {
+      
+      return;
+    }
+    
+    const scrollHeight = container[0]?.scrollHeight || 0;
+    const clientHeight = container[0]?.clientHeight || 0;
+    const maxScroll = scrollHeight - clientHeight;
+    
+    if (maxScroll <= 0) {
+      setTimeout(() => {
+        const updatedScrollHeight = container[0]?.scrollHeight || 0;
+        const updatedClientHeight = container[0]?.clientHeight || 0;
+        const updatedMaxScroll = updatedScrollHeight - updatedClientHeight;
+        
+        
+        if (updatedMaxScroll > 0) {
+          this.performScrolling(container, updatedMaxScroll, pause);
+                 } else {
+           container.scrollTop(updatedScrollHeight);
+           setTimeout(() => {
+             const finalScrollHeight = container[0]?.scrollHeight || 0;
+             const finalClientHeight = container[0]?.clientHeight || 0;
+             const finalMaxScroll = finalScrollHeight - finalClientHeight;
+             
+             if (finalMaxScroll > 0) {
+               this.performScrolling(container, finalMaxScroll, pause);
+             }
+           }, 1000);
+         }
+      }, 500);
+      return;
+    }
+    
+    this.performScrolling(container, maxScroll, pause);
+  }
+
+  private performScrolling(container: any, maxScroll: number, pause: number) {
     let currentScrollPosition = container.scrollTop();
-  
+    var step = 0;
+
     const scrollStep = () => {
       if( this.isFirstScroll){
         step = 0;
@@ -183,13 +243,13 @@ export class OpenEndedFlowingComponent implements OnInit {
         container.animate({
           scrollTop: currentScrollPosition
         }, 500, () => {
-      if (currentScrollPosition < maxScroll) {
-        setTimeout(scrollStep, pause);
+          if (currentScrollPosition < maxScroll) {
+            setTimeout(scrollStep, pause);
           }
         });
       }
     };
-  
+
     scrollStep();
     this.isFirstScroll = false;
   }
@@ -276,11 +336,16 @@ export class OpenEndedFlowingComponent implements OnInit {
   updateChart(value: any) {
     var openEndedData = value;
     if(this.isPreviewMode){
-      this.openEndedData = [];
+      this.openEndedData = [];  
       this.openEndedData = openEndedData.filter((item, i, arr) => item.Answer && typeof item.Answer === 'string' && item.Answer.trim() !== '' && item.ModerateAnswer === false && arr.findIndex(opt => opt.AnswerId === item.AnswerId) === i);
       // this.openEndedData = this._workspaceservice.profanityWordsChecksForWord(this.openEndedData);
   }else{
     this.openEndedData = openEndedData.filter((item, i, arr) => item.Answer && typeof item.Answer === 'string' && item.Answer.trim() !== '' && item.ModerateAnswer === false && arr.findIndex(opt => opt.AnswerId === item.AnswerId) === i);
+    
+    // Give more time for DOM to update with new content before scrolling
+    setTimeout(() => {
+      this.scrollToBottom();
+    }, 1200);
     // this.openEndedData = this._workspaceservice.profanityWordsChecksForWord(this.openEndedData);
   }
 }
