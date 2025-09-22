@@ -21,7 +21,6 @@ export class AccountService {
   IntegrationMediumZoom: boolean = _IntegrationMediumZoom;
   IntegrationMediumOffice: boolean = _IntegrationMediumOffice;
   constructor(private _fb: FormBuilder, private _http: HttpClient, private _router: Router,private ngZone: NgZone,private _customerPlanService:CustomerPlanService) {
-    // Remove the HTTP call from constructor
     // var userDataString = localStorage.getItem('userData');
     // if (userDataString) {
     //   const USERDATA = JSON.parse(userDataString);
@@ -29,8 +28,7 @@ export class AccountService {
     // }
     var token = this.getToken();
     if(token != null){
-      // Move this to a separate initialization method
-      this.initializeUserData(token);
+      this.customerDetail(token);
     }
     else{
       this.cookieLoading = false;
@@ -239,12 +237,5 @@ export class AccountService {
   }
   clearbalancePresentationLimitAvailable(): void {
     this.isbalancePresentationLimitSubject.next(false); 
-  }
-
-  private initializeUserData(token: string): void {
-    // Use setTimeout to break the circular dependency
-    setTimeout(() => {
-      this.customerDetail(token);
-    }, 0);
   }
 }

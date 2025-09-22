@@ -65,9 +65,9 @@ export class ReusableImageUploadComponent implements OnInit{
     }
     this.resizeListener = () => {
       if (this.currentUploadingOptionTabName === this.imageUploadTabNameConstant.MyImages && this.myImages.length > 0) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           this.applyMasonryLayout();
-        }, 100);
+        });
       }
     };
   }
@@ -75,9 +75,9 @@ export class ReusableImageUploadComponent implements OnInit{
   ngAfterViewInit() {
     window.addEventListener('resize', () => {
       if (this.currentUploadingOptionTabName === this.imageUploadTabNameConstant.MyImages && this.myImages.length > 0) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           this.applyMasonryLayout();
-        }, 100);
+        });
       }
     });
   }
@@ -290,9 +290,9 @@ export class ReusableImageUploadComponent implements OnInit{
           this.myImagesErrorMessage = '';
           
           if (this.myImages.length > 0) {
-            setTimeout(() => {
+            requestAnimationFrame(() => {
               this.applyMasonryLayout();
-            }, 100);
+            });
           }
         } else {
           this.myImages = [];
@@ -312,6 +312,7 @@ export class ReusableImageUploadComponent implements OnInit{
     const fileType = this.getImageTypeFromUrl(image.url);
     this.selectedFileEvent.emit({ file: null, url: image.url, type: fileType, isFromMyImages: true });
   }
+
 
   private getImageNameFromUrl(url: string): string {
     if (url.includes('data:')) {
@@ -371,12 +372,18 @@ export class ReusableImageUploadComponent implements OnInit{
     const columnHeights = new Array(numColumns).fill(0);
     const positions: { left: number; top: number; width: number; height: number }[] = [];
   
+    images.forEach((img) => {
+      const imageElement = img as HTMLElement;
+      imageElement.style.opacity = '0';
+    });
+  
     images.forEach((img, index) => {
       const imageElement = img as HTMLElement;
       const image = imageElement.querySelector('img') as HTMLImageElement;
       
       if (image) {
         if (image.naturalWidth === 0 || image.naturalHeight === 0) {
+          // Image not loaded yet, use default aspect ratio and set up load handler
           const defaultAspectRatio = 1; 
           const width = columnWidth;
           const height = width / defaultAspectRatio;
@@ -393,8 +400,11 @@ export class ReusableImageUploadComponent implements OnInit{
           imageElement.style.width = `${width}px`;
           imageElement.style.height = `${height}px`;
           
+          // Set up load handler to recalculate layout when image loads
           image.onload = () => {
-            this.applyMasonryLayout();
+            requestAnimationFrame(() => {
+              this.applyMasonryLayout();
+            });
           };
           return;
         }
@@ -422,6 +432,15 @@ export class ReusableImageUploadComponent implements OnInit{
   
     const maxHeight = Math.max(...columnHeights);
     container.style.height = `${maxHeight}px`;
+    
+    requestAnimationFrame(() => {
+      images.forEach((img) => {
+        const imageElement = img as HTMLElement;
+        imageElement.style.transition = 'opacity 0.2s ease-in-out';
+        imageElement.style.opacity = '1';
+      });
+    });
+    
     this.isMasonryLayoutApplied = true;
   }
   ngOnDestroy() {

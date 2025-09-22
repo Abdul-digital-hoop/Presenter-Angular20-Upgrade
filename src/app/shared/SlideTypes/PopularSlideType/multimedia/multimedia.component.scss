@@ -15,6 +15,88 @@ canvas {
   position: relative;
 }
 
+.drop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(74, 144, 226, 0.1);
+  border: 3px dashed #4a90e2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+
+  &.active {
+    opacity: 1;
+  }
+
+  .drop-message {
+    text-align: center;
+    color: #4a90e2;
+    font-family: Arial, sans-serif;
+
+    h3 {
+      margin: 0 0 10px 0;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    p {
+      margin: 0;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    img {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 15px;
+      opacity: 0.7;
+    }
+  }
+}
+
+.processing-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1001;
+  color: white;
+  font-family: Arial, sans-serif;
+
+  .processing-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+  }
+
+  p {
+    margin: 0;
+    font-size: 16px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 .context-menu {
   position: absolute;
   z-index: 1000;
@@ -27,8 +109,8 @@ canvas {
   transform: scale(var(--canvas-scale, 1));
   padding: 5px;
   border-radius: 5px;
-  width: 115px;
-  max-height: 250px;
+  width: 180px;
+ // max-height: 300px;
   overflow-y: auto;
   transition: opacity 0.2s ease;
 }
@@ -43,10 +125,19 @@ canvas {
   cursor: pointer;
   width: 100%;
   text-align: left;
-  font-size: 9px;
+  font-size: 10px;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    
+    img {
+      opacity: 0.5;
+    }
+  }
 }
 .context-menu img {
-  width: 14px;
+  width: 23px;
   height: auto;
 }
 
@@ -695,7 +786,7 @@ input[type="number"]:focus {
   position: fixed;
   z-index: 999;
   height: 2em;
-  width: 2em;
+  //width: 2em;
   overflow: visible;
   margin: auto;
   top: 0;
@@ -728,13 +819,14 @@ input[type="number"]:focus {
 }
 
 .loading:not(:required):after {
-  content: '';
+  content: "";
   display: block;
   font-size: 10px;
+  position: fixed;
   width: 1em;
+  left:10vw;
+  top: 30vh;
   height: 1em;
-  margin-top: -9.5em;
-  margin-left: -32em;
   -webkit-animation: spinner 1500ms infinite linear;
   -moz-animation: spinner 1500ms infinite linear;
   -ms-animation: spinner 1500ms infinite linear;
@@ -810,4 +902,7 @@ input[type="number"]:focus {
     -o-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+.space-down{
+  left: -7em !important;
 }

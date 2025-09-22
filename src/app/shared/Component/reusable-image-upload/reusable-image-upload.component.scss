@@ -784,6 +784,8 @@ img {
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
+    opacity: 1;
+    transition: opacity 0.2s ease-in-out;
     
     &:hover .image-overlay {
         opacity: 1;
@@ -795,6 +797,7 @@ img {
     height: auto;
     display: block;
     border-radius: 8px;
+    transition: transform 0.2s ease-in-out;
 }
 
 .image-overlay {

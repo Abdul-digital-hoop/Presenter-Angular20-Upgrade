@@ -86,9 +86,9 @@ export class ImageUploadComponent implements OnInit{
       }
       this.resizeListener = () => {
         if (this.uploadTabNumber === 4 && this.myImages.length > 0) {
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             this.applyMasonryLayout();
-          }, 100);
+          });
         }
       };
       window.addEventListener('resize', this.resizeListener);
@@ -109,9 +109,9 @@ export class ImageUploadComponent implements OnInit{
   ngAfterViewInit() {
     window.addEventListener('resize', () => {
       if (this.uploadTabNumber === 4 && this.myImages.length > 0) {
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           this.applyMasonryLayout();
-        }, 100);
+        });
       }
     });
   }
@@ -349,9 +349,9 @@ loadMyImages(): void {
         if (this.myImages.length === 0) {
           this.myImagesErrorMessage = 'No images uploaded yet. Upload some images to see them here.';
         } else {
-          setTimeout(() => {
+          requestAnimationFrame(() => {
             this.applyMasonryLayout();
-          }, 100);
+          });
         }
       } else {
         this.myImages = [];
@@ -395,6 +395,12 @@ applyMasonryLayout() {
   const columnHeights = new Array(numColumns).fill(0);
   const positions: { left: number; top: number; width: number; height: number }[] = [];
 
+  // First, hide all images to prevent flicker
+  images.forEach((img) => {
+    const imageElement = img as HTMLElement;
+    imageElement.style.opacity = '0';
+  });
+
   images.forEach((img, index) => {
     const imageElement = img as HTMLElement;
     const image = imageElement.querySelector('img') as HTMLImageElement;
@@ -418,7 +424,9 @@ applyMasonryLayout() {
         imageElement.style.height = `${height}px`;
         
         image.onload = () => {
-          this.applyMasonryLayout();
+          requestAnimationFrame(() => {
+            this.applyMasonryLayout();
+          });
         };
         return;
       }
@@ -446,6 +454,16 @@ applyMasonryLayout() {
 
   const maxHeight = Math.max(...columnHeights);
   container.style.height = `${maxHeight}px`;
+  
+  // Show all images with a smooth transition after layout is applied
+  requestAnimationFrame(() => {
+    images.forEach((img) => {
+      const imageElement = img as HTMLElement;
+      imageElement.style.transition = 'opacity 0.2s ease-in-out';
+      imageElement.style.opacity = '1';
+    });
+  });
+  
   this.isMasonryLayoutApplied = true;
 }
 

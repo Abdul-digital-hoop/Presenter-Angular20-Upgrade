@@ -846,7 +846,8 @@ img {
     border-radius: 0;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s ease;
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease;
 }
 
 
@@ -857,7 +858,8 @@ img {
     margin: 0;
     padding: 0;
     border-radius: 0;
-    object-fit: cover; 
+    object-fit: cover;
+    transition: transform 0.2s ease-in-out;
 }
 
 .my-images-grid .skeleton-item {
