@@ -28,12 +28,19 @@ export class AccountService {
     // }
     var token = this.getToken();
     if(token != null){
-      this.customerDetail(token);
+      // Move this to a separate initialization method
+      this.initializeUserData(token);
     }
     else{
       this.cookieLoading = false;
     }
     this.setupPageVisibilityListener();
+  }
+  private initializeUserData(token: string): void {
+    // Use setTimeout to break the circular dependency
+    setTimeout(() => {
+      this.customerDetail(token);
+    }, 0);
   }
   private setupPageVisibilityListener() {
     window.addEventListener('offline', () => {
