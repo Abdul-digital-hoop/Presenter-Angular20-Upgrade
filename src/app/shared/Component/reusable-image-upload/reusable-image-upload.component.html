@@ -5,29 +5,41 @@
             <button type="button" class="btn-close m-0" (click)="closeUploadImageModal()"></button>
         </div>
         <div class="row mx-0" *ngIf="workspaceService.activeSlideTypeName != 'Multimedia'">
-            <div class="design-tab col-4 px-0"
+            <div class="design-tab col-3 px-0"
                 [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.Device? 'active':' '">
                 <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.Device)">Upload</h5>
             </div>
-            <div class="design-tab col-4 px-0"
+            <div class="design-tab col-3 px-0"
                 [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyImage? 'active':' '">
                 <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyImage)">
                     Image Library</h5>
             </div>
-            <div class="design-tab col-4 px-0"
+            <div class="design-tab col-3 px-0"
                 [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyGif? 'active':' '">
-                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyGif)" *ngIf="workspaceService.activeSlideTypeName != 'Multimedia'">GIF's</h5>
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyGif)">GIF's</h5>
+            </div>
+            <div class="design-tab col-3 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.MyImages? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.MyImages)">My Images</h5>
             </div>
         </div>
         <div class="row mx-0"  *ngIf="workspaceService.activeSlideTypeName == 'Multimedia'">
-            <div class="design-tab col-6 px-0"
+            <div class="design-tab col-3 px-0"
                 [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.Device? 'active':' '">
                 <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.Device)">Upload</h5>
             </div>
-            <div class="design-tab col-6 px-0"
+            <div class="design-tab col-3 px-0"
                 [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyImage? 'active':' '">
                 <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyImage)">
                     Image Library</h5>
+            </div>
+            <div class="design-tab col-3 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.ThiredPartyGif? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.ThiredPartyGif)">GIF's</h5>
+            </div>
+            <div class="design-tab col-3 px-0"
+                [ngClass]="currentUploadingOptionTabName == imageUploadTabNameConstant.MyImages? 'active':' '">
+                <h5 class="modal-title mb-0" (click)="uploadOptionTabs(imageUploadTabNameConstant.MyImages)">My Images</h5>
             </div>
         </div>
         <div class="modal-body">
@@ -112,6 +124,44 @@
                     </div>
                 </div>
 
+            </div>
+            <div *ngIf="currentUploadingOptionTabName == imageUploadTabNameConstant.MyImages">
+                <div *ngIf="myImagesErrorMessage" class="alert alert-info mt-3 text-center">
+                    {{ myImagesErrorMessage }}
+                </div>
+                
+                <!-- Show images grid when images exist -->
+                <div class="image-list-container mt-3" [class.myimage-fixed-scroll]="isMasonryLayoutApplied" *ngIf="!isMyImagesLoading && myImages.length > 0">
+                    <div class="my-images-grid">
+                        <div class="image-container rounded-0" *ngFor="let image of myImages"
+                             (mouseenter)="image.isHovered = true" 
+                             (mouseleave)="image.isHovered = false"
+                             (click)="selectMyImage(image)">
+                            <a class="absolute-image-upload" href="javascript:void(0)" (click)="selectMyImage(image)"></a>
+                            <img [src]="image.url" class="my-image-natural-size rounded-0" [alt]="image.name"/>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="!isMyImagesLoading && myImages.length === 0" class="upload-image-div border-0">
+                    <div class="my-4 text-centers">
+                        <img src="/assets/new-icons/imagine.png" class="img-fluid mb-3 imagine-img">
+                
+                        <h5 class="modal-title mt-4">
+                            Every picture tells a story—what’s<br>yours? Upload one now.
+                          </h5>
+                
+                        <button type="button" class="btn btn-primary p-2 mt-3" (click)="navigateToUploadTab()">
+                            Upload & Shine
+                        </button>
+                    </div>
+                </div>
+                <div *ngIf="isMyImagesLoading" class="dots-loading-container mt-3">
+                    <div class="dots-loading">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

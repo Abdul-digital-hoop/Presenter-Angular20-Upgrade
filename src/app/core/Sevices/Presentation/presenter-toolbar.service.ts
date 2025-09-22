@@ -4,6 +4,8 @@ import { WorkSignalRServiceService } from '../WorkSpace/work-signal-rservice.ser
 import { PresentationService } from './presentation.service';
 import { MasterSlideTypeName } from 'src/app/utility/constants';
 import { CustomerPlanService } from '../CustomerPlan/customer-plan.service';
+import { environment } from 'src/environments/environment';
+import { HttpClient } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +17,8 @@ export class PresenterToolbarService {
   public workSpaceService:WorkspaceService,
   public workSpaceSignalRService:WorkSignalRServiceService,
   public presentationService:PresentationService,
-  private _customerPlanService:CustomerPlanService) { }
+  private _customerPlanService:CustomerPlanService,
+  private _http:HttpClient) { }
 
   previousSlides(){
     return new Promise((resolve, reject) => {
@@ -52,6 +55,67 @@ export class PresenterToolbarService {
       )
     });
     
+  }
+  RemotePreviousSlides(){debugger;
+    return new Promise((resolve, reject) => {
+      this.workSpaceService.slideReactionsCountList;
+      this.workSpaceService.changeSlideFlag = true;
+      this.RemoteChangeSlideData().subscribe(
+        (response: any) => {
+          let presentationData = response['data'];
+          this.workSpaceService.updateSlideData(presentationData);
+          resolve(response);
+        },
+        (error: any) => {
+          this.workSpaceService.changeSlideFlag = false;
+          console.log(error);
+        }
+      )
+    });
+  }
+  RemoteNextSlide(){debugger;
+    return new Promise((resolve, reject) => {
+      this.workSpaceService.slideReactionsCountList;
+      this.workSpaceService.changeSlideFlag = true;
+      this.RemoteChangeSlideData().subscribe(
+        (response: any) => {
+          let presentationData = response['data'];
+          this.workSpaceService.updateSlideData(presentationData);
+          
+          resolve(response);
+        },
+        (error: any) => {
+          this.workSpaceService.changeSlideFlag = false;
+          console.log(error);
+        }
+      )
+    });
+    
+  }
+  changeSlideData() {
+    let obj = {
+      presentationId: this.workSpaceService.presentationId,
+      activeSlideId: this.workSpaceService.activeSlideId == null ? "" : this.workSpaceService.activeSlideId,
+      slideTypeId: this.workSpaceService.slideTypeId == null ? "" : this.workSpaceService.slideTypeId,
+      isTemplate: this.workSpaceService.isTemplate,
+    }
+    if(this.workSpaceService.slideContentType == MasterSlideTypeName.QUIZ && this.workSpaceService.activeSlideTypeName != MasterSlideTypeName.LEADER_BOARD_SLIDE_TYPE){
+      this.workSpaceService.dynamicComponent_Clone.instance.ngOnDestroy();
+    }
+    return this._http.post(environment.MyApi + 'change-slide', obj);
+  }
+  RemoteChangeSlideData() {
+    let obj = {
+      presentationId: this.workSpaceService.presentationId,
+      activeSlideId: this.workSpaceService.activeSlideId == null ? "" : this.workSpaceService.activeSlideId,
+      slideTypeId: this.workSpaceService.slideTypeId == null ? "" : this.workSpaceService.slideTypeId,
+      isTemplate: this.workSpaceService.isTemplate,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`) == null ? "" : localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`)
+    }
+    if(this.workSpaceService.slideContentType == MasterSlideTypeName.QUIZ && this.workSpaceService.activeSlideTypeName != MasterSlideTypeName.LEADER_BOARD_SLIDE_TYPE){
+      this.workSpaceService.dynamicComponent_Clone.instance.ngOnDestroy();
+    }
+    return this._http.post(environment.MyApi + 'remote-change-slide', obj);
   }
   enableQuestion(){
     let presentationDTO = {
@@ -144,6 +208,23 @@ export class PresenterToolbarService {
       }
     );
   }
+  RemoteLockVoting(isVoting:any){
+    let presentationDTO = {
+      presentationId: this.workSpaceService.presentationId,
+      slideId: this.workSpaceService.activeSlideId,
+      IsVoting:isVoting,
+      isTemplate: this.workSpaceService.isTemplate,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`) == null ? this.workSpaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`)
+    }
+    this.presentationService.RemotePresenterLockVoting(presentationDTO).subscribe(
+      (response: any) => {
+        
+      },
+      (error: any) => {
+        console.log(error?.error);
+      }
+    );
+  }
   showPercentage(){
     let responseAsPresentageDTO = {
       presentationId: this.workSpaceService.presentationId,
@@ -168,6 +249,23 @@ export class PresenterToolbarService {
       isTemplate: this.workSpaceService.isTemplate
     }
     this.presentationService.manageAccessCode(responseAsAccessDTO).subscribe(
+      (response: any) => {
+        // this.workSpaceService.dynamicChartResponseLoad();
+      },
+      (error: any) => {
+        console.log(error?.error);
+      }
+    );
+  }
+  RemoteUpdateAccessCode(){
+    let responseAsAccessDTO = {
+      presentationId: this.workSpaceService.presentationId,
+      slideId: this.workSpaceService.activeSlideId,
+      isShowAccessBar: this.workSpaceService.presentationSettingJoiningInstructions,
+      isTemplate: this.workSpaceService.isTemplate,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`) == null ? this.workSpaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`)
+    }
+    this.presentationService.RemoteManageAccessCode(responseAsAccessDTO).subscribe(
       (response: any) => {
         // this.workSpaceService.dynamicChartResponseLoad();
       },
@@ -236,6 +334,27 @@ export class PresenterToolbarService {
         isTemplate: this.workSpaceService.isTemplate
       }
       this.presentationService.updatePinnedQuestion(questionDTO).subscribe(
+        (response: any) => {
+          this.workSpaceService.presentationQuestions.find(x=>x.questionId == questionId).isPinned = response.presentationQuestions.find(x=>x.questionId == questionId).isPinned;
+          resolve(response);
+        },
+        (error: any) => {
+          console.log(error?.error);
+        }
+      );
+    });
+    
+  }
+  RemoteMarkAsPinned(questionId: any, isPinned: boolean) {
+    return new Promise((resolve, reject) => {
+      let questionDTO = {
+        presentationId: this.workSpaceService.presentationId,
+        questionId: questionId,
+        isValue: !isPinned,
+        isTemplate: this.workSpaceService.isTemplate,
+        remoteUserId:localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`) == null ? this.workSpaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workSpaceService.presentationId}`)
+      }
+      this.presentationService.RemoteUpdatePinnedQuestion(questionDTO).subscribe(
         (response: any) => {
           this.workSpaceService.presentationQuestions.find(x=>x.questionId == questionId).isPinned = response.presentationQuestions.find(x=>x.questionId == questionId).isPinned;
           resolve(response);
@@ -442,6 +561,18 @@ export class PresenterToolbarService {
       );
     });
   }
+  RemoteShowCorrectAnswerUpdate(showChooseCorrectAnswerDTO:any){
+    return new Promise((resolve, reject) => {
+      this.presentationService.RemoteShowCorrectAnswer(showChooseCorrectAnswerDTO).subscribe(
+        (response: any) => {
+         resolve(response);
+        },
+        (error: any) => {
+          console.log(error?.error);
+        }
+      );
+    });
+  }
   moderateResponse(moderateResponseDTO:any){
     return new Promise((resolve, reject) => {
       this.presentationService.moderateResponse(moderateResponseDTO).subscribe(
@@ -503,6 +634,18 @@ export class PresenterToolbarService {
       )
     });
   }
+  RemoteBlankScreenUpdate(presentationDTO:any){
+    return new Promise((resolve, reject) => {
+      this.presentationService.RemoteBlankScreenUpdate(presentationDTO).subscribe(
+        (response: any) => {
+          resolve(response);
+        },
+        (error: any) => {
+          console.log(error);
+        }
+      )
+    });
+  }
   resetPresentationResults(data:any){
     return new Promise((resolve, reject) => {
       this.presentationService.resetPresentationResult(data).subscribe(
@@ -518,6 +661,18 @@ export class PresenterToolbarService {
   resetSlideResults(data:any){
     return new Promise((resolve, reject) => {
       this.presentationService.resetSlideResult(data).subscribe(
+        (response: any) => {
+          resolve(response);
+        },
+        (error: any) => {
+          console.log(error);
+        }
+      )
+    })
+  }
+  RemoteResetSlideResults(data:any){
+    return new Promise((resolve, reject) => {
+      this.presentationService.RemoteResetSlideResult(data).subscribe(
         (response: any) => {
           resolve(response);
         },

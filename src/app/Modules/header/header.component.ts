@@ -69,6 +69,7 @@ export class HeaderComponent implements OnInit {
     }
     Signout() {
       this._accountservice.logout();
+
      
     }
   confirmLogout(){
@@ -78,8 +79,14 @@ export class HeaderComponent implements OnInit {
       $('#logoutModal').modal('hide');
   }
   logout() {
+    const payload = {
+      description: `The user signout the application`
+    };
+    this._presentationservice.customerActive(payload).subscribe(
+      (response: any) => {})
     $('#logoutModal').modal('hide');
     this._accountservice.logout();
+  
   }
   upgrade(){
     this._router.navigateByUrl('app/myplan');

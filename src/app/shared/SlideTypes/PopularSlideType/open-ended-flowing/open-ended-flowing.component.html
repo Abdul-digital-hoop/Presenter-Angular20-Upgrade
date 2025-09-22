@@ -1,4 +1,7 @@
-<div class="overflow" id="overflow-scroll" *ngIf="presentationMode ">
+<div class="overflow" 
+     [ngClass]="{'remote-mode': isRemoteMode}" 
+     id="overflow-scroll" 
+     *ngIf="presentationMode ">
     <div class="row1" (keydown)="onKeyDown($event)" *ngIf="this.slideDetails.settings.showInResults">
         <div class="column">
 

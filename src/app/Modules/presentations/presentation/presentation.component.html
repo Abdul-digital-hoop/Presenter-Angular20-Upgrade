@@ -1,3 +1,11 @@
+<!-- Remote Access Notification -->
+<app-remote-access-notification 
+    [isVisible]="showRemoteAccessNotification"
+    (visibilityChange)="onRemoteAccessNotificationVisibilityChange($event)"
+    (requestApproved)="onRemoteAccessRequestApproved($event)"
+    (requestRejected)="onRemoteAccessRequestRejected($event)">
+</app-remote-access-notification>
+
 <section class="presentation-main-screen">
     <div class="inside-presentation-screen">
         <div class="position-max-width" #OuterScreen>
@@ -90,12 +98,12 @@
                                                         <path d="M17.8801 5.1158C17.8421 5.07909 17.797 5.04997 17.7474 5.0301C17.6977 5.01023 17.6445 5 17.5908 5C17.537 5 17.4838 5.01023 17.4342 5.0301C17.3845 5.04997 17.3394 5.07909 17.3015 5.1158L15.1199 7.22031C15.0819 7.25698 15.0517 7.30053 15.0312 7.34846C15.0106 7.39639 15 7.44777 15 7.49966C15 7.55155 15.0106 7.60293 15.0312 7.65086C15.0517 7.6988 15.0819 7.74234 15.1199 7.77901L17.3015 9.88352C17.3778 9.95767 17.4815 9.99956 17.5897 10C17.6437 10 17.6971 9.98977 17.747 9.96978C17.7968 9.94979 17.842 9.92047 17.8801 9.88352C17.9181 9.84685 17.9483 9.8033 17.9688 9.75537C17.9894 9.70744 18 9.65606 18 9.60417C18 9.55228 17.9894 9.5009 17.9688 9.45297C17.9483 9.40504 17.9181 9.36149 17.8801 9.32482L15.9889 7.49867L17.8801 5.67253C17.9562 5.59855 17.999 5.49848 17.999 5.39417C17.999 5.28985 17.9562 5.18978 17.8801 5.1158Z" [attr.fill]="ContrastColor" [attr.stroke]="ContrastColor" stroke-width="0.7"/>
                                                         <path d="M12.6985 8.36571C12.6217 8.29162 12.5177 8.25 12.4092 8.25C12.3006 8.25 12.1966 8.29162 12.1198 8.36571C12.0431 8.4398 12 8.54029 12 8.64507C12 8.74985 12.0431 8.85033 12.1198 8.92442L14.0111 10.7506L12.1198 12.5768C12.0437 12.6508 12.0009 12.7508 12.0009 12.8552C12.0009 12.9595 12.0437 13.0595 12.1198 13.1335C12.1579 13.1705 12.2031 13.1998 12.2529 13.2198C12.3028 13.2398 12.3562 13.25 12.4102 13.25C12.5185 13.2496 12.6221 13.2077 12.6985 13.1335L14.8801 11.029C14.9181 10.9923 14.9482 10.9488 14.9688 10.9008C14.9894 10.8529 15 10.8015 15 10.7496C15 10.6977 14.9894 10.6463 14.9688 10.5984C14.9482 10.5505 14.9181 10.5069 14.8801 10.4703L12.6985 8.36571Z" [attr.fill]="ContrastColor" [attr.stroke]="ContrastColor" stroke-width="0.7"/>
                                                         </svg>
-                                                        <p *ngIf="customerPlan?.remote; else inactiveIcon"></p>
+                                                        <p *ngIf="customerPlan?.remote; else inactiveIcon">Manage Users</p>
                                                 </button>
                                             </ng-container>
                                             <ng-container *ngIf="!((imageType === 'Image left'|| imageType === 'Side by side left') && workSpaceService.presentationSettingJoiningInstructions)">
                                                 <button  style="border-radius: 25px;" class="back-to-edit-page-section btn btn-list-menu"(click)="openSlideOneRemote()" [ngStyle]="{'cursor':customerPlan?.remote?'':'not-allowed'}">
-                                                    Slidea Remote
+                                                    Remote Access
                                                     <!-- <img src="/assets/new-icons/Remote.svg" class="tab-icon"> -->
                                                     <svg width="24" height="24" viewBox="0 0 24 24" [attr.fill]="'black'" xmlns="http://www.w3.org/2000/svg" *ngIf="customerPlan?.remote; else inactiveIcon">
                                                         <path d="M15.625 17.5C15.5255 17.5 15.4302 17.5395 15.3598 17.6098C15.2895 17.6802 15.25 17.7755 15.25 17.875V20.0425C15.25 20.0644 15.2413 20.0854 15.2258 20.1008C15.2104 20.1163 15.1894 20.125 15.1675 20.125H1.8325C1.81062 20.125 1.78964 20.1163 1.77416 20.1008C1.75869 20.0854 1.75 20.0644 1.75 20.0425V10.4575C1.75 10.4356 1.75869 10.4146 1.77416 10.3992C1.78964 10.3837 1.81062 10.375 1.8325 10.375H5.875C5.97446 10.375 6.06984 10.3355 6.14016 10.2652C6.21049 10.1948 6.25 10.0995 6.25 10C6.25 9.90054 6.21049 9.80516 6.14016 9.73483C6.06984 9.66451 5.97446 9.625 5.875 9.625H1.8325C1.61171 9.625 1.39996 9.71271 1.24383 9.86883C1.08771 10.025 1 10.2367 1 10.4575L1 20.0425C1 20.2633 1.08771 20.475 1.24383 20.6312C1.39996 20.7873 1.61171 20.875 1.8325 20.875H8.125V22.375H5.125C5.02554 22.375 4.93016 22.4145 4.85984 22.4848C4.78951 22.5552 4.75 22.6505 4.75 22.75C4.75 22.8495 4.78951 22.9448 4.85984 23.0152C4.93016 23.0855 5.02554 23.125 5.125 23.125H11.875C11.9745 23.125 12.0698 23.0855 12.1402 23.0152C12.2105 22.9448 12.25 22.8495 12.25 22.75C12.25 22.6505 12.2105 22.5552 12.1402 22.4848C12.0698 22.4145 11.9745 22.375 11.875 22.375H8.875V20.875H15.1675C15.3883 20.875 15.6 20.7873 15.7562 20.6312C15.9123 20.475 16 20.2633 16 20.0425V17.875C16 17.7755 15.9605 17.6802 15.8902 17.6098C15.8198 17.5395 15.7245 17.5 15.625 17.5Z" [attr.fill]="'black'" [attr.stroke]="'black'" stroke-width="0.7"/>
@@ -118,6 +126,21 @@
                                         </div>
                                     </div>
                             </ng-container>
+                            
+                            <!-- Remote Access Management Popup -->
+                            <app-remote-access-management 
+                                [presentationId]="workSpaceService.presentationId"
+                                [isVisible]="showRemoteAccessPopup"
+                                (popupClosed)="onRemoteAccessPopupClosed()"
+                                (openUrlPopup)="onOpenUrlPopup()">
+                            </app-remote-access-management>
+                            
+                            <!-- Remote URL Popup -->
+                            <app-remote-url-popup 
+                                [presentationId]="workSpaceService.presentationId"
+                                [isVisible]="showRemoteUrlPopup"
+                                (popupClosed)="onRemoteUrlPopupClosed()">
+                            </app-remote-url-popup>
                             <!-- * ===== Center Panel Section ====== -->
                             <ng-container *ngIf="!loadPresentationPage">
                                 <div class="loading">   

@@ -1,0 +1,60 @@
+<div class="remote-url-popup" *ngIf="isVisible">
+  <div class="popup-overlay" (click)="closePopup()"></div>
+  <div class="popup-content" [style.scale]="this.workspaceService.presentationMode ? 1: .7">
+    <!-- Header -->
+    <div class="popup-header">
+      <h3 class="popup-title">
+        <i class="fas fa-link"></i>
+        Remote Access URL
+      </h3>
+    </div>
+    
+    <!-- Content -->
+    <div class="popup-body">
+      <p class="description">Share this URL with remote users to give them access to your presentation:</p>
+      
+      <div class="url-box">
+        <label class="url-label">Remote URL:</label>
+        <div class="url-container">
+          <input 
+            type="text" 
+            class="url-input" 
+            [value]="remoteUrl" 
+            readonly
+            #urlInput>
+          <button class="copy-btn" (click)="copyUrl()" title="Copy URL">
+           Copy URL
+          </button>
+        </div>
+      </div>
+      <div class="remote-qr-code-container">
+        <img [src]="this.workspaceService.remoteUrlQRCode" alt="Remote URL QR Code" class="qr-code" 
+             [style.width.px]="this.workspaceService.presentationMode ? 400 : 200" 
+             [style.height.px]="this.workspaceService.presentationMode ? 400 : 200">
+      </div>
+      
+      
+      <!-- <div class="instructions">
+        <h5><i class="fas fa-info-circle"></i> Instructions for Remote Users:</h5>
+        <ol>
+          <li>Copy the URL above</li>
+          <li>Open it in a new browser tab</li>
+          <li>Enter your name when prompted</li>
+          <li>Wait for presenter approval</li>
+          <li>Once approved, you can use remote controls</li>
+        </ol>
+      </div> -->
+    </div>
+    
+    <!-- Footer -->
+    <div class="popup-footer">
+      <button class="btn btn-primary me-2" (click)="openRemoteAccessManagement()" *ngIf="!this.workspaceService.presentationMode">
+        <i class="fas fa-users"></i>
+        Manage Remote Users
+      </button>
+      <button class="btn btn-secondary" (click)="closePopup()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

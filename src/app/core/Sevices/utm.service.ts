@@ -11,26 +11,31 @@ export class UtmService {
   constructor(private route: ActivatedRoute) {}
 
   getUtmParams(): any {
-    // First check URL query parameters
-    let urlParams: any = {};
-    if (this.route.snapshot.queryParams) {
-      Object.entries(this.route.snapshot.queryParams).forEach(([key, value]) => {
+    let utmParams: any = {};
+  
+    Object.entries(this.route.snapshot.queryParams).forEach(([key, value]) => {
+      if (key.startsWith('utm_')) {
+        utmParams[key] = value;
+      }
+    });
+    if (Object.keys(utmParams).length === 0 && window.location.hash) {
+      const fragment = window.location.hash.substring(1); // remove '#'
+      const params = new URLSearchParams(fragment);
+      params.forEach((value, key) => {
         if (key.startsWith('utm_')) {
-          urlParams[key] = value;
+          utmParams[key] = value;
         }
       });
     }
-
-    // If URL has UTM parameters, return them
-    if (Object.keys(urlParams).length > 0) {
-      return urlParams;
+  
+    if (Object.keys(utmParams).length === 0) {
+      const cookieValue = this.getCookie(this.UTM_KEY);
+      return cookieValue ? JSON.parse(cookieValue) : null;
     }
-
-    // If no URL parameters, check cookies
-    const cookieValue = this.getCookie(this.UTM_KEY);
-    return cookieValue ? JSON.parse(cookieValue) : null;
+  
+    return utmParams;
   }
-
+  
   saveUtmParams(params: any) {
     const utmParams = {
       utm_source: params['utm_source'] || null,

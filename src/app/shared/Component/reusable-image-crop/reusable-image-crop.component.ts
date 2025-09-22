@@ -4,6 +4,7 @@ import { PresentationThemeService } from 'src/app/core/Sevices/Presentation/pres
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { ImageUploadeModuleName } from 'src/app/utility/constants';
 import { settingVariables } from 'src/app/utility/SettingVariables';
+import { defaultmediaService } from 'src/app/core/Sevices/defaultmedia.service';
 
 @Component({
     selector: 'app-reusable-image-crop',
@@ -18,6 +19,7 @@ export class ReusableImageCropComponent implements OnInit {
   @Input() instanceId: string = '';
   @Input() currentUploadedImageEvent: any;
   @Input() existingCroppedPossition: any | null = null;
+  @Input() isFromMyImages: boolean = false;
   @Output() isInticateImageUploading = new EventEmitter<any>();
   @Output() inticateCustomerBackToUpload = new EventEmitter<any>();
   @Output() savedImageEntityDetails = new EventEmitter<{response: any, type: string}>();
@@ -37,7 +39,7 @@ export class ReusableImageCropComponent implements OnInit {
   public newCroppedPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   public emptyCropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   public newCroppedImage: string = '';
-  constructor(private _http: HttpClient, private _presentationThemeService: PresentationThemeService, public _workspaceService: WorkspaceService) {}
+  constructor(private _http: HttpClient, private _presentationThemeService: PresentationThemeService, public _workspaceService: WorkspaceService, private defaultmediaService: defaultmediaService) {}
 
   ngOnInit(): void {
   }
@@ -113,6 +115,9 @@ export class ReusableImageCropComponent implements OnInit {
       case ImageUploadeModuleName.ThemeBackgroundImage:
         this.themeBackgroundUploadImageAPI().then((response:any) => {
           this.isInticateImageUploading.emit(false);
+          if (!this.isFromMyImages) {
+            this.saveImageToRecentImages(this.currentOrginalImage);
+          }
           this.savedImageEntityDetails.emit({response, type: ImageUploadeModuleName.ThemeBackgroundImage});
           this.clearLocalVariables();
         });
@@ -120,6 +125,9 @@ export class ReusableImageCropComponent implements OnInit {
       case ImageUploadeModuleName.ThemeLogoImages:
         this.themeLogoImageAPI().then((response:any) => {
           this.isInticateImageUploading.emit(false);
+          if (!this.isFromMyImages) {
+            this.saveImageToRecentImages(this.currentOrginalImage);
+          }
           this.savedImageEntityDetails.emit({response, type: ImageUploadeModuleName.ThemeLogoImages});
           this.clearLocalVariables();
         });
@@ -130,6 +138,9 @@ export class ReusableImageCropComponent implements OnInit {
       case ImageUploadeModuleName.MultiSlideImage:
         this.multiSlideImageAPI().then((response:any) => {
           this.isInticateImageUploading.emit(false);
+          if (!this.isFromMyImages) {
+            this.saveImageToRecentImages(this.currentOrginalImage);
+          }
           this.savedImageEntityDetails.emit({response, type: ImageUploadeModuleName.MultiSlideImage});
           this.clearLocalVariables();
         });
@@ -206,5 +217,13 @@ export class ReusableImageCropComponent implements OnInit {
       resolve();
       console.log("Clear Local Variable Image Crop");
     });
+  }
+  private saveImageToRecentImages(imageUrl: string): void {
+    this.defaultmediaService.addUserRecentImage(imageUrl).subscribe(
+      (response: any) => {
+      },
+      (error) => {
+      }
+    );
   }
 }

@@ -116,9 +116,17 @@ export class SinginComponent implements OnInit {
     }
     if (this.loginForm.valid) {
       this.isLoading = true;
+      const utmData = this._utmService.getUtmParams();
+      const cleanedUtm = utmData
+      ? Object.fromEntries(
+          Object.entries(utmData).filter(([_, v]) => v != null && v !== "")
+        )
+      : null;
       var payload = {
         ...this.loginForm.value,
-        utmData: this._utmService.getUtmParams()
+        ...(cleanedUtm && Object.keys(cleanedUtm).length > 0
+        ? { utmData: cleanedUtm }
+        : {}),
       };
       
       this._accountservice.login(payload).subscribe(
@@ -184,8 +192,15 @@ export class SinginComponent implements OnInit {
       this.isLoading = true;
       var token = response.credential;
       const utmData = this._utmService.getUtmParams();
-      
-      this._accountservice.googlelogin(token, utmData).subscribe(
+      const cleanedUtm = utmData
+      ? Object.fromEntries(
+          Object.entries(utmData).filter(([_, v]) => v != null && v !== "")
+        )
+      : null;
+  
+    // Pass utmData only if it has valid keys
+    const finalUtm = cleanedUtm && Object.keys(cleanedUtm).length > 0 ? cleanedUtm : undefined;
+      this._accountservice.googlelogin(token, finalUtm).subscribe(
         (response: any) => {
           this._utmService.clearUtmParams(); // Clear UTM data after successful login
           this.isLoading = false;

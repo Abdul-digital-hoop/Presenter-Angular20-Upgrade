@@ -6,16 +6,21 @@ import { Injectable } from '@angular/core';
 export class CursorService {
   private cursorCache: Map<string, string> = new Map();
   
+  public static readonly HIGHLIGHTER_SIZES = {
+    SMALL: 8,      // S
+    MEDIUM: 15,    // M  
+    LARGE: 25,     // L
+    EXTRA_LARGE: 35 // XL
+  };
+  
   constructor() {
     this.initializeCursors();
   }
 
   private initializeCursors(): void {
-    // Try canvas-based cursors first
     let penCursor = this.createToolCursor('pen');
     let highlighterCursor = this.createToolCursor('highlighter');
     
-    // If canvas cursors fail, try SVG-based cursors
     if (!penCursor || penCursor.length === 0) {
       penCursor = this.createSimpleCursor('pen');
     }
@@ -24,25 +29,20 @@ export class CursorService {
       highlighterCursor = this.createSimpleCursor('highlighter');
     }
     
-    this.cursorCache.set('pen', penCursor);
-    this.cursorCache.set('highlighter', highlighterCursor);
+    this.cursorCache.set('pen', this.createEmojiCursor('🖊'));
+    this.cursorCache.set('highlighter', this.createColoredCircleCursor('#ffff00', 20)); // Default L size (20px = L)
     this.cursorCache.set('eraser', this.createEmojiCursor('🧽'));
-    this.cursorCache.set('arrow', this.createEmojiCursor('➡️'));
-    this.cursorCache.set('rectangle', this.createEmojiCursor('⏹️'));
-    this.cursorCache.set('circle', this.createEmojiCursor('⭕'));
-    this.cursorCache.set('text', this.createEmojiCursor('🔤'));
-    this.cursorCache.set('select', this.createEmojiCursor('👆'));
+    this.cursorCache.set('arrow', 'crosshair');
+    this.cursorCache.set('rectangle', 'crosshair');
+    this.cursorCache.set('circle', 'crosshair');
+    this.cursorCache.set('text', 'text');
+    this.cursorCache.set('select', 'move');
     
-    // Inject CSS styles for cursor override
     setTimeout(() => this.injectCursorCSS(), 100);
   }
 
-  /**
-   * Create a custom cursor for specific tools (pen, highlighter)
-   */
   private createToolCursor(toolType: string): string {
     try {
-      // Use higher resolution for crisp rendering
       const size = 32;
       const canvas = document.createElement('canvas');
       canvas.width = size;
@@ -53,14 +53,11 @@ export class CursorService {
         return '';
       }
 
-      // Enable crisp rendering
       ctx.imageSmoothingEnabled = false;
       
-      // Clear canvas with transparent background
       ctx.clearRect(0, 0, size, size);
 
     if (toolType === 'highlighter') {
-      // Draw pen icon without background
       
       // Pen body - main blue part
       ctx.fillStyle = '#2196F3';
@@ -118,7 +115,6 @@ export class CursorService {
       ctx.fill();
       ctx.stroke();
       
-      // Highlighter tip - darker yellow
       ctx.fillStyle = '#FF9800';
       ctx.beginPath();
       ctx.moveTo(6, 26);
@@ -128,7 +124,6 @@ export class CursorService {
       ctx.closePath();
       ctx.fill();
       
-      // Cap - orange
       ctx.fillStyle = '#FF5722';
       ctx.strokeStyle = '#D84315';
       
@@ -149,19 +144,14 @@ export class CursorService {
     }
   }
 
-  /**
-   * Create a custom cursor from emoji
-   */
   private createEmojiCursor(emoji: string): string {
     const canvas = document.createElement('canvas');
     canvas.width = 32;
     canvas.height = 32;
     const ctx = canvas.getContext('2d')!;
 
-    // Clear canvas
     ctx.clearRect(0, 0, 32, 32);
     
-    // Try different font families for better emoji support
     const fonts = [
       '24px "Segoe UI Emoji"',
       '24px "Apple Color Emoji"',
@@ -176,10 +166,8 @@ export class CursorService {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
-        // Draw emoji
         ctx.fillText(emoji, 16, 16);
         
-        // Check if something was actually drawn
         const imageData = ctx.getImageData(0, 0, 32, 32);
         const hasContent = imageData.data.some(pixel => pixel !== 0);
         
@@ -193,7 +181,6 @@ export class CursorService {
       }
     }
     
-    // If emoji failed, fall back to a simple symbol
     if (!drawn) {
       ctx.clearRect(0, 0, 32, 32);
       ctx.font = '16px Arial, sans-serif';
@@ -216,16 +203,16 @@ export class CursorService {
     return canvas.toDataURL();
   }
   
-  /**
-   * Get cursor CSS for a specific tool
-   */
   getToolCursor(toolId: string): string {
     const customCursor = this.cursorCache.get(toolId);
     if (customCursor && customCursor.length > 0) {
-      // Updated hotspot positions for 32x32 cursor with precise tip alignment
-      const hotspotX = toolId === 'pen' ? 14 : toolId === 'highlighter' ? 4 : 16;
-      const hotspotY = toolId === 'pen' ? 28 : toolId === 'highlighter' ? 28 : 16;
-      return `url("${customCursor}") ${hotspotX} ${hotspotY}, auto`;
+      if (customCursor.startsWith('data:') || customCursor.startsWith('url(')) {
+        const hotspotX = toolId === 'pen' ? 14 : toolId === 'highlighter' ? 16 : 16;
+        const hotspotY = toolId === 'pen' ? 28 : toolId === 'highlighter' ? 16 : 16;
+        return `url("${customCursor}") ${hotspotX} ${hotspotY}, auto`;
+      } else {
+        return customCursor;
+      }
     }
     
     // Fallback to default cursors
@@ -237,52 +224,207 @@ export class CursorService {
       case 'eraser':
         return 'grab';
       case 'arrow':
-        return 'n-resize';
+        return 'crosshair';
       case 'rectangle':
-        return 'se-resize';
+        return 'crosshair';
       case 'circle':
-        return 'se-resize';
+        return 'crosshair';
       case 'text':
         return 'text';
       case 'select':
-        return 'default';
+        return 'move';
       default:
         return 'default';
     }
   }
 
-  /**
-   * Force refresh cursors
-   */
+  private createColoredCircleCursor(color: string, size?: number): string {
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d')!;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, 32, 32);
+    
+    let radius: number;
+    if (size) {
+      if (size <= CursorService.HIGHLIGHTER_SIZES.SMALL) {
+        radius = 4; 
+      } else if (size <= CursorService.HIGHLIGHTER_SIZES.MEDIUM) {
+        radius = 6; 
+      } else if (size <= CursorService.HIGHLIGHTER_SIZES.LARGE) {
+        radius = 8; 
+      } else {
+        radius = 10;
+      }
+    } else {
+      radius = 6; 
+    }
+    
+    ctx.fillStyle = color;
+    ctx.strokeStyle = this.darkenColor(color, 0.3);
+    ctx.lineWidth = 2;
+    
+    ctx.beginPath();
+    ctx.arc(16, 16, radius, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.stroke();
+    
+    const innerRadius = radius * 0.8;
+    const gradient = ctx.createRadialGradient(16 - innerRadius * 0.3, 16 - innerRadius * 0.3, 0, 16, 16, innerRadius);
+    gradient.addColorStop(0, this.lightenColor(color, 0.3));
+    gradient.addColorStop(1, color);
+    
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.arc(16, 16, innerRadius, 0, 2 * Math.PI);
+    ctx.fill();
+    
+    return canvas.toDataURL();
+  }
+
+  private darkenColor(color: string, amount: number): string {
+    const hex = color.replace('#', '');
+    const r = Math.max(0, parseInt(hex.substr(0, 2), 16) * (1 - amount));
+    const g = Math.max(0, parseInt(hex.substr(2, 2), 16) * (1 - amount));
+    const b = Math.max(0, parseInt(hex.substr(4, 2), 16) * (1 - amount));
+    return `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
+  }
+
+  private lightenColor(color: string, amount: number): string {
+    const hex = color.replace('#', '');
+    const r = Math.min(255, parseInt(hex.substr(0, 2), 16) + (255 - parseInt(hex.substr(0, 2), 16)) * amount);
+    const g = Math.min(255, parseInt(hex.substr(2, 2), 16) + (255 - parseInt(hex.substr(2, 2), 16)) * amount);
+    const b = Math.min(255, parseInt(hex.substr(4, 2), 16) + (255 - parseInt(hex.substr(4, 2), 16)) * amount);
+    return `#${Math.round(r).toString(16).padStart(2, '0')}${Math.round(g).toString(16).padStart(2, '0')}${Math.round(b).toString(16).padStart(2, '0')}`;
+  }
+
   refreshCursors(): void {
     this.cursorCache.clear();
     this.initializeCursors();
   }
 
-  /**
-   * Apply cursor directly to canvas element
-   */
+  clearAllCursorStyling(): void {
+    // Remove all cursor-related CSS
+    const styleId = 'annotation-cursor-styles';
+    const existingStyle = document.getElementById(styleId);
+    if (existingStyle) {
+      existingStyle.remove();
+    }
+
+    const canvasElements = document.querySelectorAll('canvas[data-cursor-tool]');
+    const annotationElements = document.querySelectorAll('.annotation-canvas[data-cursor-tool]');
+    
+    canvasElements.forEach((element) => {
+      (element as HTMLElement).style.cursor = 'default';
+      element.removeAttribute('data-cursor-tool');
+    });
+    
+    annotationElements.forEach((element) => {
+      (element as HTMLElement).style.cursor = 'default';
+      element.removeAttribute('data-cursor-tool');
+      element.classList.remove('annotation-canvas');
+    });
+
+    const fabricWrappers = document.querySelectorAll('.fabric-canvas-wrapper');
+    fabricWrappers.forEach((wrapper) => {
+      const canvas = wrapper.querySelector('canvas');
+      if (canvas) {
+        canvas.style.cursor = 'default';
+        canvas.removeAttribute('data-cursor-tool');
+      }
+      wrapper.removeAttribute('data-cursor-tool');
+    });
+  }
+
+  updateHighlighterColor(color: string, size?: number): void {
+    this.cursorCache.set('highlighter', this.createColoredCircleCursor(color, size));
+    setTimeout(() => this.injectCursorCSS(), 50);
+    
+    this.forceCursorUpdate();
+  }
+
+  updateHighlighterSize(size: number, color?: string): void {
+    const currentColor = color || '#ffff00';
+    this.cursorCache.set('highlighter', this.createColoredCircleCursor(currentColor, size));
+    setTimeout(() => this.injectCursorCSS(), 50);
+    this.forceCursorUpdate();
+  }
+
+  syncWithAnnotationSettings(highlighterColor: string, highlighterWidth: number): void {
+    this.cursorCache.set('highlighter', this.createColoredCircleCursor(highlighterColor, highlighterWidth));
+    setTimeout(() => this.injectCursorCSS(), 50);
+  }
+
+  getSizeLevelName(size: number): string {
+    if (size <= CursorService.HIGHLIGHTER_SIZES.SMALL) {
+      return 'S';
+    } else if (size <= CursorService.HIGHLIGHTER_SIZES.MEDIUM) {
+      return 'M';
+    } else if (size <= CursorService.HIGHLIGHTER_SIZES.LARGE) {
+      return 'L';
+    } else {
+      return 'XL';
+    }
+  }
+
+  private forceCursorUpdate(): void {
+    // Find all canvas elements with cursor tool attributes
+    const canvasElements = document.querySelectorAll('canvas[data-cursor-tool="highlighter"]');
+    const annotationElements = document.querySelectorAll('.annotation-canvas[data-cursor-tool="highlighter"]');
+    
+    const newCursor = this.getToolCursor('highlighter');
+    
+    canvasElements.forEach((element) => {
+      (element as HTMLElement).style.setProperty('cursor', newCursor, 'important');
+    });
+    
+    annotationElements.forEach((element) => {
+      (element as HTMLElement).style.setProperty('cursor', newCursor, 'important');
+    });
+    
+    const fabricWrappers = document.querySelectorAll('.fabric-canvas-wrapper');
+    fabricWrappers.forEach((wrapper) => {
+      const canvas = wrapper.querySelector('canvas');
+      if (canvas && canvas.getAttribute('data-cursor-tool') === 'highlighter') {
+        canvas.style.setProperty('cursor', newCursor, 'important');
+      }
+    });
+  }
+
   applyCursorToCanvas(canvasElement: HTMLElement, toolId: string): void {
     const cursor = this.getToolCursor(toolId);
     
     if (canvasElement) {
-      // Force cursor application with !important
       canvasElement.style.setProperty('cursor', cursor, 'important');
       
-      // Add data attribute for CSS targeting
       canvasElement.setAttribute('data-cursor-tool', toolId);
       canvasElement.classList.add('annotation-canvas');
       
-      // Apply cursor to parent wrapper if exists
       const wrapper = canvasElement.closest('.fabric-canvas-wrapper') || canvasElement.parentElement;
       if (wrapper && wrapper !== canvasElement) {
         (wrapper as HTMLElement).style.setProperty('cursor', cursor, 'important');
         wrapper.setAttribute('data-cursor-tool', toolId);
       }
       
-      // Update CSS injection and setup mouse event fallback
       this.injectCursorCSS();
       this.setupMouseEventCursors(canvasElement, toolId);
+    }
+  }
+
+  clearCursorFromCanvas(canvasElement: HTMLElement): void {
+    if (canvasElement) {
+      canvasElement.style.setProperty('cursor', 'default', 'important');
+      
+      canvasElement.removeAttribute('data-cursor-tool');
+      canvasElement.classList.remove('annotation-canvas');
+      
+      const wrapper = canvasElement.closest('.fabric-canvas-wrapper') || canvasElement.parentElement;
+      if (wrapper && wrapper !== canvasElement) {
+        (wrapper as HTMLElement).style.setProperty('cursor', 'default', 'important');
+        wrapper.removeAttribute('data-cursor-tool');
+      }
     }
   }
 
@@ -310,19 +452,14 @@ export class CursorService {
     return '';
   }
 
-  /**
-   * Inject CSS to ensure our cursors have priority
-   */
   private injectCursorCSS(): void {
     const styleId = 'annotation-cursor-styles';
     
-    // Remove existing style if present
     const existingStyle = document.getElementById(styleId);
     if (existingStyle) {
       existingStyle.remove();
     }
 
-    // Create new style element
     const style = document.createElement('style');
     style.id = styleId;
     style.innerHTML = `
@@ -335,6 +472,26 @@ export class CursorService {
         cursor: ${this.getToolCursor('highlighter')} !important;
       }
       
+      .annotation-canvas[data-cursor-tool="eraser"] {
+        cursor: ${this.getToolCursor('eraser')} !important;
+      }
+      
+      .annotation-canvas[data-cursor-tool="arrow"] {
+        cursor: crosshair !important;
+      }
+      
+      .annotation-canvas[data-cursor-tool="rectangle"] {
+        cursor: crosshair !important;
+      }
+      
+      .annotation-canvas[data-cursor-tool="circle"] {
+        cursor: crosshair !important;
+      }
+      
+      .annotation-canvas[data-cursor-tool="text"] {
+        cursor: text !important;
+      }
+      
       /* Fabric.js canvas elements */
       canvas[data-cursor-tool="pen"] {
         cursor: ${this.getToolCursor('pen')} !important;
@@ -343,7 +500,32 @@ export class CursorService {
       canvas[data-cursor-tool="highlighter"] {
         cursor: ${this.getToolCursor('highlighter')} !important;
       }
+        
+      canvas[data-cursor-tool="eraser"] {
+        cursor: ${this.getToolCursor('eraser')} !important;
+      }
       
+      canvas[data-cursor-tool="arrow"] {
+        cursor: crosshair !important;
+      }
+      
+      canvas[data-cursor-tool="rectangle"] {
+        cursor: crosshair !important;
+      }
+      
+      canvas[data-cursor-tool="circle"] {
+        cursor: crosshair !important;
+      }
+      
+      canvas[data-cursor-tool="text"] {
+        cursor: text !important;
+      }
+      annotation-canvas[data-cursor-tool="select"] {
+        cursor: move !important;
+      }
+      canvas[data-cursor-tool="select"] {
+        cursor: move !important;
+      }
       /* Override any conflicting cursor styles */
       .fabric-canvas-wrapper canvas {
         cursor: inherit !important;
@@ -353,17 +535,12 @@ export class CursorService {
     document.head.appendChild(style);
   }
 
-  /**
-   * Apply cursor using mouse events (ultimate fallback)
-   */
   private setupMouseEventCursors(canvasElement: HTMLElement, toolId: string): void {
     const cursor = this.getToolCursor(toolId);
     
-    // Remove existing event listeners
     canvasElement.removeEventListener('mouseenter', this.mouseEnterHandler);
     canvasElement.removeEventListener('mousemove', this.mouseMoveHandler);
     
-    // Create new handlers
     this.mouseEnterHandler = () => {
       canvasElement.style.setProperty('cursor', cursor, 'important');
     };
@@ -374,7 +551,6 @@ export class CursorService {
       }
     };
     
-    // Add event listeners
     canvasElement.addEventListener('mouseenter', this.mouseEnterHandler);
     canvasElement.addEventListener('mousemove', this.mouseMoveHandler);
   }

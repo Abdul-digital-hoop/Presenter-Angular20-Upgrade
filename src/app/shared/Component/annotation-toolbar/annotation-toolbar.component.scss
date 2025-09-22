@@ -8,7 +8,6 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   opacity: 0;
   transform: translateY(-10px);
-  transition: all 0.3s ease;
   user-select: none;
 
   &.visible {
@@ -121,6 +120,7 @@
         align-items: center;
         justify-content: center;
         font-size: 18px;
+        position: relative;
 
         &:hover {
           background: rgba(255, 255, 255, 0.2);
@@ -134,7 +134,7 @@
         }
 
         .tool-icon {
-          font-size: 26px;
+          font-size: 18px;
         }
       }
     }
@@ -157,6 +157,7 @@
           display: flex;
           align-items: center;
           justify-content: center;
+          position: relative;
 
           &:hover {
             border-color: rgba(255, 255, 255, 0.4);
@@ -280,6 +281,7 @@
         gap: 6px;
         font-size: 12px;
         font-weight: 500;
+        position: relative;
 
         &:hover {
           background: rgba(255, 255, 255, 0.2);
@@ -297,8 +299,8 @@
         }
 
         svg {
-          width: 14px;
-          height: 14px;
+          width: 18px;
+          height: 18px;
         }
       }
     }
@@ -308,6 +310,11 @@
       border-radius: 8px;
       padding: 12px;
       border: 1px solid rgba(255, 255, 255, 0.1);
+      position: absolute;
+      bottom: 0;
+      right: 100px;
+      background: #191919;
+      text-wrap-mode: nowrap;
 
       .setting-item {
         .setting-label {
@@ -326,6 +333,66 @@
         }
       }
     }
+  }
+  .custom-tooltip {
+    position: absolute;
+    bottom: 35px;
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 10005;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: rgba(0, 0, 0, 0.95);
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    .tool-btn & {
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .close-btn & {
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .control-btn & {
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .action-btn & {
+      bottom: calc(100% + 12px);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+
+  .tool-btn:hover .custom-tooltip,
+  .close-btn:hover .custom-tooltip,
+  .control-btn:hover .custom-tooltip,
+  .action-btn:hover .custom-tooltip {
+    opacity: 1;
+    visibility: visible;
   }
 }
 

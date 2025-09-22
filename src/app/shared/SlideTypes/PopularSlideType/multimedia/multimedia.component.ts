@@ -3,6 +3,8 @@ import * as fabric from 'fabric';
 
 import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
+import { MultimediaService } from 'src/app/core/Sevices/multimedia.service';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription, Subject, filter, take, distinctUntilChanged, finalize } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import * as paper from 'paper';
@@ -31,10 +33,10 @@ interface TableConfig {
 }
 
 @Component({
-    selector: 'app-multimedia',
-    templateUrl: './multimedia.component.html',
-    styleUrls: ['./multimedia.component.scss'],
-    standalone: false
+  selector: 'app-multimedia',
+  templateUrl: './multimedia.component.html',
+  styleUrls: ['./multimedia.component.scss'],
+  standalone: false
 })
 export class MultimediaComponent implements OnInit, OnDestroy {
 
@@ -170,33 +172,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   // Add new property for tracking merged shapes
   private mergedShapes: fabric.Object[] = [];
+
+  // Drag and drop state
+  public isDragOver: boolean = false;
+  public isProcessingImage: boolean = false;
   defaultJson: string;
-
-  private clipboardObject: any = null;
-
-  private copySelectedObject() {
-    const activeObject = this.canvas.getActiveObject();
-    if (activeObject) {
-      activeObject.clone().then((cloned) => {
-        this.clipboardObject = cloned;
-      });
-    }
-  }
-
-  private pasteObject() {
-    if (this.clipboardObject) {
-      this.clipboardObject.clone((cloned: fabric.Object) => {
-        cloned.set({
-          left: this.clipboardObject.left! + 10,
-          top: this.clipboardObject.top! + 10
-        });
-        this.canvas.add(cloned);
-        this.canvas.setActiveObject(cloned);
-        this.canvas.renderAll();
-      });
-    }
-  }
-
 
   // Add these properties to your class
   private clipboard: fabric.Object | null = null;
@@ -208,6 +188,9 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     rows: 3,
     columns: 3
   };
+  
+  // Property to store group adjustment for paste operations
+  private currentPasteAdjustment: { x: number; y: number } | null = null;
   tableErrors = {
     rows: '',
     columns: ''
@@ -248,10 +231,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     public presentationService: PresentationService,
     public workspaceService: WorkspaceService,
     private changeDetectorRef: ChangeDetectorRef,
+    private multimediaService: MultimediaService,
+    private toastr: ToastrService
   ) {
     //this.existingJson = this.workspaceService.options;
   }
-  
 
   /**
    * LIFECYCLE HOOKS
@@ -303,7 +287,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     
     this.canvas?.dispose();
   }
-  
+
   /**
    * CANVAS INITIALIZATION AND SETUP
    */
@@ -320,40 +304,62 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       preserveObjectStacking: true
     });
 
+
+    // Also add to the wrapper element (upper canvas)
+    const upperCanvas = this.canvas.upperCanvasEl;
+    upperCanvas.addEventListener('drop', (e) => {
+      this.onDrop(e);
+    });
+
+
+
     // Scale canvas container to fit parent while maintaining aspect ratio
     this.scaleCanvasContainer(parentElement);
     
-    const parsedJson = JSON.parse(existingJson);
-    if (parsedJson.objects && Array.isArray(parsedJson.objects)) {
-      this.loadFromJson(existingJson);
-    } else {
-      this.addDefaultText();
-    }
 
-    fabric.Object.prototype.set({
-      borderColor: '#44aaff',
-      cornerColor: '#44aaff',
-      cornerSize: 12,
-      cornerStyle: 'circle',
-      transparentCorners: false,
-      selectable: true,
-      evented: true
-    });
+
+  // 🔹 Global defaults (for all fabric objects except where overridden)
+fabric.Object.prototype.set({
+  borderColor: '#44aaff',
+  cornerColor: '#44aaff',
+  cornerSize: 12,
+  cornerStyle: 'circle',
+  transparentCorners: false,
+  selectable: true,
+  evented: true
+});
+
+// 🔹 Override specifically for Textbox objects
+fabric.Textbox.prototype.set({
+  borderColor: '#555',             // gray border
+  borderDashArray: [2, 2],         // dotted line
+  borderScaleFactor: 1,
+  cornerStyle: 'circle',
+  cornerColor: '#fff',             // white handles
+  cornerStrokeColor: '#555',       // gray outline
+  cornerSize: 12,
+  transparentCorners: false,
+  rotatingPointOffset: 30,
+  selectable: true,
+  evented: true
+});
+const parsedJson = JSON.parse(existingJson);
+if (parsedJson.objects && Array.isArray(parsedJson.objects)) {
+  this.loadFromJson(existingJson);
+} else {
+  this.addDefaultText();
+}
 
     this.canvas.renderAll();
 
     // Listen to canvas changes for auto-save & undo/redo tracking
     this.canvas.on('object:modified', () => this.recordHistory());
-    this.canvas.on('object:added', () => this.recordHistory());
-    this.canvas.on('object:removed', () => this.recordHistory());
-
-    this.canvas.on('object:moving', () => this.recordHistory());
     // Handle right-click specifically
     this.canvas.wrapperEl.addEventListener('contextmenu', (e: MouseEvent) => {
       e.preventDefault();
       const clickedObject = this.canvas.findTarget(e);
       
-      if (clickedObject) {  
+      if (clickedObject) {
         this.selectedObject = clickedObject;
         this.showContextMenu = true;
         
@@ -374,8 +380,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
         this.contextMenuY = pointerY;
         
         // Adjust if menu would go outside canvas
-        const menuWidth = 115;
-        const menuHeight = 250;
+        const menuWidth = 180;
+        const menuHeight = 400;
         
         if (this.contextMenuX + menuWidth > this.canvas.width!) {
           this.contextMenuX = this.canvas.width! - menuWidth;
@@ -391,8 +397,6 @@ export class MultimediaComponent implements OnInit, OnDestroy {
         this.showContextMenu = false;
       }
     });
-
-
 
     // Setup drag alignment events
     this.setupDragAlignment();
@@ -606,9 +610,20 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       top: 15,
       hasControls: true,
       hasBorders: true,
-      lockScalingY: true
+      lockScalingY: true,
+      borderColor: '#555',             // gray border
+      borderDashArray: [2, 2],         // dotted line
+      borderScaleFactor: 1,
+      cornerStyle: 'circle',
+      cornerColor: '#fff',             // white handles
+      cornerStrokeColor: '#555',       // gray outline
+      cornerSize: 12,
+      transparentCorners: false,
+      selectable: true,
+      evented: true
     });
-    (headingGroup as any).name = 'headingGroup';
+    headingGroup.set('name', 'headingGroup');
+    headingGroup.set('rotatingPointOffset', 30);
   
     // Content Border and Text
     const contentBorder = new fabric.Rect({
@@ -641,10 +656,20 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       top: 90,
       hasControls: true,
       hasBorders: true,
-      
-      lockScalingY: true
+      lockScalingY: true,
+      borderColor: '#555',             // gray border
+      borderDashArray: [2, 2],         // dotted line
+      borderScaleFactor: 1,
+      cornerStyle: 'circle',
+      cornerColor: '#fff',             // white handles
+      cornerStrokeColor: '#555',       // gray outline
+      cornerSize: 12,
+      transparentCorners: false,
+      selectable: true,
+      evented: true
     });
-    (contentGroup as any).name = 'contentGroup';
+    contentGroup.set('name', 'contentGroup');
+    contentGroup.set('rotatingPointOffset', 30);
 
     this.canvas.add(headingGroup, contentGroup);
     this.canvas.renderAll();
@@ -671,7 +696,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     if (existingJson) {
       const parsedJson = JSON.parse(existingJson);
       
-      // Process objects to hide default elements
+      // Process objects to hide default elements and make textboxes non-editable
       if (parsedJson.objects) {
         parsedJson.objects.forEach((obj: any) => {
           if (obj.type === 'group') {
@@ -681,6 +706,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
                  (groupObj.text === 'Click to add heading' || 
                   groupObj.text === 'Click to add content')) {
                 groupObj.visible = false; // Hide default text
+              } else if (groupObj.type === 'textbox') {
+                // Make textbox non-editable
+                groupObj.selectable = false;
+                groupObj.evented = false;
+                groupObj.editable = false;
               }
               if (groupObj.type === 'rect' && 
                   groupObj.fill === 'transparent' && 
@@ -695,6 +725,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
                (obj.text === 'Click to add heading' || 
                 obj.text === 'Click to add content')) {
               obj.visible = false; // Hide default text
+            } else if (obj.type === 'textbox') {
+              // Make textbox non-editable
+              obj.selectable = false;
+              obj.evented = false;
+              obj.editable = false;
             }
             if (obj.type === 'rect' && 
                 obj.fill === 'transparent' && 
@@ -708,6 +743,16 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
       // Load the modified JSON
       this.canvas.loadFromJSON(parsedJson, () => {
+        // After loading, ensure all textboxes are non-editable
+        this.canvas.getObjects().forEach((obj: any) => {
+          if (obj.type === 'textbox' || obj.type === 'i-text') {
+            obj.set({
+              selectable: false,
+              evented: false,
+              editable: false
+            });
+          }
+        });
         this.canvas.renderAll();
       });
     }
@@ -718,8 +763,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   
     if (!obj) return;
   
-    if (obj.type === 'activeSelection') {
-      (obj as any).getObjects().forEach(element => {
+    if (obj.type === 'activeSelection' && obj instanceof fabric.ActiveSelection) {
+      obj.getObjects().forEach(element => {
         this.canvas.remove(element);
       });
     } else {
@@ -734,7 +779,20 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   loadFromJson(dbJson?: string) {
     const savedJson = dbJson;
     if (savedJson) {
-      this.canvas.loadFromJSON(savedJson, () => this.canvas.renderAll());
+      this.canvas.loadFromJSON(savedJson, () => {
+        // Apply padding to all textbox objects after loading from JSON
+        this.canvas.getObjects().forEach((obj: fabric.Object) => {
+          if (obj.type === 'textbox') {
+            const textbox = obj as fabric.Textbox;
+            // Apply padding if it doesn't already have it
+            if (textbox.padding === undefined || textbox.padding === 0) {
+              textbox.set('padding', 10);
+              textbox.setCoords();
+            }
+          }
+        });
+        this.canvas.renderAll();
+      });
     }
   }
 
@@ -804,6 +862,10 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       this.canvas.off('object:modified');
       this.canvas.off('object:added');
       this.canvas.off('object:removed');
+      // this.canvas.off('object:moved');
+      // this.canvas.off('object:rotated');
+      // this.canvas.off('object:scaled');
+      // this.canvas.off('object:skewed');
       this.canvas.off('text:changed');
       this.canvas.off('path:created');
 
@@ -878,7 +940,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   bringToFront() {
     const obj = this.canvas.getActiveObject();
     if (obj) {
-      (obj as any).bringToFront();
+      this.canvas.bringObjectToFront(obj);
       this.canvas.renderAll();
     }
   }
@@ -886,7 +948,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   sendToBack() {
     const obj = this.canvas.getActiveObject();
     if (obj) {
-      (obj as any).sendToBack();
+      this.canvas.sendObjectToBack(obj);
       this.canvas.renderAll();
     }
   }
@@ -894,7 +956,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   bringForward() {
     const obj = this.canvas.getActiveObject();
     if (obj) {
-      (obj as any).bringForward();
+      this.canvas.bringObjectForward(obj);
       this.canvas.renderAll();
     }
   }
@@ -902,7 +964,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   sendBackward() {
     const obj = this.canvas.getActiveObject();
     if (obj) {
-      (obj as any).sendBackwards();
+      this.canvas.sendObjectBackwards(obj);
       this.canvas.renderAll();
     }
   }
@@ -1164,47 +1226,48 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     // Group - Ctrl+G
     if (event.ctrlKey && !event.shiftKey && event.key === 'g') {
       event.preventDefault();
-       const activeObj = this.canvas?.getActiveObject();
-       if (!activeObj) return;
-       if ((activeObj as any).type === 'activeSelection') {
+      if (!this.canvas.getActiveObject()) return;
       if (this.canvas.getActiveObject().type === 'activeSelection') {
-        (activeObj as any).toGroup();
-        this.canvas?.renderAll();
+        const activeSelection = this.canvas.getActiveObject() as fabric.ActiveSelection;
+        const objects = activeSelection.getObjects();
+        const group = new fabric.Group(objects, {
+          left: activeSelection.left,
+          top: activeSelection.top,
+          subTargetCheck: true,
+          interactive: true
+        });
+        
+        // Remove the active selection and its objects
+        this.canvas.discardActiveObject();
+        objects.forEach(obj => this.canvas.remove(obj));
+        
+        // Add the new group
+        this.canvas.add(group);
+        this.canvas.setActiveObject(group);
+        this.canvas.renderAll();
       }
     }
 
-
     // Duplicate - Ctrl+D
-    if (event.ctrlKey && String(event.key) === 'd') {
+    if (event.ctrlKey && event.key === 'd') {
       event.preventDefault();
-      const activeObject = this.canvas?.getActiveObject();
-      if (activeObject) {
-        (activeObject as any).clone((cloned: fabric.Object) => {
-          cloned.set({
-            left: activeObject.left! + 10,
-            top: activeObject.top! + 10
-          });
-          this.canvas.add(cloned);
-          this.canvas.setActiveObject(cloned);
-          this.canvas.renderAll();
-        });
-      }
+      this.duplicateSelectedObjects();
     }
 
     // Ungroup - Ctrl+Shift+G
-    if (event.ctrlKey && event.shiftKey && String(event.key) === 'G') {
+    if (event.ctrlKey && event.shiftKey && event.key === 'G') {
       event.preventDefault();
-      const activeObject = this.canvas?.getActiveObject();
-      if (!activeObject) return;
-
-      if ((activeObject as any).type === 'group') {
-        (activeObject as any).toActiveSelection?.();
-         this.canvas?.renderAll();
-          
+      if (!this.canvas.getActiveObject()) return;
+      if (this.canvas.getActiveObject().type === 'group') {
+        const group = this.canvas.getActiveObject() as fabric.Group;
+        const objects = group.getObjects();
+        this.canvas.discardActiveObject();
+        const activeSelection = new fabric.ActiveSelection(objects, { canvas: this.canvas });
+        this.canvas.setActiveObject(activeSelection);
+        this.canvas.renderAll();
       }
     }
 
-     document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === 'ArrowLeft' || event.key === 'ArrowRight' || 
       event.key === 'ArrowUp' || event.key === 'ArrowDown') {
     const activeObject = this.canvas.getActiveObject();
@@ -1234,74 +1297,64 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       this.canvas.renderAll();
       this.recordHistory();
     }
-  }});
+  }
     // Copy - Ctrl+C
-    if (event.ctrlKey && String(event.key) === 'c') {
+    if (event.ctrlKey && event.key === 'c') {
       event.preventDefault();
       this.copySelectedObjects();
     }
 
     // Cut - Ctrl+X
-    if (event.ctrlKey && String(event.key) === 'x') {
+    if (event.ctrlKey && event.key === 'x') {
       event.preventDefault();
       this.copySelectedObjects();
       this.deleteSelected();
     }
 
     // Paste - Ctrl+V
-    
-    if (event.ctrlKey && String(event.key) === 'v') {
+    if (event.ctrlKey && event.key === 'v') {
       event.preventDefault();
-      this.pasteObject();
+      this.pasteSelectedObjects();
     }
-  
 
     // Delete - Del
-    
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.key === 'Delete') {
       event.preventDefault();
       this.deleteSelected();
     }
-  })
 
     // Bring Forward - Ctrl+Shift+F
-    document.addEventListener('keydown', (event: KeyboardEvent) => {
     if (event.ctrlKey && event.shiftKey && event.key === 'F') {
-      event.preventDefault();
-      const activeObject = this.canvas?.getActiveObject();
-      if (activeObject) {
-        (activeObject as any).bringForward();
-        this.canvas?.renderAll();
-      }
-    }
-  })
-
-    // Send Backward - Ctrl+Shift+B
-    if (event.ctrlKey && event.shiftKey && String(event.key) === 'B') {
       event.preventDefault();
       const activeObject = this.canvas.getActiveObject();
       if (activeObject) {
-        (activeObject as any).sendBackwards();
+        this.canvas.bringObjectForward(activeObject);
+        this.canvas.renderAll();
+      }
+    }
+
+    // Send Backward - Ctrl+Shift+B
+    if (event.ctrlKey && event.shiftKey && event.key === 'B') {
+      event.preventDefault();
+      const activeObject = this.canvas.getActiveObject();
+      if (activeObject) {
+        this.canvas.sendObjectBackwards(activeObject);
         this.canvas.renderAll();
       }
     }
 
     // Undo - Ctrl+Z
-    if (event.ctrlKey && !event.shiftKey && String(event.key) === 'z') {
+    if (event.ctrlKey && !event.shiftKey && event.key === 'z') {
       event.preventDefault();
       this.undo();
     }
 
     // Redo - Ctrl+Y
-    if (event.ctrlKey && String(event.key) === 'y') {
+    if (event.ctrlKey && event.key === 'y') {
       event.preventDefault();
       this.redo();
     }
   }
-}
-  
-
 
   // Undo/Redo functionality
   private undoStack: string[] = [];
@@ -1315,19 +1368,33 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   private initializeStateTracking() {
     this.canvas.on('object:modified', () => this.saveState());
-    this.canvas.on('object:added', () => this.saveState());
+    this.canvas.on('object:added', (options: { target?: fabric.Object }) => {
+      this.saveState();
+
+      if (options.target && options.target.type === 'textbox') {
+        const textbox = options.target as fabric.Textbox;
+        const currentHeight = textbox.height || 50;
+
+        (textbox as any).expandedHeight = currentHeight;
+        (textbox as any).editStartHeight = currentHeight;
+        (textbox as any).preEditHeight = currentHeight;
+
+        if (textbox.padding === undefined || textbox.padding === 0) {
+          textbox.set('padding', 10);
+          textbox.setCoords();
+        }
+      }
+    });
+
+    
     this.canvas.on('object:removed', () => this.saveState());
   }
-      
-      // Initialize height tracking for new textboxes
-      
 
-
-  addShape(shapeConfig: ShapeConfig) {
+  addShape(shapeConfig: ShapeConfig, dropPosition?: { left: number; top: number }) {
     let shape;
     const commonProps = {
-      left: 100,
-      top: 100,
+      left: dropPosition?.left ?? 100,
+      top: dropPosition?.top ?? 100,
       fill: '#ffffff', // Changed from 'transparent' to white
       stroke: '#000',
       strokeWidth: 2,
@@ -1339,9 +1406,10 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       case 'text':
         const textboxWidth = 200;
         const textboxHeight = 50;
-        shape = new fabric.Textbox('Enter Text', {
-          left: (this.canvas.width! - textboxWidth) / 2,
-          top: (this.canvas.height! - textboxHeight) / 2,
+        const borderPadding = 10; // Padding to prevent cursor overlap with border
+        shape = new fabric.Textbox('', {
+          left: dropPosition?.left ?? (this.canvas.width! - textboxWidth) / 2,
+          top: dropPosition?.top ?? (this.canvas.height! - textboxHeight) / 2,
           fontSize: 24,
           width: textboxWidth,
           fontFamily: 'Arial',
@@ -1361,21 +1429,35 @@ export class MultimediaComponent implements OnInit, OnDestroy {
           lineHeight: 1,
           textAlign: 'left',
           breakWords: true,
-          wordWrap: true
+          wordWrap: true,
+          padding: borderPadding, // Add padding to prevent cursor overlap
+          // Add dotted border to textbox container
+          borderColor: '#555', // Changed from black to gray
+          borderScaleFactor: 1,
+          borderDashArray: [2, 2], // This creates the dotted border effect
+          cornerStyle: 'circle',       // makes corners circular
+          cornerColor: '#fff',         // white fill
+          cornerStrokeColor: '#555',   // gray outline
+          cornerSize: 12,              // circle size
+          transparentCorners: false,   // keep filled circles
+          rotatingPointOffset: 30,     // distance of rotation handle from object
+          cursorColor: '#333',         // Set cursor color to match text color
+          cursorWidth: 2,              // Set cursor width
+          selectionColor: 'rgba(0, 123, 255, 0.3)' // Set selection background color
         });
 
         // Add custom scaling handler to prevent text distortion
-        shape.on('scaling', (e: fabric.TEvent<MouseEvent> & { target?: fabric.Object }) => {
-          const target = e.target as fabric.Textbox;
+        shape.on('scaling', (options: { target?: fabric.Object }) => {
+          const target = options.target as fabric.Textbox;
           if (target && target.type === 'textbox') {
-            // Use Y-only scaling to prevent text distortion while allowing X scaling
             this.handleTextboxScalingYOnly(target);
           }
         });
+        
 
         // Add handler for when scaling starts
-        shape.on('scaling', (e: fabric.TEvent<MouseEvent> & { target?: fabric.Object }) => {
-          const target = e.target as fabric.Textbox;
+        shape.on('scaling', (options: { target?: fabric.Object }) => {
+          const target = options.target as fabric.Textbox;
           if (target && target.type === 'textbox') {
             // Prevent text distortion during scaling
             target.set({
@@ -1387,8 +1469,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
 
         // Add handler for text editing to preserve height
-        shape.on('editing:entered', (e: fabric.TEvent<MouseEvent> & { target?: fabric.Object }) => {
-          const target = e.target as fabric.Textbox;
+        shape.on('editing:entered', (options: { target?: fabric.Object }) => {
+          const target = options.target as fabric.Textbox;
           if (target && target.type === 'textbox') {
             // Store current height when entering edit mode
             (target as any).editStartHeight = target.height || 50;
@@ -1405,8 +1487,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
  
 
         // Add handler for keydown to catch all text changes
-        shape.on('keydown', (e: fabric.TEvent<MouseEvent> & { target?: fabric.Object }) => {
-          const target = e.target as fabric.Textbox;
+        shape.on('keydown', (options: { target?: fabric.Object }) => {
+          const target = options.target as fabric.Textbox;
           if (target && target.type === 'textbox') {
             // Store height before any text changes
             (target as any).preEditHeight = target.height || 50;
@@ -1415,8 +1497,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
 
         // Add handler for when scaling is completed
-        shape.on('scaled', (e: fabric.TEvent<MouseEvent> & { target?: fabric.Object }) => {
-          const target = e.target as fabric.Textbox;
+        shape.on('scaled', (options: { target?: fabric.Object }) => {
+          const target = options.target as fabric.Textbox;
           if (target && target.type === 'textbox') {
             this.handleTextboxScalingYOnly(target);
           }
@@ -1643,7 +1725,8 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       top: 150, 
       fontSize: 24,
       width: 200,
-      height: 50
+      height: 50,
+      padding: 10 // Add padding to prevent cursor overlap with border
     });
     
     // Initialize height tracking properties for new textboxes
@@ -2247,9 +2330,9 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   private setupTextSelectionHandler() {
     
-    this.canvas.on('text:selection:changed', (e: { target: fabric.IText }) => {
+    this.canvas.on('text:selection:changed', (options: { target?: fabric.Object }) => {
       this.workspaceService.multimediaAlighment = true;
-      const textObject = e.target as fabric.IText;
+      const textObject = options.target as fabric.IText;
       if (textObject) {
         const start = textObject.selectionStart || 0;
         const end = textObject.selectionEnd || 0;
@@ -2271,7 +2354,16 @@ export class MultimediaComponent implements OnInit, OnDestroy {
             hasBorders: false,
             hasControls: false,
             selectable: true,
-            evented: true
+            evented: true,
+            borderColor: '#555', // Changed from blue to gray
+            borderScaleFactor: 1,
+            borderDashArray: [2, 2],
+            cornerStyle: 'circle',       // makes corners circular
+            cornerColor: '#fff',         // white fill
+            cornerStrokeColor: '#555',   // gray outline
+            cornerSize: 12,              // circle size
+            transparentCorners: false,   // keep filled circles
+            rotatingPointOffset: 30  
           });
         } else {
           // For standalone text objects, show the selection outline
@@ -2280,21 +2372,24 @@ export class MultimediaComponent implements OnInit, OnDestroy {
             hasControls: true,
             selectable: true,
             evented: true,
-            borderColor: '#44aaff',
-            borderScaleFactor: 2,
-            cornerColor: '#44aaff',
-            cornerSize: 12,
-            cornerStyle: 'circle',
-            transparentCorners: false
+            borderColor: '#555', // Changed from blue to gray
+            borderScaleFactor: 1,
+            borderDashArray: [2, 2],
+            cornerStyle: 'circle',       // makes corners circular
+            cornerColor: '#fff',         // white fill
+            cornerStrokeColor: '#555',   // gray outline
+            cornerSize: 12,              // circle size
+            transparentCorners: false,   // keep filled circles
+            rotatingPointOffset: 30      // distance of rotation handle from object
           });
         }
         this.canvas.renderAll();
       }
     });
-    this.canvas.on('selection:created', (e) => {
-      const target = e.selected?.[0];
-      const textObject = target as fabric.IText;
+    this.canvas.on('selection:created', (options: { selected?: fabric.Object[] }) => {
+      const textObject = options.selected?.[0] as fabric.IText;
       if (textObject && textObject.type === 'i-text') {
+        // Ensure visible outline
         this.selectedTextObject = textObject;
         this.showTextToolbar = true;  // Show toolbar when text is selected
         this.updateTextPropertiesFromSelection(textObject);
@@ -2328,7 +2423,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       if (target && (target.type === 'textbox' || target.type === 'i-text')) {
         // If text is part of a group, bring it to front for editing
         if (target.group) {
-          (this.canvas as any).bringToFront();
+          this.canvas.bringObjectToFront(target.group);
         }
         
         // Update current active textbox
@@ -2347,36 +2442,24 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       this.recordHistory();
     });
     // Add event listener for text:changed event
-    this.canvas.on('text:changed', (e) => {
-      const textObject = e.target as fabric.IText;
+    this.canvas.on('text:changed', (options: { target?: fabric.Object }) => {
+      const textObject = options.target as fabric.IText;
       if (textObject) {
         this.handleTextDeletion(textObject);
         
-        // Preserve height during text changes for textboxes
+
+        
+        // Auto-adjust height for textboxes when text changes
         if (textObject.type === 'textbox') {
-          const currentHeight = textObject.height || 50;
-          const editStartHeight = (textObject as any).editStartHeight || currentHeight;
-          
-          // Always preserve the higher height during editing
-          const preservedHeight = Math.max(currentHeight, editStartHeight);
-          
-          if (preservedHeight > 50) {
-            (textObject as any).expandedHeight = preservedHeight;
-            
-            // Update height if it's different to maintain consistency
-            if (textObject.height !== preservedHeight) {
-              textObject.set({ height: preservedHeight });
-              textObject.setCoords();
-              this.canvas.requestRenderAll();
-            }
-          }
+          // Use adjustTextboxHeight to properly calculate required height
+          this.adjustTextboxHeight(textObject as fabric.Textbox);
         }
       }
     });
 
     // Add event listener for text:editing:entered to ensure proper cursor handling
-    this.canvas.on('text:editing:entered', (e) => {
-      const textObject = e.target as fabric.IText;
+    this.canvas.on('text:editing:entered', (options: { target?: fabric.Object }) => {
+      const textObject = options.target as fabric.IText;
       if (textObject) {
         // Set current active textbox when editing starts
         this.currentActiveTextbox = textObject;
@@ -2395,8 +2478,6 @@ export class MultimediaComponent implements OnInit, OnDestroy {
             (textObject as any).editStartHeight = (textObject as any).expandedHeight;
             (textObject as any).preEditHeight = (textObject as any).expandedHeight;
           }
-          
-          console.log('Editing started - Height preserved:', (textObject as any).editStartHeight);
         }
         
         // Ensure cursor position is properly set
@@ -2410,30 +2491,13 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     });
 
     // Add event listener for text:editing:exited to cleanup event listeners
-    this.canvas.on('text:editing:exited', (e) => {
-      const textObject = e.target as fabric.IText;
+    this.canvas.on('text:editing:exited', (options: { target?: fabric.Object }) => {
+      const textObject = options.target as fabric.IText;
       if (textObject) {
-        // Preserve the final height when editing ends
+        // Auto-adjust height when editing ends for textboxes
         if (textObject.type === 'textbox') {
-          const finalHeight = textObject.height || 50;
-          const editStartHeight = (textObject as any).editStartHeight || finalHeight;
-          
-          // Use the higher of the two heights to preserve expansion
-          const preservedHeight = Math.max(finalHeight, editStartHeight);
-          
-          if (preservedHeight > 50) {
-            (textObject as any).expandedHeight = preservedHeight;
-            (textObject as any).preEditHeight = preservedHeight;
-            
-            // Ensure the height is set to the preserved value
-            if (textObject.height !== preservedHeight) {
-              textObject.set({ height: preservedHeight });
-              textObject.setCoords();
-              this.canvas.requestRenderAll();
-            }
-            
-            console.log('Editing ended - Final height preserved:', preservedHeight);
-          }
+          // Final height adjustment after editing
+          this.adjustTextboxHeight(textObject as fabric.Textbox);
         }
         
         this.cleanupTextKeyboardEvents(textObject);
@@ -2446,36 +2510,63 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     const cursorPosition = textObject.selectionStart || 0;
     const selectionLength = (textObject.selectionEnd || 0) - cursorPosition;
 
-    if ((textObject as any)._textBeforeEdit && (textObject as any)._textBeforeEdit.length > text.length) {
-      
-      // If we have stored selected styles, preserve them more efficiently
+    // Check if this is a list text and handle list type clearing
+    const listType = textObject.get('listType');
+    if (listType) {
+      // Check if all content has been removed (empty or only whitespace)
+      if (text.trim().length === 0) {
+        textObject.set('listType', null);
+        textObject.set('listPrefix', '');
+      } else {
+        // Check if all list prefixes have been manually removed
+        const lines = text.split('\n');
+        const hasAnyListContent = lines.some(line => {
+          const trimmedLine = line.trim();
+          return trimmedLine.length > 0 && (
+            trimmedLine.startsWith('• ') ||
+            /^\d+\.\s/.test(trimmedLine) ||
+            /^[a-zA-Z]\.\s/.test(trimmedLine) ||
+            /^[IVXLCDM]+\.\s/.test(trimmedLine) ||
+            trimmedLine.startsWith('→ ') ||
+            trimmedLine.startsWith('✓ ')
+          );
+        });
+
+        if (!hasAnyListContent && text.trim().length > 0) {
+          // Text exists but no list prefixes found, clear list type
+          textObject.set('listType', null);
+          textObject.set('listPrefix', '');
+        }
+      }
+    }
+
+    textObject.on('editing:entered', () => {
+      (textObject as any).preEditText = textObject.text;
+    });
+    
+    // Later, when handling input/change
+    if ((textObject as any).preEditText && (textObject as any).preEditText.length > text.length) {
       if (this.selectedStyles) {
-        
-        // Store the current styles before applying new ones
         const currentStyles = textObject.styles ? { ...textObject.styles } : null;
-        
-        // Apply the stored styles to the entire text object (object level)
+    
         textObject.set({
           fill: this.selectedStyles.fill,
           stroke: this.selectedStyles.stroke,
-          fontSize: textObject.get('fontSize'), // Keep existing font size
-          fontFamily: textObject.get('fontFamily'), // Keep existing font family
+          fontSize: textObject.get('fontSize'),
+          fontFamily: textObject.get('fontFamily'),
           fontWeight: this.selectedStyles.fontWeight || 'normal',
           fontStyle: this.selectedStyles.fontStyle || 'normal',
           underline: this.selectedStyles.underline || false,
           linethrough: this.selectedStyles.linethrough || false,
-          textAlign: textObject.get('textAlign') // Keep existing alignment
+          textAlign: textObject.get('textAlign')
         });
-
-        // Restore character-level styles if they exist, otherwise apply stored styles
+    
         if (currentStyles && Object.keys(currentStyles).length > 0) {
-          // Preserve existing character styles
           textObject.styles = currentStyles;
         } else {
-          // Only apply to first character to avoid performance issues
           textObject.setSelectionStyles(this.selectedStyles, 0, 1);
         }
-        
+    
         this.canvas.renderAll();
       }
     }
@@ -2487,19 +2578,25 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     
     if (hiddenInput) {
       // Remove any existing event listeners to prevent duplicates
-      hiddenInput.removeEventListener('keydown', (e: KeyboardEvent) =>
-        this.handleTextKeyDown(textObject,e));
+      if ((textObject as any).boundKeyDownHandler) {
+        hiddenInput.removeEventListener('keydown', (textObject as any).boundKeyDownHandler);
+      }
+      
+      // Create bound function and store it on the text object
+      (textObject as any).boundKeyDownHandler = this.handleTextKeyDown.bind(this, textObject);
       
       // Add new event listener for keydown
-      hiddenInput.addEventListener('keydown', this.handleTextKeyDown.bind(this, textObject));
+      hiddenInput.addEventListener('keydown', (textObject as any).boundKeyDownHandler);
     } else {
       // If hiddenTextarea is not immediately available, try again after a short delay
       setTimeout(() => {
         const delayedInput = textObject.hiddenTextarea;
         if (delayedInput) {
-          hiddenInput.removeEventListener('keydown', (e: KeyboardEvent) =>
-        this.handleTextKeyDown(textObject,e));
-          delayedInput.addEventListener('keydown', this.handleTextKeyDown.bind(this, textObject));
+          if ((textObject as any).boundKeyDownHandler) {
+            delayedInput.removeEventListener('keydown', (textObject as any).boundKeyDownHandler);
+          }
+          (textObject as any).boundKeyDownHandler = this.handleTextKeyDown.bind(this, textObject);
+          delayedInput.addEventListener('keydown', (textObject as any).boundKeyDownHandler);
         }
       }, 100);
     }
@@ -2508,84 +2605,408 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   private cleanupTextKeyboardEvents(textObject: fabric.IText) {
     // Remove keyboard event listener when text editing ends
     const hiddenInput = textObject.hiddenTextarea;
-    if (hiddenInput) {
-      hiddenInput.removeEventListener('keydown', (e: KeyboardEvent) =>
-        this.handleTextKeyDown(textObject,e));
+    if (hiddenInput && (textObject as any).boundKeyDownHandler) {
+      hiddenInput.removeEventListener('keydown', (textObject as any).boundKeyDownHandler);
+      delete (textObject as any).boundKeyDownHandler;
     }
   }
 
   private handleTextKeyDown(textObject: fabric.IText, e: KeyboardEvent) {
-    const listType = textObject.get('listType');
-    const listPrefix = textObject.get('listPrefix') || '';
-    
-    if (!listType || !listPrefix) {
-      return; // Not a list type, no special handling
-    }
-    
-  
-    
-    // Check if backspace was pressed and list prefix was removed
+    // Handle Backspace key for list formatting
     if (e.key === 'Backspace') {
-     if (textObject.text.trim().length === 0) {
-      textObject.set('listType', null);
-      textObject.set('listPrefix', '');
+      const selectionStart = textObject.selectionStart || 0;
+      const selectionEnd = textObject.selectionEnd || 0;
+      const hasSelection = selectionStart !== selectionEnd;
+      
+      if (hasSelection) {
+        // Handle multi-line selection deletion
+        const lines = textObject.text.split('\n');
+        const startLineIndex = this.getCurrentLineIndex(textObject.text, selectionStart) - 1;
+        const endLineIndex = this.getCurrentLineIndex(textObject.text, selectionEnd) - 1;
+        
+        // Check if any of the selected lines are list items
+        let hasListItems = false;
+        let listType = null;
+        
+        for (let i = startLineIndex; i <= endLineIndex; i++) {
+          if (i >= 0 && i < lines.length) {
+            const lineType = this.detectLineListType(lines[i]);
+            if (lineType && (lineType === 'number' || lineType === 'letter' || lineType === 'roman')) {
+              hasListItems = true;
+              listType = lineType;
+              break;
+            }
+          }
+        }
+        
+        if (hasListItems) {
+          e.preventDefault();
+          
+          // Remove the selected text completely
+          const textBefore = textObject.text.substring(0, selectionStart);
+          const textAfter = textObject.text.substring(selectionEnd);
+          const newText = textBefore + textAfter;
+          
+          textObject.set('text', newText);
+          textObject.selectionStart = selectionStart;
+          textObject.selectionEnd = selectionStart;
+          
+          // Renumber the remaining list items
+          if (listType) {
+            const allLines = newText.split('\n');
+            
+            // Find the entire list section that needs renumbering
+            let sectionStart = -1;
+            let sectionEnd = -1;
+            
+            // First, find any line in the text that has the same list type
+            for (let i = 0; i < allLines.length; i++) {
+              const lineType = this.detectLineListType(allLines[i]);
+              if (lineType === listType) {
+                if (sectionStart === -1) {
+                  sectionStart = i;
+                }
+                sectionEnd = i + 1; // Keep extending the end
+              } else if (sectionStart !== -1 && lineType !== listType && lineType !== null) {
+                // Found a different list type, stop here
+                break;
+              }
+            }
+            
+            // If we found list items, renumber the entire section
+            if (sectionStart !== -1 && sectionEnd !== -1) {
+              let sequenceNumber = 1;
+              
+              for (let i = sectionStart; i < sectionEnd; i++) {
+                const line = allLines[i];
+                const lineListType = this.detectLineListType(line);
+                
+                if (lineListType === listType) {
+                  if (listType === 'number') {
+                    allLines[i] = line.replace(/^\s*\d+\.\s*/, `${sequenceNumber}. `);
+                  } else if (listType === 'letter') {
+                    const letter = String.fromCharCode(96 + sequenceNumber); // 96 = 'a' - 1
+                    allLines[i] = line.replace(/^\s*[a-zA-Z]\.\s*/, `${letter}. `);
+                  } else if (listType === 'roman') {
+                    const roman = this.toRoman(sequenceNumber);
+                    allLines[i] = line.replace(/^\s*[IVXLCDM]+\.\s*/, `${roman}. `);
+                  }
+                  sequenceNumber++;
+                }
+              }
+              
+              // Update text with renumbered lines
+              const renumberedText = allLines.join('\n');
+              textObject.set('text', renumberedText);
+            }
+          }
+          
+          textObject.canvas?.renderAll();
+          
+          // Update the hidden input value to match
+          if (textObject.hiddenTextarea) {
+            textObject.hiddenTextarea.value = textObject.text;
+            textObject.hiddenTextarea.setSelectionRange(selectionStart, selectionStart);
+          }
+          
+          return;
+        }
+      } else {
+        // Handle single cursor position (existing logic for prefix removal)
+        const cursorPos = selectionStart;
+        const lines = textObject.text.split('\n');
+        const currentLineIndex = this.getCurrentLineIndex(textObject.text, cursorPos) - 1;
+        
+        // Get the current line to detect its list type
+        const currentLine = lines[currentLineIndex] || '';
+        const currentListType = this.detectLineListType(currentLine);
+        
+        if (!currentListType || currentListType === 'bullet' || currentListType === 'arrow' || currentListType === 'check') {
+          return; // No special handling for non-list items or bullet/arrow/check lists
+        }
+        
+        // Check if cursor is at the beginning of the list prefix
+        let lineStartPos = 0;
+        for (let i = 0; i < currentLineIndex; i++) {
+          lineStartPos += lines[i].length + 1; // +1 for \n
+        }
+        
+        // Get the prefix length for the current line
+        let prefixMatch: RegExpMatchArray | null = null;
+        let prefixLength = 0;
+        
+        if (currentListType === 'number') {
+          prefixMatch = currentLine.match(/^\s*(\d+)\.\s*/);
+        } else if (currentListType === 'letter') {
+          prefixMatch = currentLine.match(/^\s*([a-zA-Z])\.\s*/);
+        } else if (currentListType === 'roman') {
+          prefixMatch = currentLine.match(/^\s*([IVXLCDM]+)\.\s*/);
+        }
+        
+        if (prefixMatch) {
+          prefixLength = prefixMatch[0].length;
+        }
+        
+        // Check if cursor is within the prefix area (including the dot and space)
+        const cursorPosInLine = cursorPos - lineStartPos;
+        if (cursorPosInLine <= prefixLength) {
+          e.preventDefault();
+          
+          // Remove the prefix from the current line
+          const lineContent = currentLine.substring(prefixLength); // Content after prefix
+          const textBeforeCurrentLine = textObject.text.substring(0, lineStartPos);
+          const textAfterCurrentLine = textObject.text.substring(lineStartPos + currentLine.length);
+          
+          // Build new text without the prefix
+          const newText = textBeforeCurrentLine + lineContent + textAfterCurrentLine;
+          textObject.set('text', newText);
+          
+          // Set cursor position at the beginning of the line content
+          const newCursorPos = lineStartPos;
+          textObject.selectionStart = newCursorPos;
+          textObject.selectionEnd = newCursorPos;
+          
+          // Renumber subsequent lines of the same list type
+          if (currentListType === 'number' || currentListType === 'letter' || currentListType === 'roman') {
+            const allLines = newText.split('\n');
+            
+            // Find the section boundaries
+            let sectionStart = currentLineIndex;
+            let sectionEnd = allLines.length;
+            
+            // Find section start
+            for (let i = currentLineIndex - 1; i >= 0; i--) {
+              const lineType = this.detectLineListType(allLines[i]);
+              if (lineType !== currentListType) {
+                sectionStart = i + 1;
+                break;
+              }
+              if (i === 0) {
+                sectionStart = 0;
+              }
+            }
+            
+            // Find section end
+            for (let i = currentLineIndex + 1; i < allLines.length; i++) {
+              const lineType = this.detectLineListType(allLines[i]);
+              if (lineType !== currentListType) {
+                sectionEnd = i;
+                break;
+              }
+            }
+            
+            // Renumber lines after the removed line
+            let sequenceNumber = 1;
+            for (let i = sectionStart; i < sectionEnd; i++) {
+              const line = allLines[i];
+              const lineListType = this.detectLineListType(line);
+              
+              if (lineListType === currentListType) {
+                if (currentListType === 'number') {
+                  allLines[i] = line.replace(/^\s*\d+\.\s*/, `${sequenceNumber}. `);
+                } else if (currentListType === 'letter') {
+                  const letter = String.fromCharCode(96 + sequenceNumber); // 96 = 'a' - 1
+                  allLines[i] = line.replace(/^\s*[a-zA-Z]\.\s*/, `${letter}. `);
+                } else if (currentListType === 'roman') {
+                  const roman = this.toRoman(sequenceNumber);
+                  allLines[i] = line.replace(/^\s*[IVXLCDM]+\.\s*/, `${roman}. `);
+                }
+                sequenceNumber++;
+              }
+            }
+            
+            // Update text with renumbered lines
+            const renumberedText = allLines.join('\n');
+            textObject.set('text', renumberedText);
+            
+            // Recalculate cursor position after renumbering
+            let adjustedCursorPos = 0;
+            for (let i = 0; i < currentLineIndex; i++) {
+              adjustedCursorPos += allLines[i].length + 1; // +1 for \n
+            }
+            textObject.selectionStart = adjustedCursorPos;
+            textObject.selectionEnd = adjustedCursorPos;
+          }
+          
+          textObject.canvas?.renderAll();
+          
+          // Update the hidden input value to match
+          if (textObject.hiddenTextarea) {
+            textObject.hiddenTextarea.value = textObject.text;
+            textObject.hiddenTextarea.setSelectionRange(textObject.selectionStart || 0, textObject.selectionEnd || 0);
+          }
+        }
+      }
       return;
-    }
     }
     
     // Handle Enter key for list formatting
     if (e.key === 'Enter') {
-      e.preventDefault();
+      // Check if the text is completely empty or only contains whitespace
+      if (textObject.text.trim().length === 0) {
+        return; // Let the default Enter behavior handle this
+      }
       
       const cursorPos = textObject.selectionStart || 0;
+      const lines = textObject.text.split('\n');
+      const currentLineIndex = this.getCurrentLineIndex(textObject.text, cursorPos) - 1; // -1 because we want the current line, not next line
+      
+      // Get the current line to detect its list type
+      const currentLine = lines[currentLineIndex] || '';
+      const currentListType = this.detectLineListType(currentLine);
+      
+      if (!currentListType) {
+        return; // Current line is not a list, no special handling
+      }
+      
+      e.preventDefault();
+      
+      // Capture original styles BEFORE any text modifications
+      const originalStylesBeforeAnyChanges = textObject.styles ? JSON.parse(JSON.stringify(textObject.styles)) : {};
+      
       const textBeforeCursor = textObject.text.slice(0, cursorPos);
       const textAfterCursor = textObject.text.slice(cursorPos);
       
-              // Count existing lines to determine the next number/letter
-        const lines = textObject.text.split('\n');
-        const currentLineIndex = this.getCurrentLineIndex(textObject.text, cursorPos);
+      // Declare variables that will be used later for all list types
+      let targetLineIndex = -1;
+      let prefixLengthBeforeCursor = 0;
+      
+      // Generate next prefix based on the current line's list type
+      let nextPrefix = '';
+      if (currentListType === 'number') {
+        // For numbered lists, check if this is a new section or continuation
+        const currentMatch = currentLine.match(/^\s*(\d+)\.\s*/);
+        const currentNumber = currentMatch ? parseInt(currentMatch[1]) : 1;
         
-        // Generate next prefix based on the current line count and type
-        let nextPrefix = '';
-        if (listType === 'number') {
-          // For numbered lists, use the line count + 1
-          const nextNumber = currentLineIndex + 1;
-          nextPrefix = `${nextNumber}. `;
-        } else if (listType === 'letter') {
-          // For letter lists, calculate the next letter based on line count
-          const nextLetter = String.fromCharCode(97 + currentLineIndex); // 97 = 'a' in ASCII
-          nextPrefix = `${nextLetter}. `;
-        } else if (listType === 'roman') {
-          // For Roman numeral lists, convert line count to Roman
-          const nextNumber = currentLineIndex + 1;
-          nextPrefix = `${this.toRoman(nextNumber)}. `;
-        } else if (listType === 'bullet') {
-          // For bullet lists, just use the bullet symbol
-          nextPrefix = '• ';
+        // Check if previous line has a different list type - if so, start fresh
+        const prevLineIndex = currentLineIndex - 1;
+        const prevLine = prevLineIndex >= 0 ? lines[prevLineIndex] : '';
+        const prevLineType = this.detectLineListType(prevLine);
+        
+        if (prevLineType !== 'number' || currentNumber === 1) {
+          // This is a new number section, start from 1, 2, 3...
+          nextPrefix = '1. ';
+        } else {
+          // This is continuation of existing number section
+          nextPrefix = `${currentNumber + 1}. `;
         }
+      } else if (currentListType === 'letter') {
+        // For letter lists, check if this is a new section or continuation
+        const currentMatch = currentLine.match(/^\s*([a-zA-Z])\.\s*/);
+        const currentLetter = currentMatch ? currentMatch[1] : 'a';
+        
+        // Check if previous line has a different list type - if so, start fresh
+        const prevLineIndex = currentLineIndex - 1;
+        const prevLine = prevLineIndex >= 0 ? lines[prevLineIndex] : '';
+        const prevLineType = this.detectLineListType(prevLine);
+        
+        if (prevLineType !== 'letter' || currentLetter === 'a') {
+          // This is a new letter section, start from a, b, c...
+          nextPrefix = 'a. ';
+        } else {
+          // This is continuation of existing letter section
+          const nextLetter = String.fromCharCode(currentLetter.charCodeAt(0) + 1);
+          nextPrefix = `${nextLetter}. `;
+        }
+      } else if (currentListType === 'roman') {
+        // For Roman numeral lists, find the next Roman numeral based on current line
+        const currentMatch = currentLine.match(/^\s*([IVXLCDM]+)\.\s*/);
+        if (currentMatch) {
+          const currentRoman = currentMatch[1];
+          const currentNumber = this.fromRoman(currentRoman);
+          
+          // Check if previous line has a different list type - if so, start fresh
+          const prevLineIndex = currentLineIndex - 1;
+          const prevLine = prevLineIndex >= 0 ? lines[prevLineIndex] : '';
+          const prevLineType = this.detectLineListType(prevLine);
+          
+          if (prevLineType !== 'roman' || currentNumber === 1) {
+            // This is a new roman section, start from I, II, III...
+            nextPrefix = 'I. ';
+          } else {
+            // This is continuation of existing roman section
+            nextPrefix = `${this.toRoman(currentNumber + 1)}. `;
+          }
+        } else {
+          nextPrefix = 'I. '; // fallback to start fresh
+        }
+      } else if (currentListType === 'bullet') {
+        // For bullet lists, just use the bullet symbol
+        nextPrefix = '• ';
+      } else if (currentListType === 'arrow') {
+        nextPrefix = '→ ';
+      } else if (currentListType === 'check') {
+        nextPrefix = '✓ ';
+      }
+        
+        // Set initial values for cursor positioning (will be updated for numbered lists)
+        const textBeforeNewLine = textBeforeCursor;
+        const linesSoFar = textBeforeNewLine.split('\n').length;
+        targetLineIndex = linesSoFar; // This is the line index of our new line
+        prefixLengthBeforeCursor = nextPrefix.length;
         
         // Build new text with prefix
         const newText = textBeforeCursor + '\n' + nextPrefix + textAfterCursor;
         
         // Renumber all subsequent lines if this is a numbered list
-        if (listType === 'number' || listType === 'letter' || listType === 'roman') {
+        if (currentListType === 'number' || currentListType === 'letter' || currentListType === 'roman') {
           const allLines = newText.split('\n');
-          let currentNumber = 1;
           
-          for (let i = 0; i < allLines.length; i++) {
+          // Use the styles captured before any changes
+          const originalStyles = originalStylesBeforeAnyChanges;
+          
+          // Find the start and end of the current list section
+          let sectionStart = currentLineIndex;
+          let sectionEnd = allLines.length;
+          
+          // Find section start by going backwards until we find a different list type
+          for (let i = currentLineIndex - 1; i >= 0; i--) {
+            const lineType = this.detectLineListType(allLines[i]);
+            if (lineType !== currentListType) {
+              sectionStart = i + 1;
+              break;
+            }
+            if (i === 0) {
+              sectionStart = 0;
+            }
+          }
+          
+          // Find section end by going forwards until we find a different list type
+          for (let i = currentLineIndex + 1; i < allLines.length; i++) {
+            const lineType = this.detectLineListType(allLines[i]);
+            if (lineType !== currentListType) {
+              sectionEnd = i;
+              break;
+            }
+          }
+          
+          // Only renumber lines within the current section
+          let sequenceNumber = 1;
+          for (let i = sectionStart; i < sectionEnd; i++) {
             const line = allLines[i];
-            if (line.trim() && (line.includes('. ') || line.includes('• '))) {
-              // This is a list item line
-              if (listType === 'number') {
-                allLines[i] = line.replace(/^\d+\.\s*/, `${currentNumber}. `);
-              } else if (listType === 'letter') {
-                const letter = String.fromCharCode(96 + currentNumber); // 96 = 'a' - 1
-                allLines[i] = line.replace(/^[a-zA-Z]\.\s*/, `${letter}. `);
-              } else if (listType === 'roman') {
-                const roman = this.toRoman(currentNumber);
-                allLines[i] = line.replace(/^[IVXLCDM]+\.\s*/, `${roman}. `);
+            const lineListType = this.detectLineListType(line);
+            
+            if (lineListType === currentListType) {
+              let newPrefix = '';
+              if (currentListType === 'number') {
+                newPrefix = `${sequenceNumber}. `;
+                allLines[i] = line.replace(/^\s*\d+\.\s*/, newPrefix);
+              } else if (currentListType === 'letter') {
+                const letter = String.fromCharCode(96 + sequenceNumber); // 96 = 'a' - 1
+                newPrefix = `${letter}. `;
+                allLines[i] = line.replace(/^\s*[a-zA-Z]\.\s*/, newPrefix);
+              } else if (currentListType === 'roman') {
+                const roman = this.toRoman(sequenceNumber);
+                newPrefix = `${roman}. `;
+                allLines[i] = line.replace(/^\s*[IVXLCDM]+\.\s*/, newPrefix);
               }
-              currentNumber++;
+              
+              // If this is the target line (where cursor should be), store the prefix length
+              if (i === targetLineIndex) {
+                prefixLengthBeforeCursor = newPrefix.length;
+              }
+              
+              sequenceNumber++;
             }
           }
           
@@ -2593,11 +3014,43 @@ export class MultimediaComponent implements OnInit, OnDestroy {
           const renumberedText = allLines.join('\n');
           textObject.set('text', renumberedText);
           
-          // Adjust cursor position for the new text length
-          const cursorOffset = renumberedText.length - newText.length;
-          const adjustedCursorPos = cursorPos + 1 + nextPrefix.length + cursorOffset;
-          textObject.selectionStart = adjustedCursorPos;
-          textObject.selectionEnd = adjustedCursorPos;
+          // Restore original styles to preserve existing formatting (except for the new line)
+          
+          // Clear all styles first to prevent contamination
+          textObject.styles = {};
+          
+          if (originalStyles && Object.keys(originalStyles).length > 0) {
+            // When we insert a new line, all lines after the target get shifted down by 1
+            // We need to account for this when restoring styles
+            
+            for (const lineIndex in originalStyles) {
+              const originalLineNum = parseInt(lineIndex);
+              
+              if (originalLineNum < targetLineIndex) {
+                // Lines before the target keep their original position
+                textObject.styles[originalLineNum] = originalStyles[lineIndex];
+              } else if (originalLineNum >= targetLineIndex) {
+                // Lines at and after the target get shifted down by 1
+                const newLineNum = originalLineNum + 1;
+                textObject.styles[newLineNum] = originalStyles[lineIndex];
+              }
+            }
+          }
+          
+          // Calculate correct cursor position for the new line
+          let correctCursorPos = 0;
+          const targetLines = renumberedText.split('\n');
+          
+          // Add length of all lines before our target line
+          for (let i = 0; i < targetLineIndex; i++) {
+            correctCursorPos += targetLines[i].length + 1; // +1 for \n
+          }
+          
+          // Add the prefix length to position cursor after the prefix
+          correctCursorPos += prefixLengthBeforeCursor;
+          
+          textObject.selectionStart = correctCursorPos;
+          textObject.selectionEnd = correctCursorPos;
         } else {
           // For bullet lists, just set the text normally
           textObject.set('text', newText);
@@ -2608,69 +3061,98 @@ export class MultimediaComponent implements OnInit, OnDestroy {
           textObject.selectionEnd = newCursorPos;
         }
         
-        // Apply current text properties to the new line (prefix + text after cursor)
-        const newLineStart = cursorPos + 1; // Start of new line
-        const newLineEnd = textObject.text.length; // End of new line
+
         
-        // Get styles from the current line (if it exists)
+        // Store cursor position before applying styles
+        const finalCursorPos = textObject.selectionStart || 0;
+        
+        // For numbered lists, we need to apply styles AFTER restoring original styles
+        const needsDelayedStyling = (currentListType === 'number' || currentListType === 'letter' || currentListType === 'roman');
+        
+        // Get style from the current line to apply to the new line
         let currentLineStyles = null;
+        
+        // Try to get style from the current line at cursor position
         if (textObject.styles && textObject.styles[currentLineIndex]) {
-          // Get the first character style from current line as reference
-          const firstCharIndex = Object.keys(textObject.styles[currentLineIndex])[0];
-          if (firstCharIndex) {
-            currentLineStyles = textObject.styles[currentLineIndex][firstCharIndex];
+          const lineStyles = textObject.styles[currentLineIndex];
+          
+          // Find the character position within the current line
+          let charPosInLine = cursorPos;
+          for (let i = 0; i < currentLineIndex; i++) {
+            charPosInLine -= (lines[i].length + 1); // +1 for newline
+          }
+          
+          // Try to get style from character before cursor position in current line
+          if (charPosInLine > 0 && lineStyles[charPosInLine - 1]) {
+            currentLineStyles = lineStyles[charPosInLine - 1];
+          } else if (Object.keys(lineStyles).length > 0) {
+            // Use the last styled character in the current line
+            const charIndexes = Object.keys(lineStyles).map(k => parseInt(k)).sort((a, b) => b - a);
+            currentLineStyles = lineStyles[charIndexes[0]];
           }
         }
         
-        // If no current line styles, try to get from previous line
-        if (!currentLineStyles && currentLineIndex > 0 && textObject.styles && textObject.styles[currentLineIndex - 1]) {
-          const prevLineFirstChar = Object.keys(textObject.styles[currentLineIndex - 1])[0];
-          if (prevLineFirstChar) {
-            currentLineStyles = textObject.styles[currentLineIndex - 1][prevLineFirstChar];
-          }
-        }
-        
-        // Fallback to text object properties if no styles found
+        // Fallback to text object base properties if no line styles found
         if (!currentLineStyles) {
           currentLineStyles = {
-            fontSize: textObject.get('fontSize') || this.currentFontSize,
-            fontFamily: textObject.get('fontFamily') || this.currentFontFamily,
-            fill: textObject.get('fill') || this.currentColor,
-            fontWeight: textObject.get('fontWeight') || 'normal',
-            fontStyle: textObject.get('fontStyle') || 'normal',
-            underline: textObject.get('underline') || false,
-            linethrough: textObject.get('linethrough') || false
+            fontSize: textObject.fontSize || this.currentFontSize,
+            fontFamily: textObject.fontFamily || this.currentFontFamily,
+            fill: textObject.fill || this.currentColor,
+            fontWeight: textObject.fontWeight || 'normal',
+            fontStyle: textObject.fontStyle || 'normal',
+            underline: textObject.underline || false,
+            linethrough: textObject.linethrough || false
           };
         }
         
-        // Apply complete styles to maintain full consistency
-        if (textObject.styles && textObject.styles[currentLineIndex - 1]) {
-          // Get styles from the previous line to maintain consistency
-          const prevLineStyles = textObject.styles[currentLineIndex - 1];
-          const firstCharKey = Object.keys(prevLineStyles)[0];
-          if (firstCharKey && prevLineStyles[firstCharKey]) {
-            const prevStyles = prevLineStyles[firstCharKey];
-            // Apply all style properties to maintain complete consistency
-            textObject.setSelectionStyles({
-              fontSize: prevStyles.fontSize || textObject.get('fontSize'),
-              fontFamily: prevStyles.fontFamily || textObject.get('fontFamily'),
-              fill: prevStyles.fill || textObject.get('fill'),
-              fontWeight: prevStyles.fontWeight || textObject.get('fontWeight'),
-              fontStyle: prevStyles.fontStyle || textObject.get('fontStyle'),
-              underline: prevStyles.underline || textObject.get('underline'),
-              linethrough: prevStyles.linethrough || textObject.get('linethrough'),
-              textAlign: textObject.get('textAlign')
-            }, newLineStart, newLineStart + nextPrefix.length);
+        // Apply styles to the new line (both numbered/lettered lists and bullet lists)
+        if (currentLineStyles) {
+          const styleToApply = {
+            fontSize: currentLineStyles.fontSize || textObject.fontSize,
+            fontFamily: currentLineStyles.fontFamily || textObject.fontFamily,
+            fill: currentLineStyles.fill || textObject.fill,
+            fontWeight: currentLineStyles.fontWeight || textObject.fontWeight,
+            fontStyle: currentLineStyles.fontStyle || textObject.fontStyle,
+            underline: currentLineStyles.underline || textObject.underline,
+            linethrough: currentLineStyles.linethrough || textObject.linethrough
+          };
+
+          // Initialize styles for the new target line if it doesn't exist
+          if (!textObject.styles) {
+            textObject.styles = {};
           }
+          if (!textObject.styles[targetLineIndex]) {
+            textObject.styles[targetLineIndex] = {};
+          }
+
+          // Apply style to all characters in the prefix
+          for (let i = 0; i < prefixLengthBeforeCursor; i++) {
+            textObject.styles[targetLineIndex][i] = { ...styleToApply };
+          }
+          
+          // Update component properties so they persist for future typing
+          this.currentFontSize = styleToApply.fontSize;
+          this.currentFontFamily = styleToApply.fontFamily;
+          this.currentColor = styleToApply.fill;
+          
+          // Update the current text properties for this textbox (affects new text)
+          this.updateTextPropertiesFromSelection(textObject);
         }
+          
+      // Restore cursor position after all operations
+      textObject.selectionStart = finalCursorPos;
+      textObject.selectionEnd = finalCursorPos;
       
+      // Force canvas update
+      textObject._clearCache();
+      textObject.initDimensions();
+      textObject.setCoords();
       textObject.canvas?.renderAll();
       
-      // Update the hidden input value to match
+      // Update the hidden input value to match and maintain cursor position
       if (textObject.hiddenTextarea) {
         textObject.hiddenTextarea.value = textObject.text;
-        const currentCursorPos = textObject.selectionStart || 0;
-        textObject.hiddenTextarea.setSelectionRange(currentCursorPos, currentCursorPos);
+        textObject.hiddenTextarea.setSelectionRange(finalCursorPos, finalCursorPos);
       }
     }
   }
@@ -2680,6 +3162,41 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     const textBeforeCursor = text.slice(0, cursorPosition);
     const lines = textBeforeCursor.split('\n');
     return lines.length;
+  }
+
+  private detectLineListType(line: string): string | null {
+    const trimmedLine = line.trim();
+    if (!trimmedLine) return null;
+    
+    if (/^\s*•\s/.test(line)) return 'bullet';
+    if (/^\s*\d+\.\s/.test(line)) return 'number';
+    if (/^\s*[IVXLCDM]+\.\s*/.test(line)) return 'roman'; // Moved before letter check
+    if (/^\s*[a-zA-Z]\.\s/.test(line)) return 'letter';
+    if (/^\s*→\s/.test(line)) return 'arrow';
+    if (/^\s*✓\s/.test(line)) return 'check';
+    
+    return null;
+  }
+
+  private fromRoman(roman: string): number {
+    const romanNumerals: { [key: string]: number } = {
+      'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000
+    };
+    
+    let result = 0;
+    for (let i = 0; i < roman.length; i++) {
+      const current = romanNumerals[roman[i]];
+      const next = romanNumerals[roman[i + 1]];
+      
+      if (next && current < next) {
+        result += next - current;
+        i++; // Skip next character
+      } else {
+        result += current;
+      }
+    }
+    
+    return result;
   }
   
   private restoreListTypeFromText(textObject: fabric.IText) {
@@ -2722,6 +3239,34 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   
     if (!listType || !listPrefix) {
       return; // Not a list type, no special handling
+    }
+
+    // Check if all content has been removed (empty or only whitespace)
+    if (textObject.text.trim().length === 0) {
+      textObject.set('listType', null);
+      textObject.set('listPrefix', '');
+      return;
+    }
+
+    // Check if all list prefixes have been manually removed
+    const lines = textObject.text.split('\n');
+    const hasAnyListContent = lines.some(line => {
+      const trimmedLine = line.trim();
+      return trimmedLine.length > 0 && (
+        trimmedLine.startsWith('• ') ||
+        /^\d+\.\s/.test(trimmedLine) ||
+        /^[a-zA-Z]\.\s/.test(trimmedLine) ||
+        /^[IVXLCDM]+\.\s/.test(trimmedLine) ||
+        trimmedLine.startsWith('→ ') ||
+        trimmedLine.startsWith('✓ ')
+      );
+    });
+
+    if (!hasAnyListContent && textObject.text.trim().length > 0) {
+      // Text exists but no list prefixes found, clear list type
+      textObject.set('listType', null);
+      textObject.set('listPrefix', '');
+      return;
     }
   
     // Only handle Enter key
@@ -2766,28 +3311,6 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       textObject.canvas?.renderAll();
     }
   }
-  
-  
-  // Helper method to convert Roman numerals to numbers
-  private fromRoman(roman: string): number {
-    const romanNumerals: { [key: string]: number } = {
-      'I': 1, 'V': 5, 'X': 10, 'L': 50, 'C': 100, 'D': 500, 'M': 1000
-    };
-    
-    let result = 0;
-    for (let i = 0; i < roman.length; i++) {
-      const current = romanNumerals[roman[i]];
-      const next = romanNumerals[roman[i + 1]];
-      
-      if (next && current < next) {
-        result -= current;
-      } else {
-        result += current;
-      }
-    }
-    return result;
-  }
-
   private updateTextPropertiesFromSelection(textObject: fabric.IText) {
     const start = textObject.selectionStart || 0;
     const end = textObject.selectionEnd || 0;
@@ -2854,7 +3377,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
         // Update background color
         const sameBackgroundColor = styles.every(style => 
-          (style.textBackgroundColor|| defaultBackgroundColor) === (styles[0].textBackgroundColor || defaultBackgroundColor));
+          (style.textBackgroundColor || defaultBackgroundColor) === (styles[0].textBackgroundColor || defaultBackgroundColor));
         this.currentBackgroundColor = sameBackgroundColor ? 
           (styles[0].textBackgroundColor as string || defaultBackgroundColor) : defaultBackgroundColor;
       }
@@ -3074,7 +3597,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   setTextAlign(align: string): void {
     if (this.selectedTextObject && (align === 'left' || align === 'center' || align === 'right' || align === 'justify-left')) {
-      this.selectedTextObject.set('textAlign', align );
+      this.selectedTextObject.set('textAlign', align);
       this.currentAlignment = align;
       if(align === 'justify-left'){
         align = 'justify';
@@ -3090,6 +3613,56 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
     const text = this.selectedTextObject.text;
     const lines = text.split('\n');
+    let selectionStart = this.selectedTextObject.selectionStart || 0;
+    let selectionEnd = this.selectedTextObject.selectionEnd || selectionStart;
+    
+
+    
+    // If no selection, use current cursor line
+    if (selectionStart === selectionEnd) {
+      // Find current line based on cursor position
+    let charCount = 0;
+    let currentLineIndex = 0;
+    for (let i = 0; i < lines.length; i++) {
+        if (charCount + lines[i].length >= selectionStart) {
+        currentLineIndex = i;
+        break;
+      }
+      charCount += lines[i].length + 1; // +1 for newline
+      }
+      // Set selection to include the entire current line
+      const startOfLine = lines.slice(0, currentLineIndex).reduce((sum, l) => sum + l.length + 1, 0);
+      selectionStart = startOfLine;
+      selectionEnd = startOfLine + lines[currentLineIndex].length;
+    }
+    
+    // Find which lines are selected
+    let charCount = 0;
+    let startLineIndex = 0;
+    let endLineIndex = 0;
+    
+    // Find start line
+    for (let i = 0; i < lines.length; i++) {
+      const lineEnd = charCount + lines[i].length;
+      if (lineEnd >= selectionStart) {
+        startLineIndex = i;
+        break;
+      }
+      charCount += lines[i].length + 1; // +1 for newline
+    }
+    
+    // Find end line
+    charCount = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const lineEnd = charCount + lines[i].length;
+      if (lineEnd >= selectionEnd) {
+        endLineIndex = i;
+        break;
+      }
+      charCount += lines[i].length + 1; // +1 for newline
+    }
+
+
 
     // All possible list prefix patterns
     const allPrefixPatterns = [
@@ -3111,7 +3684,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       check: /^\s*✓\s*/
     }[type];
 
-    // Remove any existing list prefix from all lines
+    if (!prefixPattern) {
+      return;
+    }
+
+    // Get cleaned lines (remove any existing list prefixes)
     const cleanedLines = lines.map(line => {
       let cleaned = line;
       allPrefixPatterns.forEach(pattern => {
@@ -3120,104 +3697,175 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       return cleaned;
     });
 
-    // Detect if all lines already have the current list prefix
-    const allHaveCurrentPrefix = lines.every(line => prefixPattern.test(line));
+    // Check if selected lines already have the current list prefix
+    const selectedLines = lines.slice(startLineIndex, endLineIndex + 1);
+    const allSelectedHaveCurrentPrefix = selectedLines.every(line => 
+      line.trim() === '' || prefixPattern.test(line)
+    );
 
-    let newLines: string[];
 
-    if (allHaveCurrentPrefix) {
-      // REMOVE the list formatting
-      newLines = cleanedLines;
-      this.selectedTextObject.set('listType', null);
-      this.selectedTextObject.set('listPrefix', null);
-    } else {
-      // APPLY the new list formatting
-      switch (type) {
-        case 'bullet':
-          newLines = cleanedLines.map(line => `• ${line}`);
-          break;
-        case 'number':
-          newLines = cleanedLines.map((line, i) => `${i + 1}. ${line}`);
-          break;
-        case 'letter':
-          newLines = cleanedLines.map((line, i) => `${String.fromCharCode(97 + i)}. ${line}`);
-          break;
-        case 'roman':
-          newLines = cleanedLines.map((line, i) => `${this.toRoman(i + 1)}. ${line}`);
-          break;
-        case 'arrow':
-          newLines = cleanedLines.map(line => `→ ${line}`);
-          break;
-        case 'check':
-          newLines = cleanedLines.map(line => `✓ ${line}`);
-          break;
-        default:
-          return;
+
+    let newLines: string[] = [...lines];
+
+    if (allSelectedHaveCurrentPrefix && selectedLines.some(line => prefixPattern.test(line))) {
+      // REMOVE the list formatting from selected lines only
+      for (let i = startLineIndex; i <= endLineIndex; i++) {
+        newLines[i] = cleanedLines[i];
       }
-      this.selectedTextObject.set('listType', type);
-      this.selectedTextObject.set('listPrefix', this.getPrefixForType(type));
+    } else {
+      // APPLY the new list formatting to selected lines only
+      let counter = 1;
+
+      for (let i = startLineIndex; i <= endLineIndex; i++) {
+        const cleanedLine = cleanedLines[i];
+        switch (type) {
+          case 'bullet':
+            newLines[i] = `• ${cleanedLine}`;
+            break;
+          case 'number':
+            newLines[i] = `${counter}. ${cleanedLine}`;
+            counter++;
+            break;
+          case 'letter':
+            const letterChar = String.fromCharCode(96 + counter); // 'a', 'b', 'c', etc.
+            newLines[i] = `${letterChar}. ${cleanedLine}`;
+            counter++;
+            break;
+          case 'roman':
+            newLines[i] = `${this.toRoman(counter)}. ${cleanedLine}`;
+            counter++;
+            break;
+          case 'arrow':
+            newLines[i] = `→ ${cleanedLine}`;
+            break;
+          case 'check':
+            newLines[i] = `✓ ${cleanedLine}`;
+            break;
+          default:
+            return;
+        }
+      }
+
+      // Update numbering for lines after the selection if they have numbered lists
+      if (endLineIndex < lines.length - 1) {
+        
+        // Find what number the original selection started with
+        let originalStartNumber = 1;
+        const originalFirstLine = lines[startLineIndex];
+        const numberMatch = originalFirstLine.match(/^\s*(\d+)\.\s*/);
+        const letterMatch = originalFirstLine.match(/^\s*([a-zA-Z])\.\s*/);
+        const romanMatch = originalFirstLine.match(/^\s*([IVXLCDM]+)\.\s*/);
+        
+        if (numberMatch) {
+          originalStartNumber = parseInt(numberMatch[1]);
+        } else if (letterMatch) {
+          originalStartNumber = letterMatch[1].toLowerCase().charCodeAt(0) - 96;
+        } else if (romanMatch) {
+          originalStartNumber = this.fromRoman(romanMatch[1]);
+        }
+
+
+
+        // Update subsequent lines that have numbered/lettered/roman lists
+        // Start from 1 for the lines after the changed selection
+        let newCounter = 1;
+        for (let i = endLineIndex + 1; i < lines.length; i++) {
+          const line = lines[i];
+          const cleanedLine = cleanedLines[i];
+          
+          // Check what type of list this line has and update accordingly
+          const numMatch = line.match(/^\s*(\d+)\.\s*/);
+          const letMatch = line.match(/^\s*([a-zA-Z])\.\s*/);
+          const romMatch = line.match(/^\s*([IVXLCDM]+)\.\s*/);
+          
+          if (numMatch) {
+            newLines[i] = `${newCounter}. ${cleanedLine}`;
+            newCounter++;
+          } else if (letMatch) {
+            const newLetter = String.fromCharCode(96 + newCounter);
+            newLines[i] = `${newLetter}. ${cleanedLine}`;
+            newCounter++;
+          } else if (romMatch) {
+            newLines[i] = `${this.toRoman(newCounter)}. ${cleanedLine}`;
+            newCounter++;
+          }
+          // If it's not a numbered/lettered/roman list, don't increment counter
+        }
+      }
     }
 
-    // Save styles for each line before changing text
-    const lineStyles: any[][] = lines.map((line, lineIdx) => {
-      const startIdx = lines.slice(0, lineIdx).reduce((sum, l) => sum + l.length + 1, 0); // +1 for \n
-      return Array.from({ length: line.length }, (_, i) =>
-        this.selectedTextObject.getSelectionStyles(startIdx + i, startIdx + i + 1)[0] || {}
-      );
-    });
 
+
+    // Save the current styles before making changes
+    const originalStyles = JSON.parse(
+      JSON.stringify(this.selectedTextObject.styles || {})
+    );
+    const textDecoration = [
+      this.selectedTextObject.underline ? 'underline' : '',
+      this.selectedTextObject.overline ? 'overline' : '',
+      this.selectedTextObject.linethrough ? 'line-through' : ''
+    ].filter(Boolean).join(' ');
+    
+    const defaultStyle = {
+      fill: this.selectedTextObject.fill || '#000000',
+      fontFamily: this.selectedTextObject.fontFamily || 'Arial',
+      fontSize: this.selectedTextObject.fontSize || 14,
+      fontWeight: this.selectedTextObject.fontWeight || 'normal',
+      fontStyle: this.selectedTextObject.fontStyle || 'normal',
+      textDecoration: textDecoration,   // ✅ now safely built
+      underline: this.selectedTextObject.underline || false
+    };
+    
+
+    // Update the text first
     this.selectedTextObject.text = newLines.join('\n');
 
+    // Create new styles object
+    const newStyles: any = {};
 
-    // Re-apply styles to each line after prefix
-    let charIdx = 0;
+    // Process each line to preserve and apply styles correctly
     for (let lineIdx = 0; lineIdx < newLines.length; lineIdx++) {
-      const prefixLen = newLines[lineIdx].length - cleanedLines[lineIdx].length;
-      // Apply style to prefix (use first char style of original line)
+      const newLine = newLines[lineIdx];
+      const originalLine = lines[lineIdx] || '';
+      const cleanedLine = cleanedLines[lineIdx] || '';
+      
+      // Skip empty lines
+      if (newLine.length === 0) continue;
+      
+      // Initialize line styles
+      newStyles[lineIdx] = {};
+      
+      // Calculate prefix length
+      const prefixLen = newLine.length - cleanedLine.length;
+      
+      // Get original line styles or use default
+      const originalLineStyles = originalStyles[lineIdx] || {};
+      
+      // Get the style for the first character of the original line (or default)
+      const firstCharStyle = originalLineStyles[0] || defaultStyle;
+      
+      // Apply the first character's style to the prefix
       for (let i = 0; i < prefixLen; i++) {
-        this.selectedTextObject.setSelectionStyles(lineStyles[lineIdx][0] || {}, charIdx + i, charIdx + i + 1);
+        newStyles[lineIdx][i] = { ...firstCharStyle };
       }
-      // Apply original styles to the rest of the line, or extend with last style if needed
-      const originalStyles = lineStyles[lineIdx];
-      const newContentLen = newLines[lineIdx].length - prefixLen;
-      for (let i = 0; i < newContentLen; i++) {
-        let style = originalStyles[i] || originalStyles[originalStyles.length - 1] || lineStyles[lineIdx][0] || {};
-        this.selectedTextObject.setSelectionStyles(style, charIdx + prefixLen + i, charIdx + prefixLen + i + 1);
-      }
-
-      charIdx += newLines[lineIdx].length + 1; // +1 for \n
-    }
-
-    // Ensure Fabric.js styles object is filled for every line and every character
-    const linesArr = this.selectedTextObject.text.split('\n');
-    if (!this.selectedTextObject.styles) this.selectedTextObject.styles = {};
-    for (let lineIdx = 0; lineIdx < linesArr.length; lineIdx++) {
-      if (!this.selectedTextObject.styles[lineIdx]) this.selectedTextObject.styles[lineIdx] = {};
-      for (let charIdx = 0; charIdx < linesArr[lineIdx].length; charIdx++) {
-        // If style is missing, use last known style or fallback
-        let style = this.selectedTextObject.getSelectionStyles(
-          this.selectedTextObject.text
-            .split('\n')
-            .slice(0, lineIdx)
-            .reduce((sum, l) => sum + l.length + 1, 0) + charIdx,
-          this.selectedTextObject.text
-            .split('\n')
-            .slice(0, lineIdx)
-            .reduce((sum, l) => sum + l.length + 1, 0) + charIdx + 1
-        )[0];
-        if (!style || Object.keys(style).length === 0) {
-          // fallback to first style or default
-          style = lineStyles[lineIdx]?.[0] || { fill: this.selectedTextObject.fill, stroke: this.selectedTextObject.stroke };
-        }
-        this.selectedTextObject.styles[lineIdx][charIdx] = style;
+      
+      // Apply original character styles to the content part
+      for (let i = 0; i < cleanedLine.length; i++) {
+        const originalCharStyle = originalLineStyles[i] || firstCharStyle;
+        newStyles[lineIdx][prefixLen + i] = { ...originalCharStyle };
       }
     }
 
+    // Apply the new styles to the text object
+    this.selectedTextObject.styles = newStyles;
+
+    // Force the text object to update its internal state
+    this.selectedTextObject._clearCache();
+    this.selectedTextObject.initDimensions();
+    this.selectedTextObject.setCoords();
+
+    // Update canvas
     this.canvas.setActiveObject(this.selectedTextObject);
-    // if(this.currentFontSize !==this.selectedTextObject.get('fontSize')){
-    //   this.selectedTextObject.set('fontSize', this.currentFontSize); // Or your default
-    // }
-
     this.selectedTextObject.exitEditing();
     this.canvas.renderAll();
   }
@@ -3367,7 +4015,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     }
     // Apply positions
     toolbarElement.style.left = `${left}px`;
-    toolbarElement.style.top = `${top}px`;
+    toolbarElement.style.top = `${0}px`;
   }
 
   // Add window resize handler
@@ -3436,37 +4084,40 @@ export class MultimediaComponent implements OnInit, OnDestroy {
         this.imageLoaded = false;
       };
     } else {
-      fabric.Image.fromURL(url).then((img:fabric.Image) => {
-        // Scale image to fit canvas while maintaining aspect ratio
-        const canvasWidth = this.canvas.width!;
-        const canvasHeight = this.canvas.height!;
-        const scale = Math.min(
-          (canvasWidth * 0.5) / img.width!,
-          (canvasHeight * 0.5) / img.height!
-        );
-    
-        img.set({
-          left: 50,
-          top: 50,
-          scaleX: scale,
-          scaleY: scale,
-          cornerStyle: 'circle',
-          cornerColor: '#44aaff',
-          borderColor: '#44aaff',
-          cornerSize: 12,
-          transparentCorners: false,
-          lockUniScaling: false,
+      fabric.Image.fromURL(url)
+        .then((img) => {
+          // Scale image to fit canvas while maintaining aspect ratio
+          const canvasWidth = this.canvas.width!;
+          const canvasHeight = this.canvas.height!;
+          const scale = Math.min(
+            (canvasWidth * 0.5) / img.width!,
+            (canvasHeight * 0.5) / img.height!
+          );
+
+          img.set({
+            left: 50,
+            top: 50,
+            scaleX: scale,
+            scaleY: scale,
+            cornerStyle: 'circle',
+            cornerColor: '#44aaff',
+            borderColor: '#44aaff',
+            cornerSize: 12,
+            transparentCorners: false,
+            lockUniScaling: false,
+          });
+
+          this.canvas.add(img);
+          this.canvas.setActiveObject(img);
+          this.canvas.renderAll();
+          this.recordHistory();
+          this.imageLoaded = false;
+        })
+        .catch((error) => {
+          console.error('Error loading image:', error);
+          alert('Failed to load image from URL');
         });
-    
-        this.canvas.add(img);
-        this.canvas.setActiveObject(img);
-        this.canvas.renderAll();
-        this.recordHistory();
-        this.imageLoaded = false;
-      }, (error) => {
-        console.error('Error loading image:', error);
-        alert('Failed to load image from URL');
-      });
+
     }
    
   }
@@ -3546,12 +4197,11 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
     if (validShapes.length > 0) {
       // Check if any of the selected shapes are contentGroup or headingGroup
-      const hasContentOrHeadingGroup = validShapes.some(shape =>{
-        const group = shape.group as fabric.Group & { name?: string }; 
-        (group && group.name === 'contentGroup') || 
-        (group && group.name === 'headingGroup') ||
-        (group && group.name === '') }
-      );
+      const hasContentOrHeadingGroup = validShapes.some(shape => {
+        const group = shape.group as any; // bypass TS
+        return group && (group.name === 'contentGroup' || group.name === 'headingGroup' || group.name === '');
+      });
+      
       
       // Hide shape toolbar for contentGroup or headingGroup
       this.showShapeToolbar = !hasContentOrHeadingGroup;
@@ -4255,8 +4905,13 @@ export class MultimediaComponent implements OnInit, OnDestroy {
 
   // Helper method to get current border color
   getCurrentBorderColor(): string {
-    return (this.selectedShape?.stroke as string) || '#000000';
+    const stroke = this.selectedShape?.stroke;
+    if (typeof stroke === 'string') {
+      return stroke;
+    }
+    return '#000000'; // fallback if it's a gradient/pattern
   }
+  
 
   updateBorderOpacity(opacity: number) {
     if (!this.selectedShape) return;
@@ -4626,19 +5281,20 @@ export class MultimediaComponent implements OnInit, OnDestroy {
           const firstShape = this.selectedShapes[0];
           
           // Check if the first shape is a group
-          if (firstShape.type === 'group' ) {
+          if (firstShape.type === 'group') {
             const group = firstShape as fabric.Group;
-            if (group._objects && group._objects.length > 0) {
-            // Get the first object from the group
-            const firstGroupObject = group._objects[0];
-            firstShapeFill = firstGroupObject.fill as string || '#000000';
-            firstShapeStroke = firstGroupObject.stroke as string || 'transparent';
-            firstShapeStrokeWidth = firstGroupObject.strokeWidth as number || 1;
-            firstShapeOpacity = firstGroupObject.opacity as number || 1;
-            firstShapeStrokeOpacity = (firstGroupObject as any).strokeOpacity as number || 1;
-            firstShapeStrokeDashArray = firstGroupObject.strokeDashArray as number[] || null;
+            const groupObjects = group.getObjects();
+            if (groupObjects.length > 0) {
+              const firstGroupObject = groupObjects[0];
+              firstShapeFill = firstGroupObject.fill as string || '#000000';
+              firstShapeStroke = firstGroupObject.stroke as string || 'transparent';
+              firstShapeStrokeWidth = firstGroupObject.strokeWidth as number || 1;
+              firstShapeOpacity = firstGroupObject.opacity as number || 1;
+              firstShapeStrokeOpacity = (firstGroupObject as any).strokeOpacity as number || 1;
+              firstShapeStrokeDashArray = firstGroupObject.strokeDashArray as number[] || null;
+            }
           } else {
-            // Handle non-group shapes as before
+            // Handle non-group shapes
             firstShapeFill = firstShape.fill as string || '#000000';
             firstShapeStroke = firstShape.stroke as string || 'transparent';
             firstShapeStrokeWidth = firstShape.strokeWidth as number || 1;
@@ -4646,6 +5302,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
             firstShapeStrokeOpacity = (firstShape as any).strokeOpacity as number || 1;
             firstShapeStrokeDashArray = firstShape.strokeDashArray as number[] || null;
           }
+          
         }
 
         // Position fragment relative to original group bounds
@@ -4670,7 +5327,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     
         this.canvas.add(fabricPath);
       }
-    }});
+    });
     
     this.canvas.discardActiveObject();
     this.canvas.requestRenderAll();
@@ -4927,25 +5584,25 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       const firstShape = this.selectedShapes[0];
       
       // Check if the first shape is a group
-      if (firstShape.type === 'group' ) {
+      if (firstShape.type === 'group') {
         const group = firstShape as fabric.Group;
-        if (group._objects && group._objects.length > 0) {
-        // Get the first object from the group
-        const firstGroupObject = group._objects[0];
-        firstShapeFill = firstGroupObject.fill as string || '#000000';
-        firstShapeStroke = firstGroupObject.stroke as string || 'transparent';
-        firstShapeStrokeWidth = firstGroupObject.strokeWidth as number || 1;
-        firstShapeOpacity = firstGroupObject.opacity as number || 1;
-        firstShapeStrokeOpacity = (firstGroupObject as any).strokeOpacity as number || 1;
-        firstShapeStrokeDashArray = firstGroupObject.strokeDashArray as number[] || null;
-      } 
-      }else {
-        // Handle non-group shapes as before
+        const objects = group.getObjects();
+        if (objects.length > 0) {
+          const firstGroupObject = objects[0];
+          firstShapeFill = firstGroupObject.fill as string || '#000000';
+          firstShapeStroke = firstGroupObject.stroke as string || 'transparent';
+          firstShapeStrokeWidth = firstGroupObject.strokeWidth as number || 1;
+          firstShapeOpacity = firstGroupObject.opacity as number || 1;
+          // Use any if you need strokeOpacity
+          firstShapeStrokeOpacity = (firstGroupObject as any).strokeOpacity ?? 1;
+          firstShapeStrokeDashArray = firstGroupObject.strokeDashArray as number[] || null;
+        }
+      } else {
         firstShapeFill = firstShape.fill as string || '#000000';
         firstShapeStroke = firstShape.stroke as string || 'transparent';
         firstShapeStrokeWidth = firstShape.strokeWidth as number || 1;
         firstShapeOpacity = firstShape.opacity as number || 1;
-        firstShapeStrokeOpacity = (firstShape as any).strokeOpacity as number || 1;
+        firstShapeStrokeOpacity = (firstShape as any).strokeOpacity ?? 1;
         firstShapeStrokeDashArray = firstShape.strokeDashArray as number[] || null;
       }
     }
@@ -4993,7 +5650,7 @@ export class MultimediaComponent implements OnInit, OnDestroy {
         });
       
         // Prevent selection outline
-        (textbox as any).renderControls = () => {};
+        (textbox as any)._renderControls = () => {};
         textbox._renderControls = () => {};
         this.canvas.selection = false;
       
@@ -5030,42 +5687,39 @@ export class MultimediaComponent implements OnInit, OnDestroy {
       
   
       // Handle group double-click
-      if (target.type === 'group') {
-  const group = target as fabric.Group;
-
-  if (group._objects?.length === 2) {
-    const [a, b] = group._objects;
-
-    this.rect = a.type === 'rect' ? a : b.type === 'rect' ? b : null;
-
-    // Save group properties
-    this.lastGroupLeft = group.left;
-    this.lastGroupTop = group.top;
-    this.lastGroupAngle = group.angle || 0;
-    this.lastGroupScaleX = group.scaleX || 1;
-    this.lastGroupScaleY = group.scaleY || 1;
-    this.lastGroupFlipX = group.flipX || false;
-    this.lastGroupFlipY = group.flipY || false;
-    this.lastGroupName = (group as any).name || '';
-
-    // Restore objects and store them
-    (group as any)._restoreObjectsState();
-    this.lastUngroupedObjects = group._objects;
-
-    // Remove old group
-    this.canvas.remove(group);
-
-    // Add objects individually to canvas
-    this.lastUngroupedObjects.forEach(obj => {
-      this.canvas.add(obj);
-      if (obj.type === 'textbox') {
-        makeEditableWithoutOutline(obj as fabric.Textbox);
+      if (target.type === 'group' && target instanceof fabric.Group && target.getObjects().length === 2) {
+        const group = target as fabric.Group;
+        const [a, b] = group.getObjects();
+      
+        // Identify the rectangle in the group
+        this.rect = a.type === 'rect' ? a : b.type === 'rect' ? b : null;
+      
+        // Save group transform properties
+        this.lastGroupLeft = group.left ?? 0;
+        this.lastGroupTop = group.top ?? 0;
+        this.lastGroupAngle = group.angle ?? 0;
+        this.lastGroupScaleX = group.scaleX ?? 1;
+        this.lastGroupScaleY = group.scaleY ?? 1;
+        this.lastGroupFlipX = group.flipX ?? false;
+        this.lastGroupFlipY = group.flipY ?? false;
+      
+        // Save group name safely
+        this.lastGroupName = (group.get('name') as string) ?? '';
+      
+        // Remove the group
+        this.canvas.remove(group);
+      
+        // Add individual objects back to the canvas
+        group.getObjects().forEach(obj => {
+          this.canvas.add(obj);
+          if (obj.type === 'textbox') {
+            makeEditableWithoutOutline(obj as fabric.Textbox);
+          }
+        });
+      
+        this.canvas.renderAll();
       }
-    });
-
-    this.canvas.renderAll();
-  }
-}
+      
       
       // Handle direct textbox double-click
       else if (target.type === 'textbox') {
@@ -5082,10 +5736,13 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   
     // Enter editing mode properly
     setTimeout(() => {
-      (target as any).enterEditing();
-      (target as any).selectAll();
-      this.canvas.requestRenderAll();
+      if (target instanceof fabric.Textbox || target instanceof fabric.IText) {
+        target.enterEditing();
+        target.selectAll();
+        this.canvas.requestRenderAll();
+      }
     }, 0);
+    
   
     this.canvas.renderAll();
       }
@@ -5093,108 +5750,462 @@ export class MultimediaComponent implements OnInit, OnDestroy {
   }
   
   
-
-copySelectedObjects() {
-  const activeObject = this.canvas.getActiveObject();
-  if (!activeObject) return;
-
-  this.copiedObjects = [];
-
-  if (activeObject instanceof fabric.ActiveSelection) {
-    this.copiedObjects = activeObject.getObjects();
-  } else {
-    this.copiedObjects = [activeObject];
-  }
-}
-
-pasteSelectedObjects() {
-  if (!this.copiedObjects.length) {
-    console.warn('No copied objects to paste.');
-    return;
-  }
-  this.canvas.discardActiveObject();
-
-  const newObjects: fabric.Object[] = [];
-  const offset = 20; 
-
-  const clonePromises = this.copiedObjects.map((obj) => {
-  return new Promise<fabric.Object>((resolve, reject) => {
-    try {
-      // Assert obj as fabric.Object so TS knows clone exists
-      const fabricObj = obj as fabric.Object & {
-        clone: (callback: (cloned: fabric.Object) => void, props?: string[]) => void;
+  copySelectedObjects() {
+    const activeObject = this.canvas.getActiveObject();
+    if (!activeObject) return;
+  
+    let objectsToCopy: fabric.Object[] = [];
+    let copyMetadata: any = {};
+  
+    const nowIso = new Date().toISOString();
+  
+    if (activeObject instanceof fabric.ActiveSelection) {
+      objectsToCopy = activeObject.getObjects();
+      
+      // Calculate absolute positions of objects within the selection
+      const selectionLeft = activeObject.left || 0;
+      const selectionTop = activeObject.top || 0;
+      
+      // Calculate the selection's center point and bounds
+      const selectionCenter = {
+        x: selectionLeft + (activeObject.width || 0) / 2,
+        y: selectionTop + (activeObject.height || 0) / 2
       };
 
-      fabricObj.clone(
-        (cloned: fabric.Object) => {
-          if (!cloned) {
-            console.error('Failed to clone object:', obj);
-            reject('Clone failed');
-            return;
-          }
+      // Store both relative (to selection center) and absolute positions
+      const objectsData = objectsToCopy.map((obj) => {
+        // Get object's position relative to selection center
+        const relativeToCenter = {
+          x: (obj.left || 0),  // fabric already gives position relative to center
+          y: (obj.top || 0)
+        };
 
-          // Set position and common properties
-          cloned.set({
-            left: (obj.left || 0) + offset,
-            top: (obj.top || 0) + offset,
-            evented: true,
-            opacity: 1,
-            visible: true,
-          });
+        // Calculate absolute position
+        const absolutePosition = {
+          left: selectionCenter.x + relativeToCenter.x,
+          top: selectionCenter.y + relativeToCenter.y
+        };
 
-          // Add to canvas
-          this.canvas.add(cloned);
-
-          // Bring to front (TS-safe)
-          if ('bringToFront' in this.canvas) {
-            (this.canvas as any).bringToFront(cloned);
-          }
-
-          newObjects.push(cloned);
-          resolve(cloned);
-        },
-        [
-          'left', 'top', 'scaleX', 'scaleY', 'angle', 'width', 'height',
-          'fill', 'stroke', 'strokeWidth', 'opacity', 'src', 'visible', 'evented'
-        ]
-      );
-    } catch (err) {
-      console.error('Error during clone:', err);
-      reject(err);
-    }
-  });
-});
-
-
-  Promise.allSettled(clonePromises).then((results) => {
-    const successful = results.filter(r => r.status === 'fulfilled').map(r => (r as any).value);
-    if (successful.length > 1) {
-      const selection = new fabric.ActiveSelection(successful, {
-        canvas: this.canvas
+        return {
+          relativeToCenter,
+          absolutePosition
+        };
       });
-      this.canvas.setActiveObject(selection);
-    } else if (successful.length === 1) {
-      this.canvas.setActiveObject(successful[0]);
+
+      // Store positions for paste operation
+      const absolutePositions = objectsData.map(data => data.absolutePosition);
+      
+      copyMetadata = {
+        selectionLeft: selectionLeft,
+        selectionTop: selectionTop,
+        selectionWidth: activeObject.width || 0,
+        selectionHeight: activeObject.height || 0,
+        isSelection: true,
+        objectCount: objectsToCopy.length,
+        timestamp: nowIso,
+        absolutePositions: absolutePositions
+      };
     } else {
-      console.warn('No objects were successfully pasted.');
+      objectsToCopy = [activeObject];
+      copyMetadata = {
+        originalLeft: activeObject.left || 0,
+        originalTop: activeObject.top || 0,
+        originalWidth: activeObject.width || 0,
+        originalHeight: activeObject.height || 0,
+        isSelection: false,
+        objectCount: 1,
+        timestamp: nowIso
+      };
     }
-    this.canvas.requestRenderAll();
-    this.recordHistory();
+  
+    this.copiedObjects = objectsToCopy;
+    // multimediaService.copyObjects should persist the metadata.timestamp
+    this.multimediaService.copyObjects(objectsToCopy, this.workspaceService.activeSlideId, copyMetadata);
+    this.resetPasteCounter();
+  }
+  
+    
+  
+  hasClipboardContent(): boolean {
+    return this.multimediaService.hasClipboardItems() || this.copiedObjects.length > 0;
+  }
+  
+  
+  private calculateSmartOffset(metadata: any, baseOffset: number): { x: number; y: number } {
+    const pasteCount = this.getConsecutivePasteCount();
+    const multiplier = Math.max(1, pasteCount);
+    
+    const sizeMultiplier = metadata.isSelection ? 
+      Math.max(1, Math.floor((metadata.selectionWidth || 100) / 100)) : 1;
+    
+    const finalOffset = baseOffset * multiplier * sizeMultiplier;
+    
+    // Ensure we don't paste outside canvas bounds
+    const canvasWidth = this.canvas.getWidth();
+    const canvasHeight = this.canvas.getHeight();
+    const maxOffset = Math.min(canvasWidth * 0.1, canvasHeight * 0.1); // Max 10% of canvas size
+    
+    return {
+      x: Math.min(finalOffset, maxOffset),
+      y: Math.min(finalOffset, maxOffset)
+    };
+  }
+  
+  /**
+   * Calculate the exact position for a specific object during paste
+   */
+  private calculateObjectPosition(
+    objData: any,
+    index: number,
+    smartOffset: { x: number; y: number },
+    metadata: any
+  ): { left: number; top: number } {
+    let left = (objData.left || 0) + smartOffset.x;
+    let top = (objData.top || 0) + smartOffset.y;
+  
+    // If metadata has original/selection reference, use that
+    if (metadata?.isSelection) {
+      // For selections, we need to maintain relative positions between objects
+      const canvasWidth = this.canvas.getWidth();
+      const canvasHeight = this.canvas.getHeight();
+
+      // Calculate target center for the paste operation
+      const targetCenter = {
+        x: canvasWidth * 0.3 + smartOffset.x,  // Paste at 30% of canvas width
+        y: canvasHeight * 0.3 + smartOffset.y   // and 30% of canvas height
+      };
+
+      // Get the original relative position from selection center
+      const relativeToCenter = {
+        x: objData.left || 0,
+        y: objData.top || 0
+      };
+
+      // Calculate new position maintaining relative distance from center
+      left = targetCenter.x + relativeToCenter.x;
+      top = targetCenter.y + relativeToCenter.y;
+
+      // We need to calculate group adjustments only once and apply them consistently
+      // Use a static property to store the adjustment for the entire paste operation
+      if (!this.currentPasteAdjustment) {
+        // Calculate group bounds
+        const groupWidth = metadata.selectionWidth || 0;
+        const groupHeight = metadata.selectionHeight || 0;
+
+        const groupBounds = {
+          left: targetCenter.x - groupWidth / 2,
+          right: targetCenter.x + groupWidth / 2,
+          top: targetCenter.y - groupHeight / 2,
+          bottom: targetCenter.y + groupHeight / 2
+        };
+
+        // Calculate needed adjustments to keep group in bounds
+        let centerAdjustX = 0;
+        let centerAdjustY = 0;
+
+        if (groupBounds.left < 0) centerAdjustX = Math.abs(groupBounds.left) + 10; // 10px padding
+        if (groupBounds.right > canvasWidth) centerAdjustX = -(groupBounds.right - canvasWidth) - 10;
+        if (groupBounds.top < 0) centerAdjustY = Math.abs(groupBounds.top) + 10;
+        if (groupBounds.bottom > canvasHeight) centerAdjustY = -(groupBounds.bottom - canvasHeight) - 10;
+
+        // Store the adjustment for all objects in this paste operation
+        this.currentPasteAdjustment = { x: centerAdjustX, y: centerAdjustY };
+      }
+
+      // Apply the same adjustment to all objects
+      left += this.currentPasteAdjustment.x;
+      top += this.currentPasteAdjustment.y;
+    } else {
+      // For single object
+      const canvasWidth = this.canvas.getWidth();
+      const canvasHeight = this.canvas.getHeight();
+      
+      if (metadata?.originalLeft !== undefined && metadata?.originalTop !== undefined) {
+        // Use the original position plus smart offset
+        left = metadata.originalLeft + smartOffset.x;
+        top = metadata.originalTop + smartOffset.y;
+      } else {
+        // Fallback: position at a good location on canvas
+        left = canvasWidth * 0.3 + smartOffset.x;
+        top = canvasHeight * 0.3 + smartOffset.y;
+      }
+      
+      // Ensure the object stays within canvas bounds with padding
+      const padding = 20;
+      const objWidth = objData.width || 100;
+      const objHeight = objData.height || 100;
+      
+      // Check if object would go outside canvas bounds
+      if (left < padding) left = padding;
+      if (top < padding) top = padding;
+      if (left + objWidth > canvasWidth - padding) left = canvasWidth - objWidth - padding;
+      if (top + objHeight > canvasHeight - padding) top = canvasHeight - objHeight - padding;
+      
+      // Final safety check - ensure position is never negative
+      left = Math.max(0, left);
+      top = Math.max(0, top);
+    }
+  
+    return { left, top };
+  }
+  
+  
+  /**
+   * Track consecutive paste operations to improve positioning
+   */
+  private lastPasteTimestamp: number = 0;
+  private consecutivePasteCount: number = 0;
+  
+  private getConsecutivePasteCount(): number {
+    const now = Date.now();
+    const timeSinceLastPaste = now - this.lastPasteTimestamp;
+    
+    // If more than 2 seconds since last paste, reset counter
+    if (timeSinceLastPaste > 2000) {
+      this.consecutivePasteCount = 0;
+    }
+    
+    this.consecutivePasteCount++;
+    this.lastPasteTimestamp = now;
+    
+    return this.consecutivePasteCount;
+  }
+  
+  /**
+   * Reset paste counter when a new copy operation happens
+   */
+  private resetPasteCounter(): void {
+    this.consecutivePasteCount = 0;
+    this.lastPasteTimestamp = 0;
+  }
+  
+  // --- pasteSelectedObjects: uses app timestamps + system clipboard detection ---
+  async pasteSelectedObjects() {
+    const RECENT_THRESHOLD_MS = 3000; // tweak this value as needed (3s default)
+  
+    // 1) determine most recent timestamp from app-managed clipboard (multimediaService or this.copiedObjects)
+    const globalClipboardItems = this.multimediaService.getRecentCopiedObjects() || [];
+    let appLatestTimestampMs: number | null = null;
+    let appObjectsToClone: any[] = [];
+  
+    if (globalClipboardItems.length > 0) {
+      // choose the most recent timestamp among items (metadata.copyMetadata.timestamp expected)
+      const tsList = globalClipboardItems
+        .map(i => i.metadata?.copyMetadata?.timestamp)
+        .filter(Boolean)
+        .map((t: string) => new Date(t).getTime());
+      if (tsList.length) {
+        appLatestTimestampMs = Math.max(...tsList);
+      }
+      appObjectsToClone = globalClipboardItems.map(i => i.data);
+    } else if (this.copiedObjects && this.copiedObjects.length > 0) {
+      // fallback: if we only have this.copiedObjects (user copied in current session)
+      appObjectsToClone = this.copiedObjects;
+      // We set a timestamp when copying via copySelectedObjects, but if not present, set it to now
+      appLatestTimestampMs = Date.now();
+    }
+  
+    // 2) sample the system clipboard to see if there is an image/video/text candidate
+    let clipboardHasImage = false;
+    let clipboardImageFile: File | null = null;
+    let clipboardHasText = false;
+    try {
+      if (navigator.clipboard && navigator.clipboard.read) {
+        const clipboardItems = await navigator.clipboard.read();
+        outerLoop: for (const clipboardItem of clipboardItems) {
+          for (const type of clipboardItem.types) {
+            if (type.startsWith('image/') || type.startsWith('video/')) {
+              // get blob and wrap as a File (no persistent timestamp stored)
+              const blob = await clipboardItem.getType(type);
+              const file = new File([blob], `pasted-${type.replace('/', '.')}-${Date.now()}`, {
+                type,
+                lastModified: Date.now()
+              });
+              clipboardHasImage = true;
+              clipboardImageFile = file;
+              break outerLoop;
+            } else if (type === 'text/plain') {
+              clipboardHasText = true;
+              // keep scanning in case there is an image also
+            }
+          }
+        }
+      }
+    } catch (err) {
+      // reading clipboard can fail depending on permission; silently continue to object paste path
+    }
+  
+    // 3) Decide whether to paste system-image/text or app-copied objects
+    let shouldPasteClipboardImage = false;
+    let shouldPasteClipboardText = false;
+  
+    if (clipboardHasImage) {
+      if (appLatestTimestampMs == null) {
+        // no app copy available -> paste clipboard image
+        shouldPasteClipboardImage = true;
+      } else {
+        // if app copy was very recent (within threshold), prefer app copy;
+        // otherwise prefer the clipboard image (user likely copied image after shapes)
+        const now = Date.now();
+        if (now - appLatestTimestampMs <= RECENT_THRESHOLD_MS) {
+          shouldPasteClipboardImage = false; // app objects are more recent
+        } else {
+          shouldPasteClipboardImage = true; // clipboard image is considered more recent
+        }
+      }
+    } else if (clipboardHasText && (!appLatestTimestampMs || (Date.now() - appLatestTimestampMs) > RECENT_THRESHOLD_MS)) {
+      // If there's clipboard text and app copy isn't very recent, paste text.
+      shouldPasteClipboardText = true;
+    }
+  
+    // 4) If clipboard image/text chosen, handle it and exit early
+    if (shouldPasteClipboardImage && clipboardImageFile) {
+      // Construct a FileList-like object for your existing file drop handler
+      const fileList = {
+        0: clipboardImageFile,
+        length: 1,
+        item: (index: number) => index === 0 ? clipboardImageFile : null,
+        [Symbol.iterator]: function* () { yield clipboardImageFile; }
+      } as unknown as FileList;
+  
+      const fakeEvent = new DragEvent('drop', {
+        dataTransfer: new DataTransfer()
+      });
+  
+      // call your existing handler that handles dropping files onto the canvas
+      this.handleFileDrops(fileList, fakeEvent);
+  
+      // NOTE: we intentionally do NOT persist a timestamp for system clipboard images (per your note).
+      return;
+    }
+  
+    if (shouldPasteClipboardText) {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text && text.trim()) {
+          this.addTextFromClipboard(text.trim());
+          return;
+        }
+      } catch (e) {
+        // ignore and fall back to object paste
+      }
+    }
+  
+    // 5) Otherwise paste the app objects (fabric cloning / enliven logic)
+    // Reset paste adjustment for new paste operation
+    this.currentPasteAdjustment = null;
+    
+    this.canvas.discardActiveObject();
+    const newObjects: fabric.Object[] = [];
+    const baseOffset = 20;
+    const clipboardMetadata = globalClipboardItems[0]?.metadata?.copyMetadata || { isSelection: appObjectsToClone.length > 1, objectCount: appObjectsToClone.length };
+    
+    const smartOffset = this.calculateSmartOffset(clipboardMetadata, baseOffset);
+  
+    const clonePromises = appObjectsToClone.map((objData, idx) => {
+      return new Promise<fabric.Object>((resolve, reject) => {
+        try {
+          const newPosition = this.calculateObjectPosition(objData, idx, smartOffset, clipboardMetadata);
+          if (globalClipboardItems.length > 0) {
+            const objDataArray = [objData];
+
+            fabric.util.enlivenObjects(objDataArray)
+            .then((enlivenedObjects: fabric.Object[]) => {
+              const cloned = enlivenedObjects[0];
+              if (!cloned) { reject('Enliven failed'); return; }
+              cloned.set({
+                left: newPosition.left,
+                top: newPosition.top,
+                evented: true,
+                opacity: objData.opacity ?? 1,
+                visible: true
+              });
+              this.canvas.add(cloned);
+              this.canvas.bringObjectToFront(cloned);
+              newObjects.push(cloned);
+              resolve(cloned);
+            })
+            .catch(err => {
+              console.error('Failed to enliven objects:', err);
+            });
+          } else {
+            objData.clone((cloned: fabric.Object) => {
+              if (!cloned) { reject('Clone failed'); return; }
+              cloned.set({
+                left: newPosition.left,
+                top: newPosition.top,
+                evented: true,
+                opacity: 1,
+                visible: true
+              });
+              this.canvas.add(cloned);
+              this.canvas.bringObjectToFront(cloned);
+              newObjects.push(cloned);
+              resolve(cloned);
+            });
+          }
+        } catch (err) {
+          reject(err);
+        }
+      });
+    });
+  
+    Promise.allSettled(clonePromises).then((results) => {
+      const successful = results.filter(r => r.status === 'fulfilled').map(r => (r as any).value);
+      
+      if (successful.length > 1) {
+        const selection = new fabric.ActiveSelection(successful, {
+          canvas: this.canvas
+        });
+        this.canvas.setActiveObject(selection);
+      } else if (successful.length === 1) {
+        this.canvas.setActiveObject(successful[0]);
+      }
+      this.canvas.requestRenderAll();
+      this.recordHistory();
+    });
+  }
+
+/**
+ * Add text from clipboard as a new text object
+ */
+private addTextFromClipboard(text: string): void {
+  // Create a new text object similar to addText() method
+  const textObject = new fabric.Textbox(text, {
+    left: 150,
+    top: 150,
+    fontSize: 24,
+    width: 200,
+    height: 50,
+    padding: 10,
+    fill: this.currentColor || '#000000',
+    fontFamily: this.currentFontFamily || 'Arial'
   });
+
+  // Initialize height tracking properties for new textboxes
+  (textObject as any).expandedHeight = 50;
+  (textObject as any).editStartHeight = 50;
+  (textObject as any).preEditHeight = 50;
+
+  // Add to canvas and select it
+  this.canvas.add(textObject);
+  this.canvas.setActiveObject(textObject);
+  this.canvas.renderAll();
+  this.recordHistory();
 }
 
-duplicateSelectedObjects() {
+async duplicateSelectedObjects() {
   const activeObject = this.canvas.getActiveObject();
   if (!activeObject) return;
 
   // Store current selection
   this.copySelectedObjects();
   // Paste immediately
-  this.pasteSelectedObjects();
+  await this.pasteSelectedObjects();
 }
 textBringToFront(target:any){
     if (target) {
-        (this.canvas as any).bringToFront(target); // Ensure dragging works
+        this.canvas.bringObjectToFront(target); // Ensure dragging works
     }
 }     
 updateContent() {
@@ -5220,16 +6231,21 @@ updateContent() {
       if (textboxObject.text !== 'Click to add heading' && textboxObject.text !== 'Click to add content') {
         hasCustomContent = true;
       }
-    } else if (obj.type === 'rect'|| ['headingBorder','contentBorder'].includes((obj as any).name)) {
-      const name = (obj as fabric.Object & { name?: string }).name;
-      if(name !== 'headingBorder' && name !== 'contentBorder'){
-        obj.set({ stroke: '#ccc',  strokeWidth: 1 });
-
-      }else{
-        obj.set({ stroke: 'transparent',  strokeWidth: 0 });
+    } else if (
+      obj.type === 'rect' ||
+      (obj.get('name') === 'headingBorder' || obj.get('name') === 'contentBorder')
+    ) {
+      const name = obj.get('name');
+      
+      if (name !== 'headingBorder' && name !== 'contentBorder') {
+        obj.set({ stroke: '#ccc', strokeWidth: 1 });
+      } else {
+        obj.set({ stroke: 'transparent', strokeWidth: 0 });
       }
+    
       borderObject = obj as fabric.Rect;
     }
+    
   });
 
 
@@ -5245,9 +6261,19 @@ updateContent() {
 
   // Remove all ungrouped objects from canvas
   this.lastUngroupedObjects.forEach(obj => {
-    (obj as any).editable = false; 
+    if (obj instanceof fabric.Textbox || obj instanceof fabric.IText) {
+      // Exit editing mode
+      obj.exitEditing();
+      // Make it non-selectable if desired
+      obj.selectable = false;
+    } else {
+      // For other objects, just make them non-selectable
+      obj.selectable = false;
+    }
+  
     this.canvas.remove(obj);
   });
+  
 
   // Create new group without the border
   const newGroup = new fabric.Group(this.lastUngroupedObjects, {
@@ -5261,11 +6287,22 @@ updateContent() {
     hasControls: true,
     hasBorders: true,
     lockScalingY: true,
+    borderColor: '#555',             // gray border
+    borderDashArray: [2, 2],         // dotted line
+    borderScaleFactor: 1,
+    cornerStyle: 'circle',
+    cornerColor: '#fff',             // white handles
+    cornerStrokeColor: '#555',       // gray outline
+    cornerSize: 12,
+    transparentCorners: false,
+    selectable: true,
+    evented: true
   });
-  (newGroup as any).name = this.lastGroupName;
+  newGroup.set('name', 'headingGroup');
+  newGroup.set('rotatingPointOffset', 30);
 
   this.canvas.add(newGroup);
-  (this.canvas as any).sendBackwards(newGroup);
+  this.canvas.sendObjectBackwards(newGroup);
   this.canvas.setActiveObject(newGroup);
   this.canvas.renderAll();
   // Store the reference to the last regrouped object
@@ -5521,21 +6558,25 @@ updateContent() {
 
   private setupDragAlignment() {
     // Handle object moving events
-    this.canvas.on('object:moving', (e) => {
-      const target = e.target!;
-      
+    this.canvas.on('object:moving', (options) => {
+      const target = options.target; // target is the object being moved
+    
+      if (!target) return;
+    
       // Apply boundary constraints
-      if(!this.ungroub){
-       this.constrainObjectToCanvas(target);
+      if (!this.ungroub) {
+        this.constrainObjectToCanvas(target);
       }
-      
+    
       if (!this.dragAlignmentEnabled) return;
-      
+    
       this.isDragging = true;
       this.showAlignmentGuides(target);
     });
+    
 
     this.canvas.on('object:modified', (e) => {
+      const event = e as unknown as fabric.ObjectEvents;
       this.isDragging = false;
       this.hideAlignmentGuides();
       
@@ -5553,37 +6594,24 @@ updateContent() {
 
     // Global handler for textbox scaling to prevent text distortion
     this.canvas.on('object:scaling', (e) => {
+      const event = e as unknown as fabric.ObjectEvents;
       const target = e.target;
       if (target && target.type === 'textbox') {
         this.handleTextboxScalingYOnly(target as fabric.Textbox);
       }
     });
 
-
-
-    // Global handler for textbox text changes
-    this.canvas.on('text:changed', (e) => {
-      const target = e.target;
-      if (target && target.type === 'textbox') {
-        // Preserve height when text changes with immediate preservation
-        
-        // Also ensure height is maintained during typing
-        const textbox = target as fabric.Textbox;
-        const currentHeight = textbox.height || 50;
-        const editStartHeight = (textbox as any).editStartHeight || currentHeight;
-        
-        if (editStartHeight > 50) {
-          const preservedHeight = Math.max(currentHeight, editStartHeight);
-          (textbox as any).expandedHeight = preservedHeight;
-          
-          if (textbox.height !== preservedHeight) {
-            textbox.set({ height: preservedHeight });
-            textbox.setCoords();
-            this.canvas.requestRenderAll();
-          }
+      // Handle textbox scaling completion
+      this.canvas.on('object:modified', (options) => {
+        const target = options.target;
+      
+        if (target && target.type === 'textbox') {
+          this.adjustTextboxHeight(target as fabric.Textbox);
         }
-      }
-    });
+      });
+
+
+
 
   }
 
@@ -5723,7 +6751,7 @@ updateContent() {
     
     this.alignmentGuides.push(guide);
     this.canvas.add(guide);
-    (this.canvas as any).sendToBack(guide);
+    this.canvas.sendObjectToBack(guide);
   }
 
   private createHorizontalGuide(y: number) {
@@ -5738,7 +6766,7 @@ updateContent() {
     
     this.alignmentGuides.push(guide);
     this.canvas.add(guide);
-    (this.canvas as any).sendToBack(guide);
+    this.canvas.sendObjectToBack(guide);
   }
 
   private snapToVerticalGuide(object: fabric.Object, guideX: number) {
@@ -5783,16 +6811,9 @@ updateContent() {
    */
   private handleTextboxScalingYOnly(textbox: fabric.Textbox) {
     try {
-      // Get current scaling values
-      const currentScaleX = textbox.scaleX || 1;
       const currentScaleY = textbox.scaleY || 1;
-      
-      // Store original dimensions
-      const originalWidth = textbox.width || 200;
       const originalHeight = textbox.height || 50;
-      
-      // For X-axis: allow normal scaling behavior
-      // For Y-axis: reset scaling and update height to prevent text distortion
+      const defaultHeight = 50; // Default height for textboxes
       
       if (currentScaleY !== 1) {
         // Calculate new height based on Y scaling
@@ -5803,11 +6824,19 @@ updateContent() {
           scaleY: 1
         });
         
-        // Update only the height to match the scaled size
-        textbox.set({
-          height: newHeight
-        });
-        (textbox as any).expandedHeight = newHeight;
+        // If scaling down to default size or smaller, reset to default
+        if (newHeight <= defaultHeight) {
+          textbox.set({
+            height: defaultHeight
+          });
+          (textbox as any).expandedHeight = defaultHeight;
+        } else {
+          // Update height to match the scaled size for expansion
+          textbox.set({
+            height: newHeight
+          });
+          (textbox as any).expandedHeight = newHeight;
+        }
       }
       
       // Auto-adjust height based on text content
@@ -5828,33 +6857,329 @@ updateContent() {
     try {
       // Get the current text content
       const text = textbox.text || '';
-      if (!text.trim()) return;
+      const defaultHeight = 50; // Default height for textboxes
       
-      // Calculate required height based on text content
-      const lines = text.split('\n');
-      const lineHeight = textbox.fontSize || 14;
-      const lineSpacing = 1.2; // Standard line spacing multiplier
-      
-      // Calculate total height needed
-      const requiredHeight = Math.max(10, lines.length * lineHeight * lineSpacing);
-      
-      // Get current height and expanded height
-      const currentHeight = textbox.height || 50;
-      const expandedHeight = (textbox as any).expandedHeight || currentHeight;
-      
-      // Use the larger of required height or expanded height
-      const newHeight = Math.max(requiredHeight, expandedHeight);
-      
-      // Update height if it's different
-      if (textbox.height !== newHeight) {
-        textbox.set({ height: newHeight });
-        (textbox as any).expandedHeight = newHeight;
+      // If no text content, reset to default height
+      if (!text.trim()) {
+        if (textbox.height !== defaultHeight) {
+          textbox.set({ height: defaultHeight });
+          (textbox as any).expandedHeight = defaultHeight;
+        }
+        return;
       }
+      
+      // Store original properties
+      const originalHeight = textbox.height;
+      const originalWidth = textbox.width;
+      
+      // Temporarily set a very large height but keep width fixed for proper wrapping
+      textbox.set({ 
+        height: 10000,
+        width: originalWidth // Keep original width to maintain text wrapping
+      });
+      
+      // Force text to recalculate its dimensions with proper wrapping
+      textbox.initDimensions();
+      textbox.setCoords();
+      
+      // Get the actual text height after wrapping
+      let textHeight;
+      try {
+        textHeight = textbox.calcTextHeight();
+      } catch (calcError) {
+        // Fallback calculation if calcTextHeight fails
+        const lines = text.split('\n');
+        const lineHeight = (textbox.fontSize || 14) * (textbox.lineHeight || 1.2);
+        textHeight = lines.length * lineHeight;
+      }
+      
+      // Add padding for better appearance
+      const padding = 16; // Increased padding for better text visibility
+      const requiredHeight = Math.max(defaultHeight, textHeight + padding);
+      
+      // Get current expanded height
+      const expandedHeight = (textbox as any).expandedHeight || originalHeight || defaultHeight;
+      
+      // Use the larger of required height or expanded height, but never less than default
+      const newHeight = Math.max(requiredHeight, expandedHeight, defaultHeight);
+      
+      // Set the final height and restore width
+      textbox.set({ 
+        height: newHeight,
+        width: originalWidth
+      });
+      (textbox as any).expandedHeight = newHeight;
+      
+      // Ensure proper text rendering and coordinates
+      textbox.initDimensions();
+      textbox.setCoords();
+      
+      // Force canvas re-render
+      this.canvas.requestRenderAll();
       
     } catch (error) {
       console.warn('Error adjusting textbox height:', error);
+      // Fallback: ensure textbox has at least default height
+      if (textbox.height < 50) {
+        textbox.set({ height: 50 });
+        textbox.setCoords();
+      }
+    }
+  }
+
+  // Method to reset textbox to default height
+  resetTextboxToDefault(textbox: fabric.Textbox) {
+    const defaultHeight = 50;
+    textbox.set({
+      height: defaultHeight,
+      scaleY: 1
+    });
+    (textbox as any).expandedHeight = defaultHeight;
+    textbox.setCoords();
+    this.canvas.requestRenderAll();
+  }
+  /**
+   * Handle file drops for image uploads
+   */
+  private handleFileDrops(files: FileList, event: DragEvent) {
+    const maxFileSize = 2 * 1024 * 1024; // 2MB limit
+    
+    Array.from(files).forEach(file => {
+      // Check if it's a video file first
+      if (this.isVideoFile(file)) {
+        this.toastr.error('Video files are not allowed. Please upload image files only.');
+        return;
+      }
+      
+      if (!this.isValidImageFile(file)) {
+        this.toastr.error('File type not supported. Only image files are allowed (JPEG, PNG, GIF, WebP, SVG).', 'File Type Error');
+        return;
+      }
+      
+      if (file.size > maxFileSize) {
+        this.toastr.error(`File "${file.name}" is too large. Maximum size allowed is 2MB.`);
+        return;
+      }
+      
+      this.convertFileToBase64(file, event);
+    });
+  }
+
+  /**
+   * Check if the file is a video file
+   */
+  private isVideoFile(file: File): boolean {
+    return file.type.startsWith('video/');
+  }
+
+  /**
+   * Validate if the dropped file is a supported image type
+   */
+  private isValidImageFile(file: File): boolean {
+    const supportedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+    return supportedTypes.includes(file.type);
+  }
+
+  /**
+   * Convert dropped image file to base64 and call imageUpload
+   */
+  private convertFileToBase64(file: File, event: DragEvent) {
+    this.isProcessingImage = true;
+    const reader = new FileReader();
+    
+    reader.onload = (e) => {
+      this.imageLoaded = true;
+      const base64String = e.target?.result as string;
+      
+      if (base64String) {
+        // Call the imageUpload function with the base64 data
+        this.imageUpload(base64String);
+      }
+      
+      this.isProcessingImage = false;
+    };
+    
+    reader.onerror = (error) => {
+      this.toastr.error('Error processing image file. Please try again.', 'Upload Error');
+      this.isProcessingImage = false;
+    };
+    
+    reader.readAsDataURL(file);
+  }
+
+  onDragEnter(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Check if dragged items contain files
+    if (event.dataTransfer?.types.includes('Files')) {
+      this.isDragOver = true;
+    }
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Only hide overlay if leaving the canvas area completely
+    const target = event.target as HTMLElement;
+    const relatedTarget = event.relatedTarget as HTMLElement;
+    
+    if (!target.contains(relatedTarget)) {
+      this.isDragOver = false;
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Keep drag over state active
+    if (event.dataTransfer?.types.includes('Files')) {
+      this.isDragOver = true;
     }
   }
   
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    
+    // Hide drag overlay
+    this.isDragOver = false;
+  
+    // Check if files are being dropped
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.handleFileDrops(files, event);
+      return;
+    }
 
+    const action = event.dataTransfer?.getData('action');
+    if (!action) {
+      return;
+    }
+  
+    // Map action to shape type
+    let shapeType: string;
+    switch (action) {
+      case 'addArrow':
+        shapeType = 'arrow';
+        break;
+      case 'addTriangle':
+        shapeType = 'triangle';
+        break;
+      case 'addRectangle':
+        shapeType = 'rectangle';
+        break;
+      case 'addCircle':
+        shapeType = 'circle';
+        break;
+      case 'addText':
+        shapeType = 'text';
+        break;
+      case 'addLine':
+        shapeType = 'line';
+        break;
+      case 'addHexagon':
+        shapeType = 'hexagon';
+        break;
+      case 'addStar':
+        shapeType = 'star';
+        break;
+      case 'addPentagon':
+        shapeType = 'pentagon';
+        break;
+      case 'addCube':
+        shapeType = 'cube';
+        break;
+      case 'addPie':
+        shapeType = 'pie';
+        break;
+      case 'addTag':
+        shapeType = 'tag';
+        break;
+      case 'addTeardrop':
+        shapeType = 'teardrop';
+        break;
+      case 'addDiamond':
+        shapeType = 'diamond';
+        break;
+      case 'addParallelogram':
+        shapeType = 'parallelogram';
+        break;
+      case 'addTrapezoid':
+        shapeType = 'trapezoid';
+        break;
+      case 'addSemiCircle':
+        shapeType = 'semiCircle';
+        break;
+      case 'addChat':
+        shapeType = 'chat';
+        break;
+      case 'addChevron':
+        shapeType = 'chevron';
+        break;
+      case 'addHalfFrame':
+        shapeType = 'halfFrame';
+        break;
+      case 'addFrame':
+        shapeType = 'frame';
+        break;
+      case 'addDonut':
+        shapeType = 'donut';
+        break;
+      case 'addBlockArc':
+        shapeType = 'blockArc';
+        break;
+      case 'addForwardArrow':
+        shapeType = 'forwardArrow';
+        break;
+      case 'addTable':
+        shapeType = 'table';
+        break;
+      default:
+        return;
+    }
+  
+  
+
+     // Get drop position using Fabric.js getPointer method to handle canvas scaling and viewport transforms
+  const canvasElement = event.target as HTMLCanvasElement;
+  const rect = canvasElement.getBoundingClientRect();
+  
+  // Create a mock event object that getPointer can use
+  const mockEvent = {
+    clientX: event.clientX,
+    clientY: event.clientY,
+    target: canvasElement
+  } as any;
+  
+  // Use Fabric.js getPointer to get the correct canvas coordinates
+  const pointer = this.canvas.getPointer(mockEvent);
+  const x = pointer.x;
+  const y = pointer.y;
+  
+    this.addShape({
+      type: shapeType,
+      properties: {
+        width: 100,
+        height: 60,
+        radius: 50,
+        size: 100
+      }
+    }, { left: x, top: y });
+  }
+
+
+
+  imageUpload(base64data:any){  
+    this.workspaceService.updateMultimediaSlideImage(base64data).then(response => {
+      let obj = {
+        type:'addImageUrl',
+        imageUrl: response.imageUrl
+      }
+      this.workspaceService.triggerMultimediaImageAction(obj);
+    }, error => {
+    });
+  }
 }

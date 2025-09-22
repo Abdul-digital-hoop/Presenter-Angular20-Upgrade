@@ -114,7 +114,7 @@ export class RemoteRightbarComponent implements OnInit {
         this.openQAText = "Close";
       }
     }
-    this.presenterToolbarService.markAsPinned(questionId, isPinned).then((response:any) => {
+    this.presenterToolbarService.RemoteMarkAsPinned(questionId, isPinned).then((response:any) => {
       this.workspaceService.presentationQuestions = response?.presentationQuestions;
       this.workspaceService.presentationQuestionsLegnth = response?.presentationQuestions == null ? 0 : response?.presentationQuestions?.length;
     });

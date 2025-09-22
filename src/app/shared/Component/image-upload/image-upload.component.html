@@ -175,14 +175,17 @@
                 <button type="button" class="btn-close m-0" data-bs-dismiss="modal" aria-label="Close" (click)="CloseModal()"></button>
             </div>
             <div class="row mx-0">
-                <div class="design-tab col-4 px-0" [ngClass]="uploadTabNumber == 1? 'active':' '">
+                <div class="design-tab col-3 px-0" [ngClass]="uploadTabNumber == 1? 'active':' '">
                     <h5 class="modal-title mb-0" (click)="selectTabForUpload(1)">Upload</h5>
                 </div>
-                <div class="design-tab col-4 px-0" [ngClass]="uploadTabNumber == 2? 'active':' '">
+                <div class="design-tab col-3 px-0" [ngClass]="uploadTabNumber == 2? 'active':' '">
                     <h5 class="modal-title mb-0" (click)="selectTabForUpload(2)">Image Library</h5>
                 </div>
-                <div class="design-tab col-4 px-0" [ngClass]="uploadTabNumber == 3? 'active':' '">
+                <div class="design-tab col-3 px-0" [ngClass]="uploadTabNumber == 3? 'active':' '">
                     <h5 class="modal-title mb-0" (click)="selectTabForUpload(3)">GIF's</h5>
+                </div>
+                <div class="design-tab col-3 px-0" [ngClass]="uploadTabNumber == 4? 'active':' '">
+                    <h5 class="modal-title mb-0" (click)="selectTabForUpload(4)">My Images</h5>
                 </div>
             </div>
             <div class="modal-body">
@@ -281,8 +284,41 @@
                         </div>
                       </div>
                                          
-                  </div>  
-                                
+                </div>
+                <div *ngIf="uploadTabNumber == 4">
+                    <div *ngIf="isMyImagesLoading" class="dots-loading-container mt-3">
+                        <div class="dots-loading">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                    </div>
+                    <div class="image-list-container" [class.myimage-fixed-scroll]="isMasonryLayoutApplied" *ngIf="!isMyImagesLoading && myImages.length > 0">
+                        <div class="my-images-grid">
+                            <div class="image-container" *ngFor="let image of myImages"
+                                 (mouseenter)="image.isHovered = true" 
+                                 (mouseleave)="image.isHovered = false"
+                                 (click)="selectMyImage(image)">
+                                <a class="absolute-image-upload" href="javascript:void(0)" (click)="selectMyImage(image)"></a>
+                                <img [src]="image.url" class="my-image-natural-size" [alt]="image.name"/>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div *ngIf="!isMyImagesLoading && myImages.length === 0" class="upload-image-div border-0">
+                        <div class="my-4 text-centers">
+                            <img src="/assets/new-icons/imagine.png" class="img-fluid mb-3 imagine-img">
+                
+                            <h5 class="modal-title mt-4">
+                                Every picture tells a story—what's<br>yours? Upload one now.
+                            </h5>
+                
+                            <button type="button" class="btn btn-primary p-2 mt-3" (click)="navigateToUploadTab()">
+                                Upload & Shine
+                            </button>
+                        </div>
+                    </div>
+                </div>          
             </div>
         </div>
     </div>

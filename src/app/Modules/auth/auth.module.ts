@@ -11,8 +11,7 @@ import { SignupVerificationComponent } from './Pages/signup-verification/signup-
 import { ChangePasswordComponent } from './Pages/change-password/change-password.component';
 import { ResendEmailVerificationComponent } from './Pages/resend-email-verification/resend-email-verification.component';
 import { CommonPreviewComponent } from './Pages/common-preview/common-preview.component';
-
-
+import { RemoteAccessComponent } from './Pages/remote-access/remote-access.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +21,8 @@ import { CommonPreviewComponent } from './Pages/common-preview/common-preview.co
     SignupVerificationComponent,
     ChangePasswordComponent,
     ResendEmailVerificationComponent,
-    CommonPreviewComponent
+    CommonPreviewComponent,
+    RemoteAccessComponent
   ],
   imports: [
     CommonModule,

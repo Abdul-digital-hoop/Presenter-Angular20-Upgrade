@@ -9,6 +9,7 @@ import { ToastrService } from 'ngx-toastr';
 import { image } from 'd3';
 import { DynamicSlideTypeDirective } from 'src/app/shared/directive/dynamic-slide-type.directive';
 import { DynamicSlideTypeComponent } from 'src/app/shared/Component/dynamic-slide-type/dynamic-slide-type.component';
+import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
 
 @Component({
     selector: 'app-remote-center-panel',
@@ -47,7 +48,8 @@ export class RemoteCenterPanelComponent implements OnInit {
     public workSpaceSignalRService: WorkSignalRServiceService,
     public presenterToolbarService: PresenterToolbarService,
     private _CommanService:CommanService,
-    private _toastr: ToastrService) { }
+    private _toastr: ToastrService,
+    private presentationService: PresentationService) { }
 
   ngOnInit(): void {
     if (!this.workspaceService.currentMasterSlideTypeId && localStorage.getItem('slideTypeId')) {
@@ -112,7 +114,7 @@ export class RemoteCenterPanelComponent implements OnInit {
       if (nextSlideId != null || nextSlideId != undefined) {
       //  localStorage.setItem('activeSlideId', nextSlideId);
       this.workspaceService.activeSlideId = nextSlideId;
-        this.presenterToolbarService.nextSlide().then((response: any) => {
+        this.presenterToolbarService.RemoteNextSlide().then((response: any) => {
           let presentationData = response['data'];
           var nextandPreviousRemote = {
             presentationId: this.workspaceService.presentationId,
@@ -174,7 +176,7 @@ export class RemoteCenterPanelComponent implements OnInit {
     let perivousSlideId = this.workspaceService.slideListArray[this.workspaceService.currentSlideIndex - 1]?.slideId;
     if (perivousSlideId != null || perivousSlideId != undefined) {
     this.workspaceService.activeSlideId = perivousSlideId;
-      this.presenterToolbarService.previousSlides().then((response: any) => {
+      this.presenterToolbarService.RemotePreviousSlides().then((response: any) => {
         let presentationData = response['data'];
         var nextandPreviousRemote = {
           presentationId: this.workspaceService.presentationId,
@@ -216,9 +218,10 @@ export class RemoteCenterPanelComponent implements OnInit {
     let showChooseCorrectAnswerDTO = {
       presentationId: this.workspaceService.presentationId,
       slideId: this.workspaceService.activeSlideId,
-      isShowCorrectAnswers: this.workspaceService.multiplechoicepresenterEnterClick
+      isShowCorrectAnswers: this.workspaceService.multiplechoicepresenterEnterClick,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) == null ?  this.workspaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) 
     }
-    this.presenterToolbarService.showCorrectAnswerUpdate(showChooseCorrectAnswerDTO);
+    this.presenterToolbarService.RemoteShowCorrectAnswerUpdate(showChooseCorrectAnswerDTO);
   }
   guesstheNumberCorrectAnswersUpdate() {
     this.workspaceService.guessthenumberpresenterEnterClick = !this.workspaceService.guessthenumberpresenterEnterClick;
@@ -231,9 +234,10 @@ export class RemoteCenterPanelComponent implements OnInit {
     let showChooseCorrectAnswerDTO = {
       presentationId: this.workspaceService.presentationId,
       slideId: this.workspaceService.activeSlideId,
-      isShowCorrectAnswers: this.workspaceService.guessthenumberpresenterEnterClick
+      isShowCorrectAnswers: this.workspaceService.guessthenumberpresenterEnterClick,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) == null ?  this.workspaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) 
     }
-    this.presenterToolbarService.showCorrectAnswerUpdate(showChooseCorrectAnswerDTO);
+    this.presenterToolbarService.RemoteShowCorrectAnswerUpdate(showChooseCorrectAnswerDTO);
   }
   truthOrLieCorrectAnswersUpdate() {
     this.workspaceService.truthorliepresenterEnterClick = !this.workspaceService.truthorliepresenterEnterClick;
@@ -246,9 +250,10 @@ export class RemoteCenterPanelComponent implements OnInit {
     let showChooseCorrectAnswerDTO = {
       presentationId: this.workspaceService.presentationId,
       slideId: this.workspaceService.activeSlideId,
-      isShowCorrectAnswers: this.workspaceService.truthorliepresenterEnterClick
+      isShowCorrectAnswers: this.workspaceService.truthorliepresenterEnterClick,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) == null ?  this.workspaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) 
     }
-    this.presenterToolbarService.showCorrectAnswerUpdate(showChooseCorrectAnswerDTO);
+    this.presenterToolbarService.RemoteShowCorrectAnswerUpdate(showChooseCorrectAnswerDTO);
   }
   startQuizFromRemote() {
     this.isStartQuiz = true;
@@ -455,7 +460,7 @@ export class RemoteCenterPanelComponent implements OnInit {
         if(!data.isPreview){
           this.workspaceService.activeSlideId =  data.activeSlideId;
           localStorage.setItem('slideTypeId', data.activeSlideTypeId);
-          this.workspaceService.storeActiveSlideDetails().then(
+          this.workspaceService.storeActiveSlideDetailsRemote().then(
             (response: any) => {
               let presentationData = response['data'];
               this.closeModalsEmitter.emit(true);
@@ -491,7 +496,7 @@ export class RemoteCenterPanelComponent implements OnInit {
   resetResultSubject() {
     this.workspaceService.resetResultBehavioursSubject.subscribe((data: any) => {
       if (data != null) {
-        this.workspaceService.storeActiveSlideDetails().then(
+        this.workspaceService.storeActiveSlideDetailsRemote(true).then(
           (response: any) => {
             let presentationData = response['data'];
             this.buttonContentUpdate();
@@ -564,6 +569,7 @@ export class RemoteCenterPanelComponent implements OnInit {
         }
       }
   }
+
   ngOnDestroy(){
     this.workspaceService.resetResultBehavioursSubject.next(null);
     this.workspaceService.moveNextSlideBehavioursSubject.next(null);
@@ -571,5 +577,6 @@ export class RemoteCenterPanelComponent implements OnInit {
     this.workspaceService.isLastBehavioursSubject.next(null);
     this.workspaceService.multipleChoicesCorrectAnswersBehavioursSubject.next(null);
   }
+
 }
 

@@ -262,6 +262,9 @@ export class PresentationService {
   showCorrectAnswers(payload: any) {
     return this._http.post(environment.MyApi + 'showcorrectanswers', payload);
   }
+  RemoteShowCorrectAnswer(payload: any) {
+    return this._http.post(environment.MyApi + 'remote-access/show-correct-answer', payload);
+  }
   moderateResponse(payload: any) {
     return this._http.post(environment.MyApi + 'moderate-response', payload);
   }
@@ -596,11 +599,17 @@ updateSlideStatus(data:any): void {
   updatePinnedQuestion(data:any){
     return this._http.post(environment.MyApi + 'update-pinned-question',data);
   }
+  RemoteUpdatePinnedQuestion(data:any){
+    return this._http.post(environment.MyApi + 'remote-access/update-pinned-question',data);
+  }
   responseAsPercentage(data:any){
     return this._http.post(environment.MyApi + 'response-percentages',data);
   }
   manageAccessCode(data:any){
     return this._http.post(environment.MyApi + 'manage-accessbar',data);
+  }
+  RemoteManageAccessCode(data:any){
+    return this._http.post(environment.MyApi + 'remote-access/manage-accessbar',data);
   }
   applyTextFontAndColor(data:any){
     return this._http.post(environment.MyApi + 'apply-fontandcolors',data);
@@ -680,6 +689,9 @@ updateSlideStatus(data:any): void {
   presenterEnableQuestion(data:any){
     return this._http.post(environment.MyApi + 'presenter-enable-questions',data);
   }
+  RemotePresenterEnableQuestion(data:any){
+    return this._http.post(environment.MyApi + 'remote-access/presenter-enable-questions',data);
+  }
   OnlyQAEnableQuestion(data:any){
     return this._http.post(environment.MyApi + 'presenter-qaenable-questions',data);
   }
@@ -689,6 +701,9 @@ updateSlideStatus(data:any): void {
   SlideEnableComment(data:any){
     return this._http.post(environment.MyApi + 'Slide-enable-comments',data);
   }
+  RemoteSlideEnableComment(data:any){
+    return this._http.post(environment.MyApi + 'remote-access/slide-enable-comment',data);
+  }
   presenterShowResponse(data:any){
     return this._http.post(environment.MyApi + 'presenter-show-responses',data);
   }
@@ -697,6 +712,9 @@ updateSlideStatus(data:any): void {
   }
   presenterLockVoting(data:any){
     return this._http.post(environment.MyApi + 'presenter-lock-votings',data);
+  }
+  RemotePresenterLockVoting(data:any){
+    return this._http.post(environment.MyApi + 'remote-access/presenter-lock-votings',data);
   }
   presenterShowQRCode(data:any){
     return this._http.post(environment.MyApi + 'presenter-show-qrcodes',data);
@@ -802,8 +820,14 @@ updateSlideStatus(data:any): void {
   resetSlideResult(data: any) {
     return this._http.post(environment.MyApi + 'reset-slide-result', data);
   }
+  RemoteResetSlideResult(data: any) {
+    return this._http.post(environment.MyApi + 'remote-access/reset-slide-result', data);
+  }
   resetPresentationResult(data: any) {
     return this._http.post(environment.MyApi + 'reset-presentation-result', data);
+  }
+  resetRemotePresentationResult(data: any) {
+    return this._http.post(environment.MyApi + 'remote-access/reset-presentation', data);
   }
   duplicatePresentationResetResult(data: any) {
     return this._http.post(environment.MyApi + 'duplicate-presentation-reset-result', data);
@@ -814,9 +838,15 @@ updateSlideStatus(data:any): void {
   blankScreenUpdate(data:any){
     return this._http.post(environment.MyApi + 'blank-screen-update',data);
   }
+  RemoteBlankScreenUpdate(data:any){
+    return this._http.post(environment.MyApi + 'remote-access/blank-screen-update',data);
+  }
   // * ===== Remote API Call ========
   resetTimer(data: any) {
     return this._http.post(environment.MyApi + 'reset-present-timer', data);
+  }
+  RemoteResetPresentTime(data:any){
+    return this._http.post(environment.MyApi + 'remote-access/reset-present-time',data);
   }
   deleteQuestion(data: any) {
     return this._http.post(environment.MyApi + 'delete-question', data);

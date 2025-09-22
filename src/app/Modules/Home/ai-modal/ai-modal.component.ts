@@ -57,6 +57,7 @@ export class AiModalComponent {
 
   currentStage: number = this.startStage;
   refinedUserPrompt: string = '';
+  initialUserPrompt: string = '';
   aiResponse: string = '';
   isLoading: boolean = false;
   isRefineLoading: boolean = false;
@@ -128,6 +129,7 @@ export class AiModalComponent {
     this.isShowModal = false;
     this.currentStage = this.startStage;
     this.refinedUserPrompt = '';
+    this.initialUserPrompt = '';
     this.promptForm.reset();
     this.refinedPromptForm.reset();
     this.aiResponse = '';
@@ -249,6 +251,11 @@ export class AiModalComponent {
     if (formGroup.valid) {
       this[loadingFlag] = true;
 
+      // Store initial prompt if this is the first refinement
+      if (this.currentStage == 1) {
+        this.initialUserPrompt = tempUserPrompt;
+      }
+
       const payload = { prompt: tempUserPrompt };
 
       this._presentationservice.refineUserPrompt(payload).subscribe(
@@ -297,6 +304,7 @@ export class AiModalComponent {
       this.isLoading = true;
       var payload = {
         prompt: tempUserPrompt,
+        initialPrompt: this.initialUserPrompt,
         numberOfSlides: this.numberOfSlides,
         isAddInstructionSlide: this.refinedPromptForm.value.isAddInstructionSlide,
         isAddImages: this.refinedPromptForm.value.isAddImages,

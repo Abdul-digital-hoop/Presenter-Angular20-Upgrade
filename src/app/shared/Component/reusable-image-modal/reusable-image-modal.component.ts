@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output } fro
 import { PresentationThemeService } from 'src/app/core/Sevices/Presentation/presentation-theme.service';
 import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
+import { defaultmediaService } from 'src/app/core/Sevices/defaultmedia.service';
 import { ImageUploadeModuleName } from 'src/app/utility/constants';
 declare var $: any;
 export class ImageTypeClass {
@@ -42,10 +43,12 @@ export class ReusableImageModalComponent implements OnInit {
   public emptyCropperPosition = { x1: 0, y1: 0, x2: 0, y2: 0 };
   dragandDorpImageCoordinates: { x1: number; y1: number; x2: number; y2: number; };
   croppedPositionObj = { x1: 0, y1: 0, x2: 0, y2: 0 };
+  public isFromMyImages: boolean = false;
   constructor(public workSpaceService: WorkspaceService, 
     public _presentationService: PresentationService,
      public _presentationThemeService: PresentationThemeService,
-     private cdr: ChangeDetectorRef) { }
+     private cdr: ChangeDetectorRef,
+     private defaultmediaService: defaultmediaService) { }
   // This method initializes the component and sets the currently uploaded image if an image URL is provided.
   ngOnInit(): void {
     this._presentationThemeService.setImageType(this.imageUploadedType);
@@ -113,6 +116,7 @@ export class ReusableImageModalComponent implements OnInit {
       return event.target.error.code;
     };
     this.currentUploadedImageEvent = event;
+    this.isFromMyImages = event.isFromMyImages || false;
     this.currentImageformat = fileExtension === 'svg' || fileExtension === 'gif' ? fileExtension : '';
     if(this.workSpaceService.activeSlideTypeName == 'Multimedia'){
       this.convertImageUrlToBase64Multimedia(event[0]?.url?.changingThisBreaksApplicationSecurity);
@@ -151,6 +155,9 @@ export class ReusableImageModalComponent implements OnInit {
           const base64data = reader.result as string;
           this.workSpaceService.updateMultimediaSlideImage(base64data).then(response => {
             resolve(response);
+            if (!this.isFromMyImages) {
+              this.saveImageToRecentImages(base64data);
+            }
             this.updatedImageToParent.emit(response);
             this.isImageUploadingLoader = false;
           }, error => {
@@ -210,6 +217,9 @@ export class ReusableImageModalComponent implements OnInit {
       case ImageUploadeModuleName.ThemeBackgroundImage:
         this.themeBackgroundUploadImageAPI(base64String).then((response: any) => {
           this.inticateImageUploading(false);
+          if (!this.isFromMyImages) {
+            this.saveImageToRecentImages(base64String);
+          }
           var response = response;
           var obj = {
             response: response,
@@ -221,6 +231,9 @@ export class ReusableImageModalComponent implements OnInit {
       case ImageUploadeModuleName.ThemeLogoImages:
         this.themeLogoImageAPI(base64String).then((response: any) => {
           this.inticateImageUploading(false);
+          if (!this.isFromMyImages) {
+            this.saveImageToRecentImages(base64String);
+          }
           var response = response;
           var obj = {
             response: response,
@@ -237,6 +250,15 @@ export class ReusableImageModalComponent implements OnInit {
       default:
         console.error('Invalid context for backToUploadComponent');
     }
+  }
+
+  private saveImageToRecentImages(imageUrl: string): void {
+    this.defaultmediaService.addUserRecentImage(imageUrl).subscribe(
+      (response: any) => {
+      },
+      (error) => {
+      }
+    );
   }
   closeUploadComponentModal() {
     $('#imageUploadModal-'+this.instanceId).modal('hide');
@@ -277,6 +299,7 @@ export class ReusableImageModalComponent implements OnInit {
         return;
       }
       this.currentUploadedImageEvent = event;
+      this.isFromMyImages = event.isFromMyImages || false;
       if (fileExtension === 'svg' || fileExtension === 'gif') {
         this.currentImageformat = fileExtension;
       }
@@ -288,6 +311,7 @@ export class ReusableImageModalComponent implements OnInit {
             reader.onloadend = () => {
               const base64Url = reader.result as string;
               this.currentlyUploadedImage = base64Url;
+              this.currentlyOrginalImage = base64Url;
               this.isShowCrop = true;
               resolve();
             };
@@ -301,7 +325,9 @@ export class ReusableImageModalComponent implements OnInit {
         const file = event.target?.files?.[0] || event[0]?.file;
         const reader = new FileReader();
         reader.onload = (loadEvent) => {
-          this.currentlyUploadedImage = loadEvent.target?.result;
+          const base64Url = loadEvent.target?.result;
+          this.currentlyUploadedImage = base64Url;
+          this.currentlyOrginalImage = base64Url;
           this.isShowCrop = true;
           resolve();
         };
@@ -309,9 +335,6 @@ export class ReusableImageModalComponent implements OnInit {
       }
     }).catch(error => {
       console.error('Error processing file:', error);
-    }).finally(() => {
-      this.currentlyOrginalImage = this.currentlyUploadedImage;
-      this.isShowCrop = true;
     });
   }
   customerTriggerBackToUploadEvent() {
@@ -327,6 +350,7 @@ export class ReusableImageModalComponent implements OnInit {
       this.allowedSizeType = 2048;
       this.currentImageformat = '';
       this.isImageUploadingLoader = false;
+      this.isFromMyImages = false;
       resolve();
       console.log("Clear Local Variable Image modal");
     });

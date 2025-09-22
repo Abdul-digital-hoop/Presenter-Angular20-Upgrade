@@ -1,12 +1,4 @@
-<ng-container *ngIf="!workspaceService.presentationMode && isPageLoading || workspaceService.isPreviewMode">
-    <div class="disable-presentationmode-container">
-        <div class="presentPresentation">
-            <h1>Want to use the remote?</h1>
-            <p class="presentationmodefalse-content">Hit <b>'Present'</b> to begin. You can control the session<br> with the remote once it’s live.</p>
-            <button class="btn btn-confirm-main text-white px-3"[ngClass]="workspaceService.isPreviewMode ? 'disableds' : ''"  (click)="workspaceService.isPreviewMode === false && presentAnyway()">Present</button>
-        </div>
-    </div>
-</ng-container>
+<!-- Loading spinner -->
 <ng-container *ngIf="isLoading && !isPageLoading">
     <div class="disable-presentationmode-container">
         <div class="presentPresentation">
@@ -14,68 +6,101 @@
         </div>
     </div>
 </ng-container>
-<ng-container *ngIf="!isMobile && isPageLoading">
-    <div class="remote-contianer" [hidden]="!workspaceService.presentationMode || workspaceService.isPreviewMode">
-        <button  [ngClass]="isOpenQAWhenTabView == true? 'toggle-right-absolute':'toggle-right'" (click)="openQA()">
-            <ng-container *ngIf="!isOpenQAWhenTabView">
-                <img src="/assets/new-icons/message.svg" class="tab-icon">
-            </ng-container> 
-            <ng-container *ngIf="isOpenQAWhenTabView">
-                <img src="/assets/new-icons/QA_active.svg" class="tab-icon">
-            </ng-container>
-        </button>
-        <!-- * ============ Header Template ============== -->
-        <app-remote-navbar></app-remote-navbar>
-        <!-- * ============ Main Contant Template ============== -->
-        <div class="content">
-            <!-- * ============ Main Contant Template ============== -->
-            <div class="control-section active">
-                <app-remote-leftbar (dynamicComponentUpdate)="remoteCenterPanel.dynamicComponentUpdate($event)"></app-remote-leftbar>
-            </div>
-            <!-- * ============ Presentation Contant Template ============== -->
-            <div class="presentation-section">
-                <app-remote-center-panel [isLoading]="isLoading" [presenterTime]="presenterTime"
-                    #remoteCenterPanel (isPresentationResetResults)="manageResetResults($event)" (closeModalsEmitter)="closeModals()"></app-remote-center-panel>
-            </div>  
-            <!-- * ============ QA Contant Template ============== -->
-            <div [ngClass]="isOpenQAWhenTabView == true? 'QA-section-absolute':'QA-section'">
-                <ng-container *ngIf="!isLoading">
-                    <app-remote-rightbar [itHasQASlides]="itHasQASlides"
-                        (deleteQuestion)="deleteQuestionIdSet($event)"></app-remote-rightbar>
-                </ng-container>
-            </div>
-        </div>
 
-    </div>
-</ng-container>
-
-<ng-container *ngIf="isMobile && isPageLoading">
+<!-- Main remote interface -->
+<ng-container *ngIf="!isMobile && !isLoading && (isPageLoading || hasRemoteAccess)">
     <div class="remote-contianer" [hidden]="!workspaceService.presentationMode || workspaceService.isPreviewMode">
-        <!-- * ============ Header Template ============== -->
-        <app-remote-navbar (activeTabChange)="changeActiveTab($event)" [isAllQuestionsAnswered]="true" #remoteNavBar></app-remote-navbar>
-        <!-- * ============ Main Contant Template ============== -->
-        <div class="content">
-            <!-- * ============ Main Contant Template ============== -->
-            <div class="control-section" [class.active-tab]="activeTab === RemoteTabString.Setting">
-                <app-remote-leftbar
-                    (dynamicComponentUpdate)="remoteCenterPanel.dynamicComponentUpdate($event)"></app-remote-leftbar>
-            </div>
-            <!-- * ============ Presentation Contant Template ============== -->
-            <div class="presentation-section" [class.active-tab]="activeTab === RemoteTabString.Present">
-                <app-remote-center-panel [isLoading]="isLoading" [presenterTime]="presenterTime"
-                    #remoteCenterPanel (isPresentationResetResults)="manageResetResults($event)" (closeModalsEmitter)="closeModals()"></app-remote-center-panel>
-            </div>
-            <!-- * ============ QA Contant Template ============== -->
-            <div class="QA-section" [class.active-tab]="activeTab === RemoteTabString.QA">
-                <ng-container *ngIf="!isLoading">
-                    <app-remote-rightbar [itHasQASlides]="itHasQASlides"
-                        (deleteQuestion)="deleteQuestionIdSet($event)"
-                        (allQuestionsAnswered)="remoteNavBar.changeQuestionsNotifications($event)"></app-remote-rightbar>
+        <!-- Remote controls -->
+        <div class="remote-controls">
+            <!-- Toggle QA button -->
+            <button [ngClass]="isOpenQAWhenTabView == true? 'toggle-right-absolute':'toggle-right'" (click)="openQA()">
+                <ng-container *ngIf="!isOpenQAWhenTabView">
+                    <img src="/assets/new-icons/message.svg" class="tab-icon">
+                </ng-container> 
+                <ng-container *ngIf="isOpenQAWhenTabView">
+                    <img src="/assets/new-icons/QA_active.svg" class="tab-icon">
                 </ng-container>
+            </button>
+            
+            <!-- Header Template -->
+            <app-remote-navbar></app-remote-navbar>
+            
+            <!-- Main Content Template -->
+            <div class="content">
+                <!-- Left Sidebar -->
+                <div class="control-section active">
+                    <app-remote-leftbar (dynamicComponentUpdate)="remoteCenterPanel.dynamicComponentUpdate($event)"></app-remote-leftbar>
+                </div>
+                
+                <!-- Center Panel -->
+                <div class="presentation-section">
+                    <app-remote-center-panel 
+                        [isLoading]="isLoading" 
+                        [presenterTime]="presenterTime"
+                        #remoteCenterPanel 
+                        (isPresentationResetResults)="manageResetResults($event)" 
+                        (closeModalsEmitter)="closeModals()">
+                    </app-remote-center-panel>
+                </div>  
+                
+                <!-- Right Sidebar -->
+                <div [ngClass]="isOpenQAWhenTabView == true? 'QA-section-absolute':'QA-section'">
+                    <ng-container *ngIf="!isLoading">
+                        <app-remote-rightbar 
+                            [itHasQASlides]="itHasQASlides"
+                            (deleteQuestion)="deleteQuestionIdSet($event)">
+                        </app-remote-rightbar>
+                    </ng-container>
+                </div>
             </div>
         </div>
     </div>
 </ng-container>
+
+<!-- Mobile view -->
+<ng-container *ngIf="isMobile && !isLoading && (isPageLoading || hasRemoteAccess)">
+    <div class="remote-contianer" [hidden]="!workspaceService.presentationMode || workspaceService.isPreviewMode">
+        <!-- Remote controls for mobile -->
+        <div class="remote-controls">
+            <!-- Header Template -->
+            <app-remote-navbar (activeTabChange)="changeActiveTab($event)" [isAllQuestionsAnswered]="true" #remoteNavBar></app-remote-navbar>
+            
+            <!-- Main Content Template -->
+            <div class="content">
+                <!-- Left Sidebar -->
+                <div class="control-section" [class.active-tab]="activeTab === RemoteTabString.Setting">
+                    <app-remote-leftbar
+                        (dynamicComponentUpdate)="remoteCenterPanel.dynamicComponentUpdate($event)"></app-remote-leftbar>
+                </div>
+                
+                <!-- Center Panel -->
+                <div class="presentation-section" [class.active-tab]="activeTab === RemoteTabString.Present">
+                    <app-remote-center-panel 
+                        [isLoading]="isLoading" 
+                        [presenterTime]="presenterTime"
+                        #remoteCenterPanel 
+                        (isPresentationResetResults)="manageResetResults($event)" 
+                        (closeModalsEmitter)="closeModals()">
+                    </app-remote-center-panel>
+                </div>
+                
+                <!-- Right Sidebar -->
+                <div class="QA-section" [class.active-tab]="activeTab === RemoteTabString.QA">
+                    <ng-container *ngIf="!isLoading">
+                        <app-remote-rightbar 
+                            [itHasQASlides]="itHasQASlides"
+                            (deleteQuestion)="deleteQuestionIdSet($event)"
+                            (allQuestionsAnswered)="remoteNavBar.changeQuestionsNotifications($event)">
+                        </app-remote-rightbar>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>
+
+
+
 
 <!-- Start Timer Modal -->
 <div class="modal fade" id="startTimerModal" tabindex="-1" role="dialog" aria-labelledby="startTimerModalTitle"
@@ -151,6 +176,7 @@
         </div>
     </div>
 </div>
+
 <!-- Reset Timer Modal -->
 <div class="modal fade" id="resetModal" tabindex="-1" role="dialog" aria-labelledby="resetModal" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered align-items-end my-0 mvh-100" role="document">
@@ -172,7 +198,6 @@
             </div>
             <div class="modal-body">
                 <div class="reset-timer">
-                    <!-- <span class="heading">Reset timer?</span> -->
                     <span class="content">Pressing the "Reset" button will restart the presentation timer.</span>
                 </div>
                 <div class="reset-action">
@@ -191,7 +216,8 @@
         </div>
     </div>
 </div>
-<!-- Reset Timer Modal -->
+
+<!-- Delete Question Modal -->
 <div class="modal fade" id="deleteQuestionModal" tabindex="-1" role="dialog" aria-labelledby="deleteQuestionModal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered align-items-end my-0 mvh-100" role="document">
@@ -233,7 +259,8 @@
         </div>
     </div>
 </div>
-<!--Moderation Modal -->
+
+<!-- Moderation Modal -->
 <div class="modal fade" id="moderationModal" tabindex="-1" role="dialog" aria-labelledby="moderationModal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered align-items-end my-0 mvh-100" role="document">
@@ -296,7 +323,8 @@
         </div>
     </div>
 </div>
-<!-- MarkCorrect Modal -->
+
+<!-- Mark Correct Modal -->
 <div class="modal fade" id="markCorrectAnswersModal" tabindex="-1" role="dialog" aria-labelledby="markCorrectAnswersModal"
     aria-hidden="true">
     <div class="modal-dialog modal-dialog-scrollable modal-dialog-centered align-items-end my-0 mvh-100" role="document">
@@ -375,6 +403,7 @@
         </div>
     </div>
 </div>
+
 <!-- Reset Modal -->
 <div class="modal fade" id="resetResultModal" tabindex="-1" role="dialog" aria-labelledby="resetResultModal"
     aria-hidden="true">
@@ -427,7 +456,6 @@
                     </div>
                 </div>
             </div>
-           
         </div>
     </div>
 </div>

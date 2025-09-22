@@ -885,7 +885,7 @@
     box-shadow: 6px -6px 6px 0px #00000008 inset;
     transition: all 0.3s ease 0s;
     border-radius: 9999px;
-    z-index: 99;
+    z-index: 10001;
     opacity: 0;
     position: absolute;
     align-items: flex-start;
@@ -1295,6 +1295,7 @@ input#leading:checked ~ .toggle-dot-quiz {
         width: 100%;
         height: 100%;
         pointer-events: none;
+        overflow: hidden; 
         
         &.annotation-mode-active {
             pointer-events: all;
@@ -1372,6 +1373,6 @@ input#leading:checked ~ .toggle-dot-quiz {
     }
 }
 .presenter-toolbar-container-layer{
-    z-index: 100000;
+    z-index: 10001;
     position: relative;
 }

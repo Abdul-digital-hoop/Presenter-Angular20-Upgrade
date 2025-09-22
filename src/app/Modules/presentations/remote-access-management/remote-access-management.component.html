@@ -1,0 +1,124 @@
+<div class="remote-access-popup" *ngIf="isVisible">
+  <div class="popup-overlay" (click)="closePopup()"></div>
+  <div class="popup-content" [style.scale]="this.workspaceService.presentationMode ? 1: .7">
+                <!-- Header -->
+            <div class="popup-header">
+              <h3 class="popup-title">
+                <i class="fas fa-users"></i>
+                Remote Access Management
+              </h3>
+              <div class="header-actions">
+                
+                <button class="close-btn" (click)="closePopup()">
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+            </div>
+    
+    <!-- Error Message -->
+    <div class="error-message" *ngIf="errorMessage">
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        {{ errorMessage }}
+        <button class="btn-close" (click)="errorMessage = ''"></button>
+      </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="popup-body">
+      <!-- Loading State -->
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading remote users...</p>
+      </div>
+      
+             <!-- Empty State -->
+       <div class="empty-state" *ngIf="!isLoading && remoteUsers.length === 0">
+         <i class="fas fa-users-slash"></i>
+         <h5>No Remote Users</h5>
+         <p>No users have requested remote access yet.</p>
+       </div>
+      
+      <!-- Users List -->
+      <div class="users-list" *ngIf="!isLoading && remoteUsers.length > 0">
+                 <div class="list-header">
+           <h6>Remote Users ({{ remoteUsers.length }})</h6>
+           <button class="btn btn-sm btn-outline-primary" (click)="refreshList()">
+             <i class="fas fa-sync-alt"></i>
+             Refresh
+           </button>
+         </div>
+        
+        <div class="user-item" *ngFor="let user of remoteUsers">
+          <div class="user-info">
+            <div class="user-avatar">
+              <i class="fas fa-user"></i>
+            </div>
+            <div class="user-details">
+              <div class="user-name">{{ user.remoteUserName }}</div>
+              <div class="user-meta">
+                <span class="request-time">
+                  <i class="fas fa-clock"></i>
+                  Requested: {{ formatDate(user.requestedAt) }}
+                </span>
+                <span class="last-activity" *ngIf="user.lastActivity">
+                  <i class="fas fa-signal"></i>
+                  Last active: {{ formatDate(user.lastActivity) }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="user-status">
+            <span class="status-badge" [ngClass]="getStatusBadgeClass(user.requestStatus)">
+              {{ getStatusText(user.requestStatus) }}
+            </span>
+          </div>
+          
+          <div class="user-actions">
+            <!-- Pending Requests -->
+            <div *ngIf="user.requestStatus.toLowerCase() === 'pending'">
+              <button class="btn btn-sm btn-success me-2" (click)="approveAccess(user)">
+                <i class="fas fa-check"></i>
+                Approve
+              </button>
+              <button class="btn btn-sm btn-danger" (click)="denyAccess(user)">
+                <i class="fas fa-times"></i>
+                Deny
+              </button>
+            </div>
+            
+            <!-- Approved Users -->
+            <div *ngIf="user.hasAccess && user.requestStatus.toLowerCase() === 'approved'">
+              <button class="btn btn-sm btn-warning" (click)="revokeAccess(user)">
+                <i class="fas fa-ban"></i>
+                Revoke Access
+              </button>
+            </div>
+            
+            <!-- Denied Users -->
+            <div *ngIf="user.requestStatus.toLowerCase() === 'denied'">
+              <button class="btn btn-sm btn-outline-success" (click)="approveAccess(user)">
+                <i class="fas fa-check"></i>
+                Re-approve
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="popup-footer">
+      <button class="url-btn" (click)="openRemoteUrlPopup()">
+        <i class="fas fa-link"></i>
+        Get URL
+      </button>
+      <button class="btn btn-secondary" (click)="closePopup()">
+        Close
+      </button>
+    </div>
+  </div>
+</div>

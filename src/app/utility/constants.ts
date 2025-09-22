@@ -130,6 +130,7 @@ export class ImageUploadTabName{
     public static Device =  "Device";
     public static ThiredPartyImage =  "ThiredPartyImage";
     public static ThiredPartyGif =  "ThiredPartyGif";
+    public static MyImages =  "MyImages";
 }
 export class ImageUploadeModuleName{
     public static SlideImage =  "SlideLevelImages";

@@ -1,5 +1,11 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Router,
+  RouterStateSnapshot
+
+} from '@angular/router';
 import { JwtHelperService } from '@auth0/angular-jwt';
 
 import { AccountService } from '../Sevices/account.service';
@@ -7,7 +13,7 @@ import { AccountService } from '../Sevices/account.service';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard  {
+export class AuthGuard implements CanActivate {
   CurrentUser: any;
   constructor(private _router: Router, private _service: AccountService) {
     const helper = new JwtHelperService();

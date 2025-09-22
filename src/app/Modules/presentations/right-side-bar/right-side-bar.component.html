@@ -4266,15 +4266,15 @@
                     </div>
                     <h5 class="modal-title mb-2 mt-3">Shapes</h5>
                     <div class="multimedia-options">
-                        <button class="multimedia-button" (click)="sendAction('addText')">
+                        <button class="multimedia-button multimedia-tooltip" (click)="sendAction('addText')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addText')">
                             <div class="svg-container">
-                            <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-                              <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
-                              <path d="M20.5 30V17H15V14H29V17H23.5V30H20.5Z" fill="#525252"/>
-                            </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" width="43" height="43" viewBox="0 0 43.25 42.46"><defs><style>.cls-1,.cls-2{fill:none;stroke-miterlimit:10;}.cls-1{stroke:#000;stroke-width:0.75px;}.cls-2{stroke:#4848ff;stroke-width:0.83px;}.cls-3{font-size:33px;fill:#4848ff;font-family:LexendDeca-Regular, Lexend Deca;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><line class="cls-1" x1="1.94" y1="40.06" x2="1.94" y2="2.94"/><line class="cls-1" x1="40.59" y1="40.83" x2="2.51" y2="40.83"/><line class="cls-1" x1="41.32" y1="2.46" x2="41.32" y2="39.92"/><line class="cls-1" x1="3.3" y1="1.46" x2="40.47" y2="1.46"/><rect class="cls-2" x="0.72" y="0.41" width="2.31" height="2.31"/><rect class="cls-2" x="40.53" y="0.41" width="2.31" height="2.31"/><rect class="cls-2" x="0.41" y="39.74" width="2.31" height="2.31"/><rect class="cls-2" x="40.53" y="39.74" width="2.31" height="2.31"/><text class="cls-3" transform="translate(9.89 31.29)">A</text></g></g></svg>
                           </div>
+                          <span class="multimedia-tooltip-text multimedia-tooltip-add-text">Text</span>
                           </button>
-                        <button class="multimedia-button" (click)="sendAction('addRectangle')"> <div class="svg-container">
+                        <button class="multimedia-button" (click)="sendAction('addRectangle')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addRectangle')"> <div class="svg-container">
                             <svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="1" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                                 <rect x="13" y="15" width="19" height="14" rx="1" stroke="#525252" stroke-width="2"/>
@@ -4290,11 +4290,13 @@
                             </g>
                             </svg>
                             </div></button> -->
-                        <button class="multimedia-button" (click)="sendAction('addArrow')"><div class="svg-container"><svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addArrow')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addArrow')"><div class="svg-container"><svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="1" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M26.469 27.8521L29.8972 15.2724L17.0496 17.4947L23.6203 19.6292L14.4282 27.9889L15.7738 29.4685L24.966 21.1088L26.469 27.8521Z" fill="#525252"/>
                             </svg></div></button>
-                        <button class="multimedia-button" (click)="sendAction('addTriangle')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addTriangle')" draggable="true"
+                        (dragstart)="onDragStart($event, 'addTriangle')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <mask id="mask0_21316_387991" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="10" y="10" width="24" height="24">
                             <rect x="10" y="10" width="24" height="24" fill="#D9D9D9"/>
@@ -4303,12 +4305,14 @@
                             <path d="M12 30L22 14L32 30H12ZM15.6 28H28.4L22 17.75L15.6 28Z" fill="#525252"/>
                             </g>
                             </svg></div></button>
-                        <button class="multimedia-button" (click)="sendAction('addLine')"><div class="svg-container"><svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addLine')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addLine')"><div class="svg-container"><svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="1" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <rect x="14.7188" y="28.3633" width="20" height="2" transform="rotate(-45 14.7188 28.3633)" fill="#525252"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addHexagon')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addHexagon')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addHexagon')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <mask id="mask0_21579_27462" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="10" y="10" width="24" height="24">
                             <rect x="10" y="10" width="24" height="24" fill="#D9D9D9"/>
@@ -4317,18 +4321,21 @@
                             <path d="M16.8016 31L11.6016 22L16.8016 13H27.2016L32.4016 22L27.2016 31H16.8016ZM17.9516 29H26.0516L30.0766 22L26.0516 15H17.9516L13.9016 22L17.9516 29Z" fill="#525252"/>
                             </g>
                             </svg></div></button>
-                        <button class="multimedia-button" (click)="sendAction('addCircle')"><div class="svg-container">
+                        <button class="multimedia-button" (click)="sendAction('addCircle')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addCircle')"><div class="svg-container">
                             <svg width="45" height="44" viewBox="0 0 45 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="1" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <ellipse cx="22.5" cy="22" rx="9" ry="8" stroke="#525252" stroke-width="2"/>
                             </svg></div></button>
-                        <button class="multimedia-button" (click)="sendAction('addStar')"><div class="svg-container">
+                        <button class="multimedia-button" (click)="sendAction('addStar')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addStar')"><div class="svg-container">
                             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M17.6094 16.9L20.4094 13.275C20.6094 13.0083 20.8469 12.8125 21.1219 12.6875C21.3969 12.5625 21.6844 12.5 21.9844 12.5C22.2844 12.5 22.5719 12.5625 22.8469 12.6875C23.1219 12.8125 23.3594 13.0083 23.5594 13.275L26.3594 16.9L30.6094 18.325C31.0427 18.4583 31.3844 18.7042 31.6344 19.0625C31.8844 19.4208 32.0094 19.8167 32.0094 20.25C32.0094 20.45 31.9802 20.65 31.9219 20.85C31.8635 21.05 31.7677 21.2417 31.6344 21.425L28.8844 25.325L28.9844 29.425C29.001 30.0083 28.8094 30.5 28.4094 30.9C28.0094 31.3 27.5427 31.5 27.0094 31.5C26.976 31.5 26.7927 31.475 26.4594 31.425L21.9844 30.175L17.5094 31.425C17.426 31.4583 17.3344 31.4792 17.2344 31.4875C17.1344 31.4958 17.0427 31.5 16.9594 31.5C16.426 31.5 15.9594 31.3 15.5594 30.9C15.1594 30.5 14.9677 30.0083 14.9844 29.425L15.0844 25.3L12.3594 21.425C12.226 21.2417 12.1302 21.05 12.0719 20.85C12.0135 20.65 11.9844 20.45 11.9844 20.25C11.9844 19.8333 12.1052 19.4458 12.3469 19.0875C12.5885 18.7292 12.926 18.475 13.3594 18.325L17.6094 16.9ZM18.8344 18.625L13.9844 20.225L17.0844 24.7L16.9844 29.475L21.9844 28.1L26.9844 29.5L26.8844 24.7L29.9844 20.275L25.1344 18.625L21.9844 14.5L18.8344 18.625Z" fill="#525252"/>
                             </svg>
                             </div></button>
-                            <button class="multimedia-button" (click)="sendAction('addPentagon')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <button class="multimedia-button" (click)="sendAction('addPentagon')"  draggable="true"
+                            (dragstart)="onDragStart($event, 'addPentagon')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                                 <mask id="mask0_21316_387994" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="10" y="10" width="24" height="24">
                                 <rect x="10" y="10" width="24" height="24" fill="#D9D9D9"/>
@@ -4342,23 +4349,27 @@
                             <img src="/assets/multimedia-icons/multimedia-more.svg" alt="More">
                             <span class="multimedia-tooltip-text">Show more</span>
                           </button>
-                          <button class="multimedia-button" (click)="sendAction('addCube')"  *ngIf="multimediaShowMoreShapes"><div class="svg-path"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+                          <button class="multimedia-button" (click)="sendAction('addCube')"  draggable="true"
+                          (dragstart)="onDragStart($event, 'addCube')" *ngIf="multimediaShowMoreShapes"><div class="svg-path"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M14.5 27.3125V16.5833L25.0208 12M14.5 27.3125L25.0208 22.625M14.5 27.3125L18.875 32L29.5 27.1042M25.0208 12V22.625M25.0208 12L29.5 16.5833V27.1042M25.0208 22.625L29.5 27.1042" stroke="#525252" stroke-width="2"/>
                             </svg></div></button>
                     </div>
                     <div class="multimedia-options" *ngIf="multimediaShowMoreShapes">
-                        <button class="multimedia-button" (click)="sendAction('addPie')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addPie')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addPie')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M31 22C31 23.78 30.4722 25.5201 29.4832 27.0001C28.4943 28.4802 27.0887 29.6337 25.4442 30.3149C23.7996 30.9961 21.99 31.1743 20.2442 30.8271C18.4984 30.4798 16.8947 29.6226 15.636 28.364C14.3774 27.1053 13.5202 25.5016 13.1729 23.7558C12.8257 22.01 13.0039 20.2004 13.6851 18.5558C14.3663 16.9113 15.5198 15.5057 16.9999 14.5168C18.4799 13.5278 20.22 13 22 13L22 22H31Z" stroke="#525252" stroke-width="2"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addTag')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addTag')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addTag')"><div class="svg-container"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M31 22L26.65 28.15C26.4667 28.4167 26.2293 28.625 25.938 28.775C25.646 28.925 25.3333 29 25 29H15C14.45 29 13.979 28.8043 13.587 28.413C13.1957 28.021 13 27.55 13 27V17C13 16.45 13.1957 15.9793 13.587 15.588C13.979 15.196 14.45 15 15 15H25C25.3333 15 25.646 15.075 25.938 15.225C26.2293 15.375 26.4667 15.5833 26.65 15.85L31 22ZM28.55 22L25 17H15V27H25L28.55 22ZM15 22V27V17V22Z" fill="#525252"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addTeardrop')"><div class="svg-path"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+                        <button class="multimedia-button" (click)="sendAction('addTeardrop')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addTeardrop')"><div class="svg-path"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <g clip-path="url(#clip0_25275_297644)">
                             <path d="M21.5361 30.6606C19.7265 30.7697 17.7883 30.0738 16.3607 28.8126C14.9467 27.5634 14.0856 25.8117 14.283 23.801C14.4815 21.7803 15.7704 19.2984 19.0765 16.6636C19.0798 16.6613 19.0831 16.658 19.0871 16.6552C19.1125 16.6376 19.1532 16.61 19.2075 16.5742C19.3162 16.5027 19.4804 16.398 19.6933 16.2735C20.1207 16.0237 20.7389 15.6958 21.4909 15.3906C22.9066 14.816 24.7329 14.3486 26.637 14.5647C26.7224 14.6993 26.8302 14.8764 26.9455 15.097C27.2523 15.684 27.625 16.5668 27.8615 17.7168C28.3304 19.9977 28.28 23.4059 25.9891 27.7443C24.9656 29.6825 23.3064 30.5538 21.5361 30.6606Z" stroke="#525252" stroke-width="2" stroke-miterlimit="10"/>
@@ -4370,63 +4381,67 @@
                             </defs>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addDiamond')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addDiamond')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addDiamond')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M22 13L31 22L22 31L13 22L22 13Z" stroke="#525252" stroke-width="2"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addParallelogram')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addParallelogram')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addParallelogram')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M31 14.6875H18.4L13 29.3125H25L31 14.6875Z" stroke="#525252" stroke-width="2"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addTrapezoid')"><div class="svg-path">
+                        <button class="multimedia-button" (click)="sendAction('addTrapezoid')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addTrapezoid')"><div class="svg-path">
                             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M18.3333 16L13 28H31L25 16H18.3333Z" stroke="#525252" stroke-width="2"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addSemiCircle')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <button class="multimedia-button" (click)="sendAction('addSemiCircle')"  draggable="true"
+                        (dragstart)="onDragStart($event, 'addSemiCircle')"><div class="svg-path"><svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M22.0039 31C17.0841 31 13.0005 26.79 13 21.5182C13.0037 19.6979 13.5032 17.9196 14.4355 16.3925C15.264 15.0357 16.4021 13.9294 17.7371 13.1688L30.9663 22.4248C30.7599 24.6872 29.7879 26.7971 28.228 28.3689C26.5473 30.0624 24.3159 30.9999 22.0039 31Z" stroke="#525252" stroke-width="2"/>
                             </svg></div></button>
-                        <button class="multimedia-button" (click)="sendAction('addChat')"><div class="svg-path">
+                        <button class="multimedia-button" (click)="sendAction('addChat')" draggable="true" (dragstart)="onDragStart($event, 'addChat')"><div class="svg-path">
                             <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
                                 <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                                 <path d="M12 15.0273V23.6199C12 24.7245 12.8954 25.6199 14 25.6199H30C31.1046 25.6199 32 24.7245 32 23.6199V15.0273C32 13.9228 31.1046 13.0273 30 13.0273H14C12.8954 13.0273 12 13.9228 12 15.0273Z" stroke="#525252" stroke-width="2"/>
                                 <path d="M28 30.9727L23 25.9727H28V30.9727Z" stroke="#525252" stroke-width="2"/>
                                 </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addChevron')"><div class="svg-path">
+                        <button class="multimedia-button" (click)="sendAction('addChevron')" draggable="true" (dragstart)="onDragStart($event, 'addChevron')"><div class="svg-path">
                             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M13 29L17.5 22L13 15H25C25.3333 15 25.646 15.075 25.938 15.225C26.2293 15.375 26.4667 15.5833 26.65 15.85L31 22L26.65 28.15C26.4667 28.4167 26.2293 28.625 25.938 28.775C25.646 28.925 25.3333 29 25 29H13ZM16.65 27H25L28.55 22L25 17H16.65L19.9 22L16.65 27Z" fill="#525252"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addHalfFrame')"><div class="svg-path"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+                        <button class="multimedia-button" (click)="sendAction('addHalfFrame')" draggable="true" (dragstart)="onDragStart($event, 'addHalfFrame')"><div class="svg-path"><svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M12 12V32H16.7458V16.8387H32V12H12Z" stroke="#525252" stroke-width="2"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addFrame')"><div class="svg-path">
+                        <button class="multimedia-button" (click)="sendAction('addFrame')" draggable="true" (dragstart)="onDragStart($event, 'addFrame')"><div class="svg-path">
                             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <rect x="18" y="18" width="8" height="8" stroke="#525252" stroke-width="2"/>
                             <rect x="14" y="14" width="16" height="16" stroke="#525252" stroke-width="2"/>
                             </svg></div></button>
-                        <button class="multimedia-button" (click)="sendAction('addDonut')"><div class="svg-donut">
+                        <button class="multimedia-button" (click)="sendAction('addDonut')" draggable="true" (dragstart)="onDragStart($event, 'addDonut')"><div class="svg-donut">
                             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <rect x="14" y="14" width="16" height="16" rx="8" stroke="#525252" stroke-width="2"/>
                             <circle cx="22" cy="22" r="4" stroke="#525252" stroke-width="2"/>
                             </svg></div></button>
-                        <button class="multimedia-button" (click)="sendAction('addBlockArc')"><div class="svg-path">
+                        <button class="multimedia-button" (click)="sendAction('addBlockArc')" draggable="true" (dragstart)="onDragStart($event, 'addBlockArc')"><div class="svg-path">
                             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path fill-rule="evenodd" clip-rule="evenodd" d="M30.775 25.5C30.6628 25.0077 30.5091 24.5246 30.3149 24.0558C29.8626 22.9639 29.1997 21.9718 28.364 21.136C27.5282 20.3003 26.5361 19.6374 25.4442 19.1851C24.3522 18.7328 23.1819 18.5 22 18.5C20.8181 18.5 19.6478 18.7328 18.5558 19.1851C17.4639 19.6374 16.4718 20.3003 15.636 21.136C14.8003 21.9718 14.1374 22.9639 13.6851 24.0558C13.4909 24.5246 13.3372 25.0077 13.225 25.5L17.2436 25.5C17.5026 24.884 17.8789 24.3241 18.3515 23.8515C18.8306 23.3724 19.3994 22.9923 20.0254 22.733C20.6515 22.4737 21.3224 22.3402 22 22.3402C22.6776 22.3402 23.3485 22.4737 23.9746 22.733C24.6006 22.9923 25.1694 23.3724 25.6485 23.8515C26.1211 24.3241 26.4974 24.884 26.7564 25.5H30.775ZM32.8167 25.5C32.677 24.7444 32.4581 24.0038 32.1627 23.2905C31.6099 21.9559 30.7996 20.7433 29.7782 19.7218C28.7567 18.7004 27.5441 17.8901 26.2095 17.3373C24.8749 16.7845 23.4445 16.5 22 16.5C20.5555 16.5 19.1251 16.7845 17.7905 17.3373C16.4559 17.8901 15.2433 18.7004 14.2218 19.7218C13.2004 20.7433 12.3901 21.9559 11.8373 23.2905C11.5419 24.0038 11.323 24.7444 11.1833 25.5C11.0617 26.1581 11 26.8275 11 27.5L18.8402 27.5C18.8402 27.0851 18.922 26.6742 19.0808 26.2908C19.2395 25.9074 19.4723 25.5591 19.7657 25.2657C20.0591 24.9723 20.4074 24.7395 20.7908 24.5808C21.1742 24.422 21.5851 24.3402 22 24.3402C22.4149 24.3402 22.8258 24.422 23.2092 24.5808C23.5926 24.7395 23.9409 24.9723 24.2343 25.2657C24.5277 25.5591 24.7605 25.9074 24.9192 26.2908C25.078 26.6742 25.1598 27.0851 25.1598 27.5H33C33 26.8275 32.9383 26.1581 32.8167 25.5Z" fill="#525252"/>
                             </svg>
                             </div></button>
-                        <button class="multimedia-button" (click)="sendAction('addForwardArrow')"><div class="svg-path">
+                        <button class="multimedia-button" (click)="sendAction('addForwardArrow')" draggable="true" (dragstart)="onDragStart($event, 'addForwardArrow')"><div class="svg-path">
                             <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="0.5" y="0.5" width="43" height="43" rx="4.5" stroke="#F4F4FF"/>
                             <path d="M13 26V17.6H23.8V14L31 21.8L23.8 29.6V26H13Z" stroke="#525252" stroke-width="2"/>

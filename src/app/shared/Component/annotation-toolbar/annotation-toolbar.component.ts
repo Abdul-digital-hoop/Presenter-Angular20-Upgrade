@@ -1,6 +1,7 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, Input, Output, EventEmitter, HostListener, ElementRef, ViewChild } from '@angular/core';
 import { AnnotationService, AnnotationTool, AnnotationSettings } from 'src/app/core/Sevices/Presentation/annotation.service';
 import { Subscription } from 'rxjs';
+import { distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
     selector: 'app-annotation-toolbar',
@@ -8,13 +9,14 @@ import { Subscription } from 'rxjs';
     styleUrls: ['./annotation-toolbar.component.scss'],
     standalone: false
 })
-export class AnnotationToolbarComponent implements OnInit, OnDestroy {
+export class AnnotationToolbarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() isVisible: boolean = false;
   @Input() position: { x: number; y: number } = { x: 50, y: 50 };
   @Output() close = new EventEmitter<void>();
-
-  private readonly toolbarWidth = 280;
-  private readonly toolbarHeight = 200;
+  @ViewChild('annotationToolbar') AnnotationToolbar: ElementRef<HTMLImageElement>;
+  
+  private toolbarWidth = 280;
+  private toolbarHeight = 200;
 
 
 
@@ -22,7 +24,7 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
   private subscriptions: Subscription[] = [];
 
   // Component state
-  currentTool: string = 'pen';
+  currentTool: string = 'none';
   settings: AnnotationSettings;
   tools: AnnotationTool[] = [];
   
@@ -32,7 +34,6 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
   showSettingsPanel: boolean = false;
   isDragging: boolean = false;
   dragOffset: { x: number; y: number } = { x: 0, y: 0 };
-  private animationFrameId?: number;
 
   // Color options
   colors: string[] = [
@@ -52,22 +53,35 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
     this.tools = this.annotationService.tools;
     this.settings = {
       persistAcrossSlides: true,
-      defaultTool: 'pen',
+      defaultTool: 'none',
       penColor: '#ff0000',
       penWidth: 3,
       highlighterColor: '#ffff00',
       highlighterWidth: 20,
       textColor: '#000000',
-      textSize: 16
+      textSize: 16,
+      shapeWidth: 8,
+      arrowWidth: 8
     };
   }
 
   ngOnInit(): void {
+    this.currentTool = 'none';
     this.subscribeToAnnotationService();
     this.centerToolbar();
   }
 
+  ngOnChanges(): void {
+    if (this.isVisible) {
+      this.currentTool = 'none';
+    }
+  }
 
+  ngAfterViewInit(): void {
+    const rect = this.AnnotationToolbar.nativeElement.getBoundingClientRect();
+    this.toolbarWidth = rect.width;
+    this.toolbarHeight = rect.height;
+  }
   private centerToolbar(): void {
     const windowHeight = window.innerHeight;
     
@@ -84,8 +98,13 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
    * Subscribe to annotation service observables
    */
   private subscribeToAnnotationService(): void {
-    const toolSubscription = this.annotationService.currentTool$.subscribe(
-      tool => this.currentTool = tool
+    const toolSubscription = this.annotationService.currentTool$.pipe(
+      distinctUntilChanged()
+    ).subscribe(
+      tool => {
+        this.currentTool = tool;
+        console.log('Annotation toolbar received tool:', tool, 'isVisible:', this.isVisible);
+      }
     );
 
     const settingsSubscription = this.annotationService.annotationSettings$.subscribe(
@@ -121,8 +140,19 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
       case 'text':
         updates.textColor = color;
         break;
+      case 'rectangle':
+      case 'circle':
+      case 'triangle':
+        updates.penColor = color; // Use penColor for shapes
+        console.log('Setting shape color to penColor:', color);
+        break;
+      case 'arrow':
+        updates.penColor = color; // Use penColor for arrows
+        console.log('Setting arrow color to penColor:', color);
+        break;
     }
 
+    console.log('Updating annotation settings with:', updates);
     this.annotationService.updateSettings(updates);
     this.showColorPicker = false;
   }
@@ -143,6 +173,11 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
       case 'text':
         updates.textSize = size + 10; // Text size offset
         break;
+      case 'rectangle':
+      case 'circle':
+      case 'triangle':
+      case 'arrow':
+        return;
     }
 
     this.annotationService.updateSettings(updates);
@@ -169,16 +204,31 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
    * Get current color for active tool
    */
   getCurrentColor(): string {
+    let color: string;
+    
     switch (this.currentTool) {
       case 'pen':
-        return this.settings.penColor;
+        color = this.settings.penColor;
+        break;
       case 'highlighter':
-        return this.settings.highlighterColor;
+        color = this.settings.highlighterColor;
+        break;
       case 'text':
-        return this.settings.textColor;
+        color = this.settings.textColor;
+        break;
+      case 'rectangle':
+      case 'circle':
+      case 'triangle':
+        color = this.settings.penColor; // Use penColor for shapes
+        break;
+      case 'arrow':
+        color = this.settings.penColor; // Use penColor for arrows
+        break;
+      case 'none':
       default:
-        return '#000000';
-    }
+        color = '#000000';
+    }    
+    return color;
   }
 
   /**
@@ -192,6 +242,13 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
         return this.settings.highlighterWidth;
       case 'text':
         return this.settings.textSize;
+      case 'rectangle':
+      case 'circle':
+      case 'triangle':
+        return 8;
+      case 'arrow':
+        return 8;
+      case 'none':
       default:
         return 3;
     }
@@ -233,11 +290,13 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
     this.showSizePicker = false;
   }
 
+
   /**
    * Close toolbar
    */
   closeToolbar(): void {
     this.hideAllPickers();
+    this.annotationService.forceResetTool();
     
     // Emit the close event - let the parent component handle the annotation mode
     this.close.emit();
@@ -264,14 +323,13 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
       
       this.isDragging = true;
       
-      // For right positioning, we need to calculate offset differently
-      // Convert right position to left position for calculation
       const windowWidth = window.innerWidth;
-      const leftPosition = windowWidth - this.position.x - this.toolbarWidth;
+      const windowHeight = window.innerHeight;
+      const toolbarRightEdge = windowWidth - this.position.x;
       
       this.dragOffset = {
-        x: event.clientX - leftPosition,
-        y: event.clientY - this.position.y
+        x: event.clientX - toolbarRightEdge,  
+        y: event.clientY - this.position.y    
       };
       
       // Prevent text selection and default behavior
@@ -290,29 +348,21 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
   @HostListener('document:mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
     if (this.isDragging) {
-      // Cancel previous animation frame if exists
-      if (this.animationFrameId) {
-        cancelAnimationFrame(this.animationFrameId);
-      }
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
       
-      // Use requestAnimationFrame for smooth dragging
-      this.animationFrameId = requestAnimationFrame(() => {
-        const windowWidth = window.innerWidth;
-        const windowHeight = window.innerHeight;
-        
-        // Calculate new left position
-        const newLeftX = event.clientX - this.dragOffset.x;
-        const newY = event.clientY - this.dragOffset.y;
-        
-        // Convert left position back to right position
-        const newRightX = windowWidth - newLeftX - this.toolbarWidth;
-        
-        // Apply boundary constraints to keep toolbar visible
-        this.position = {
-          x: Math.max(0, Math.min(newRightX, windowWidth - this.toolbarWidth)),
-          y: Math.max(0, Math.min(newY, windowHeight - this.toolbarHeight))
-        };
-      });
+      const newRightEdge = event.clientX - this.dragOffset.x;
+      const newY = event.clientY - this.dragOffset.y;
+      
+      const constrainedRightEdge = Math.max(-75, Math.min(newRightEdge, windowWidth));
+      const constrainedY = Math.max(0, Math.min(newY, windowHeight - this.toolbarHeight));
+      
+      const newRightPosition = windowWidth - constrainedRightEdge;
+      
+      this.position = {
+        x: newRightPosition,
+        y: constrainedY
+      };
       
       event.preventDefault();
     }
@@ -326,12 +376,6 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
     if (this.isDragging) {
       this.isDragging = false;
       
-      // Cancel any pending animation frame
-      if (this.animationFrameId) {
-        cancelAnimationFrame(this.animationFrameId);
-        this.animationFrameId = undefined;
-      }
-      
       // Restore cursor and user selection
       document.body.style.cursor = '';
       document.body.style.userSelect = '';
@@ -342,11 +386,6 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
    * Clean up on component destroy
    */
   ngOnDestroy(): void {
-    // Cancel animation frame if component is destroyed while dragging
-    if (this.animationFrameId) {
-      cancelAnimationFrame(this.animationFrameId);
-    }
-    
     // Restore cursor styles
     document.body.style.cursor = '';
     document.body.style.userSelect = '';
@@ -372,14 +411,15 @@ export class AnnotationToolbarComponent implements OnInit, OnDestroy {
    * Check if tool supports color
    */
   toolSupportsColor(toolId: string): boolean {
-    return ['pen', 'highlighter', 'text', 'arrow', 'rectangle', 'circle'].includes(toolId);
+    const supportsColor = ['pen', 'highlighter', 'text', 'arrow', 'rectangle', 'circle', 'triangle'].includes(toolId);
+    return supportsColor && toolId !== 'none';
   }
 
   /**
    * Check if tool supports size
    */
   toolSupportsSize(toolId: string): boolean {
-    return ['pen', 'highlighter', 'text'].includes(toolId);
+    return ['pen', 'highlighter'].includes(toolId) && toolId !== 'none';
   }
 
 

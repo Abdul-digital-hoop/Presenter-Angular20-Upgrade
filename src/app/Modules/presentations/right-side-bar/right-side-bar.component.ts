@@ -1908,5 +1908,20 @@ closePopup() {
       event.preventDefault();
     }
   }
-  
+  onDragStart(event: DragEvent, action: string) {
+    event.dataTransfer?.setData('action', action);
+    
+    // Create a transparent drag image to hide the default drag preview
+    const canvas = document.createElement('canvas');
+    canvas.width = 1;
+    canvas.height = 1;
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctx.globalAlpha = 0;
+      ctx.fillRect(0, 0, 1, 1);
+    }
+    
+    // Set the transparent canvas as drag image
+    event.dataTransfer?.setDragImage(canvas, 0, 0);
+  }
 }

@@ -57,7 +57,7 @@ export class RemoteLeftbarComponent implements OnInit {
     this.presenterToolbarService.ShowResponse();
   }
   updateSlideShowResponse(){
-    this.presenterToolbarService.lockVoting(!this.workspaceService.slideEnableVoting);
+    this.presenterToolbarService.RemoteLockVoting(!this.workspaceService.slideEnableVoting);
   }
   updateSlidePercentage(){
     this.workspaceService.currentActiveSlide.design.slideResponseAsPercentage = this.workspaceService.slideResponseAsPercentage;
@@ -83,13 +83,43 @@ export class RemoteLeftbarComponent implements OnInit {
   //  this.dynamicComponentUpdate.emit(slideTypeId);
   }
   updateAccessCode(){
-    this.presenterToolbarService.updateAccessCode();
+    this.presenterToolbarService.RemoteUpdateAccessCode();
   }
   enableDisableQuestion(){
-    this.presenterToolbarService.enableQuestion();
+    this.enableQuestion();
+  }
+  enableQuestion(){
+    let presentationDTO = {
+      presentationId: this.workspaceService.presentationId,
+      slideId: this.workspaceService.activeSlideId,
+      isTemplate: this.workspaceService.isTemplate,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) == null ?  this.workspaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) 
+    }
+    this.presentationService.RemotePresenterEnableQuestion(presentationDTO).subscribe(
+      (response: any) => {
+      },
+      (error: any) => {
+        console.log(error?.error);
+      }
+    );
   }
   enableDisableComment(){
-    this.presenterToolbarService.enableComment();
+    this.enableComment();
+  }
+  enableComment(){
+    let presentationDTO = {
+      presentationId: this.workspaceService.presentationId,
+      slideId: this.workspaceService.activeSlideId,
+      isTemplate: this.workspaceService.isTemplate,
+      remoteUserId: localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) == null ?  this.workspaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) 
+    }
+    this.presentationService.RemoteSlideEnableComment(presentationDTO).subscribe(
+      (response: any) => {
+      },
+      (error: any) => {
+        console.log(error?.error);
+      }
+    );
   }
   blankScreenUpdate() {
     if(this.workspaceService.isBlackOverlayVisible){
@@ -114,6 +144,32 @@ export class RemoteLeftbarComponent implements OnInit {
         isTemplate: this.workspaceService.isTemplate
       }
       this.presenterToolbarService.blankScreenUpdate(objWhenFalse);
+    }
+  }
+  RemoteBlankScreenUpdate() {
+    if(this.workspaceService.isBlackOverlayVisible){
+      if((this.workspaceService.slideContentType != this.masterSlideTypeName.QUIZ && this.workspaceService.activeSlideTypeName !=this.masterSlideTypeName.ImportDocument && this.workspaceService.activeSlideTypeName !=this.masterSlideTypeName.GoogleSlides && this.workspaceService.activeSlideTypeName !=this.masterSlideTypeName.POWER_POINT)){
+        this.workspaceService.slideEnableVoting = false;
+      }
+      var objWhenTrue= {
+        presentationId:this.workspaceService.presentationId,
+        isOpenBlankScreen:this.workspaceService.isBlackOverlayVisible,
+        slideId:this.workspaceService.activeSlideId,
+        lookVoting:this.workspaceService.slideEnableVoting,
+        isTemplate: this.workspaceService.isTemplate,
+        remoteUserId: localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) == null ?  this.workspaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) 
+      }
+      this.presenterToolbarService.RemoteBlankScreenUpdate(objWhenTrue);
+    }
+    else{
+      var objWhenFalse= {
+        presentationId:this.workspaceService.presentationId,
+        isOpenBlankScreen:this.workspaceService.isBlackOverlayVisible,
+        slideId:this.workspaceService.activeSlideId,
+        lookVoting:true,
+        isTemplate: this.workspaceService.isTemplate
+      }
+      this.presenterToolbarService.RemoteBlankScreenUpdate(objWhenFalse);
     }
   }
   copyPresentationLink(){

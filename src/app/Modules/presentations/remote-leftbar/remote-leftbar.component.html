@@ -38,7 +38,7 @@
                     <div class="control-icon">
                         <label class="switch mb-0">
                             <input type="checkbox" class="ctsm-toggle-btn" 
-                                [ngModel]="!workspaceService.slideEnableVoting" (ngModelChange)="workspaceService.slideEnableVoting = $event"
+                                [ngModel]="!workspaceService.slideEnableVoting"
                                 [ngModelOptions]="{standalone: true}" (change)="updateSlideShowResponse()"
                                 [disabled]="!customerPlan?.audience_response_control">
                             <span class="slider round" [ngClass]="!customerPlan?.audience_response_control ? 'cursor-notallowed':''"></span>
@@ -201,7 +201,7 @@
                 <div class="control-icon">
                     <label class="switch mb-0">
                         <input type="checkbox" class="ctsm-toggle-btn" [(ngModel)]="workspaceService.isBlackOverlayVisible"
-                        [ngModelOptions]="{standalone: true}"(change)="blankScreenUpdate()">
+                        [ngModelOptions]="{standalone: true}"(change)="RemoteBlankScreenUpdate()">
                         <span class="slider round"></span>
                     </label>
                 </div>
@@ -278,12 +278,6 @@
                 <button class="btn btn-control" data-bs-toggle="modal" data-bs-target="#resetModal">
                     <span class="btn-name">Reset timer</span>
                     <img src="/assets/new-icons/device_reset.svg" class="control-btn-icon">
-                </button>
-            </div>
-            <div class="control-button">
-                <button class="btn btn-control" (click)="myPresentations()">
-                    <span class="btn-name">My Presentations</span>
-                    <img src="/assets/new-icons/MarkAsAnswered.svg" class="mypresentaion-btn-icon">
                 </button>
             </div>
         </div>

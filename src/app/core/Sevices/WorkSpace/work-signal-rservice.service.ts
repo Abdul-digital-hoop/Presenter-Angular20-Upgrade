@@ -5,6 +5,8 @@ import { WorkspaceService } from './workspace.service';
 import * as signalR from '@microsoft/signalr';
 import { BehaviorSubject, Observable, Subscription, delay, interval, retryWhen, takeWhile, tap } from 'rxjs';
 import { MasterSlideTypeName } from 'src/app/utility/constants';
+import { RemoteAccessNotificationService } from '../remote-access-notification.service';
+import { RemoteAccessCommunicationService } from '../remote-access-communication.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +24,7 @@ export class WorkSignalRServiceService {
   private isProcessing = false; // Prevent overlapping executions
   private lastExecutionTime = 0; // Track the last execution time
   private visibilityChangeHandler: () => void;
-  constructor(private _networkService: NetworkService, private _workspaceservice: WorkspaceService) {
+  constructor(private _networkService: NetworkService, private _workspaceservice: WorkspaceService, private _remoteAccessNotificationService: RemoteAccessNotificationService, private _remoteAccessCommunicationService: RemoteAccessCommunicationService) {
     //this.setupPageVisibilityListener();
    }
 
@@ -88,6 +90,10 @@ export class WorkSignalRServiceService {
       this.typeAnswerShowAndHideUpdateOn();
       this.blankScreenUpdateOn();
       this.resetResultOn();
+      // Remote Access
+      this.remoteAccessRequestedOn();
+      this.remoteAccessApprovedOn();
+      this.remoteAccessRejectedOn();
     }
     // Reconnect when the hub is disconnect 
     this.presentationHub.onreconnecting((error) => {
@@ -667,5 +673,55 @@ export class WorkSignalRServiceService {
   }
   resetResult(resultDDTO: any) {
     this.presentationHub.invoke("ResetResult", resultDDTO).catch((error: any) => console.log(error));
+  }
+
+  // Remote Access Methods
+  remoteAccessRequestedOn() {
+    this.presentationHub.on("RequestRemoteAccess", (data: any) => {
+      this._remoteAccessNotificationService.addRequest({
+        requestId: data.remoteUserId,
+        presentationId: data.presentationId,
+        remoteUserId: data.remoteUserId,
+        remoteUserName: data.remoteUserName,
+        connectionId: data.connectionId || '',
+        requestedAt: new Date(data.requestedAt),
+        hasAccess: false,
+        status: 'pending'
+      });
+    });
+  }
+
+  remoteAccessApprovedOn() {
+    this.presentationHub.on("RemoteAccessApproved", (data: any) => {
+      if(data.presentationId === this._workspaceservice.presentationId && data.remoteUserId === localStorage.getItem(`remote_user_id_${this._workspaceservice.presentationId}`)){
+        // Trigger the remote access component to check existing access
+        this._remoteAccessCommunicationService.triggerCheckAccess();
+        this._remoteAccessCommunicationService.notifyAccessApproved(data);
+      }
+    });
+  }
+
+  remoteAccessRejectedOn() {
+    this.presentationHub.on("RemoteAccessRejected", (data: any) => {
+      if(data.presentationId === this._workspaceservice.presentationId && data.remoteUserId === localStorage.getItem(`remote_user_id_${this._workspaceservice.presentationId}`)){
+        // Notify the remote access component about rejection
+        this._remoteAccessCommunicationService.notifyAccessRejected(data);
+      }
+    });
+  }
+
+  // Send remote access request to presenter
+  requestRemoteAccess(data: any) {
+    this.presentationHub.invoke("RequestRemoteAccess", data).catch((error: any) => console.log(error));
+  }
+
+  // Send remote access approval/rejection to remote user
+  notifyRemoteAccessDecision(data: any) {
+    this.presentationHub.invoke("NotifyRemoteAccessDecision", data).catch((error: any) => console.log(error));
+  }
+
+  // Method to set presentationId for auth module context
+  setPresentationIdForAuthModule(presentationId: string) {
+    this._workspaceservice.presentationId = presentationId;
   }
 }

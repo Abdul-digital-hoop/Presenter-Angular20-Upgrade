@@ -1,11 +1,26 @@
-<canvas #canvas></canvas>
+<canvas #canvas 
+        (dragenter)="onDragEnter($event)" 
+        (dragleave)="onDragLeave($event)" 
+        (dragover)="onDragOver($event)" 
+        (drop)="onDrop($event)"></canvas>
 <div class="loading" *ngIf="imageLoaded"></div>
+<div class="processing-overlay" *ngIf="isProcessingImage">
+  <div class="processing-spinner"></div>
+  <p>Processing image...</p>
+</div>
+<div class="drop-overlay" *ngIf="isDragOver" [class.active]="isDragOver">
+  <div class="drop-message">
+    <img src="/assets/multimedia-icons/multimedia-upload.svg" alt="Upload" *ngIf="false">
+    <h3>Drop Image Files Here</h3>
+    <p>Supported formats: JPEG, PNG, GIF, WebP, SVG (Max 2MB)</p>
+  </div>
+</div>
 <div *ngIf="showContextMenu" 
   [style.left.px]="contextMenuX !== 0 ? contextMenuX : null"
   [style.top.px]="contextMenuY !== 0 ? contextMenuY : null"
   [style.bottom.px]="contextMenu_Y !== 0 ? contextMenu_Y : null" class="context-menu">
-  <button (click)="copySelectedObjects()"><img src="/assets/multimedia-icons/multimedia-copy.svg" alt="Copy"> Copy to</button>
-  <button (click)="pasteSelectedObjects()"><img src="/assets/multimedia-icons/multimedia-paste.svg" alt="Paste"> Paste</button>
+  <button (click)="copySelectedObjects()"><img src="/assets/multimedia-icons/multimedia-copy.svg" alt="Copy"> Copy</button>
+  <button (click)="pasteSelectedObjects()" [disabled]="!hasClipboardContent()"><img src="/assets/multimedia-icons/multimedia-paste.svg" alt="Paste"> Paste</button>
   <button (click)="duplicateSelectedObjects()"><img src="/assets/multimedia-icons/multimedia-duplicate.svg" alt="Duplicate"> Duplicate</button>
   <button (click)="bringToFront()"><img src="/assets/multimedia-icons/multimedia-bring-to-front.svg" alt="Bring to Front"> Bring to Front</button>
   <button (click)="sendToBack()"><img src="/assets/multimedia-icons/multimedia-send-to-back.svg" alt="Send to Back"> Send to Back</button>
@@ -140,7 +155,7 @@
   <button class="select-button" (click)="toggleLetterSpaceDropdown($event)">
     <img src="/assets/multimedia-icons/multimedia-letter-space.svg" alt="Text Alignment">
   </button>
-  <div class="select-dropdown letter-space-dropdown" [class.show]="showLetterSpaceDropdown">
+  <div class="select-dropdown letter-space-dropdown space-down" [class.show]="showLetterSpaceDropdown">
     <div class="opacity-control">
       <label>Letter Spacing</label>
       <div class="letter-space-middle d-flex">

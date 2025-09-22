@@ -74,6 +74,7 @@ import { SlidesPreviewComponent } from './Slide-Preview/slides-preview/slides-pr
 import { TemplatesPreviewComponent } from './Component/templates-preview/templates-preview.component';
 import { ConvertTemplateComponent } from './Component/convert-template/convert-template.component';
 import { AnnotationToolbarComponent } from './Component/annotation-toolbar/annotation-toolbar.component';
+import { RemoteAccessNotificationComponent } from './Component/remote-access-notification/remote-access-notification.component';
 
 @NgModule({
   declarations: [
@@ -146,7 +147,8 @@ import { AnnotationToolbarComponent } from './Component/annotation-toolbar/annot
     SlidesPreviewComponent,
     TemplatesPreviewComponent,
     ConvertTemplateComponent,
-    AnnotationToolbarComponent
+    AnnotationToolbarComponent,
+    RemoteAccessNotificationComponent
   ],
   imports: [
     CommonModule,
@@ -223,7 +225,8 @@ import { AnnotationToolbarComponent } from './Component/annotation-toolbar/annot
     SlidesPreviewComponent,
     TemplatesPreviewComponent,
     ConvertTemplateComponent,
-    AnnotationToolbarComponent
+    AnnotationToolbarComponent,
+    RemoteAccessNotificationComponent
   ]
 })
 export class SharedModule { }
