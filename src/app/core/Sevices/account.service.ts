@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { EventEmitter, Injectable, NgZone } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NavigationExtras, Router } from '@angular/router';
@@ -28,7 +28,6 @@ export class AccountService {
     // }
     var token = this.getToken();
     if(token != null){
-      // Move this to a separate initialization method
       this.initializeUserData(token);
     }
     else{
@@ -98,26 +97,32 @@ export class AccountService {
   getCustomerDetailes(token: string) {
     return this._http.get(`${environment.MyApi}getcustomerDetails?token=${encodeURIComponent(token)}`);
   }
+  guestCookieLogin(existingActualToken:any){
+    return this._http.post(`${environment.MyApi}guest-cookie-login`,existingActualToken);
+  }
+  guestSignup(signupData:any){
+    return this._http.post(`${environment.MyApi}guest-signup`,signupData);
+  }
   logout(): void {
     this.removeTokens();
+    this.deleteCookie();
     localStorage.clear();
-    const navigationExtras: NavigationExtras = {
-      replaceUrl: true 
-    };
-  
-    this.ngZone.run(() => {
-      this._router.navigate(['/auth'], navigationExtras);
-    });
+    
     if(this.IntegrationMediumZoom){
       localStorage.setItem('integration_medium','zoom');
     }
     if(this.IntegrationMediumOffice){
       localStorage.setItem('integration_medium','powerpoint');
     }
-    this.deleteCookie();
    this._customerPlanService.clearCustomerPlan();
    this.cookieLoading = false;
    this.clearbalancePresentationLimitAvailable();
+    const navigationExtras: NavigationExtras = {
+      replaceUrl: true
+    };
+    this.ngZone.run(() => {
+      this._router.navigate(['/auth'], navigationExtras);
+    });
   }
   removeTokens() {
     localStorage.removeItem('token');
@@ -245,4 +250,23 @@ export class AccountService {
   clearbalancePresentationLimitAvailable(): void {
     this.isbalancePresentationLimitSubject.next(false); 
   }
+  storeGuestToken(token:any){
+    localStorage.setItem('guestToken', token);
+  }
+  getGuestToken(){
+    return localStorage.getItem('guestToken');
+  }
+
+  guestUseTemplate(id: any) {
+    const options = {
+      headers: new HttpHeaders({
+        'X-Guest-API': 'true'
+      })
+    };
+    return this._http.post(`${environment.MyApi}guest-use-template?templateId=${id}`, {},  options );
+  }
+  customerUseTemplate(id: any) {
+    return this._http.post(environment.MyApi + `convert-presentation?templateId=${id}`, null);
+  }
+ 
 }

@@ -16,6 +16,11 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
+    path: 'utm-source/:utm_source/:id',
+    redirectTo: '/auth/signin?utm_source=:utm_source&id=:id',
+    pathMatch: 'full'
+  },
+  {
     path:'auth',
     loadChildren: () => import('./Modules/auth/auth.module').then(m => m.AuthModule)
   },

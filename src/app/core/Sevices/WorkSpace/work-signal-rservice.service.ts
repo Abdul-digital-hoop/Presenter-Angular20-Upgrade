@@ -678,16 +678,21 @@ export class WorkSignalRServiceService {
   // Remote Access Methods
   remoteAccessRequestedOn() {
     this.presentationHub.on("RequestRemoteAccess", (data: any) => {
-      this._remoteAccessNotificationService.addRequest({
-        requestId: data.remoteUserId,
+      const requestedAt = data.requestedAt ? new Date(data.requestedAt) : new Date();
+      const remoteUserId = data.remoteUserId || data.connectionId || `remote-${Date.now()}`;
+      
+      const request = {
+        requestId: remoteUserId,
         presentationId: data.presentationId,
-        remoteUserId: data.remoteUserId,
+        remoteUserId: remoteUserId,
         remoteUserName: data.remoteUserName,
         connectionId: data.connectionId || '',
-        requestedAt: new Date(data.requestedAt),
+        requestedAt: requestedAt,
         hasAccess: false,
-        status: 'pending'
-      });
+        status: 'pending' as const
+      };
+      
+      this._remoteAccessNotificationService.addRequest(request);
     });
   }
 

@@ -167,7 +167,8 @@ export class RemoteLeftbarComponent implements OnInit {
         isOpenBlankScreen:this.workspaceService.isBlackOverlayVisible,
         slideId:this.workspaceService.activeSlideId,
         lookVoting:true,
-        isTemplate: this.workspaceService.isTemplate
+        isTemplate: this.workspaceService.isTemplate,
+        remoteUserId: localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) == null ?  this.workspaceService.remoteUserId : localStorage.getItem(`remote_user_id_${this.workspaceService.presentationId}`) 
       }
       this.presenterToolbarService.RemoteBlankScreenUpdate(objWhenFalse);
     }

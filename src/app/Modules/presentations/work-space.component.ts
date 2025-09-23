@@ -1,21 +1,37 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { WorkSignalRServiceService } from 'src/app/core/Sevices/WorkSpace/work-signal-rservice.service';
+import { RemoteAccessNotificationService } from 'src/app/core/Sevices/remote-access-notification.service';
+import { Subscription } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 @Component({
     selector: 'app-work-space',
     templateUrl: './work-space.component.html',
     styleUrls: ['./work-space.component.scss'],
     standalone: false
 })
-export class WorkSpaceComponent implements OnInit {
+export class WorkSpaceComponent implements OnInit, OnDestroy {
   selectedTab: any = ' ';
   closeModal: any;
   isLoadComponents: boolean;
   showCreatedWithAiModal: boolean = false;
+  showRemoteAccessNotification: boolean = false;
+  private remoteAccessSubscription: Subscription = new Subscription();
 
-  constructor(private _CommonService: CommanService, public presentationService: PresentationService,public workSpaceService:WorkspaceService,private route: ActivatedRoute,private router: Router) {
+  constructor(
+    private _CommonService: CommanService, 
+    public presentationService: PresentationService,
+    public workSpaceService:WorkspaceService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private workSpaceSignalRService: WorkSignalRServiceService,
+    private remoteAccessNotificationService: RemoteAccessNotificationService,
+    private cdr: ChangeDetectorRef,
+    private toastr: ToastrService
+  ) {
     this.route.queryParams.subscribe(params => {
       this.workSpaceService.presentationId = params['id'];
       if ('isTemplate' in params) {
@@ -44,6 +60,11 @@ export class WorkSpaceComponent implements OnInit {
     this.isLoadComponents = false;
     this.selectedTab = this._CommonService.GetRightPanelHideShow();
     this.closeModal = this._CommonService.GetCloseModal();
+    
+    this.workSpaceSignalRService.netWorkValidation();
+    this.workSpaceSignalRService.callSignalR();
+    
+    this.setupRemoteAccessListeners();
   }
 
   ngDoCheck() {
@@ -87,7 +108,46 @@ export class WorkSpaceComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    // console.log("AppComponent:OnDestroy");
+    this.remoteAccessSubscription.unsubscribe();
+    
+    if (this.workSpaceSignalRService) {
+      this.workSpaceSignalRService.stopConnection();
+    }
+  }
+
+  private setupRemoteAccessListeners(): void {
+    this.showRemoteAccessNotification = this.remoteAccessNotificationService.shouldShowNotificationForComponent();
+    this.cdr.detectChanges();
+    
+    this.remoteAccessSubscription.add(
+      this.remoteAccessNotificationService.newRequest$.subscribe(newRequest => {
+        if (newRequest) {
+          this.showRemoteAccessNotification = true;
+          this.cdr.detectChanges();
+        }
+      })
+    );
+    
+    this.remoteAccessSubscription.add(
+      this.remoteAccessNotificationService.requests$.subscribe(requests => {
+        if (requests.length === 0 && this.showRemoteAccessNotification) {
+          this.showRemoteAccessNotification = false;
+          this.cdr.detectChanges();
+        }
+      })
+    );
+  }
+
+  onRemoteAccessNotificationVisibilityChange(isVisible: boolean): void {
+    this.showRemoteAccessNotification = isVisible;
+  }
+
+  onRemoteAccessRequestApproved(request: any): void {
+    this.toastr.success(`${request.remoteUserName} has been granted remote access`, 'Access Approved');
+  }
+
+  onRemoteAccessRequestRejected(request: any): void {
+    this.toastr.info(`${request.remoteUserName} has been denied remote access`, 'Access Denied');
   }
   //#endregion LifeCycle Hooks
 

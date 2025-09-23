@@ -145,6 +145,8 @@ export class ReusableImageModalComponent implements OnInit {
       let blob;
       if (this.currentImageformat === 'svg') {
         blob = new Blob([bytes], { type: 'image/svg+xml' });
+      } else if (this.currentImageformat === 'gif') {
+        blob = new Blob([bytes], { type: 'image/gif' });
       } else {
         blob = new Blob([bytes], { type: 'image/jpeg' });
       }
@@ -179,6 +181,8 @@ export class ReusableImageModalComponent implements OnInit {
       let blob;
       if (this.currentImageformat === 'svg') {
         blob = new Blob([bytes], { type: 'image/svg+xml' });
+      } else if (this.currentImageformat === 'gif') {
+        blob = new Blob([bytes], { type: 'image/gif' });
       } else {
         blob = new Blob([bytes], { type: 'image/jpeg' });
       }

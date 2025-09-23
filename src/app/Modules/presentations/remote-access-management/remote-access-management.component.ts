@@ -123,8 +123,7 @@ export class RemoteAccessManagementComponent implements OnInit, OnDestroy, OnCha
         }
       }
     } catch (error) {
-      console.error('Error loading remote users:', error);
-      this.errorMessage = 'Network error. Please try again.';
+
     } finally {
       this.isLoading = false;
       // Force change detection to ensure UI updates
@@ -159,8 +158,6 @@ export class RemoteAccessManagementComponent implements OnInit, OnDestroy, OnCha
         this.errorMessage = errorData.message || 'Failed to approve access';
       }
     } catch (error) {
-      console.error('Error approving access:', error);
-      this.errorMessage = 'Network error. Please try again.';
     }
   }
   
@@ -191,8 +188,6 @@ export class RemoteAccessManagementComponent implements OnInit, OnDestroy, OnCha
         this.errorMessage = errorData.message || 'Failed to deny access';
       }
     } catch (error) {
-      console.error('Error denying access:', error);
-      this.errorMessage = 'Network error. Please try again.';
     }
   }
   
@@ -210,8 +205,7 @@ export class RemoteAccessManagementComponent implements OnInit, OnDestroy, OnCha
         this.errorMessage = errorData.message || 'Failed to revoke access';
       }
     } catch (error) {
-      console.error('Error revoking access:', error);
-      this.errorMessage = 'Network error. Please try again.';
+
     }
   }
   

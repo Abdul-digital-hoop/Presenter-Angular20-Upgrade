@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ComponentFactoryResolver, ComponentRef, ElementRef, EventEmitter, HostListener, OnInit, Output, Renderer2, RendererFactory2, SimpleChanges, Type, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ComponentFactoryResolver, ComponentRef, ElementRef, EventEmitter, HostListener, OnDestroy, OnInit, Output, Renderer2, RendererFactory2, SimpleChanges, Type, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { PresentationService } from 'src/app/core/Sevices/Presentation/presentation.service';
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
@@ -20,18 +20,21 @@ import { CustomerPlan } from 'src/app/core/Models/customer-plan.model';
 import { DynamicSlideTypeComponent } from 'src/app/shared/Component/dynamic-slide-type/dynamic-slide-type.component';
 import { MypresentationsService } from '../../Home/mypresentations/Service/mypresentations.service';
 import { AnnotationService } from 'src/app/core/Sevices/Presentation/annotation.service';
+import { RemoteAccessNotificationService } from 'src/app/core/Sevices/remote-access-notification.service';
+import { ChangeDetectorRef } from '@angular/core';
 declare var $: any;
 declare const Tawk_API: any;
 declare const _IntegrationMediumZoom: boolean;
 declare const _IntegrationMediumOffice: boolean;
 
 @Component({
-    selector: 'app-presentation',
-    templateUrl: './presentation.component.html',
-    styleUrls: ['./presentation.component.scss'],
-    standalone: false
+  selector: 'app-presentation',
+  templateUrl: './presentation.component.html',
+  styleUrls: ['./presentation.component.scss'],
+  standalone:false
+  //changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PresentationComponent implements OnInit {
+export class PresentationComponent implements OnInit, OnDestroy {
   @Output() public clearDynamicComponent: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('InnerScreen', { static: true }) InnerScreen: ElementRef;
   @ViewChild('OuterScreen', { static: true }) OuterScreen: ElementRef;
@@ -97,6 +100,7 @@ export class PresentationComponent implements OnInit {
   showRemoteAccessPopup: boolean = false;
   showRemoteUrlPopup: boolean = false;
   showRemoteAccessNotification: boolean = false;
+  private remoteAccessSubscription: Subscription = new Subscription();
   constructor(
     private _componentFactoryResolver: ComponentFactoryResolver,
     private _CommanService: CommanService,
@@ -109,7 +113,9 @@ export class PresentationComponent implements OnInit {
     public customerPlanService: CustomerPlanService,
     public _toastr: ToastrService,private route: ActivatedRoute,
     public _mypresentationsService: MypresentationsService,
-    private annotationService: AnnotationService
+    private annotationService: AnnotationService,
+    private remoteAccessNotificationService: RemoteAccessNotificationService,
+    private cdr: ChangeDetectorRef
   ) {
     this.route.queryParams.subscribe(params => {
       this.workSpaceService.presentationId = params['id'];
@@ -160,8 +166,7 @@ export class PresentationComponent implements OnInit {
       this.toggleFullScreen();
     }
     this.workSpaceSignalRService.netWorkValidation();
-    
-    //this.workSpaceSignalRService.callSignalR();
+    this.workSpaceSignalRService.callSignalR();
     // const qrModalElement = document.getElementById('qrModal');
     // if (qrModalElement) {
     //   this.qrModal = new Modal(qrModalElement);
@@ -197,6 +202,9 @@ export class PresentationComponent implements OnInit {
     this.startQuizForRemote();
     this.blankScreenUpdateOn();
     this.resetResult();
+    
+    // Setup remote access listeners
+    this.setupRemoteAccessListeners();
     
     // Initialize annotation service with current slide
     if (this.workSpaceService.activeSlideId) {
@@ -278,6 +286,9 @@ export class PresentationComponent implements OnInit {
       this.workSpaceSignalRService.stopConnection();
   }
     document.body.style.overflow = 'auto';
+    
+    // Clean up remote access subscriptions
+    this.remoteAccessSubscription.unsubscribe();
     
   }
 
@@ -2135,13 +2146,34 @@ onRemoteAccessNotificationVisibilityChange(isVisible: boolean): void {
 }
 
 onRemoteAccessRequestApproved(request: any): void {
-  console.log('Remote access request approved:', request);
   this._toastr.success(`${request.remoteUserName} has been granted remote access`, 'Access Approved');
 }
 
 onRemoteAccessRequestRejected(request: any): void {
-  console.log('Remote access request rejected:', request);
   this._toastr.info(`${request.remoteUserName} has been denied remote access`, 'Access Denied');
+}
+
+private setupRemoteAccessListeners(): void {
+  this.showRemoteAccessNotification = this.remoteAccessNotificationService.shouldShowNotificationForComponent();
+  this.cdr.detectChanges();
+  
+  this.remoteAccessSubscription.add(
+    this.remoteAccessNotificationService.newRequest$.subscribe(newRequest => {
+      if (newRequest) {
+        this.showRemoteAccessNotification = true;
+        this.cdr.detectChanges();
+      }
+    })
+  );
+  
+  this.remoteAccessSubscription.add(
+    this.remoteAccessNotificationService.requests$.subscribe(requests => {
+      if (requests.length === 0 && this.showRemoteAccessNotification) {
+        this.showRemoteAccessNotification = false;
+        this.cdr.detectChanges();
+      }
+    })
+  );
 }
 
 }

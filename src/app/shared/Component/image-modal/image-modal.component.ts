@@ -393,6 +393,8 @@ export class ImageModalComponent implements OnInit{
       let blob;
       if (this.imageformat === 'svg') {
         blob = new Blob([bytes], { type: 'image/svg+xml' });
+      } else if (this.imageformat === 'gif') {
+        blob = new Blob([bytes], { type: 'image/gif' });
       } else {
         blob = new Blob([bytes], { type: 'image/jpeg' });
       }

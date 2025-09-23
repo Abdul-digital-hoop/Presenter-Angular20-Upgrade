@@ -162,3 +162,7 @@ export class PopularSlideTypeName {
     public static  THIS_OR_THAT_SLIDE_TYPE ="This or That";
     public static  TRUTH_OR_LIE_SLIDE_TYPE ="Truth or Lie";
 }
+export class utm {
+    public static  WEBSITE_TEMPLATE = "website_template";
+}
+

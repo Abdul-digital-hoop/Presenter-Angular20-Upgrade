@@ -140,6 +140,10 @@ app-spinner{
   max-width: 400px;
   width: 100%;
   text-align: center;
+  display: grid;
+  grid-template-columns: 1fr;
+  align-items: center;
+  justify-content: center;
 }
 
 .access-form input {

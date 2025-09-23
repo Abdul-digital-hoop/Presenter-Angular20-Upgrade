@@ -93,11 +93,8 @@ export class RemoteComponent implements OnInit {
     
   }
   ngOnInit(): void {
-    console.log('Remote component initialized');
-    
     // Prevent multiple initializations
     if (this.isRedirecting) {
-      console.log('Component already processing redirect, skipping initialization');
       return;
     }
     
@@ -114,7 +111,6 @@ export class RemoteComponent implements OnInit {
   private handlePageRefresh(): void {
     // Prevent multiple calls
     if (this.isRedirecting) {
-      console.log('Already processing redirect, skipping page refresh handling');
       return;
     }
     
@@ -124,7 +120,6 @@ export class RemoteComponent implements OnInit {
       const storedToken = localStorage.getItem(`remote_access_${this.workspaceService.presentationId}`);
       
       if (storedRequest || storedToken) {
-        console.log('Page refresh detected with stored access, attempting to restore access');
         // The checkAuthToken method will handle restoring access
       }
     }
@@ -409,6 +404,7 @@ resetPresentedTime(){
     this.workspaceService.isLastBehavioursSubject.subscribe((data: any) => {
       if (data != null) {
         this.workspaceService.isLastSlide = !this.workspaceService.isLastSlide;
+        this.cdr.detectChanges();
       }
     });
   }
@@ -426,6 +422,7 @@ resetPresentedTime(){
               if(this.workspaceService.presentationMode == false){
                 this.closeModals();
               }
+              this.cdr.detectChanges();
             },
             (error: any) => {
               console.log(error);
@@ -453,7 +450,6 @@ resetPresentedTime(){
   public checkAuthToken(): void {
     // Prevent multiple calls
     if (this.isRedirecting) {
-      console.log('Already processing redirect, skipping checkAuthToken');
       return;
     }
     
@@ -463,8 +459,6 @@ resetPresentedTime(){
       const token = params['token'];
       const remoteUserId = params['remoteUserId'];
       
-      console.log('Route params received:', { presentationId, token, remoteUserId });
-      
       if (presentationId) {
         // Check if we have a stored token for this presentation
         const storedToken = localStorage.getItem(`remote_access_${presentationId}`);
@@ -472,7 +466,6 @@ resetPresentedTime(){
         if (token || storedToken) {
           // User is coming from auth module with a token or has a stored token
           const tokenToUse = token || storedToken;
-          console.log('Proceeding with token validation');
           this.validateAuthToken(presentationId, tokenToUse, remoteUserId);
         } else {
           // Check if user already has access (from previous session)
@@ -480,24 +473,18 @@ resetPresentedTime(){
         }
       } else {
         // No presentation ID, show access request
-        console.log('No presentation ID found, showing access request');
-        this.showAccessRequest = true;
-        this.hasRemoteAccess = false;
       }
     });
   }
 
   private async checkExistingAccess(presentationId: string): Promise<void> {
     try {
-      console.log('Checking if user already has access to presentation:', presentationId);
       
       // Check if we're already on the remote page to prevent infinite redirects
       if (window.location.pathname.includes('/remote')) {
-        console.log('Already on remote page, checking for valid access');
         // Validate the stored token instead of redirecting
         const storedToken = localStorage.getItem(`remote_access_${presentationId}`);
         if (storedToken) {
-          console.log('Found stored access token, validating instead of redirecting');
           this.validateAuthToken(presentationId, storedToken);
           return;
         }
@@ -507,11 +494,9 @@ resetPresentedTime(){
       const storedRequest = localStorage.getItem(`remote_request_${presentationId}`);
       if (storedRequest) {
         const requestData = JSON.parse(storedRequest);
-        console.log('Found stored request data:', requestData);
         
         // Check if the stored request indicates access was granted
         if (requestData.guestToken && requestData.hasAccess === true) {
-          console.log('Found stored access, redirecting to remote page');
           this.guestToken = requestData.guestToken;
           this.remoteUserName = requestData.remoteUserName;
           this.redirectToRemotePage();
@@ -522,20 +507,14 @@ resetPresentedTime(){
       // Also check if we have a stored access token (only redirect if not already on remote page)
       const storedToken = localStorage.getItem(`remote_access_${presentationId}`);
       if (storedToken && !window.location.pathname.includes('/remote')) {
-        console.log('Found stored access token, redirecting to remote page');
         this.guestToken = storedToken;
         this.redirectToRemotePage();
         return;
       }
       
       // If no stored access found, show access request
-      console.log('No existing access found, showing access request');
-      this.showAccessRequest = true;
-      this.hasRemoteAccess = false;
     } catch (error) {
       console.error('Error checking existing access:', error);
-      this.showAccessRequest = true;
-      this.hasRemoteAccess = false;
     }
   }
 
@@ -556,7 +535,6 @@ resetPresentedTime(){
           localStorage.setItem(`remote_user_id_${presentationId}`, userId);
         }
         
-                 console.log('Access validated successfully');
          
          // Store the remote user name if available
          if (userData.remoteUserName) {
@@ -565,26 +543,20 @@ resetPresentedTime(){
          
          // Check if we're already on the remote page
          if (window.location.pathname.includes('/remote')) {
-           console.log('Already on remote page, loading remote data');
            this.hasRemoteAccess = true;
            this.showAccessRequest = false;
            
            // Load the remote data on the same page
            this.loadRemoteData();
          } else {
-           console.log('Redirecting to remote page with validated token');
            // Redirect to the remote page with the validated token
            this.redirectToRemotePage();
          }
       } else {
         console.log('Auth token validation failed');
-        this.showAccessRequest = true;
-        this.hasRemoteAccess = false;
       }
     } catch (error) {
       console.error('Error validating auth token:', error);
-      this.showAccessRequest = true;
-      this.hasRemoteAccess = false;
     }
   }
 
@@ -595,12 +567,6 @@ resetPresentedTime(){
       return;
     }
 
-    console.log('Starting requestAccess with userName:', this.remoteUserName);
-    console.log('Current component state:', {
-      hasRemoteAccess: this.hasRemoteAccess,
-      showAccessRequest: this.showAccessRequest,
-      requestStatus: this.requestStatus
-    });
 
     try {
       this.requestStatus = 'pending';
@@ -615,8 +581,6 @@ resetPresentedTime(){
         connectionId: connectionId
       };
 
-      console.log('Requesting remote access:', requestData);
-
       const response = await fetch(`${environment.MyApi}remote-access/request`, {
         method: 'POST',
         headers: {
@@ -627,11 +591,9 @@ resetPresentedTime(){
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Remote access request successful:', result);
         
                  // Check if access is already granted
          if (result.hasAccess === true) {
-           console.log('Access already granted');
            this.guestToken = result.guestToken || result.remoteUserId;
            this.remoteUserName = result.remoteUserName || this.remoteUserName;
            
@@ -648,14 +610,12 @@ resetPresentedTime(){
            
            // Check if we're already on the remote page
            if (window.location.pathname.includes('/remote')) {
-             console.log('Already on remote page, granting access directly');
              this.onAccessGranted({
                presentationId: this.workspaceService.presentationId,
                remoteUserId: result.remoteUserId,
                guestToken: this.guestToken
              });
            } else {
-             console.log('Redirecting to remote page immediately');
              // Redirect to remote page immediately
              this.redirectToRemotePage();
            }
@@ -686,23 +646,15 @@ resetPresentedTime(){
         this.requestStatus = 'error';
       }
     } catch (error) {
-      console.error('Error requesting remote access:', error);
-      this.errorMessage = 'Network error. Please try again.';
-      this.requestStatus = 'error';
+
     }
   }
 
   onAccessGranted(data: any): void {
-    console.log('Access granted:', data);
     this.hasRemoteAccess = true;
     this.showAccessRequest = false;
     this.guestToken = data.guestToken || '';
     
-    console.log('Component state after access granted:', {
-      hasRemoteAccess: this.hasRemoteAccess,
-      showAccessRequest: this.showAccessRequest,
-      guestToken: this.guestToken
-    });
     
     // Store the access token
     localStorage.setItem(`remote_access_${this.workspaceService.presentationId}`, this.guestToken);
@@ -737,12 +689,10 @@ resetPresentedTime(){
     // Check if we've already redirected in this session
     const redirectKey = `redirected_${this.workspaceService.presentationId}`;
     if (sessionStorage.getItem(redirectKey)) {
-      console.log('Already redirected in this session, skipping');
       return;
     }
     
     this.isRedirecting = true;
-    console.log('Redirecting to remote page with access token');
     
     // Mark that we've redirected in this session
     sessionStorage.setItem(redirectKey, 'true');
@@ -765,7 +715,6 @@ resetPresentedTime(){
     // Build the remote page URL with the access token
     const remoteUrl = `/WorkSpace/remote?id=${this.workspaceService.presentationId}&token=${this.guestToken}&remoteUserId=${remoteUserId}`;
     
-    console.log('Redirecting to:', remoteUrl);
     
     // Add a small delay to prevent rapid redirects
     setTimeout(() => {
@@ -796,6 +745,10 @@ resetPresentedTime(){
       if (this.dynamicChartComponent) {
         this.dynamicChartComponent.dynamicComponentUpdate(this.workspaceService.currentMasterSlideTypeId, true);
       }
+      
+      // Set up real-time listeners for presentation mode changes
+      this.updateContent();
+      this.isLastSlideOn();
     } catch (error) {
       console.error('Error loading remote data:', error);
       this.isLoading = false;
@@ -814,5 +767,10 @@ resetPresentedTime(){
         }
       )
     })
+  }
+  resetAccessRequest(): void {
+    this.errorMessage = '';
+    this.requestStatus = '';
+    this.cdr.detectChanges();
   }
 }

@@ -6,6 +6,78 @@
         </div>
     </div>
 </ng-container>
+<ng-container *ngIf="!workspaceService.presentationMode && isPageLoading || workspaceService.isPreviewMode">
+    <div class="disable-presentationmode-container">
+        <div class="presentPresentation">
+            <h1>Presentation Not Started</h1>
+            <p class="presentationmodefalse-content">The presenter hasn't started the presentation yet.<br> Please wait for the presenter to begin the session.</p>
+        </div>
+    </div>
+</ng-container>
+<!-- Access Request Form (when user doesn't have access) -->
+<ng-container *ngIf="showAccessRequest && !hasRemoteAccess && !isLoading">
+    <div class="access-request-overlay">
+        <div class="presentPresentation">
+            <h1>Remote Access Required</h1>
+            <p>You don't have access to control this presentation remotely. Please enter your name to request access from the presenter.</p>
+            
+            <div class="access-form">
+                <div class="mb-3">
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        placeholder="Enter your name" 
+                        [(ngModel)]="remoteUserName"
+                        [disabled]="requestStatus === 'pending'"
+                        (keyup.enter)="requestAccess()">
+                </div>
+                
+                <div class="mb-3" *ngIf="requestStatus === 'pending'">
+                    <div class="alert alert-info">
+                        <div class="d-flex align-items-center">
+                            <div class="spinner-border spinner-border-sm me-2" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            Waiting for presenter approval...
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-3" *ngIf="requestStatus === 'rejected'">
+                    <div class="alert alert-danger">
+                        <strong>Access Denied</strong><br>
+                        The presenter has denied your request to access this presentation remotely.
+                    </div>
+                </div>
+                
+                <div class="mb-3" *ngIf="errorMessage && requestStatus === 'error'">
+                    <div class="alert alert-danger">
+                        {{errorMessage}}
+                    </div>
+                </div>
+                
+                <button 
+                    class="btn btn-primary" 
+                    (click)="requestAccess()"
+                    [disabled]="!remoteUserName || remoteUserName.length < 2 || requestStatus === 'pending'">
+                    <span *ngIf="requestStatus !== 'pending'">Request Access</span>
+                    <span *ngIf="requestStatus === 'pending'">
+                        <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+                        Requesting...
+                    </span>
+                </button>
+                
+                <button 
+                    *ngIf="requestStatus === 'error' || requestStatus === 'rejected'" 
+                    class="btn btn-secondary mt-2" 
+                    (click)="resetAccessRequest()">
+                    <span *ngIf="requestStatus === 'error'">Try Again</span>
+                    <span *ngIf="requestStatus === 'rejected'">Request Again</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</ng-container>
 
 <!-- Main remote interface -->
 <ng-container *ngIf="!isMobile && !isLoading && (isPageLoading || hasRemoteAccess)">

@@ -12,6 +12,8 @@ import { Userdata } from 'src/app/core/Models/userdata';
 import { environment } from 'src/environments/environment';
 import { UtmService } from 'src/app/core/Sevices/utm.service';
 import { MetaService } from 'src/app/core/Sevices/meta.service';
+import { utm } from 'src/app/utility/constants';
+import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 declare var google: any;
 declare const _IntegrationMediumOffice: boolean;
 @Component({
@@ -29,6 +31,9 @@ export class SinginComponent implements OnInit {
   ZoomContextValue:string=localStorage.getItem('contextValue');
   GoogleInitialzed:any;
   isVerify: boolean = false;
+  utmSource: any;
+  id: any;
+  utmSourceValue = utm;
   constructor(
     private _formBuilder: FormBuilder,
     public _accountservice: AccountService,
@@ -38,26 +43,11 @@ export class SinginComponent implements OnInit {
     private route: ActivatedRoute,
     private _customerPlanService:CustomerPlanService,
     private _utmService: UtmService,
-    private _metaService: MetaService
+    private _metaService: MetaService,
+    private _workSpaceService: WorkspaceService
   ) {
-
-    var cookieValue = this._accountservice.getCookie(`${environment.Name.toLowerCase()}token`);
-    if (cookieValue) {
-      this.isLoading = true;
-      const cookieData = { Token: cookieValue }
-      this._accountservice.cookieLogin(cookieData).subscribe(
-        (response: any) => {
-          this._accountservice.cookieLoading= true;
-          this.cookieLoginFunc(response);
-        },
-        (error: any) => {
-          this._accountservice.cookieLoading= false;
-          this.isLoading = false;
-        });
-   }
-
-    // Add UTM parameter tracking
-    this.route.queryParams.subscribe(params => {
+     this.initializeUtmTracking();
+     this.route.queryParams.subscribe(params => {
       this._utmService.saveUtmParams(params);
     });
   }
@@ -286,32 +276,175 @@ export class SinginComponent implements OnInit {
         });
       }
   }
-  cookieLoginFunc(response:any){
+  cookieLoginFunc(response: any, utmSource: any,isCustomerCookie:boolean = false) {
     this.isLoading = false;
-      this._accountservice.storeToken(response.token);
-      this._accountservice.checkAndSetCookie(`${environment.Name.toLowerCase()}token`, response.token, 30);
-          const userData = new Userdata;
-          userData.ProfileFirstName = response?.firstName;
-          userData.ProfileSecondName = response?.lastName;
-          userData.ProfileImgUrl = response?.imageURL;
-          this._accountservice.customerDetail(response.token);
-          this._accountservice.StoreUserValue(userData);
-          this._customerPlanService.setCustomerPlan(response?.customerPlan);
-          if(localStorage.getItem('integration_medium') == 'zoom'){
-            this._router.navigateByUrl('/app/mypresentations?isListView=false');
-          }else if(localStorage.getItem('integration_medium') == 'powerpoint'){
-            this._router.navigateByUrl('/app/mypresentations?isListView=true');
-          }else{
-            localStorage.removeItem('integration_medium');
-            this._router.navigateByUrl('/app/home');
-          }
-          if(response?.teamId!=null){
-          localStorage.setItem('teamId', response?.teamId.toString());
-          }
-          const message = getMessage(SuccessMessages.UserSection1000,SuccessMessages.User1001);
-          this._toastr.success(message,"", {
-            timeOut: 5000,
-          });
+    this._accountservice.storeToken(response.token);
+    this._accountservice.checkAndSetCookie(`${environment.Name.toLowerCase()}token`, response.token, 30);
+    const userData = new Userdata;
+    userData.ProfileFirstName = response?.firstName;
+    userData.ProfileSecondName = response?.lastName;
+    userData.ProfileImgUrl = response?.imageURL;
+    this._accountservice.customerDetail(response.token);
+    this._accountservice.StoreUserValue(userData);
+    this._customerPlanService.setCustomerPlan(response?.customerPlan);
+    if (utmSource == this.utmSourceValue.WEBSITE_TEMPLATE && isCustomerCookie == false) {
+      this.callGuestUseTemplate();
+    }
+    else if(utmSource == this.utmSourceValue.WEBSITE_TEMPLATE && isCustomerCookie == true){
+      this.callUseTemplate();
+    }
+    else {
+      if (localStorage.getItem('integration_medium') == 'zoom') {
+        this._router.navigateByUrl('/app/mypresentations?isListView=false');
+      } else if (localStorage.getItem('integration_medium') == 'powerpoint') {
+        this._router.navigateByUrl('/app/mypresentations?isListView=true');
+      } else {
+        localStorage.removeItem('integration_medium');
+        this._router.navigateByUrl('/app/home');
+      }
+      if (response?.teamId != null) {
+        localStorage.setItem('teamId', response?.teamId.toString());
+      }
+      const message = getMessage(SuccessMessages.UserSection1000, SuccessMessages.User1001);
+      this._toastr.success(message, "", {
+        timeOut: 5000,
+      });
+    }
   }
-
+  // Guest Details
+  initializeUtmTracking(){
+    this.route.queryParams.subscribe(params => {
+      this._utmService.saveUtmParams(params);
+      this.utmSource = params['utm_source'] || null;
+      this.id = params['id'] || null;
+      if (this.utmSource == this.utmSourceValue.WEBSITE_TEMPLATE && this.id != null) {
+        this._accountservice.cookieLoading= true;
+        var customerCookie = this._accountservice.getCookie(`${environment.Name.toLowerCase()}token`);
+        if(customerCookie){
+          this.customerCookieLogin(this.utmSource,true);
+        }else{
+          const customerCookieValue = this._accountservice.getCookie(`${environment.Name.toLowerCase()}token`);
+          if (!customerCookieValue) {
+            var cookieValue = this._accountservice.getGuestToken();
+            if (cookieValue) {
+              this.guestCookieLogin(cookieValue);
+            } else {
+              this.guestSignup();
+            }
+          } else {
+            this.customerCookieLogin(this.utmSource,false);
+          }
+        }
+      }
+      else {
+        this.customerCookieLogin(this.utmSource,false);
+      }
+    });
+  }
+  customerCookieLogin(utmSource:any,isCustomerCookie:boolean = false){
+    var cookieValue = this._accountservice.getCookie(`${environment.Name.toLowerCase()}token`);
+    if (cookieValue) {
+      this.isLoading = true;
+      const cookieData = { Token: cookieValue }
+      this._accountservice.cookieLogin(cookieData).subscribe(
+        (response: any) => {
+          this._accountservice.cookieLoading= true;
+          this.cookieLoginFunc(response,utmSource,isCustomerCookie);
+        },
+        (error: any) => {
+          this._accountservice.cookieLoading= false;
+          this.isLoading = false;
+        });
+   }
+  }
+  guestCookieLogin(token:any){
+    var existingActualToken = {
+      token: token
+    }
+    this._accountservice.guestCookieLogin(existingActualToken).subscribe(
+      (response: any) => {
+        this.storeGuestDetails(response);
+      },
+      (error:any)=>{
+        this._accountservice.cookieLoading= false;
+        console.log(error);
+      }
+    );  
+  }
+  guestSignup(){
+    var guestSignupDTO = {
+      Medium: this.utmSource
+    }
+    this._accountservice.guestSignup(guestSignupDTO).subscribe(
+      (response: any) => {
+        this.storeGuestDetails(response);
+      },
+      (error:any)=>{
+        this._accountservice.cookieLoading= false;  
+        console.log(error);
+      }
+    );
+  }
+  storeGuestDetails(response: any) {
+    const PROFILE = new Profile;
+    PROFILE.ProfileId = "1";
+    PROFILE.ProfileEMail = "guest@gmail.com";
+    PROFILE.ProfileFirstName = "Guest";
+    PROFILE.ProfileSecondName = "User";
+    PROFILE.ProfileRole = "Guest";
+    PROFILE.TeamId = "";
+    PROFILE.ProfileImgUrl = "";
+    PROFILE.PlanName = "";
+    PROFILE.PlanId = 0;
+    PROFILE.ParticipationLimit = 0;
+    PROFILE.RewardId = "";
+    this._accountservice.profileValue = response;
+    this._accountservice.UserProfile.next(PROFILE);
+    this._accountservice.storeGuestToken(response.token);
+    
+    // Call guestUseTemplate API after successful guest login
+    if (this.id) {
+      this.callGuestUseTemplate();
+    }
+  }
+  callGuestUseTemplate() {
+    this._accountservice.guestUseTemplate(this.id).subscribe(
+      (response: any) => {
+        this._accountservice.cookieLoading= false;
+        // API call successful, route to the next URL
+        this.routeAfterGuestUseTemplate(response);
+      },
+      (error: any) => {
+        this._accountservice.cookieLoading= false;
+        console.error('Error calling guestUseTemplate:', error);
+      }
+    );
+  }
+  callUseTemplate(){
+    this._accountservice.customerUseTemplate(this.id).subscribe(
+      (response: any) => {
+        this._accountservice.cookieLoading= false;
+        // API call successful, route to the next URL
+        this.routeAfterGuestUseTemplate(response);
+      },
+      (error: any) => {
+        this._accountservice.cookieLoading= false;
+        console.error('Error calling guestUseTemplate:', error);
+      }
+    );
+  }
+  routeAfterGuestUseTemplate(response: any) {
+    // Route to the appropriate URL after guestUseTemplate API completes
+    // You can customize this routing logic based on your requirements
+    if (response) {
+      this._workSpaceService.activeSlideId = response.activeSlideId;
+        this._workSpaceService.presentationId = response.presentationId;
+        localStorage.setItem('slideVisualizationId',response.visualizationId);
+        this._router.navigate(['/WorkSpace/edit'], {
+          queryParams: { id: response.presentationId }
+        });
+    } else {
+      console.log("Error in routeAfterGuestUseTemplate");
+    }
+  }
 }

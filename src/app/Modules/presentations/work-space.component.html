@@ -1,3 +1,11 @@
+<!-- Remote Access Notification -->
+<app-remote-access-notification 
+    [isVisible]="showRemoteAccessNotification"
+    (visibilityChange)="onRemoteAccessNotificationVisibilityChange($event)"
+    (requestApproved)="onRemoteAccessRequestApproved($event)"
+    (requestRejected)="onRemoteAccessRequestRejected($event)">
+</app-remote-access-notification>
+
 <ng-container *ngIf="!isLoadComponents">
     <div class="loading">
         <div class="loadingWrapper">

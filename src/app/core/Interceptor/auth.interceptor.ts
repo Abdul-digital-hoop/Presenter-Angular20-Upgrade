@@ -35,9 +35,12 @@ export class AuthInterceptor implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    if (localStorage.getItem('token') != null) {
+    const isGuestApi = req.headers.has('X-Guest-API');
+    
+
+    if (isGuestApi ? localStorage.getItem('guestToken') != null : localStorage.getItem('token') != null) {
       let clonedReq = req;
-      clonedReq = this.AddTokenHeader(req, localStorage.getItem('token'));
+      clonedReq = this.AddTokenHeader(req, isGuestApi ? localStorage.getItem('guestToken') : localStorage.getItem('token'));
       return next.handle(clonedReq).pipe(
         retryWhen((error) => this.retryRequest(error, 5, req, next)),
         catchError((errordata) => {
@@ -46,7 +49,13 @@ export class AuthInterceptor implements HttpInterceptor {
             return throwError(errorMessage);
           }
           if (errordata.status === 401) {
-            return this.HandleRefrehToken(req, next);
+            if(isGuestApi){
+              this._router.navigateByUrl('/auth');
+              return throwError(errordata);
+            }
+            else{
+              return this.HandleRefrehToken(req, next);
+            }
           }
           else if (errordata.status === 500) {
             let errorMessage = errordata.error.message;

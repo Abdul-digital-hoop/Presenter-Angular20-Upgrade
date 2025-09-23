@@ -22,10 +22,12 @@ export class RemoteAccessNotificationComponent implements OnInit, OnDestroy {
   pendingRequests: RemoteAccessRequest[] = [];
   isProcessing: boolean = false;
   private subscription: Subscription = new Subscription();
+  private countdownIntervals: Map<string, any> = new Map();
+  requestCountdowns: Map<string, number> = new Map();
 
   constructor(
     private workSignalRService: WorkSignalRServiceService,
-    private workspaceService: WorkspaceService,
+    public workspaceService: WorkspaceService,
     private http: HttpClient,
     private remoteAccessNotificationService: RemoteAccessNotificationService
   ) {}
@@ -38,6 +40,9 @@ export class RemoteAccessNotificationComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     // Clean up subscriptions
     this.subscription.unsubscribe();
+    
+    this.countdownIntervals.forEach(interval => clearInterval(interval));
+    this.countdownIntervals.clear();
   }
 
   private subscribeToRequests(): void {
@@ -47,14 +52,19 @@ export class RemoteAccessNotificationComponent implements OnInit, OnDestroy {
         if (requests.length > 0) {
           this.isVisible = true;
           this.visibilityChange.emit(true);
+        } else {
+          this.isVisible = false;
+          this.visibilityChange.emit(false);
         }
+        
+        this.updateCountdownTimers();
       })
     );
 
     this.subscription.add(
         this.remoteAccessNotificationService.newRequest$.subscribe(request => {
           if (request) {
-            // New request received
+            this.startCountdownTimer(request);
           }
         })
     );
@@ -160,6 +170,7 @@ export class RemoteAccessNotificationComponent implements OnInit, OnDestroy {
   hideNotification(): void {
     this.isVisible = false;
     this.visibilityChange.emit(false);
+    this.remoteAccessNotificationService.hideNotification();
   }
 
   get pendingCount(): number {
@@ -179,5 +190,58 @@ export class RemoteAccessNotificationComponent implements OnInit, OnDestroy {
       const hours = Math.floor(diffInSeconds / 3600);
       return `${hours}h ago`;
     }
+  }
+
+  private updateCountdownTimers(): void {
+    const currentRequestIds = new Set(this.pendingRequests.map(r => r.requestId));
+    
+    this.countdownIntervals.forEach((interval, requestId) => {
+      if (!currentRequestIds.has(requestId)) {
+        clearInterval(interval);
+        this.countdownIntervals.delete(requestId);
+        this.requestCountdowns.delete(requestId);
+      }
+    });
+
+    this.pendingRequests.forEach(request => {
+      if (!this.countdownIntervals.has(request.requestId)) {
+        this.startCountdownTimer(request);
+      }
+    });
+  }
+
+  private startCountdownTimer(request: RemoteAccessRequest): void {
+    const existingInterval = this.countdownIntervals.get(request.requestId);
+    if (existingInterval) {
+      clearInterval(existingInterval);
+    }
+
+    this.updateCountdown(request.requestId);
+
+    const interval = setInterval(() => {
+      this.updateCountdown(request.requestId);
+    }, 1000);
+
+    this.countdownIntervals.set(request.requestId, interval);
+  }
+
+  private updateCountdown(requestId: string): void {
+    const remainingSeconds = this.remoteAccessNotificationService.getRemainingTime(requestId);
+    this.requestCountdowns.set(requestId, remainingSeconds);
+
+    if (remainingSeconds <= 0) {
+      const interval = this.countdownIntervals.get(requestId);
+      if (interval) {
+        clearInterval(interval);
+        this.countdownIntervals.delete(requestId);
+        this.requestCountdowns.delete(requestId);
+      }
+    }
+  }
+
+  getCountdownText(requestId: string): string {
+    const seconds = this.requestCountdowns.get(requestId) || 0;
+    if (seconds <= 0) return 'Expired';
+    return `${seconds}s remaining`;
   }
 }
