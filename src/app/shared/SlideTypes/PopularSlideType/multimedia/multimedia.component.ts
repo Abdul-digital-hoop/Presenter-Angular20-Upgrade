@@ -262,7 +262,23 @@ export class MultimediaComponent implements OnInit, OnDestroy {
     } else {
       this.renderCanvas(this.existingJson);
     }
-    fabric.Object.prototype.controls.mtr.cursorStyle = 'alias'; // or your custom cursor
+    // Ensure rotation cursor is visible on object initialization
+    if (fabric && fabric.Object && fabric.Object.prototype.controls && fabric.Object.prototype.controls.mtr) {
+      fabric.Object.prototype.controls.mtr.cursorStyle = 'alias';
+      // Force control visibility update
+      fabric.Object.prototype.controls.mtr.touchSizeX = 24;
+      fabric.Object.prototype.controls.mtr.touchSizeY = 24;
+      fabric.Object.prototype.controls.mtr.sizeX = 24;
+      fabric.Object.prototype.controls.mtr.sizeY = 24;
+    }
+    
+    // Also set this after canvas initialization to ensure controls are visible
+    setTimeout(() => {
+      if (this.canvas) {
+        this.canvas.requestRenderAll();
+      }
+    }, 100);
+     // or your custom cursor
   }
 
   ngAfterViewInit() {

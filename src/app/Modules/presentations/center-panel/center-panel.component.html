@@ -37,7 +37,7 @@
                                     <div class="center-chart-content">
                                         <div class="inside-chart-content">
                                             <div class="main-chart-area">
-                                                <ng-container [ngClass]="workSpaceService?.slideListArray?.length > 0 ? '':'d-none'">
+                                                <ng-container *ngIf="workSpaceService?.slideListArray?.length > 0">
                                                     <div class="inside-chart-area" [ngStyle]="{'height': activeslideTypeName === masterSlideTypeName.OPEN_ENDED_SLIDE_TYPE ? '100%' : '100%'}">
                                                     
                                                             <div class="content-text-area" *ngIf="workSpaceService.activeSlideTypeName != masterSlideTypeName.MULTIMEDIA">
@@ -76,7 +76,7 @@
                                                                 </div>
                                                     </div>
                                                 </ng-container>
-                                                <ng-container *ngIf="workSpaceService?.slideListArray?.length != 0">
+                                                <ng-container *ngIf="!workSpaceService?.slideListArray?.length">
                                                     <!-- Multiple Choices Hover Svg -->
                                                     <div class="inside-chart-area d-none">
                                                         <img src="/assets/new-icons/hoverSvg/multipleBarSvg.svg" class="img-fluid">
