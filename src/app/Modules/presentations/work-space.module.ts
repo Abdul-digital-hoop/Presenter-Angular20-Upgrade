@@ -31,35 +31,6 @@ import { RemoteRightbarComponent } from './remote-rightbar/remote-rightbar.compo
 import { CreateThemeComponent } from './create-theme/create-theme.component';
 import { ThemeCenterPanelComponent } from './create-theme/theme-center-panel/theme-center-panel.component';
 import { ThemeRightSideBarComponent } from './create-theme/theme-right-side-bar/theme-right-side-bar.component';
-import { MultipleDonutComponent } from './SlideTypes/PopularSlideType/multiple-donut/multiple-donut.component';
-import { MultiplePieComponent } from './SlideTypes/PopularSlideType/multiple-pie/multiple-pie.component';
-import { MultipleDotComponent } from './SlideTypes/PopularSlideType/multiple-dot/multiple-dot.component';
-import { MultipleBarComponent } from './SlideTypes/PopularSlideType/multiple-bar/multiple-bar.component';
-import { WordCloudComponent } from './SlideTypes/PopularSlideType/word-cloud/word-cloud.component';
-import { OpenEndedComponent } from './SlideTypes/PopularSlideType/open-ended/open-ended.component';
-import { OpenEndedFlowingComponent } from './SlideTypes/PopularSlideType/open-ended-flowing/open-ended-flowing.component';
-import { GuessTheNumberComponent } from './SlideTypes/PopularSlideType/guess-the-number/guess-the-number.component';
-import { RankingComponent } from './SlideTypes/PopularSlideType/ranking/ranking.component';
-import { ScalesComponent } from './SlideTypes/PopularSlideType/scales/scales.component';
-import { ScalesSliderComponent } from './SlideTypes/PopularSlideType/scales-slider/scales-slider.component';
-import { QuestionAnswersComponent } from './SlideTypes/PopularSlideType/question-answers/question-answers.component';
-import { ThisOrThatComponent } from './SlideTypes/PopularSlideType/this-or-that/this-or-that.component';
-import { TruthOrLieComponent } from './SlideTypes/PopularSlideType/truth-or-lie/truth-or-lie.component';
-import { TrafficLightsComponent } from './SlideTypes/PopularSlideType/traffic-lights/traffic-lights.component';
-import { SelectAnswersComponent } from './SlideTypes/QuizSlides/select-answers/select-answers.component';
-import { TypeAnswersComponent } from './SlideTypes/QuizSlides/type-answers/type-answers.component';
-import { GuessTheNumberQuizComponent } from './SlideTypes/QuizSlides/guess-the-number-quiz/guess-the-number-quiz.component';
-import { LeaderBoardComponent } from './SlideTypes/QuizSlides/leader-board/leader-board.component';
-import { LeaderboardChampionComponent } from './SlideTypes/QuizSlides/leaderboard-champion/leaderboard-champion.component';
-import { LeaderBoardLeadingComponent } from './SlideTypes/QuizSlides/leader-board-leading/leader-board-leading.component';
-import { ImportPptComponent } from './SlideTypes/ImportSlides/import-google-slides/import-ppt/import-ppt.component';
-import { ImportPowerpointComponent } from './SlideTypes/ImportSlides/import-powerpoint/import-powerpoint.component';
-import { ImportGoogleSlideComponent } from './SlideTypes/ImportSlides/import-google-slide/import-google-slide.component';
-import { InstructionComponent } from './SlideTypes/ContentSlides/instruction/instruction.component';
-import { LineupComponent } from './SlideTypes/QuizSlides/lineup/lineup.component';
-import { MultimediaComponent } from './SlideTypes/PopularSlideType/multimedia/multimedia.component';
-import { EmptySlideComponent } from './SlideTypes/empty-slide/empty-slide.component';
-import { MultipleChoiceComponent } from './SlideTypes/PopularSlideType/multiple-choice/multiple-choice.component';
 import { RemoteComponent } from './remote/remote.component';
 import { RemoteAccessRequestComponent } from './remote-access-request/remote-access-request.component';
 import { RemoteAccessManagementComponent } from './remote-access-management/remote-access-management.component';
@@ -98,36 +69,6 @@ import { CenterPanelSkeletonComponent } from './center-panel-skeleton/center-pan
         CreateThemeComponent,
         ThemeCenterPanelComponent,
         ThemeRightSideBarComponent,
-        MultipleChoiceComponent,
-        EmptySlideComponent,
-        WordCloudComponent,
-        OpenEndedComponent,
-        ScalesComponent,
-        RankingComponent,
-        QuestionAnswersComponent,
-        GuessTheNumberComponent,
-        ThisOrThatComponent,
-        TruthOrLieComponent,
-        TrafficLightsComponent,
-        MultipleDonutComponent,
-        MultipleDotComponent,
-        MultiplePieComponent,
-        MultipleBarComponent,
-        ScalesSliderComponent,
-        OpenEndedFlowingComponent,
-        SelectAnswersComponent,
-        LeaderBoardComponent,
-        SelectAnswersComponent,
-        ImportPptComponent,
-        ImportGoogleSlideComponent,
-        ImportPowerpointComponent,
-        InstructionComponent,
-        TypeAnswersComponent,
-        GuessTheNumberQuizComponent,
-        LineupComponent,
-        MultimediaComponent,
-        LeaderboardChampionComponent,
-        LeaderBoardLeadingComponent,
         CenterPanelSkeletonComponent    
     ],
     imports: [

@@ -4,36 +4,6 @@ import { DynamicComponentDirective } from '../Common/dynamic-component.directive
 import { WorkspaceService } from 'src/app/core/Sevices/WorkSpace/workspace.service';
 import { CommanService } from 'src/app/core/Sevices/comman.service';
 import { WorkSignalRServiceService } from 'src/app/core/Sevices/WorkSpace/work-signal-rservice.service';
-import { MultipleDonutComponent } from '../SlideTypes/PopularSlideType/multiple-donut/multiple-donut.component';
-import { MultiplePieComponent } from '../SlideTypes/PopularSlideType/multiple-pie/multiple-pie.component';
-import { MultipleDotComponent } from '../SlideTypes/PopularSlideType/multiple-dot/multiple-dot.component';
-import { MultipleBarComponent } from '../SlideTypes/PopularSlideType/multiple-bar/multiple-bar.component';
-import { WordCloudComponent } from '../SlideTypes/PopularSlideType/word-cloud/word-cloud.component';
-import { OpenEndedComponent } from '../SlideTypes/PopularSlideType/open-ended/open-ended.component';
-import { OpenEndedFlowingComponent } from '../SlideTypes/PopularSlideType/open-ended-flowing/open-ended-flowing.component';
-import { GuessTheNumberComponent } from '../SlideTypes/PopularSlideType/guess-the-number/guess-the-number.component';
-import { RankingComponent } from '../SlideTypes/PopularSlideType/ranking/ranking.component';
-import { ScalesComponent } from '../SlideTypes/PopularSlideType/scales/scales.component';
-import { ScalesSliderComponent } from '../SlideTypes/PopularSlideType/scales-slider/scales-slider.component';
-import { QuestionAnswersComponent } from '../SlideTypes/PopularSlideType/question-answers/question-answers.component';
-import { ThisOrThatComponent } from '../SlideTypes/PopularSlideType/this-or-that/this-or-that.component';
-import { TruthOrLieComponent } from '../SlideTypes/PopularSlideType/truth-or-lie/truth-or-lie.component';
-import { TrafficLightsComponent } from '../SlideTypes/PopularSlideType/traffic-lights/traffic-lights.component';
-import { SelectAnswersComponent } from '../SlideTypes/QuizSlides/select-answers/select-answers.component';
-import { TypeAnswersComponent } from '../SlideTypes/QuizSlides/type-answers/type-answers.component';
-import { GuessTheNumberQuizComponent } from '../SlideTypes/QuizSlides/guess-the-number-quiz/guess-the-number-quiz.component';
-import { LeaderBoardComponent } from '../SlideTypes/QuizSlides/leader-board/leader-board.component';
-import { LeaderboardChampionComponent } from '../SlideTypes/QuizSlides/leaderboard-champion/leaderboard-champion.component';
-import { LeaderBoardLeadingComponent } from '../SlideTypes/QuizSlides/leader-board-leading/leader-board-leading.component';
-import { ImportPptComponent } from '../SlideTypes/ImportSlides/import-google-slides/import-ppt/import-ppt.component';
-import { ImportPowerpointComponent } from '../SlideTypes/ImportSlides/import-powerpoint/import-powerpoint.component';
-import { ImportGoogleSlideComponent } from '../SlideTypes/ImportSlides/import-google-slide/import-google-slide.component';
-import { InstructionComponent } from '../SlideTypes/ContentSlides/instruction/instruction.component';
-import { LineupComponent } from '../SlideTypes/QuizSlides/lineup/lineup.component';
-import { MultimediaComponent } from '../SlideTypes/PopularSlideType/multimedia/multimedia.component';
-import { EmptySlideComponent } from '../SlideTypes/empty-slide/empty-slide.component';
-
-
 
 @Component({
     selector: 'app-dynamic-chart',
@@ -191,108 +161,108 @@ export class DynamicChartComponent implements OnInit {
   }
   switchComponent(activeSlideTypeId: any) {
     const curentSlideTypeObj = this.workSpaceService.getSlideTypeById(activeSlideTypeId) || { Name: 'Empty' };
-    switch (curentSlideTypeObj.Name) {
-      case MasterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE:
-        const masterVisualizationObj = this.workSpaceService.getMasterVisualizationData(this.workSpaceService.slideVisualizationId);
-        switch (masterVisualizationObj.Name) {
-          case this.workSpaceService.multipleChoicesVisualizationSlideType.DONUT:
-            this.dynamicComponent = MultipleDonutComponent;
-            break;
-          case this.workSpaceService.multipleChoicesVisualizationSlideType.PIE:
-            this.dynamicComponent = MultiplePieComponent;
-            break;
-          case this.workSpaceService.multipleChoicesVisualizationSlideType.DOT:
-            this.dynamicComponent = MultipleDotComponent;
-            break;
-          default:
-            this.dynamicComponent = MultipleBarComponent;
-        }
-        break;
-      case MasterSlideTypeName.WORD_CLOUD_SLIDE_TYPE:
-        this.dynamicComponent = WordCloudComponent;
-        break;
-      case MasterSlideTypeName.OPEN_ENDED_SLIDE_TYPE:
-        const openEndedVisualizationObj = this.workSpaceService.getMasterVisualizationData(this.workSpaceService.slideVisualizationId);
-        switch (openEndedVisualizationObj.Name) {
-          case this.workSpaceService.openEndedVisualizationSlideType.SPEECH_BOBBLES:
-            this.dynamicComponent = OpenEndedComponent;
-            break;
-          case this.workSpaceService.openEndedVisualizationSlideType.FLOWING_GRID:
-            this.dynamicComponent = OpenEndedFlowingComponent;
-            break;
-        }
-        break;
-      case MasterSlideTypeName.GUESS_TEHE_NUMBER_SLIDE_TYPE:
-        this.dynamicComponent = GuessTheNumberComponent;
-        break;
-      case MasterSlideTypeName.RANKING_SLIDE_TYPE:
-        this.dynamicComponent = RankingComponent;
-        break;
-      case MasterSlideTypeName.SCALES_SLIDE_TYPE:
-        const scalesMasterVisualizationObj = this.workSpaceService.getMasterVisualizationData(this.workSpaceService.slideVisualizationId);
-        if (scalesMasterVisualizationObj.Name === this.workSpaceService.scalesChoicesVisualizationSlideType.SPIDER) {
-          this.dynamicComponent = ScalesComponent;
-        } else {
-          this.dynamicComponent = ScalesSliderComponent;
-        }
-        break;
-      case MasterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE:
-        this.dynamicComponent = QuestionAnswersComponent;
-        break;
-      case MasterSlideTypeName.THIS_OR_THAT_SLIDE_TYPE:
-        this.dynamicComponent = ThisOrThatComponent;
-        break;
-      case MasterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE:
-        this.dynamicComponent = TruthOrLieComponent;
-        break;
-      case MasterSlideTypeName.TRAFFIC_LIGHTS_SLIDE_TYPE:
-        this.dynamicComponent = TrafficLightsComponent;
-        break;
-      case MasterSlideTypeName.SELECT_ANSWER_SLIDE_TYPE:
-        this.dynamicComponent = SelectAnswersComponent
-        break;
-      case MasterSlideTypeName.TYPE_ANSWER_SLIDE_TYPE:
-        this.dynamicComponent = TypeAnswersComponent
-        break;
-      case MasterSlideTypeName.GUESS_THE_NUMBER_QUIZ:
-        this.dynamicComponent = GuessTheNumberQuizComponent
-        break;
-      case MasterSlideTypeName.LEADER_BOARD_SLIDE_TYPE:
-        if(this.workSpaceService.leaderBoardState == this.quizPresenterScreenManageConstant.QUIZ_SCORE){
-          this.dynamicComponent = LeaderBoardComponent
-        }
-        else if(this.workSpaceService.leaderBoardState == this.quizPresenterScreenManageConstant.CHAMPION_SCORE){
-          this.dynamicComponent = LeaderboardChampionComponent
-        }
-        else if(this.workSpaceService.leaderBoardState == this.quizPresenterScreenManageConstant.LEADING_SCORE){
-          this.dynamicComponent = LeaderBoardLeadingComponent
-        }
-        break;
-      case MasterSlideTypeName.ImportDocument:
-        this.dynamicComponent = ImportPptComponent
-        break;
-      case MasterSlideTypeName.POWER_POINT:
-        this.dynamicComponent = ImportPowerpointComponent
-        // if(this.workSpaceService.EmbeddedPPTpresenterEnterClick){
-        //   $("#myModal").modal("show");
-        // }
-        break;
-      case MasterSlideTypeName.GoogleSlides:
-        this.dynamicComponent = ImportGoogleSlideComponent
-        break;
-        case MasterSlideTypeName.INSTRUCTION_SLIDE_TYPE:
-          this.dynamicComponent = InstructionComponent
-          break;
-      case MasterSlideTypeName.LINEUP_SLIDE_TYPE:
-        this.dynamicComponent = LineupComponent
-        break;
-      case MasterSlideTypeName.MULTIMEDIA:
-        this.dynamicComponent = MultimediaComponent
-        break;
-      default:
-        this.dynamicComponent = EmptySlideComponent;
-        break;
-    }
+    // switch (curentSlideTypeObj.Name) {
+    //   case MasterSlideTypeName.MULTIPLE_CHOICE_SLIDE_TYPE:
+    //     const masterVisualizationObj = this.workSpaceService.getMasterVisualizationData(this.workSpaceService.slideVisualizationId);
+    //     switch (masterVisualizationObj.Name) {
+    //       case this.workSpaceService.multipleChoicesVisualizationSlideType.DONUT:
+    //         this.dynamicComponent = MultipleDonutComponent;
+    //         break;
+    //       case this.workSpaceService.multipleChoicesVisualizationSlideType.PIE:
+    //         this.dynamicComponent = MultiplePieComponent;
+    //         break;
+    //       case this.workSpaceService.multipleChoicesVisualizationSlideType.DOT:
+    //         this.dynamicComponent = MultipleDotComponent;
+    //         break;
+    //       default:
+    //         this.dynamicComponent = MultipleBarComponent;
+    //     }
+    //     break;
+    //   case MasterSlideTypeName.WORD_CLOUD_SLIDE_TYPE:
+    //     this.dynamicComponent = WordCloudComponent;
+    //     break;
+    //   case MasterSlideTypeName.OPEN_ENDED_SLIDE_TYPE:
+    //     const openEndedVisualizationObj = this.workSpaceService.getMasterVisualizationData(this.workSpaceService.slideVisualizationId);
+    //     switch (openEndedVisualizationObj.Name) {
+    //       case this.workSpaceService.openEndedVisualizationSlideType.SPEECH_BOBBLES:
+    //         this.dynamicComponent = OpenEndedComponent;
+    //         break;
+    //       case this.workSpaceService.openEndedVisualizationSlideType.FLOWING_GRID:
+    //         this.dynamicComponent = OpenEndedFlowingComponent;
+    //         break;
+    //     }
+    //     break;
+    //   case MasterSlideTypeName.GUESS_TEHE_NUMBER_SLIDE_TYPE:
+    //     this.dynamicComponent = GuessTheNumberComponent;
+    //     break;
+    //   case MasterSlideTypeName.RANKING_SLIDE_TYPE:
+    //     this.dynamicComponent = RankingComponent;
+    //     break;
+    //   case MasterSlideTypeName.SCALES_SLIDE_TYPE:
+    //     const scalesMasterVisualizationObj = this.workSpaceService.getMasterVisualizationData(this.workSpaceService.slideVisualizationId);
+    //     if (scalesMasterVisualizationObj.Name === this.workSpaceService.scalesChoicesVisualizationSlideType.SPIDER) {
+    //       this.dynamicComponent = ScalesComponent;
+    //     } else {
+    //       this.dynamicComponent = ScalesSliderComponent;
+    //     }
+    //     break;
+    //   case MasterSlideTypeName.QUESTIONS_AND_ANSWER_SLIDE_TYPE:
+    //     this.dynamicComponent = QuestionAnswersComponent;
+    //     break;
+    //   case MasterSlideTypeName.THIS_OR_THAT_SLIDE_TYPE:
+    //     this.dynamicComponent = ThisOrThatComponent;
+    //     break;
+    //   case MasterSlideTypeName.TRUTH_OR_LIE_SLIDE_TYPE:
+    //     this.dynamicComponent = TruthOrLieComponent;
+    //     break;
+    //   case MasterSlideTypeName.TRAFFIC_LIGHTS_SLIDE_TYPE:
+    //     this.dynamicComponent = TrafficLightsComponent;
+    //     break;
+    //   case MasterSlideTypeName.SELECT_ANSWER_SLIDE_TYPE:
+    //     this.dynamicComponent = SelectAnswersComponent
+    //     break;
+    //   case MasterSlideTypeName.TYPE_ANSWER_SLIDE_TYPE:
+    //     this.dynamicComponent = TypeAnswersComponent
+    //     break;
+    //   case MasterSlideTypeName.GUESS_THE_NUMBER_QUIZ:
+    //     this.dynamicComponent = GuessTheNumberQuizComponent
+    //     break;
+    //   case MasterSlideTypeName.LEADER_BOARD_SLIDE_TYPE:
+    //     if(this.workSpaceService.leaderBoardState == this.quizPresenterScreenManageConstant.QUIZ_SCORE){
+    //       this.dynamicComponent = LeaderBoardComponent
+    //     }
+    //     else if(this.workSpaceService.leaderBoardState == this.quizPresenterScreenManageConstant.CHAMPION_SCORE){
+    //       this.dynamicComponent = LeaderboardChampionComponent
+    //     }
+    //     else if(this.workSpaceService.leaderBoardState == this.quizPresenterScreenManageConstant.LEADING_SCORE){
+    //       this.dynamicComponent = LeaderBoardLeadingComponent
+    //     }
+    //     break;
+    //   case MasterSlideTypeName.ImportDocument:
+    //     this.dynamicComponent = ImportPptComponent
+    //     break;
+    //   case MasterSlideTypeName.POWER_POINT:
+    //     this.dynamicComponent = ImportPowerpointComponent
+    //     // if(this.workSpaceService.EmbeddedPPTpresenterEnterClick){
+    //     //   $("#myModal").modal("show");
+    //     // }
+    //     break;
+    //   case MasterSlideTypeName.GoogleSlides:
+    //     this.dynamicComponent = ImportGoogleSlideComponent
+    //     break;
+    //     case MasterSlideTypeName.INSTRUCTION_SLIDE_TYPE:
+    //       this.dynamicComponent = InstructionComponent
+    //       break;
+    //   case MasterSlideTypeName.LINEUP_SLIDE_TYPE:
+    //     this.dynamicComponent = LineupComponent
+    //     break;
+    //   case MasterSlideTypeName.MULTIMEDIA:
+    //     this.dynamicComponent = MultimediaComponent
+    //     break;
+    //   default:
+    //     this.dynamicComponent = EmptySlideComponent;
+    //     break;
+    // }
     this.loadComponent();
   } 
 
